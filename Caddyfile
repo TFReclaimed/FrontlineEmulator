@@ -1,0 +1,16 @@
+{
+	admin off
+}
+
+:80 {
+	reverse_proxy :10000
+
+	log {
+		format console
+	}
+
+	log_skip /session/ping
+	log_skip /session/polling
+
+	uri path_regexp /{2,} /
+}

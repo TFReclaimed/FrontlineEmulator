@@ -1,0 +1,53 @@
+using FastEndpoints;
+using FastEndpoints.Security;
+using Frontline.Data.Entities;
+using Frontline.Data.Repositories;
+using Microsoft.AspNetCore.Http.HttpResults;
+
+namespace Frontline.Features.Guilds.CreateGuild;
+
+public class Endpoint : Endpoint<CreateGuildRequest, Ok>
+{
+    private readonly IGuildRepository _guildRepository;
+
+    public Endpoint(IGuildRepository guildRepository)
+    {
+        _guildRepository = guildRepository;
+    }
+
+    public override void Configure()
+    {
+        Post("/guildapi/guilds");
+    }
+
+    public override async Task HandleAsync(CreateGuildRequest req, CancellationToken ct)
+    {
+        var userId = int.Parse(User.ClaimValue("UserId")!);
+        var guild = await _guildRepository.GetPlayerGuildAsync(userId);
+        if (guild is not null)
+        {
+            await SendResultAsync(TypedResults.BadRequest());
+            return;
+        }
+        
+        var newGuild = new GuildEntity
+        {
+            Name = req.Name,
+            Description = req.Description,
+            AvatarId = req.AvatarId,
+            Mode = req.Mode,
+            Locale = req.Locale
+        };
+        
+        var member = new GuildMemberEntity
+        {
+            UserId = userId,
+            GuildId = newGuild.Id,
+            Rank = MemberRank.LEADER
+        };
+        
+        await _guildRepository.CreateGuildAsync(newGuild, member);
+        
+        await SendResultAsync(TypedResults.Ok());
+    }
+}
