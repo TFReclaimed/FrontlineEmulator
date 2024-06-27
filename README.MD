@@ -27,9 +27,9 @@ No further changes needed as we're in control of the original server domain and 
   - ⛔ Frontier
   - ⛔ Guild
 - 🚧 Hangar
-  - ⛔ Booster packs 
-    - ⛔ Get booster packs
-    - ⛔ Open booster pack
+  - 🚧 Booster packs 
+    - ✅ Get booster packs
+    - 🚧 Open booster pack
   - ⛔ Cards
     - 🚧 Get cards
     - ⛔ Retire card
@@ -37,8 +37,13 @@ No further changes needed as we're in control of the original server domain and 
     - ⛔ Get dropships
     - ⛔ Set active dropship
 - ⛔ Matchmaking
+  - ⛔ Create game request
+  - ⛔ Cancel game request
 - ⛔ Missions
-- ⛔ Leaderboards
+- 🚧 Leaderboards
+  - ✅ PvP
+  - ⛔ PvE
+  - ⛔ AWS S3 upload
 - 🚧 Guilds
   - ✅ Search guilds
   - ✅ Create guild

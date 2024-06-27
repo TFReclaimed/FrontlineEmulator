@@ -1,4 +1,5 @@
 using Frontline.Data.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Frontline.Data.Repositories;
 
@@ -7,6 +8,7 @@ public interface IPlayerRepository
     Task<PlayerEntity?> GetPlayerAsync(int id);
     Task<PlayerEntity> GetOrCreatePlayerAsync(int id);
     Task UpdatePlayerAsync(PlayerEntity player);
+    Task<List<PlayerEntity>> GetTopPlayersAsync(int count);
 }
 
 public class PlayerRepository : IPlayerRepository
@@ -49,5 +51,28 @@ public class PlayerRepository : IPlayerRepository
     {
         _db.Update(player);
         await _db.SaveChangesAsync();
+    }
+
+    public async Task<List<PlayerEntity>> GetTopPlayersAsync(int count)
+    {
+        var players = await _db.Players
+            .Where(p => p.Name != string.Empty)
+            .OrderByDescending(p => p.Trophies)
+            .Take(count)
+            .Select(p => new 
+            {
+                Player = p,
+                GuildName = _db.GuildMembers
+                    .Where(gm => gm.UserId == p.Id)
+                    .Select(gm => gm.Guild.Name)
+                    .FirstOrDefault()
+            })
+            .ToListAsync();
+
+        return players.Select(p => 
+        {
+            p.Player.GuildName = p.GuildName ?? string.Empty;
+            return p.Player;
+        }).ToList();
     }
 }
