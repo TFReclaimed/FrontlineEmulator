@@ -43,6 +43,7 @@ public class GuildRepository : IGuildRepository
     {
         return _db.Guilds
             .Where(g => g.Name.Contains(search))
+            .OrderBy(g => g.Name)
             .Skip(page * maxCount)
             .Take(maxCount)
             .ToList();
