@@ -9,8 +9,8 @@
 		format console
 	}
 
-	log_skip /session/ping
-	log_skip /session/polling
+	log_skip //session/ping
+	log_skip /session/polling/
 
 	uri path_regexp /{2,} /
 }
