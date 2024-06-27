@@ -1,8 +1,9 @@
 using FastEndpoints;
+using Frontline.Game;
 
 namespace Frontline.Features.Session.Inventory.GetInventory;
 
-public class Endpoint : Endpoint<GetInventoryRequest, string>
+public class Endpoint : Endpoint<GetInventoryRequest, InventoryListResponse>
 {
     public override void Configure()
     {
@@ -11,8 +12,21 @@ public class Endpoint : Endpoint<GetInventoryRequest, string>
 
     public override async Task HandleAsync(GetInventoryRequest req, CancellationToken ct)
     {
-        var json = "{\"$types\":{\"InventoryList\":\"1\",\"CommanderCard\":\"2\"},\"$type\":\"1\",\"bundleData\":[],\"items\":[{\"$type\":\"2\",\"defense\":0,\"secrets\":[],\"activeData\":null,\"xp\":0,\"rank\":1,\"availability\":null,\"instanceId\":0,\"templateId\":282,\"gameData\":null,\"bundle\":\"PortraitBase\"}],\"includesLast\":false}";
+        var response = new InventoryListResponse
+        {
+            Items =
+            [
+                new CommanderCard
+                {
+                    Defense = 0,
+                    Xp = 0,
+                    Rank = 1,
+                    TemplateId = 282,
+                    AssetBundle = "PortraitBase"
+                }
+            ]
+        };
         
-        await SendStringAsync(json, contentType: "application/json", cancellation: ct);
+        await SendAsync(response, cancellation: ct);
     }
 }

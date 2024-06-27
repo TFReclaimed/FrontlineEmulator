@@ -1,3 +1,5 @@
+using Frontline.Game;
+
 namespace Frontline.Features.Session.Inventory.Booster.OpenBooster;
 
 public class OpenBoosterPackRequest
@@ -7,6 +9,6 @@ public class OpenBoosterPackRequest
 
 public class BoosterPackResponse
 {
-    public List<object> Cards { get; set; }
-    public List<object> Resources { get; set; }
+    public List<Card> Cards { get; set; }
+    public List<ResourceCard> Resources { get; set; }
 }

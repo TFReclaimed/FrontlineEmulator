@@ -22,4 +22,5 @@ public class PlayerEntity
     public int MissionsComplete { get; set; }
     public int MatchesPlayed { get; set; }
     public int Xp { get; set; }
+    public int BoosterPackCount { get; set; }
 }
