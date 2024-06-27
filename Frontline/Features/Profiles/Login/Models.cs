@@ -1,11 +1,9 @@
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Frontline.Features.Profiles.Login;
 
 public class LoginRequest
 {
-    [FromBody]
     public LoginParams Param { get; set; }
 }
 

@@ -15,9 +15,9 @@ public class Endpoint : EndpointWithoutRequest<RulesetPathResponse>
         var response = new RulesetPathResponse
         {
             Uri = "http://192.168.0.219/Data/Rulesets",
-            Version = 0,
+            Version = 0
         };
         
-        await SendAsync(response);
+        await SendAsync(response, cancellation: ct);
     }
 }

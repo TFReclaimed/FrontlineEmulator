@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Mvc;
+using FastEndpoints;
 
 namespace Frontline.Features.Session.Inventory;
 

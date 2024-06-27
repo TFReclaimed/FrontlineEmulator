@@ -1,14 +1,13 @@
-using Microsoft.AspNetCore.Mvc;
+using FastEndpoints;
 
 namespace Frontline.Features.Store.Purchase;
 
 public class PurchaseRequest
 {
-    [FromQuery(Name = "Player")]
+    [BindFrom("Player")]
     public int PlayerId { get; set; }
-    [FromQuery(Name = "Method")]
+    [BindFrom("Method")]
     public string PaymentMethod { get; set; }
-    [FromQuery(Name = "Product")]
     public string Product { get; set; }
 }
 
