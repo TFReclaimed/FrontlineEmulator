@@ -1,6 +1,6 @@
 using FastEndpoints;
 
-namespace Frontline.Features.Missions.Time;
+namespace Frontline.Features.Missions.GetTime;
 
 public class Endpoint : EndpointWithoutRequest<string>
 {
@@ -12,6 +12,6 @@ public class Endpoint : EndpointWithoutRequest<string>
     public override async Task HandleAsync(CancellationToken ct)
     {
         var time = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
-        await SendStringAsync(time);
+        await SendStringAsync(time, cancellation: ct);
     }
 }
