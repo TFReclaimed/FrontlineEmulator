@@ -38,7 +38,8 @@ public class PlayerRepository : IPlayerRepository
             Credits = 100,
             Supply = 900,
             Trophies = 25,
-            Tokens = 25
+            Tokens = 25,
+            Xp = 325
         };
         
         _db.Players.Add(player);
