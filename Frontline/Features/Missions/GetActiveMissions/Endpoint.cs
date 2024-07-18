@@ -1,4 +1,5 @@
 using FastEndpoints;
+using Frontline.Missions;
 
 namespace Frontline.Features.Missions.GetActiveMissions;
 

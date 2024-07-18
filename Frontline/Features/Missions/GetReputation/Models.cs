@@ -1,3 +1,5 @@
+using Frontline.Missions;
+
 namespace Frontline.Features.Missions.GetReputation;
 
 public class ReputationInfo

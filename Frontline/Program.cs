@@ -26,6 +26,7 @@ builder.Services.AddDbContext<AppDb>(o =>
 
 builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
 builder.Services.AddScoped<IGuildRepository, GuildRepository>();
+builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 
 builder.Services.AddHttpLogging(_ => { });
 

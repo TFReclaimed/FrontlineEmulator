@@ -1,3 +1,5 @@
+using Frontline.Missions;
+
 namespace Frontline.Features.Missions.GetActiveMissions;
 
 public class MissionStageStatus

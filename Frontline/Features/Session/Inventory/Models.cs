@@ -1,11 +1,9 @@
 using System.Text.Json.Serialization;
-using FastEndpoints;
 
 namespace Frontline.Features.Session.Inventory;
 
 public class GetInventoryRequest
 {
-    [FromBody]
     public InventoryRequest Param { get; set; }
 }
 

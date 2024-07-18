@@ -11,6 +11,8 @@ public class AppDb : DbContext
     
     public DbSet<GuildMemberEntity> GuildMembers { get; set; }
     
+    public DbSet<ItemEntity> Items { get; set; }
+    
     public AppDb(DbContextOptions<AppDb> options) : base(options)
     {
     }

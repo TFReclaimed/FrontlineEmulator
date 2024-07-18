@@ -1,4 +1,4 @@
-namespace Frontline.Features.Missions;
+namespace Frontline.Missions;
 
 public enum Faction
 {
