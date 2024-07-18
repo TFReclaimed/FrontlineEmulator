@@ -3,10 +3,13 @@ using FastEndpoints.Swagger;
 using Frontline.Auth;
 using Frontline.Data;
 using Frontline.Data.Repositories;
+using Frontline.Game;
 using Frontline.Options;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using NSwag;
+
+RulesetParser.Initialize();
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
