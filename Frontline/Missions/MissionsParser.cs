@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Frontline.Features.Missions;
 using Frontline.Missions.Json;
 
 namespace Frontline.Missions;
@@ -41,6 +42,34 @@ public static class MissionsParser
     public static string GetMissionKey(MissionStage mission)
     {
         return GetMissionKey(mission.Region, mission.Faction, mission.MissionId);
+    }
+    
+    public static MissionKey ParseMissionKey(string key)
+    {
+        var parts = key.Split('-');
+        if (parts.Length != 3)
+        {
+            throw new ArgumentException("Invalid mission key format");
+        }
+
+        var region = Enum.Parse<PveRegion>(parts[0]);
+        
+        var faction = parts[1] switch
+        {
+            "IMC" => Faction.IMC,
+            "MIL" => Faction.Militia,
+            "NEU" => Faction.Neutral,
+            _ => Faction.Neutral
+        };
+        
+        var missionId = int.Parse(parts[2]);
+
+        return new MissionKey
+        {
+            Region = region,
+            Faction = faction,
+            MissionId = missionId
+        };
     }
 
     public static MissionStage? GetMission(string key)
