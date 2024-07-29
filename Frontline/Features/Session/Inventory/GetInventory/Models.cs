@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Frontline.Missions;
+using Frontline.Utils;
 
 namespace Frontline.Features.Session.Inventory.GetInventory;
 
@@ -19,6 +20,7 @@ public class InventoryCard
     public string Type { get; set; } = "1";
     public int InstanceId { get; set; }
     public int TemplateId { get; set; }
+    [JsonConverter(typeof(JsonStringConverter<CardData>))]
     public CardData? GameData { get; set; }
     public int Xp { get; set; }
     public sbyte Rank { get; set; }
@@ -26,6 +28,7 @@ public class InventoryCard
 
 public class CardData
 {
+    [JsonConverter(typeof(JsonStringConverter<CardAvailability>))]
     public CardAvailability? Availability { get; set; }
 }
 
@@ -40,8 +43,6 @@ public class CardAvailability
     public Faction Faction { get; set; }
     [JsonPropertyName("pve_missionid")]
     public int MissionId { get; set; }
-    [JsonPropertyName("pve_missionstageindex")]
-    public int MissionStageIndex { get; set; }
 }
 
 public enum CardState

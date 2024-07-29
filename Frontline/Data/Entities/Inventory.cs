@@ -13,4 +13,7 @@ public class ItemEntity
     public int TemplateId { get; set; }
     public int Xp { get; set; }
     public sbyte Rank { get; set; } = 1;
+    
+    [NotMapped]
+    public string? CurrentMission { get; set; }
 }
