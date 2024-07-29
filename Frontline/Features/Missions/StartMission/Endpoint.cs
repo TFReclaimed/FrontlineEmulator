@@ -90,6 +90,23 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
             return;
         }
         
+        var itemIds = new List<int> {req.RequiredCardItemId, req.BonusCard1ItemId, req.BonusCard2ItemId};
+        if (await _missionRepository.IsCardOnMissionAsync(userId, itemIds))
+        {
+            Logger.LogWarning("Player {UserId} attempted to start mission {Key} but a card is already on mission.",
+                userId, key);
+            await SendResultAsync(TypedResults.BadRequest());
+            return;
+        }
+
+        if (itemIds.Where(x => x != 0).GroupBy(x => x).Any(g => g.Count() > 1))
+        {
+            Logger.LogWarning("Player {UserId} attempted to start mission {Key} but card items are duplicates.",
+                userId, key);
+            await SendResultAsync(TypedResults.BadRequest());
+            return;
+        }
+        
         if (!await RequirementsMet(userId, missionData))
         {
             Logger.LogWarning("Player {UserId} attempted to start mission {Key} but requirements are not met.",

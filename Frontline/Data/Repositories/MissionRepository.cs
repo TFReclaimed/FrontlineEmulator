@@ -13,6 +13,7 @@ public interface IMissionRepository
     Task AddFinishedMissionAsync(FinishedMissionEntity mission);
     Task DeleteActiveMissionAsync(ActiveMissionEntity mission);
     Task<bool> HasCompletedMissionsAsync(int userId, List<string> keys);
+    Task<bool> IsCardOnMissionAsync(int userId, List<int> itemIds);
 }
 
 public class MissionRepository : IMissionRepository
@@ -81,5 +82,15 @@ public class MissionRepository : IMissionRepository
         return await _db.FinishedMissions
             .Where(mission => mission.UserId == userId && keys.Contains(mission.MissionKey))
             .CountAsync() == keys.Count;
+    }
+
+    public async Task<bool> IsCardOnMissionAsync(int userId, List<int> itemIds)
+    {
+        return await _db.ActiveMissions
+            .Where(mission => mission.UserId == userId)
+            .AnyAsync(mission =>
+                itemIds.Contains(mission.RequiredCardItemId)
+                || (mission.BonusCard1ItemId != null && itemIds.Contains(mission.BonusCard1ItemId.Value))
+                || (mission.BonusCard2ItemId != null && itemIds.Contains(mission.BonusCard2ItemId.Value)));
     }
 }
