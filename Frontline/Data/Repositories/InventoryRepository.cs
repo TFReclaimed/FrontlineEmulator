@@ -33,6 +33,7 @@ public class InventoryRepository : IInventoryRepository
                 TemplateId = item.TemplateId,
                 Xp = item.Xp,
                 Rank = item.Rank,
+                Casualty = item.Casualty,
                 CurrentMission = _db.ActiveMissions
                     .Where(mission => mission.UserId == userId
                                       && (mission.RequiredCardItemId == item.ItemId
@@ -58,6 +59,7 @@ public class InventoryRepository : IInventoryRepository
                     TemplateId = item.TemplateId,
                     Xp = item.Xp,
                     Rank = item.Rank,
+                    Casualty = item.Casualty,
                     CurrentMission = _db.ActiveMissions
                         .Where(mission => mission.UserId == userId
                                           && (mission.RequiredCardItemId == item.ItemId
@@ -80,6 +82,7 @@ public class InventoryRepository : IInventoryRepository
                 TemplateId = item.TemplateId,
                 Xp = item.Xp,
                 Rank = item.Rank,
+                Casualty = item.Casualty,
                 CurrentMission = _db.ActiveMissions
                     .Where(mission => mission.UserId == userId
                                       && (mission.RequiredCardItemId == item.ItemId

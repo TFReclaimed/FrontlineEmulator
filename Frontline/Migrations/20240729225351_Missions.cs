@@ -11,6 +11,13 @@ namespace Frontline.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AddColumn<bool>(
+                name: "Casualty",
+                table: "Items",
+                type: "tinyint(1)",
+                nullable: false,
+                defaultValue: false);
+
             migrationBuilder.CreateTable(
                 name: "ActiveMissions",
                 columns: table => new
@@ -101,6 +108,10 @@ namespace Frontline.Migrations
 
             migrationBuilder.DropTable(
                 name: "FinishedMissions");
+
+            migrationBuilder.DropColumn(
+                name: "Casualty",
+                table: "Items");
         }
     }
 }

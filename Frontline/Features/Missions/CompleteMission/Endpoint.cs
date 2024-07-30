@@ -77,15 +77,30 @@ public class Endpoint : Endpoint<CompleteMissionRequest, List<MissionStageStatus
         {
             await _inventoryRepository.RemoveItemAsync(mission.RequiredCardItem);
         }
+        else if (mission.Casualty && mission.RequiredCardItem is not null)
+        {
+            mission.RequiredCardItem.Casualty = true;
+            await _inventoryRepository.UpdateItemAsync(mission.RequiredCardItem);
+        }
 
         if (missionData.Bonus1SlotConsume && mission.BonusCard1Item is not null)
         {
             await _inventoryRepository.RemoveItemAsync(mission.BonusCard1Item);
         }
+        else if (mission.Bonus1Casualty && mission.BonusCard1Item is not null)
+        {
+            mission.BonusCard1Item.Casualty = true;
+            await _inventoryRepository.UpdateItemAsync(mission.BonusCard1Item);
+        }
         
         if (missionData.Bonus2SlotConsume && mission.BonusCard2Item is not null)
         {
             await _inventoryRepository.RemoveItemAsync(mission.BonusCard2Item);
+        }
+        else if (mission.Bonus2Casualty && mission.BonusCard2Item is not null)
+        {
+            mission.BonusCard2Item.Casualty = true;
+            await _inventoryRepository.UpdateItemAsync(mission.BonusCard2Item);
         }
 
         if (mission.Success)

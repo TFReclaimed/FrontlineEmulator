@@ -55,6 +55,14 @@ public class Endpoint : Endpoint<ConsumeRequest>
             return;
         }
 
+        if (item.Casualty)
+        {
+            Logger.LogWarning("Player {UserId} tried to consume item {ItemId} but it's injured/damaged!",
+                userId, req.ItemId);
+            await SendResultAsync(TypedResults.BadRequest());
+            return;
+        }
+
         if (req.RetireFor is null)
         {
             // TODO: Doesn't work. Game has all xp resource card instance ids as 0 for some reason
