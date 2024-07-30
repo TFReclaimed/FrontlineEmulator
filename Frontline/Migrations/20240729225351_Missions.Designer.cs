@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Frontline.Migrations
 {
     [DbContext(typeof(AppDb))]
-    [Migration("20240729172132_Missions")]
+    [Migration("20240729225351_Missions")]
     partial class Missions
     {
         /// <inheritdoc />
@@ -149,6 +149,9 @@ namespace Frontline.Migrations
 
                     b.Property<int>("ItemId")
                         .HasColumnType("int");
+
+                    b.Property<bool>("Casualty")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<sbyte>("Rank")
                         .HasColumnType("tinyint");

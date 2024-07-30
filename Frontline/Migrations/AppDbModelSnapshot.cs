@@ -147,6 +147,9 @@ namespace Frontline.Migrations
                     b.Property<int>("ItemId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("Casualty")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<sbyte>("Rank")
                         .HasColumnType("tinyint");
 
