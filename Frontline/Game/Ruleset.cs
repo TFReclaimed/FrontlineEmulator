@@ -99,6 +99,23 @@ public enum CardType
 
 public class UnitCardTemplate : CardTemplate
 {
+    public UnitType UnitType { get; set; }
+}
+
+[JsonConverter(typeof(JsonStringEnumConverter))]
+public enum UnitType
+{
+    None = 0,
+    Light = 1,
+    Medium = 2,
+    Heavy = 3,
+    Stryder = 4,
+    Atlas = 5,
+    Ogre = 6,
+    Installation = 7,
+    Commander = 8,
+    Spectre = 9,
+    NumTypes = 10
 }
 
 public class CommanderCardTemplate : CardTemplate

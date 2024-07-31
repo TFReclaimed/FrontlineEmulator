@@ -26,6 +26,22 @@ public class InventoryRepository : IInventoryRepository
     {
         return _db.Items
             .Where(item => item.UserId == userId && item.ItemId == itemId)
+            .Select(item => new ItemEntity
+            {
+                UserId = item.UserId,
+                ItemId = item.ItemId,
+                TemplateId = item.TemplateId,
+                Xp = item.Xp,
+                Rank = item.Rank,
+                Casualty = item.Casualty,
+                CurrentMission = _db.ActiveMissions
+                    .Where(mission => mission.UserId == userId
+                                      && (mission.RequiredCardItemId == item.ItemId
+                                          || mission.BonusCard1ItemId == item.ItemId
+                                          || mission.BonusCard2ItemId == item.ItemId))
+                    .Select(mission => mission.MissionKey)
+                    .FirstOrDefault()
+            })
             .FirstOrDefaultAsync();
     }
 
@@ -36,6 +52,22 @@ public class InventoryRepository : IInventoryRepository
             return _db.Items
                 .Where(item => item.UserId == userId)
                 .OrderBy(item => item.ItemId)
+                .Select(item => new ItemEntity
+                {
+                    UserId = item.UserId,
+                    ItemId = item.ItemId,
+                    TemplateId = item.TemplateId,
+                    Xp = item.Xp,
+                    Rank = item.Rank,
+                    Casualty = item.Casualty,
+                    CurrentMission = _db.ActiveMissions
+                        .Where(mission => mission.UserId == userId
+                                          && (mission.RequiredCardItemId == item.ItemId
+                                              || mission.BonusCard1ItemId == item.ItemId
+                                              || mission.BonusCard2ItemId == item.ItemId))
+                        .Select(mission => mission.MissionKey)
+                        .FirstOrDefault()
+                })
                 .ToList();
         }
         
@@ -43,6 +75,22 @@ public class InventoryRepository : IInventoryRepository
             .Where(item => item.UserId == userId)
             .OrderBy(item => item.ItemId)
             .Take(maxItems)
+            .Select(item => new ItemEntity
+            {
+                UserId = item.UserId,
+                ItemId = item.ItemId,
+                TemplateId = item.TemplateId,
+                Xp = item.Xp,
+                Rank = item.Rank,
+                Casualty = item.Casualty,
+                CurrentMission = _db.ActiveMissions
+                    .Where(mission => mission.UserId == userId
+                                      && (mission.RequiredCardItemId == item.ItemId
+                                          || mission.BonusCard1ItemId == item.ItemId
+                                          || mission.BonusCard2ItemId == item.ItemId))
+                    .Select(mission => mission.MissionKey)
+                    .FirstOrDefault()
+            })
             .ToList();
     }
 

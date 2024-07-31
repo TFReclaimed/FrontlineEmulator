@@ -46,7 +46,22 @@ public class Endpoint : Endpoint<ConsumeRequest>
             return;
         }
         
-        // TODO: if used in pve or dropship, cannot retire
+        // TODO: if used in dropship, cannot retire
+        if (item.CurrentMission is not null)
+        {
+            Logger.LogWarning("Player {UserId} tried to consume item {ItemId} but it's on a mission!",
+                userId, req.ItemId);
+            await SendResultAsync(TypedResults.BadRequest());
+            return;
+        }
+
+        if (item.Casualty)
+        {
+            Logger.LogWarning("Player {UserId} tried to consume item {ItemId} but it's injured/damaged!",
+                userId, req.ItemId);
+            await SendResultAsync(TypedResults.BadRequest());
+            return;
+        }
 
         if (req.RetireFor is null)
         {

@@ -4,12 +4,14 @@ using Frontline.Auth;
 using Frontline.Data;
 using Frontline.Data.Repositories;
 using Frontline.Game;
+using Frontline.Missions;
 using Frontline.Options;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using NSwag;
 
 RulesetParser.Initialize();
+MissionsParser.Initialize();
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
@@ -30,6 +32,7 @@ builder.Services.AddDbContext<AppDb>(o =>
 builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
 builder.Services.AddScoped<IGuildRepository, GuildRepository>();
 builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
+builder.Services.AddScoped<IMissionRepository, MissionRepository>();
 
 builder.Services.AddHttpLogging(_ => { });
 
