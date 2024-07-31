@@ -6,6 +6,13 @@ namespace Frontline.Missions.Json;
 
 public class StringFloatConverter : JsonConverter<float>
 {
+    private readonly float _defaultValue;
+
+    public StringFloatConverter(float defaultValue = 0f)
+    {
+        _defaultValue = defaultValue;
+    }
+
     public override float Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         if (reader.TokenType == JsonTokenType.String)
@@ -13,7 +20,7 @@ public class StringFloatConverter : JsonConverter<float>
             var stringValue = reader.GetString();
             if (stringValue is null || string.IsNullOrEmpty(stringValue))
             {
-                return 0;
+                return _defaultValue;
             }
 
             return float.Parse(stringValue, CultureInfo.InvariantCulture);
@@ -25,5 +32,21 @@ public class StringFloatConverter : JsonConverter<float>
     public override void Write(Utf8JsonWriter writer, float value, JsonSerializerOptions options)
     {
         writer.WriteStringValue(value.ToString("F", CultureInfo.InvariantCulture));
+    }
+}
+
+[AttributeUsage(AttributeTargets.Property)]
+public class StringFloatConverterAttribute : JsonConverterAttribute
+{
+    private readonly float _defaultValue;
+
+    public StringFloatConverterAttribute(float defaultValue)
+    {
+        _defaultValue = defaultValue;
+    }
+
+    public override JsonConverter? CreateConverter(Type typeToConvert)
+    {
+        return new StringFloatConverter(_defaultValue);
     }
 }

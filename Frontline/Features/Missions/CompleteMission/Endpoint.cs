@@ -123,7 +123,6 @@ public class Endpoint : Endpoint<CompleteMissionRequest, List<MissionStageStatus
             await GivePlayerRewards(player, requiredRewardSet, bonus1RewardSet, bonus2RewardSet);
         }
         
-        // TODO: casualties
         // TODO: xp to cards
         
         var response = new List<MissionStageStatus>
