@@ -7,10 +7,29 @@ This project is a work in progress and is not yet feature complete.
 
 ## How to play
 
+### Unofficial official server
+
 1. Download the 1.0.15816 APK from [APKMirror](https://www.apkmirror.com/apk/nexon-m-inc/titanfall-frontline/titanfall-frontline-1-0-15816-release/).
 2. Install the APK on your device.
 
 No further changes needed as we're in control of the original server domain and S3 bucket!
+
+### Your own server
+
+You'll need to either modify the `assets/serverAddresses.json` file in the APK to point to your server
+or modify your DNS/hosts file to point to your server.
+
+The following domains need to be pointed to your server:
+- prod-us-east-1-gameserver-lb.tfflinternal.com
+- prod-us-east-1-store-lb.tfflinternal.com
+- prod-us-east-1-virtu2-lb.tfflinternal.com
+- prod-us-east-1-chat-lb.tfflinternal.com
+- conference.prod-us-east-1-chat-lb.tfflinternal.com
+- pc-tffl-leaderboard.s3-website-us-east-1.amazonaws.com
+- pc-tffl-html.s3-website-us-east-1.amazonaws.com
+
+If you didn't modify the APK, you'll need to listen on port 443 with a valid SSL certificate.
+A reverse proxy, such as Caddy or Nginx can be used to achieve this.
 
 ## Features
 
