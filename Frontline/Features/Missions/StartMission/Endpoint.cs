@@ -79,10 +79,15 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
             await SendResultAsync(TypedResults.BadRequest());
             return;
         }
+
+        var (requiredIsValid, requiredItem) = await IsValidItem(userId, req.RequiredCardItemId, missionData,
+            MissionSlotId.Required);
+        var (bonus1IsValid, bonus1Item) = await IsValidItem(userId, req.BonusCard1ItemId, missionData,
+            MissionSlotId.Bonus1);
+        var (bonus2IsValid, bonus2Item) = await IsValidItem(userId, req.BonusCard2ItemId, missionData,
+            MissionSlotId.Bonus2);
         
-        if (!await IsValidItem(userId, req.RequiredCardItemId, missionData, CheckItem.Required)
-            || !await IsValidItem(userId, req.BonusCard1ItemId, missionData, CheckItem.Bonus1)
-            || !await IsValidItem(userId, req.BonusCard2ItemId, missionData, CheckItem.Bonus2))
+        if (!requiredIsValid || !bonus1IsValid || !bonus2IsValid)
         {
             Logger.LogWarning("Player {UserId} attempted to start mission {Key} but card items are invalid.",
                 userId, key);
@@ -117,16 +122,36 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
 
         var random = new Random();
         
-        // TODO: this is not correct.
-        var successChance = missionData.SuccessChance == 0 ? 0.7 : missionData.SuccessChance;
-        var missionSuccessful = random.NextDouble() <= successChance;
+        var missionSuccessful = random.NextDouble() <= GetSuccessChance(missionData, MissionSlotId.Required,
+            requiredItem, bonus1Item, bonus2Item);
+        var bonus1Successful = bonus1Item != null && random.NextDouble() <= GetSuccessChance(missionData,
+            MissionSlotId.Bonus1, requiredItem, bonus1Item, bonus2Item);
+        var bonus2Successful = bonus2Item != null && random.NextDouble() <= GetSuccessChance(missionData,
+            MissionSlotId.Bonus2, requiredItem, bonus1Item, bonus2Item);
+        
+        if (missionData.RequiredSlotCount == 1 && !missionSuccessful)
+        {
+            bonus1Successful = false;
+            bonus2Successful = false;
+        }
+        else if (missionData.RequiredSlotCount == 2 && (!missionSuccessful || !bonus1Successful))
+        {
+            missionSuccessful = false;
+            bonus1Successful = false;
+            bonus2Successful = false;
+        }
+        else if (missionData.RequiredSlotCount == 3 && (!missionSuccessful || !bonus1Successful || !bonus2Successful))
+        {
+            missionSuccessful = false;
+            bonus1Successful = false;
+            bonus2Successful = false;
+        }
 
-        var bonus1Successful = false; // TODO: implement this
-        var bonus2Successful = false; // TODO: implement this
-
-        var casualty = false; // TODO: implement this
-        var bonus1Casualty = false; // TODO: implement this
-        var bonus2Casualty = false; // TODO: implement this
+        var casualty = random.NextDouble() <= GetCasualtyChance(missionData, MissionSlotId.Required);
+        var bonus1Casualty = bonus1Item != null && random.NextDouble() <= GetCasualtyChance(missionData,
+            MissionSlotId.Bonus1);
+        var bonus2Casualty = bonus2Item != null && random.NextDouble() <= GetCasualtyChance(missionData,
+            MissionSlotId.Bonus2);
 
         var mission = new ActiveMissionEntity
         {
@@ -203,7 +228,8 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
         await SendAsync(response, cancellation: ct);
     }
 
-    private async Task<bool> IsValidItem(int userId, int itemId, MissionStage missionData, CheckItem itemToCheck)
+    private async Task<(bool IsValid, ItemEntity? item)> IsValidItem(int userId, int itemId, MissionStage missionData,
+        MissionSlotId slot)
     {
         var requiredSlots = missionData.RequiredSlotCount;
         if (requiredSlots == 0)
@@ -211,67 +237,67 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
             requiredSlots = 1;
         }
 
-        if (requiredSlots < (int) itemToCheck + 1 && itemId == 0)
+        if (requiredSlots < (int) slot + 1 && itemId == 0)
         {
-            return true;
+            return (true, null);
         }
         
-        var slotCondition = itemToCheck switch
+        var slotCondition = slot switch
         {
-            CheckItem.Required => missionData.RequiredSlotCondition,
-            CheckItem.Bonus1 => missionData.Bonus1SlotCondition,
-            CheckItem.Bonus2 => missionData.Bonus2SlotCondition,
+            MissionSlotId.Required => missionData.RequiredSlotCondition,
+            MissionSlotId.Bonus1 => missionData.Bonus1SlotCondition,
+            MissionSlotId.Bonus2 => missionData.Bonus2SlotCondition,
             _ => null
         };
 
         if (string.IsNullOrWhiteSpace(slotCondition))
         {
-            return true;
+            return (true, null);
         }
         
         var item = await _inventoryRepository.GetItemAsync(userId, itemId);
         if (item is null)
         {
             Logger.LogWarning("Item not found: {ItemId}", itemId);
-            return false;
+            return (false, null);
         }
         
         var template = RulesetParser.GetCardTemplate(item.TemplateId);
         if (template is null)
         {
             Logger.LogWarning("Card template not found: {TemplateId}", item.TemplateId);
-            return false;
+            return (false, null);
         }
         
-        var minCommand = itemToCheck switch
+        var minCommand = slot switch
         {
-            CheckItem.Required => missionData.RequiredSlotMinCommand,
-            CheckItem.Bonus1 => missionData.Bonus1SlotMinCommand,
-            CheckItem.Bonus2 => missionData.Bonus2SlotMinCommand,
+            MissionSlotId.Required => missionData.RequiredSlotMinCommand,
+            MissionSlotId.Bonus1 => missionData.Bonus1SlotMinCommand,
+            MissionSlotId.Bonus2 => missionData.Bonus2SlotMinCommand,
             _ => 0
         };
         
-        var maxCommand = itemToCheck switch
+        var maxCommand = slot switch
         {
-            CheckItem.Required => missionData.RequiredSlotMaxCommand,
-            CheckItem.Bonus1 => missionData.Bonus1SlotMaxCommand,
-            CheckItem.Bonus2 => missionData.Bonus2SlotMaxCommand,
+            MissionSlotId.Required => missionData.RequiredSlotMaxCommand,
+            MissionSlotId.Bonus1 => missionData.Bonus1SlotMaxCommand,
+            MissionSlotId.Bonus2 => missionData.Bonus2SlotMaxCommand,
             _ => 0
         };
         
-        var minRarity = itemToCheck switch
+        var minRarity = slot switch
         {
-            CheckItem.Required => missionData.RequiredSlotMinRarity,
-            CheckItem.Bonus1 => missionData.Bonus1SlotMinRarity,
-            CheckItem.Bonus2 => missionData.Bonus2SlotMinRarity,
+            MissionSlotId.Required => missionData.RequiredSlotMinRarity,
+            MissionSlotId.Bonus1 => missionData.Bonus1SlotMinRarity,
+            MissionSlotId.Bonus2 => missionData.Bonus2SlotMinRarity,
             _ => CardRarity.Common
         };
         
-        var minRank = itemToCheck switch
+        var minRank = slot switch
         {
-            CheckItem.Required => missionData.RequiredSlotMinRank,
-            CheckItem.Bonus1 => missionData.Bonus1SlotMinRank,
-            CheckItem.Bonus2 => missionData.Bonus2SlotMinRank,
+            MissionSlotId.Required => missionData.RequiredSlotMinRank,
+            MissionSlotId.Bonus1 => missionData.Bonus1SlotMinRank,
+            MissionSlotId.Bonus2 => missionData.Bonus2SlotMinRank,
             _ => 0
         };
         
@@ -281,32 +307,33 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
         {
             Logger.LogWarning("Card rarity too low. ID: {ItemId}, Rarity: {Rarity}, MinRarity: {MinRarity}",
                 item.ItemId, template.Rarity, minRarity);
-            return false;
+            return (false, null);
         }
         
-        if (itemToCheck == CheckItem.Required
+        if (slot == MissionSlotId.Required
             && missionData.RequiredSlotMaxRarity != CardRarity.Common
             && template.Rarity > missionData.RequiredSlotMaxRarity)
         {
             Logger.LogWarning("Card rarity too high. ID: {ItemId}, Rarity: {Rarity}, MaxRarity: {MaxRarity}",
                 item.ItemId, template.Rarity, missionData.RequiredSlotMaxRarity);
-            return false;
+            return (false, null);
         }
         
         if (item.Rank < minRank)
         {
             Logger.LogWarning("Card rank too low. ID: {ItemId}, Rank: {Rank}, MinRank: {MinRank}",
                 item.ItemId, item.Rank, minRank);
-            return false;
+            return (false, null);
         }
 
         var conditional = MissionsParser.GetConditional(slotCondition);
         if (conditional is null)
         {
-            return false;
+            return (false, null);
         }
         
-        return CheckConditional(item, template, conditional);
+        var isValid = CheckConditional(item, template, conditional);
+        return (isValid, item);
     }
 
     private bool CheckConditional(ItemEntity item, CardTemplate template, MissionConditional conditional)
@@ -441,8 +468,278 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
         
         return await _missionRepository.HasCompletedMissionsAsync(userId, requirements);
     }
+
+    private float GetSuccessChance(MissionStage missionData, MissionSlotId slot, ItemEntity? requiredItem,
+        ItemEntity? bonus1Item, ItemEntity? bonus2Item)
+    {
+        var success = GetBaseSuccessChance(missionData, slot);
+        success += GetSuccessBonus(slot, requiredItem, bonus1Item, bonus2Item);
+        
+        return Math.Clamp(success, 0f, 1f);
+    }
+
+    private float GetBaseSuccessChance(MissionStage missionData, MissionSlotId slot)
+    {
+        var success = 1f;
+
+        switch (slot)
+        {
+            case MissionSlotId.Required:
+                success = missionData.SuccessChance;
+                break;
+            
+            case MissionSlotId.Bonus1:
+                if (!GetBonusSuccessOverride(missionData, MissionSlotId.Bonus1, out success))
+                {
+                    success = 0.5f;
+                }
+                
+                break;
+            
+            case MissionSlotId.Bonus2:
+                if (!GetBonusSuccessOverride(missionData, MissionSlotId.Bonus2, out success))
+                {
+                    success = 0.35f;
+                }
+
+                break;
+        }
+        
+        return success;
+    }
+
+    private bool GetBonusSuccessOverride(MissionStage missionData, MissionSlotId slot, out float success)
+    {
+        var slotName = slot switch
+        {
+            MissionSlotId.Required => missionData.RequiredSlotCondition,
+            MissionSlotId.Bonus1 => missionData.Bonus1SlotCondition,
+            MissionSlotId.Bonus2 => missionData.Bonus2SlotCondition,
+            _ => ""
+        };
+
+        var missionSlot = MissionsParser.GetMissionSlot(slotName);
+        if (missionSlot is not null && missionSlot.BonusSuccessOverride != -1f)
+        {
+            success = missionSlot.BonusSuccessOverride;
+            return true;
+        }
+        
+        success = 0f;
+        return false;
+    }
+
+    private float GetSuccessBonus(MissionSlotId forSlot, ItemEntity? requiredItem, ItemEntity? bonus1Item,
+        ItemEntity? bonus2Item)
+    {
+        CardTemplate? bonus1Template = null;
+        if (bonus1Item is not null)
+        {
+            bonus1Template = RulesetParser.GetCardTemplate(bonus1Item.TemplateId);
+        }
+        
+        CardTemplate? bonus2Template = null;
+        if (bonus2Item is not null)
+        {
+            bonus2Template = RulesetParser.GetCardTemplate(bonus2Item.TemplateId);
+        }
+
+        var bonus = 0f;
+
+        switch (forSlot)
+        {
+            case MissionSlotId.Required:
+                if (requiredItem is not null)
+                {
+                    bonus += GetSuccessBonus(MissionSlotId.Required, MissionSlotId.Required, requiredItem.Rank);
+                }
+                
+                if (bonus1Template is not null)
+                {
+                    bonus += GetSuccessBonus(MissionSlotId.Required, MissionSlotId.Bonus1, bonus1Template.Rarity);
+                }
+                
+                if (bonus2Template is not null)
+                {
+                    bonus += GetSuccessBonus(MissionSlotId.Required, MissionSlotId.Bonus2, bonus2Template.Rarity);
+                }
+                
+                break;
+            
+            case MissionSlotId.Bonus1:
+                if (requiredItem is not null)
+                {
+                    bonus += GetSuccessBonus(MissionSlotId.Bonus1, MissionSlotId.Required, requiredItem.Rank);
+                }
+                
+                if (bonus1Template is not null)
+                {
+                    bonus += GetSuccessBonus(MissionSlotId.Bonus1, MissionSlotId.Bonus1, bonus1Template.Rarity);
+                }
+                
+                break;
+            
+            case MissionSlotId.Bonus2:
+                if (requiredItem is not null)
+                {
+                    bonus += GetSuccessBonus(MissionSlotId.Bonus2, MissionSlotId.Required, requiredItem.Rank);
+                }
+                
+                if (bonus2Template is not null)
+                {
+                    bonus += GetSuccessBonus(MissionSlotId.Bonus2, MissionSlotId.Bonus2, bonus2Template.Rarity);
+                }
+                
+                break;
+        }
+        
+        return bonus;
+    }
+
+    private float GetSuccessBonus(MissionSlotId forSlot, MissionSlotId fromSlot, int rank)
+    {
+        var bonus = 0f;
+
+        switch (forSlot)
+        {
+            case MissionSlotId.Required:
+                if (fromSlot == MissionSlotId.Required)
+                {
+                    bonus = rank switch
+                    {
+                        1 => 0f,
+                        2 => 0.01f,
+                        3 => 0.04f,
+                        4 => 0.09f,
+                        5 => 0.16f,
+                        6 => 0.25f,
+                        _ => bonus
+                    };
+                }
+                
+                break;
+            
+            case MissionSlotId.Bonus1:
+            case MissionSlotId.Bonus2:
+                if (fromSlot == MissionSlotId.Required)
+                {
+                    bonus = rank switch
+                    {
+                        1 => 0.01f,
+                        2 => 0.02f,
+                        3 => 0.03f,
+                        4 => 0.04f,
+                        5 => 0.05f,
+                        6 => 0.06f,
+                        _ => bonus
+                    };
+                }
+                
+                break;
+        }
+        
+        return bonus;
+    }
+
+    private float GetSuccessBonus(MissionSlotId forSlot, MissionSlotId fromSlot, CardRarity rarity)
+    {
+        var bonus = 0f;
+
+        switch (forSlot)
+        {
+            case MissionSlotId.Required:
+                if (fromSlot is MissionSlotId.Bonus1 or MissionSlotId.Bonus2)
+                {
+                    bonus = rarity switch
+                    {
+                        CardRarity.Common => 0f,
+                        CardRarity.Uncommon => 0.01f,
+                        CardRarity.Rare => 0.04f,
+                        CardRarity.UltraRare => 0.09f,
+                        CardRarity.Exclusive => 0.16f,
+                        _ => bonus
+                    };
+                }
+                
+                break;
+            
+            case MissionSlotId.Bonus1:
+            case MissionSlotId.Bonus2:
+                if (fromSlot is MissionSlotId.Bonus1 or MissionSlotId.Bonus2)
+                {
+                    bonus = rarity switch
+                    {
+                        CardRarity.Common => 0f,
+                        CardRarity.Uncommon => 0.05f,
+                        CardRarity.Rare => 0.1f,
+                        CardRarity.UltraRare => 0.15f,
+                        CardRarity.Exclusive => 0.2f,
+                        _ => bonus
+                    };
+                }
+                
+                break;
+        }
+        
+        return bonus;
+    }
+
+    private float GetCasualtyChance(MissionStage missionData, MissionSlotId slot)
+    {
+        var casualty = 0f;
+        
+        var slotName = slot switch
+        {
+            MissionSlotId.Required => missionData.RequiredSlotCondition,
+            MissionSlotId.Bonus1 => missionData.Bonus1SlotCondition,
+            MissionSlotId.Bonus2 => missionData.Bonus2SlotCondition,
+            _ => ""
+        };
+
+        var missionSlot = MissionsParser.GetMissionSlot(slotName);
+        if (missionSlot is null || !GetCasualtyOverride(missionSlot, slot, out casualty))
+        {
+            casualty = slot switch
+            {
+                MissionSlotId.Required => 0.1f,
+                MissionSlotId.Bonus1 => 0.15f,
+                MissionSlotId.Bonus2 => 0.2f,
+                _ => casualty
+            };
+        }
+
+        return Math.Clamp(casualty, 0f, 1f);
+    }
+
+    private bool GetCasualtyOverride(MissionSlot missionSlot, MissionSlotId slot, out float casualty)
+    {
+        switch (slot)
+        {
+            case MissionSlotId.Required:
+                if (missionSlot.ReqCasualtyOverride != -1f)
+                {
+                    casualty = missionSlot.ReqCasualtyOverride;
+                    return true;
+                }
+                
+                break;
+                
+            case MissionSlotId.Bonus1:
+            case MissionSlotId.Bonus2:
+                if (missionSlot.BonusCasualtyOverride != -1f)
+                {
+                    casualty = missionSlot.BonusCasualtyOverride;
+                    return true;
+                }
+                
+                break;
+        }
+        
+        casualty = 0f;
+        return false;
+    }
     
-    private enum CheckItem
+    private enum MissionSlotId
     {
         Required,
         Bonus1,

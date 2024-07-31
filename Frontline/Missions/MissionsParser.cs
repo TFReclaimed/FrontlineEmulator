@@ -77,8 +77,13 @@ public static class MissionsParser
         return Data?.MissionStages[key];
     }
     
-    public static MissionSlots? GetMissionSlots(string name)
+    public static MissionSlot? GetMissionSlot(string name)
     {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return null;
+        }
+        
         return Data?.Slots[name];
     }
     
@@ -99,7 +104,7 @@ public static class MissionsParser
             return null;
         }
         
-        var slots = GetMissionSlots(bonusRequirement);
+        var slots = GetMissionSlot(bonusRequirement);
         if (slots is null)
         {
             return null;

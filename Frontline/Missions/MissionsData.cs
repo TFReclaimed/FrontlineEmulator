@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Frontline.Game;
+using Frontline.Missions.Json;
 
 namespace Frontline.Missions;
 
@@ -10,7 +11,7 @@ public class MissionsData
     [JsonPropertyName("DT_MissionSet")]
     public Dictionary<string, MissionSet> MissionSets { get; set; }
     [JsonPropertyName("DT_Slots")]
-    public Dictionary<string, MissionSlots> Slots { get; set; }
+    public Dictionary<string, MissionSlot> Slots { get; set; }
     [JsonPropertyName("DT_SlotXP")]
     public Dictionary<string, MissionSlotXp> SlotXp { get; set; }
     [JsonPropertyName("DT_RewardSets")]
@@ -67,6 +68,7 @@ public class MissionStage
     [JsonPropertyName("Weight:F")]
     public float ElectiveSelectionWeight { get; set; }
     [JsonPropertyName("Cooldown:I=72000")]
+    [StringIntConverter(72000)]
     public int Cooldown { get; set; }
     [JsonPropertyName("RepType:X")]
     public string ReputationType { get; set; }
@@ -81,10 +83,12 @@ public class MissionStage
     [JsonPropertyName("Duration:I")]
     public int Duration { get; set; }
     [JsonPropertyName("SuccessChance:F=0.7")]
+    [StringFloatConverter(0.7f)]
     public float SuccessChance { get; set; }
     [JsonPropertyName("SuccessReward:X")]
     public string SuccessReward { get; set; }
     [JsonPropertyName("NumReqSlots:I=1")]
+    [StringIntConverter(1)]
     public int RequiredSlotCount { get; set; }
     [JsonPropertyName("ReqSlot:X")]
     public string RequiredSlotCondition { get; set; }
@@ -93,6 +97,7 @@ public class MissionStage
     [JsonPropertyName("ReqMinCmd:I")]
     public int RequiredSlotMinCommand { get; set; }
     [JsonPropertyName("ReqMaxCmd:I=10")]
+    [StringIntConverter(10)]
     public int RequiredSlotMaxCommand { get; set; }
     [JsonPropertyName("ReqMinRarity:S")]
     public CardRarity RequiredSlotMinRarity { get; set; }
@@ -107,6 +112,7 @@ public class MissionStage
     [JsonPropertyName("B1MinCmd:I")]
     public int Bonus1SlotMinCommand { get; set; }
     [JsonPropertyName("B1MaxCmd:I=10")]
+    [StringIntConverter(10)]
     public int Bonus1SlotMaxCommand { get; set; }
     [JsonPropertyName("B1MinRarity:S")]
     public CardRarity Bonus1SlotMinRarity { get; set; }
@@ -119,6 +125,7 @@ public class MissionStage
     [JsonPropertyName("B2MinCmd:I")]
     public int Bonus2SlotMinCommand { get; set; }
     [JsonPropertyName("B2MaxCmd:I=10")]
+    [StringIntConverter(10)]
     public int Bonus2SlotMaxCommand { get; set; }
     [JsonPropertyName("B2MinRarity:S")]
     public CardRarity Bonus2SlotMinRarity { get; set; }
@@ -144,15 +151,18 @@ public class MissionSet
     public int ElectiveCount { get; set; }
 }
 
-public class MissionSlots
+public class MissionSlot
 {
     [JsonPropertyName("ID:S")]
     public string Id { get; set; }
     [JsonPropertyName("ReqCasualtyOverride:F=-1")]
+    [StringFloatConverter(-1f)]
     public float ReqCasualtyOverride { get; set; }
     [JsonPropertyName("BonusCasualtyOverride:F=-1")]
+    [StringFloatConverter(-1f)]
     public float BonusCasualtyOverride { get; set; }
     [JsonPropertyName("BonusSuccessOverride:F=-1")]
+    [StringFloatConverter(-1f)]
     public float BonusSuccessOverride { get; set; }
     [JsonPropertyName("BonusSuccessReward:X")]
     public string BonusSuccessReward { get; set; }
