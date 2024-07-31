@@ -52,7 +52,7 @@ No further changes needed as we're in control of the original server domain and 
   - ✅ PvP
   - ⛔ PvE
   - ⛔ AWS S3 upload
-- 🚧 Guilds
+- ✅ Guilds
   - ✅ Search guilds
   - ✅ Create guild
   - ✅ Join guild
@@ -60,7 +60,7 @@ No further changes needed as we're in control of the original server domain and 
   - ✅ Kick from guild
   - ✅ Change member rank
   - ✅ Edit guild
-  - ⛔ XP gift
+  - ✅ XP gift
 
 ## Credits
 
