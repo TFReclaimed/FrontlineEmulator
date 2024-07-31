@@ -2,6 +2,8 @@ using System.Text.Json.Serialization;
 
 namespace Frontline.Game;
 
+[JsonDerivedType(typeof(CommanderCard))]
+[JsonDerivedType(typeof(ResourceCard))]
 public class Card : Item
 {
     public ActiveCardData? ActiveData { get; set; }
