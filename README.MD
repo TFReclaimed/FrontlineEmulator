@@ -20,9 +20,10 @@ No further changes needed as we're in control of the original server domain and 
   - ✅ Registration/login 
   - ✅ Get user data
   - ✅ Update profile
-- 🚧 Store
+- ✅ Store
   - ✅ Get products
-  - 🚧 Purchase (Session header not present, can't implement securely)
+  - ✅ Purchase
+    - Works, however due to session header not being present, can't implement securely
 - ⛔ Chat
   - ⛔ Frontier
   - ⛔ Guild
@@ -30,16 +31,23 @@ No further changes needed as we're in control of the original server domain and 
   - 🚧 Booster packs 
     - ✅ Get booster packs
     - 🚧 Open booster pack
-  - ⛔ Cards
-    - 🚧 Get cards
-    - ⛔ Retire card
+  - ✅ Cards
+    - ✅ Get cards
+    - ✅ Retire card
   - ⛔ Dropships
     - ⛔ Get dropships
     - ⛔ Set active dropship
 - ⛔ Matchmaking
   - ⛔ Create game request
   - ⛔ Cancel game request
-- ⛔ Missions
+- 🚧 Missions
+  - ✅ Get mission list
+  - 🚧 Start mission
+    - Missing various checks with some likely being incorrect
+  - ✅ Cancel mission
+  - 🚧 Complete mission
+    - Cards are not yet rewarded
+  - ✅ Revive card
 - 🚧 Leaderboards
   - ✅ PvP
   - ⛔ PvE
