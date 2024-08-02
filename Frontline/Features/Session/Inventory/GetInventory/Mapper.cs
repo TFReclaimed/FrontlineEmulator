@@ -20,6 +20,17 @@ public class Mapper : Mapper<GetInventoryRequest, List<InventoryCard>, List<Item
 
     private static CardData? GetCardData(ItemEntity item)
     {
+        if (item.IsInDropship)
+        {
+            return new CardData
+            {
+                Availability = new CardAvailability
+                {
+                    CardState = CardState.InDropship
+                }
+            };
+        }
+        
         if (item.CurrentMission is not null)
         {
             return new CardData

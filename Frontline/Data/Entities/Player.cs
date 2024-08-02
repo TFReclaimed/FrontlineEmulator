@@ -24,6 +24,9 @@ public class PlayerEntity
     public int Xp { get; set; }
     public int BoosterPackCount { get; set; }
     public DateTime LastGiftSent { get; set; }
+    
     [NotMapped]
     public string GuildName { get; set; } = string.Empty;
+
+    public int Level => (int) Math.Sqrt(Xp / 125f);
 }

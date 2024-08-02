@@ -53,9 +53,11 @@ A reverse proxy, such as Caddy or Nginx can be used to achieve this.
   - ✅ Cards
     - ✅ Get cards
     - ✅ Retire card
-  - ⛔ Dropships
-    - ⛔ Get dropships
-    - ⛔ Set active dropship
+  - 🚧 Dropships
+    - ✅ Get dropships
+    - ✅ Edit dropship
+    - ✅ Set active dropship
+    - ⛔ Unlock as you level up
 - ⛔ Matchmaking
   - ⛔ Create game request
   - ⛔ Cancel game request

@@ -7,10 +7,15 @@ public interface IInventoryRepository
 {
     Task<ItemEntity?> GetItemAsync(int userId, int itemId);
     List<ItemEntity> GetItems(int userId, int maxItems = 0);
+    List<ItemEntity> GetItems(int userId, List<int> itemIds);
+    List<DropshipEntity> GetDropshipItems(int userId);
     Task AddItemAsync(int userId, ItemEntity item);
     Task AddItemsAsync(int userId, List<ItemEntity> items);
+    Task AddDropshipItemsAsync(int userId, List<DropshipEntity> dropshipItems);
     Task UpdateItemAsync(ItemEntity item);
     Task RemoveItemAsync(ItemEntity item);
+    Task ClearDropshipItemsAsync(int userId, int dropshipId);
+    Task<bool> HasItemsAsync(int userId, List<int> itemIds);
 }
 
 public class InventoryRepository : IInventoryRepository
@@ -34,6 +39,9 @@ public class InventoryRepository : IInventoryRepository
                 Xp = item.Xp,
                 Rank = item.Rank,
                 Casualty = item.Casualty,
+                IsInDropship = _db.Dropships
+                    .Any(dropshipItem => dropshipItem.UserId == userId
+                                         && dropshipItem.ItemId == item.ItemId),
                 CurrentMission = _db.ActiveMissions
                     .Where(mission => mission.UserId == userId
                                       && (mission.RequiredCardItemId == item.ItemId
@@ -60,6 +68,9 @@ public class InventoryRepository : IInventoryRepository
                     Xp = item.Xp,
                     Rank = item.Rank,
                     Casualty = item.Casualty,
+                    IsInDropship = _db.Dropships
+                        .Any(dropshipItem => dropshipItem.UserId == userId
+                                             && dropshipItem.ItemId == item.ItemId),
                     CurrentMission = _db.ActiveMissions
                         .Where(mission => mission.UserId == userId
                                           && (mission.RequiredCardItemId == item.ItemId
@@ -83,6 +94,9 @@ public class InventoryRepository : IInventoryRepository
                 Xp = item.Xp,
                 Rank = item.Rank,
                 Casualty = item.Casualty,
+                IsInDropship = _db.Dropships
+                    .Any(dropshipItem => dropshipItem.UserId == userId
+                                         && dropshipItem.ItemId == item.ItemId),
                 CurrentMission = _db.ActiveMissions
                     .Where(mission => mission.UserId == userId
                                       && (mission.RequiredCardItemId == item.ItemId
@@ -91,6 +105,21 @@ public class InventoryRepository : IInventoryRepository
                     .Select(mission => mission.MissionKey)
                     .FirstOrDefault()
             })
+            .ToList();
+    }
+
+    public List<ItemEntity> GetItems(int userId, List<int> itemIds)
+    {
+        return _db.Items
+            .Where(item => item.UserId == userId && itemIds.Contains(item.ItemId))
+            .ToList();
+    }
+
+    public List<DropshipEntity> GetDropshipItems(int userId)
+    {
+        return _db.Dropships
+            .Include(dropship => dropship.Item)
+            .Where(dropship => dropship.UserId == userId)
             .ToList();
     }
 
@@ -118,6 +147,16 @@ public class InventoryRepository : IInventoryRepository
         await _db.SaveChangesAsync();
     }
 
+    public async Task AddDropshipItemsAsync(int userId, List<DropshipEntity> dropshipItems)
+    {
+        foreach (var dropshipItem in dropshipItems)
+        {
+            _db.Dropships.Add(dropshipItem);
+        }
+        
+        await _db.SaveChangesAsync();
+    }
+
     public async Task UpdateItemAsync(ItemEntity item)
     {
         _db.Items.Update(item);
@@ -129,7 +168,21 @@ public class InventoryRepository : IInventoryRepository
         _db.Items.Remove(item);
         await _db.SaveChangesAsync();
     }
-    
+
+    public async Task ClearDropshipItemsAsync(int userId, int dropshipId)
+    {
+        await _db.Dropships
+            .Where(dropshipItem => dropshipItem.UserId == userId && dropshipItem.DropshipId == dropshipId)
+            .ExecuteDeleteAsync();
+    }
+
+    public async Task<bool> HasItemsAsync(int userId, List<int> itemIds)
+    {
+        return await _db.Items
+            .Where(item => item.UserId == userId && itemIds.Contains(item.ItemId))
+            .CountAsync() == itemIds.Count;
+    }
+
     private int GetNextItemIdForUser(int userId)
     {
         var maxItemId = _db.Items

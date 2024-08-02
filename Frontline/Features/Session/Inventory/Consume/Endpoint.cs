@@ -45,8 +45,15 @@ public class Endpoint : Endpoint<ConsumeRequest>
             await SendResultAsync(TypedResults.NotFound());
             return;
         }
+
+        if (item.IsInDropship)
+        {
+            Logger.LogWarning("Player {UserId} tried to consume item {ItemId} but it's in a dropship!",
+                userId, req.ItemId);
+            await SendResultAsync(TypedResults.BadRequest());
+            return;
+        }
         
-        // TODO: if used in dropship, cannot retire
         if (item.CurrentMission is not null)
         {
             Logger.LogWarning("Player {UserId} tried to consume item {ItemId} but it's on a mission!",

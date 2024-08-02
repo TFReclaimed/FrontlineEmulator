@@ -13,6 +13,8 @@ public class AppDb : DbContext
     
     public DbSet<ItemEntity> Items { get; set; }
     
+    public DbSet<DropshipEntity> Dropships { get; set; }
+    
     public DbSet<FinishedMissionEntity> FinishedMissions { get; set; }
     
     public DbSet<ActiveMissionEntity> ActiveMissions { get; set; }

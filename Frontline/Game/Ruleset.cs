@@ -120,6 +120,7 @@ public enum UnitType
 
 public class CommanderCardTemplate : CardTemplate
 {
+    public List<int> SupportIds { get; set; }
 }
 
 public class ResourceCardTemplate : CardTemplate

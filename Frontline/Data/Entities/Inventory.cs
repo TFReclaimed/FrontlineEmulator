@@ -16,5 +16,20 @@ public class ItemEntity
     public bool Casualty { get; set; }
     
     [NotMapped]
+    public bool IsInDropship { get; set; }
+    [NotMapped]
     public string? CurrentMission { get; set; }
+}
+
+[PrimaryKey(nameof(UserId), nameof(DropshipId), nameof(SlotIndex))]
+public class DropshipEntity
+{
+    public int UserId { get; set; }
+    [ForeignKey("UserId")]
+    public PlayerEntity? Player { get; set; }
+    public int DropshipId { get; set; }
+    public int SlotIndex { get; set; }
+    public int ItemId { get; set; }
+    [ForeignKey("UserId,ItemId")]
+    public ItemEntity? Item { get; set; }
 }

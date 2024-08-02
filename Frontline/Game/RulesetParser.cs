@@ -7,6 +7,8 @@ public static class RulesetParser
     public static Ruleset? Ruleset { get; private set; }
     
     public static string? RulesetJson { get; private set; }
+    
+    private static readonly HashSet<int> CommandDeckCardIds = [];
 
     public static void Initialize()
     {
@@ -19,6 +21,20 @@ public static class RulesetParser
         };
         
         Ruleset = JsonSerializer.Deserialize<Ruleset>(RulesetJson, options);
+        
+        foreach (var cardTemplate in Ruleset!.CardsRuleset.Cards.Values)
+        {
+            if (cardTemplate.Type != CardType.Commander)
+            {
+                continue;
+            }
+            
+            var commanderCard = (CommanderCardTemplate) cardTemplate;
+            foreach (var supportId in commanderCard.SupportIds)
+            {
+                CommandDeckCardIds.Add(supportId);
+            }
+        }
     }
     
     public static CardTemplate? GetCardTemplate(int templateId)
@@ -36,5 +52,10 @@ public static class RulesetParser
         };
 
         return xpRanks?.FirstOrDefault(entry => entry.Rank == rank);
+    }
+    
+    public static bool IsCommandDeckCard(int templateId)
+    {
+        return CommandDeckCardIds.Contains(templateId);
     }
 }

@@ -326,6 +326,12 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
             return (false, null);
         }
 
+        if (item.IsInDropship)
+        {
+            Logger.LogWarning("Card is in dropship: {ItemId}", item.ItemId);
+            return (false, null);
+        }
+
         var conditional = MissionsParser.GetConditional(slotCondition);
         if (conditional is null)
         {
