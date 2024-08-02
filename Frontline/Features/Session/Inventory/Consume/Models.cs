@@ -19,10 +19,10 @@ public enum RetireFor
 // Yes, they really used strings instead of integers...
 public class RetireForCreditsResponse
 {
-    public string Credits { get; set; }
+    public string Credits { get; set; } = "0";
 }
 
 public class RetireForXpResponse
 {
-    public string Xp { get; set; }
+    public string Xp { get; set; } = "0";
 }

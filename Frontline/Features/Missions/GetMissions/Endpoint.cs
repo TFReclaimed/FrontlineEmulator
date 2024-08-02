@@ -20,6 +20,6 @@ public class Endpoint : EndpointWithoutRequest<GetMissionsResponse>
             Data = json
         };
 
-        await SendAsync(response, cancellation: ct);
+        await SendAsync(response);
     }
 }

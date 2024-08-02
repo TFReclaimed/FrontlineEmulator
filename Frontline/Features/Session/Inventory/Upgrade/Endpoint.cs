@@ -29,7 +29,7 @@ public class Endpoint : Endpoint<UpgradeRequest, UpgradedCard, Mapper>
         {
             Logger.LogWarning("Player {UserId} tried to upgrade item {ItemId} but it wasn't found!",
                 userId, req.ItemId);
-            await SendResultAsync(TypedResults.NotFound());
+            await SendNotFoundAsync();
             return;
         }
         
@@ -38,7 +38,7 @@ public class Endpoint : Endpoint<UpgradeRequest, UpgradedCard, Mapper>
         {
             Logger.LogWarning("Player {UserId} tried to upgrade item {ItemId} but card template {TemplateId} wasn't found!",
                 userId, req.ItemId, item.TemplateId);
-            await SendResultAsync(TypedResults.NotFound());
+            await SendNotFoundAsync();
             return;
         }
 
@@ -57,7 +57,7 @@ public class Endpoint : Endpoint<UpgradeRequest, UpgradedCard, Mapper>
         {
             Logger.LogWarning("Player {UserId} tried to upgrade item {ItemId} but xp entry for rank {Rank} wasn't found!",
                 userId, req.ItemId, nextRank);
-            await SendResultAsync(TypedResults.NotFound());
+            await SendNotFoundAsync();
             return;
         }
         
@@ -75,7 +75,7 @@ public class Endpoint : Endpoint<UpgradeRequest, UpgradedCard, Mapper>
         await _inventoryRepository.UpdateItemAsync(item);
         
         var result = Map.FromEntity(item);
-        await SendAsync(result, cancellation: ct);
+        await SendAsync(result);
     }
 
     private int CalculateUpgradeCost(CardType type, int rank)

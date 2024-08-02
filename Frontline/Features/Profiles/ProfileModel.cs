@@ -4,20 +4,20 @@ namespace Frontline.Features.Profiles;
 
 public class PlayerProfile
 {
-    public string SessionId { get; set; }
-    public string Name { get; set; }
+    public string SessionId { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
     public int UserId { get; set; }
     public int CharacterId { get; set; }
-    public ProfileDetails Details { get; set; }
+    public required ProfileDetails Details { get; set; }
 }
 
 public class ProfileDetails
 {
     public int ProfileId { get; set; }
     public int UserId { get; set; }
-    public string DisplayName { get; set; }
-    public string AvatarId { get; set; }
-    public List<GameProfile> GameProfiles { get; set; }
+    public string DisplayName { get; set; } = string.Empty;
+    public string AvatarId { get; set; } = string.Empty;
+    public required List<GameProfile> GameProfiles { get; set; }
 }
 
 public class GameProfile

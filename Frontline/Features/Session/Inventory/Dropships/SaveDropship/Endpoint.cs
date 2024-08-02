@@ -31,7 +31,7 @@ public class Endpoint : Endpoint<SaveDropshipRequest>
         if (player is null)
         {
             Logger.LogWarning("Player {UserId} not found", userId);
-            await SendResultAsync(TypedResults.NotFound());
+            await SendNotFoundAsync();
             return;
         }
         
@@ -155,6 +155,6 @@ public class Endpoint : Endpoint<SaveDropshipRequest>
         
         await _inventoryRepository.AddDropshipItemsAsync(userId, dropshipItems);
         
-        await SendOkAsync(ct);
+        await SendOkAsync();
     }
 }

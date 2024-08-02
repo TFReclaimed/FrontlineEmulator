@@ -6,5 +6,5 @@ namespace Frontline.Features.Guilds.JoinGuild;
 public class JoinGuildRequest : IPlainTextRequest
 {
     public Guid GuildId { get; set; }
-    public string Content { get; set; }
+    public string Content { get; set; } = string.Empty;
 }

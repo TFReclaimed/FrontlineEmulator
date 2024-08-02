@@ -13,19 +13,19 @@ public class Card : Item
 
 public class ActiveCardData
 {
-    public List<ActiveTrait> ActiveTraits { get; set; }
-    public bool[] TraitActivated { get; set; }
+    public required List<ActiveTrait> ActiveTraits { get; set; }
+    public required bool[] TraitActivated { get; set; }
     public sbyte Owner { get; set; }
 }
 
 public class ActiveTrait
 {
-    public TraitDuration DurationData { get; set; }
+    public required TraitDuration DurationData { get; set; }
     public int TraitSourceId { get; set; }
     public int TraitEffectId { get; set; }
     public int DataValue { get; set; }
-    public ActiveTraitCardInfo Source { get; set; }
-    public ActiveTraitCardInfo Target { get; set; }
+    public required ActiveTraitCardInfo Source { get; set; }
+    public required ActiveTraitCardInfo Target { get; set; }
     public bool Detered { get; set; }
     public bool Triggered { get; set; }
 }
@@ -62,7 +62,7 @@ public class CommanderCard : Card
     [JsonPropertyName("$type")]
     public string Type { get; set; } = "1";
     public sbyte Defense { get; set; }
-    public List<Card> Secrets { get; set; }
+    public required List<Card> Secrets { get; set; }
 }
 
 public class ResourceCard : Card

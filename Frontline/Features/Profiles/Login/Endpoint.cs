@@ -48,6 +48,6 @@ public class Endpoint : Endpoint<LoginRequest, PlayerProfile, Mapper>
         var profile = Map.FromEntity(player);
         profile.SessionId = jwtToken;
         
-        await SendAsync(profile, cancellation: ct);
+        await SendAsync(profile);
     }
 }

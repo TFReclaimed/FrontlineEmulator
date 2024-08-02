@@ -30,7 +30,7 @@ public class Endpoint : Endpoint<GetInventoryRequest, List<DropshipInfo>>
         if (player is null)
         {
             Logger.LogWarning("Player not found: {UserId}", userId);
-            await SendNotFoundAsync(ct);
+            await SendNotFoundAsync();
             return;
         }
 
@@ -84,6 +84,6 @@ public class Endpoint : Endpoint<GetInventoryRequest, List<DropshipInfo>>
             });
         }
         
-        await SendAsync(response, cancellation: ct);
+        await SendAsync(response);
     }
 }

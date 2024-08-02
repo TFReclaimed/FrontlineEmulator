@@ -4,8 +4,8 @@ namespace Frontline.Features.Data.Leaderboards.GetPveLeaderboard;
 
 public class LeaderboardPveResponse
 {
-    public string TournamentName { get; set; }
-    public List<LeaderboardPveEntry> Entries { get; set; }
+    public string TournamentName { get; set; } = string.Empty;
+    public required List<LeaderboardPveEntry> Entries { get; set; }
     public DateTime BeginDate { get; set; }
     public DateTime EndDate { get; set; }
 }

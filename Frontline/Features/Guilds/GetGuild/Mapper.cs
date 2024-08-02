@@ -19,7 +19,7 @@ public class Mapper : Mapper<GetGuildRequest, GuildProfile, GuildEntity>
             MaxNumberOfMembers = e.MaxNumberOfMembers,
             Members = e.Members.Select(m => new GuildMember
             {
-                MemberId = m.Player.Id.ToString(),
+                MemberId = m.Player!.Id.ToString(),
                 Rank = m.Rank
             }).ToList()
         };

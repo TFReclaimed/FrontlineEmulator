@@ -7,5 +7,5 @@ public class KickLeaveGuildRequest : IPlainTextRequest
 {
     public Guid GuildId { get; set; }
     public int UserId { get; set; }
-    public string Content { get; set; }
+    public string Content { get; set; } = string.Empty;
 }

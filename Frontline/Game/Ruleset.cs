@@ -4,14 +4,14 @@ namespace Frontline.Game;
 
 public class Ruleset
 {
-    public CardsRuleset CardsRuleset { get; set; }
-    public CardXpRanks PilotXpRanksRuleset { get; set; }
-    public CardXpRanks TitanXpRanksRuleset { get; set; }
+    public required CardsRuleset CardsRuleset { get; set; }
+    public required CardXpRanks PilotXpRanksRuleset { get; set; }
+    public required CardXpRanks TitanXpRanksRuleset { get; set; }
 }
 
 public class CardsRuleset
 {
-    public Dictionary<string, CardTemplate> Cards { get; set; }
+    public required Dictionary<string, CardTemplate> Cards { get; set; }
 }
 
 [JsonDerivedType(typeof(CardTemplate), "CardTemplate")]
@@ -120,7 +120,7 @@ public enum UnitType
 
 public class CommanderCardTemplate : CardTemplate
 {
-    public List<int> SupportIds { get; set; }
+    public required List<int> SupportIds { get; set; }
 }
 
 public class ResourceCardTemplate : CardTemplate
@@ -132,7 +132,7 @@ public class ResourceCardTemplate : CardTemplate
 public class CardXpRanks
 {
     [JsonPropertyName("XPRanks")]
-    public List<CardXpEntry> XpRanks { get; set; }
+    public required List<CardXpEntry> XpRanks { get; set; }
 }
 
 public class CardXpEntry

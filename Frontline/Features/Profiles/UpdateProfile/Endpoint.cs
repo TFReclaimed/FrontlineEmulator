@@ -26,7 +26,7 @@ public class Endpoint : Endpoint<ProfileUpdateRequest, Ok>
         if (player is null)
         {
             Logger.LogWarning("Player {UserId} tried to update their profile but it wasn't found!", userId);
-            await SendResultAsync(TypedResults.NotFound());
+            await SendNotFoundAsync();
             return;
         }
         
@@ -38,6 +38,6 @@ public class Endpoint : Endpoint<ProfileUpdateRequest, Ok>
         
         await _playerRepository.UpdatePlayerAsync(player);
         
-        await SendResultAsync(TypedResults.Ok());
+        await SendOkAsync();
     }
 }

@@ -16,6 +16,6 @@ public class Endpoint : EndpointWithoutRequest<SessionInfoResponse>
             CurrentGameInstance = "0"
         };
         
-        await SendAsync(response, cancellation: ct);
+        await SendAsync(response);
     }
 }

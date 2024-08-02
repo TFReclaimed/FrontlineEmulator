@@ -28,6 +28,6 @@ public class Endpoint : Endpoint<GetInventoryRequest, InventoryListResponse, Map
             Items = Map.FromEntity(items)
         };
         
-        await SendAsync(response, cancellation: ct);
+        await SendAsync(response);
     }
 }

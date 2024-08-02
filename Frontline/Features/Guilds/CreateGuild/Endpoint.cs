@@ -48,6 +48,6 @@ public class Endpoint : Endpoint<CreateGuildRequest, Ok>
         
         await _guildRepository.CreateGuildAsync(newGuild, member);
         
-        await SendResultAsync(TypedResults.Ok());
+        await SendOkAsync();
     }
 }

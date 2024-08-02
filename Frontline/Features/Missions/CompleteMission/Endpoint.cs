@@ -36,7 +36,7 @@ public class Endpoint : Endpoint<CompleteMissionRequest, List<MissionStageStatus
         if (player is null)
         {
             Logger.LogWarning("Player not found: {UserId}", userId);
-            await SendNotFoundAsync(ct);
+            await SendNotFoundAsync();
             return;
         }
         
@@ -47,7 +47,7 @@ public class Endpoint : Endpoint<CompleteMissionRequest, List<MissionStageStatus
         {
             Logger.LogWarning("Player {UserId} attempted to complete mission {Key} but mission doesn't exist.",
                 userId, key);
-            await SendNotFoundAsync(ct);
+            await SendNotFoundAsync();
             return;
         }
         
@@ -56,7 +56,7 @@ public class Endpoint : Endpoint<CompleteMissionRequest, List<MissionStageStatus
         {
             Logger.LogWarning("Player {UserId} attempted to complete mission {Key} but mission isn't started.",
                 userId, key);
-            await SendNotFoundAsync(ct);
+            await SendNotFoundAsync();
             return;
         }
 
@@ -138,7 +138,7 @@ public class Endpoint : Endpoint<CompleteMissionRequest, List<MissionStageStatus
         
         response.AddRange(await GetNextMissions(userId, key));
         
-        await SendAsync(response, cancellation: ct);
+        await SendAsync(response);
     }
 
     private async Task GivePlayerRewards(PlayerEntity player, params MissionRewardSet?[] rewardSets)

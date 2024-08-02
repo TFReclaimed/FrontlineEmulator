@@ -15,10 +15,10 @@ public class Endpoint : EndpointWithoutRequest<string>
     {
         if (RulesetParser.RulesetJson is null)
         {
-            await SendNotFoundAsync(ct);
+            await SendNotFoundAsync();
             return;
         }
 
-        await SendStringAsync(RulesetParser.RulesetJson, contentType: "application/json", cancellation: ct);
+        await SendStringAsync(RulesetParser.RulesetJson, contentType: "application/json");
     }
 }

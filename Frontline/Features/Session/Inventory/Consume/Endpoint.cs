@@ -33,7 +33,7 @@ public class Endpoint : Endpoint<ConsumeRequest>
         {
             Logger.LogWarning("Player {UserId} tried to consume item {ItemId} but it wasn't found!",
                 userId, req.ItemId);
-            await SendResultAsync(TypedResults.NotFound());
+            await SendNotFoundAsync();
             return;
         }
         
@@ -42,7 +42,7 @@ public class Endpoint : Endpoint<ConsumeRequest>
         {
             Logger.LogWarning("Player {UserId} tried to consume item {ItemId} but card template {TemplateId} wasn't found!",
                 userId, req.ItemId, item.TemplateId);
-            await SendResultAsync(TypedResults.NotFound());
+            await SendNotFoundAsync();
             return;
         }
 
@@ -77,11 +77,11 @@ public class Endpoint : Endpoint<ConsumeRequest>
         }
         else if (req.RetireFor == RetireFor.CREDITS)
         {
-            await RetireForCredits(userId, req, item, cardTemplate, ct);
+            await RetireForCredits(userId, req, item, cardTemplate);
         }
         else if (req.RetireFor == RetireFor.XP)
         {
-            await RetireForXp(userId, req, item, cardTemplate, ct);
+            await RetireForXp(userId, req, item, cardTemplate);
         }
     }
 
@@ -100,7 +100,7 @@ public class Endpoint : Endpoint<ConsumeRequest>
         {
             Logger.LogWarning("Player {UserId} tried to use XP card {ItemId} for target {TargetId} but target wasn't found!",
                 userId, req.ItemId, req.TargetId);
-            await SendResultAsync(TypedResults.NotFound());
+            await SendNotFoundAsync();
             return;
         }
 
@@ -109,11 +109,10 @@ public class Endpoint : Endpoint<ConsumeRequest>
         targetItem.Xp += resourceCardTemplate.ResourceValue;
         await _inventoryRepository.UpdateItemAsync(targetItem);
         
-        await SendResultAsync(TypedResults.Ok());
+        await SendOkAsync();
     }
 
-    private async Task RetireForCredits(int userId, ConsumeRequest req, ItemEntity item, CardTemplate cardTemplate,
-        CancellationToken ct)
+    private async Task RetireForCredits(int userId, ConsumeRequest req, ItemEntity item, CardTemplate cardTemplate)
     {
         if (cardTemplate is ResourceCardTemplate)
         {
@@ -128,7 +127,7 @@ public class Endpoint : Endpoint<ConsumeRequest>
         {
             Logger.LogWarning("Player {UserId} tried to retire card {ItemId} but player wasn't found!",
                 userId, req.ItemId);
-            await SendResultAsync(TypedResults.NotFound());
+            await SendNotFoundAsync();
             return;
         }
         
@@ -144,18 +143,17 @@ public class Endpoint : Endpoint<ConsumeRequest>
             Credits = credits.ToString()
         };
         
-        await SendAsync(result, cancellation: ct);
+        await SendAsync(result);
     }
 
-    private async Task RetireForXp(int userId, ConsumeRequest req, ItemEntity item, CardTemplate cardTemplate,
-        CancellationToken ct)
+    private async Task RetireForXp(int userId, ConsumeRequest req, ItemEntity item, CardTemplate cardTemplate)
     {
         var targetItem = await _inventoryRepository.GetItemAsync(userId, req.TargetId!.Value);
         if (targetItem is null)
         {
             Logger.LogWarning("Player {UserId} tried retire card {ItemId} for XP but target {TargetId} wasn't found!",
                 userId, req.ItemId, req.TargetId);
-            await SendResultAsync(TypedResults.NotFound());
+            await SendNotFoundAsync();
             return;
         }
 
@@ -171,6 +169,6 @@ public class Endpoint : Endpoint<ConsumeRequest>
             Xp = xp.ToString()
         };
         
-        await SendAsync(result, cancellation: ct);
+        await SendAsync(result);
     }
 }

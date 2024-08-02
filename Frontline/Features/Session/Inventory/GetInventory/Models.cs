@@ -11,7 +11,7 @@ public class InventoryListResponse
     {
         ["Card"] = "1"
     };
-    public List<InventoryCard> Items { get; set; }
+    public required List<InventoryCard> Items { get; set; }
 }
 
 public class InventoryCard

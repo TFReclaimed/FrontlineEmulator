@@ -27,7 +27,7 @@ public class Endpoint : Endpoint<OpenBoosterPackRequest, BoosterPackResponse>
         if (player is null)
         {
             Logger.LogWarning("Player {UserId} tried to open a booster pack but the profile wasn't found!", userId);
-            await SendResultAsync(TypedResults.NotFound());
+            await SendNotFoundAsync();
             return;
         }
         
@@ -54,6 +54,6 @@ public class Endpoint : Endpoint<OpenBoosterPackRequest, BoosterPackResponse>
             Resources = [resourceCard, resourceCard, resourceCard, resourceCard, resourceCard]
         };
         
-        await SendAsync(response, cancellation: ct);
+        await SendAsync(response);
     }
 }

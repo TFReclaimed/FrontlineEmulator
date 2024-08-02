@@ -4,7 +4,7 @@ namespace Frontline.Features.Profiles.Login;
 
 public class LoginRequest
 {
-    public LoginParams Param { get; set; }
+    public required LoginParams Param { get; set; }
 }
 
 public class LoginParams
@@ -13,10 +13,10 @@ public class LoginParams
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public LoginType LoginType { get; set; }
     [JsonPropertyName("authID")]
-    public string AuthId { get; set; }
+    public string AuthId { get; set; } = string.Empty;
     [JsonPropertyName("pass")]
-    public string Password { get; set; }
-    public string DeviceId { get; set; }
+    public string Password { get; set; } = string.Empty;
+    public string DeviceId { get; set; } = string.Empty;
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public Platform DeviceType { get; set; }
 }

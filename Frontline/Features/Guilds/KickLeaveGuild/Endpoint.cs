@@ -67,6 +67,6 @@ public class Endpoint : Endpoint<KickLeaveGuildRequest, Ok>
             await _guildRepository.DeletePlayerMembershipAsync(target);
         }
         
-        await SendResultAsync(TypedResults.Ok());
+        await SendOkAsync();
     }
 }

@@ -9,7 +9,7 @@ public class ItemEntity
     public int UserId { get; set; }
     public int ItemId { get; set; }
     [ForeignKey("UserId")]
-    public PlayerEntity Player { get; set; }
+    public PlayerEntity? Player { get; set; }
     public int TemplateId { get; set; }
     public int Xp { get; set; }
     public sbyte Rank { get; set; } = 1;

@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,7 +8,8 @@ namespace Frontline.Data.Entities;
 public class FinishedMissionEntity
 {
     public int UserId { get; set; }
-    public string MissionKey { get; set; }
+    [MaxLength(18)]
+    public required string MissionKey { get; set; }
     [ForeignKey("UserId")]
     public PlayerEntity? Player { get; set; }
 }
@@ -16,7 +18,8 @@ public class FinishedMissionEntity
 public class ActiveMissionEntity
 {
     public int UserId { get; set; }
-    public string MissionKey { get; set; }
+    [MaxLength(18)]
+    public required string MissionKey { get; set; }
     [ForeignKey("UserId")]
     public PlayerEntity? Player { get; set; }
     public DateTime Start { get; set; }

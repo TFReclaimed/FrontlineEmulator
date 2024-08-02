@@ -16,6 +16,6 @@ public class Endpoint : EndpointWithoutRequest<List<ReputationInfo>>
             
         };
 
-        await SendAsync(response, cancellation: ct);
+        await SendAsync(response);
     }
 }

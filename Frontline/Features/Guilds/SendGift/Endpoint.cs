@@ -30,7 +30,7 @@ public class Endpoint : Endpoint<SendGiftRequest, SendGiftResponse>
         if (player is null)
         {
             Logger.LogWarning("Player {UserId} tried to send a gift but was not found", userId);
-            await SendResultAsync(TypedResults.NotFound());
+            await SendNotFoundAsync();
             return;
         }
         
@@ -46,7 +46,7 @@ public class Endpoint : Endpoint<SendGiftRequest, SendGiftResponse>
         {
             Logger.LogWarning("Player {UserId} tried to send a gift to {ReceiverId} but the receiver was not found",
                 userId, req.ReceiverId);
-            await SendResultAsync(TypedResults.NotFound());
+            await SendNotFoundAsync();
             return;
         }
         
@@ -66,6 +66,6 @@ public class Endpoint : Endpoint<SendGiftRequest, SendGiftResponse>
             Fulfillment = true
         };
 
-        await SendAsync(result, cancellation: ct);
+        await SendAsync(result);
     }
 }

@@ -25,7 +25,7 @@ public class Endpoint : Endpoint<GetInventoryRequest, List<int>>
         if (player is null)
         {
             Logger.LogWarning("Player {UserId} tried to get their booster packs but the profile wasn't found!", userId);
-            await SendResultAsync(TypedResults.NotFound());
+            await SendNotFoundAsync();
             return;
         }
         
@@ -39,6 +39,6 @@ public class Endpoint : Endpoint<GetInventoryRequest, List<int>>
             response.Add(i);
         }
         
-        await SendAsync(response, cancellation: ct);
+        await SendAsync(response);
     }
 }

@@ -28,9 +28,9 @@ public class GuildMemberEntity
     [Column(Order = 1)]
     public Guid GuildId { get; set; }
     [ForeignKey("UserId")]
-    public PlayerEntity Player { get; set; }
+    public PlayerEntity? Player { get; set; }
     [ForeignKey("GuildId")]
-    public GuildEntity Guild { get; set; }
+    public GuildEntity? Guild { get; set; }
     public MemberRank Rank { get; set; }
 }
 

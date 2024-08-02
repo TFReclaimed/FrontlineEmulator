@@ -4,7 +4,7 @@ namespace Frontline.Features.Missions.StartMission;
 
 public class StartMissionRequest
 {
-    public MissionKey Key { get; set; }
+    public required MissionKey Key { get; set; }
     public int RequiredCardTemplateId { get; set; }
     [BindFrom("RequiredCardInstanceId")]
     public int RequiredCardItemId { get; set; }

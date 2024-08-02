@@ -95,7 +95,7 @@ public class Endpoint : EndpointWithoutRequest<List<MissionStageStatus>>
             }
         }
 
-        await SendAsync(response, cancellation: ct);
+        await SendAsync(response);
     }
 
     private bool AreRequirementsMet(MissionStage mission, List<ActiveMissionEntity> activeMissions,

@@ -6,12 +6,12 @@ namespace Frontline.Features.Session.Inventory.Dropships.SaveDropship;
 public class SaveDropshipRequest
 {
     public int DropshipId { get; set; }
-    public SaveDropshipParams Param { get; set; }
+    public required SaveDropshipParams Param { get; set; }
 }
 
 public class SaveDropshipParams
 {
-    public int[] InstanceIds { get; set; }
+    public required int[] InstanceIds { get; set; }
 }
 
 public class Validator : Validator<SaveDropshipRequest>

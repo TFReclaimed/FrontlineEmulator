@@ -9,6 +9,6 @@ public class OpenBoosterPackRequest
 
 public class BoosterPackResponse
 {
-    public List<Card> Cards { get; set; }
-    public List<ResourceCard> Resources { get; set; }
+    public required List<Card> Cards { get; set; }
+    public required List<ResourceCard> Resources { get; set; }
 }

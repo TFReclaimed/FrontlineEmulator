@@ -34,12 +34,12 @@ public class Endpoint : Endpoint<GetProfileRequest, ProfileDetails, Mapper>
         var entity = await _playerRepository.GetPlayerAsync(userId);
         if (entity is null)
         {
-            await SendResultAsync(TypedResults.NotFound());
+            await SendNotFoundAsync();
             return;
         }
         
         var profile = Map.FromEntity(entity!);
         
-        await SendAsync(profile, cancellation: ct);
+        await SendAsync(profile);
     }
 }

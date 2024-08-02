@@ -7,11 +7,11 @@ namespace Frontline.Features.Guilds.CreateGuild;
 
 public class CreateGuildRequest
 {
-    public string Name { get; set; }
-    public string Description { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public GuildMode Mode { get; set; }
-    public string AvatarId { get; set; }
+    public string AvatarId { get; set; } = string.Empty;
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public GuildLocale Locale { get; set; }
 }

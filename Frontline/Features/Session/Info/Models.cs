@@ -2,7 +2,7 @@ namespace Frontline.Features.Session.Info;
 
 public class SessionInfoResponse
 {
-    public string CurrentGameInstance { get; set; }
+    public string CurrentGameInstance { get; set; } = string.Empty;
     public int CurrentDeckId { get; set; }
     public int UserChangeCounter { get; set; }
     public long LastSeen { get; set; }

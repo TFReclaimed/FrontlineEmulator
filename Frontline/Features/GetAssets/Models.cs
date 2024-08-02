@@ -11,5 +11,5 @@ public class AssetBundlesResponse : List<AssetBundle>
 public class AssetBundle
 {
     [XmlElement("Key")]
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 }

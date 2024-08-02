@@ -28,6 +28,6 @@ public class Endpoint : Endpoint<SearchGuildRequest, GuildListResponse, Mapper>
             LastPage = guilds.Count < req.MaxCount
         };
 
-        await SendAsync(response, cancellation: ct);
+        await SendAsync(response);
     }
 }

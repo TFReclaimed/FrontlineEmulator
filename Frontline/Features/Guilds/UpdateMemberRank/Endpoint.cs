@@ -45,6 +45,6 @@ public class Endpoint : Endpoint<UpdateMemberRankRequest, Ok>
         target.Rank = req.Member.Rank;
         await _guildRepository.UpdatePlayerMembershipAsync(target);
         
-        await SendResultAsync(TypedResults.Ok());
+        await SendOkAsync();
     }
 }

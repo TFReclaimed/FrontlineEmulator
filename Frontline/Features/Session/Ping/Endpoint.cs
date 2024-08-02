@@ -18,6 +18,6 @@ public class Endpoint : EndpointWithoutRequest<Ok>
     
     public override async Task HandleAsync(CancellationToken ct)
     {
-        await SendResultAsync(TypedResults.Ok());
+        await SendOkAsync();
     }
 }

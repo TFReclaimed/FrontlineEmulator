@@ -65,7 +65,7 @@ public class PlayerRepository : IPlayerRepository
                 Player = p,
                 GuildName = _db.GuildMembers
                     .Where(gm => gm.UserId == p.Id)
-                    .Select(gm => gm.Guild.Name)
+                    .Select(gm => gm.Guild!.Name)
                     .FirstOrDefault()
             })
             .ToListAsync();

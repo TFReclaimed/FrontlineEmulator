@@ -54,16 +54,16 @@ public class GuildRepository : IGuildRepository
         if (includeMembers)
         {
             return await _db.GuildMembers
-                .Where(m => m.Player.Id == playerId)
+                .Where(m => m.Player!.Id == playerId)
                 .Include(m => m.Guild)
-                .ThenInclude(g => g.Members)
+                .ThenInclude(g => g!.Members)
                 .ThenInclude(m => m.Player)
                 .Select(m => m.Guild)
                 .FirstOrDefaultAsync();
         }
         
         return await _db.GuildMembers
-            .Where(m => m.Player.Id == playerId)
+            .Where(m => m.Player!.Id == playerId)
             .Select(m => m.Guild)
             .FirstOrDefaultAsync();
     }
@@ -71,7 +71,7 @@ public class GuildRepository : IGuildRepository
     public async Task<GuildMemberEntity?> GetPlayerMembershipAsync(int playerId)
     {
         return await _db.GuildMembers
-            .FirstOrDefaultAsync(m => m.Player.Id == playerId);
+            .FirstOrDefaultAsync(m => m.Player!.Id == playerId);
     }
 
     public async Task UpdatePlayerMembershipAsync(GuildMemberEntity member)

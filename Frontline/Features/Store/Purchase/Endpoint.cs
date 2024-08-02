@@ -25,7 +25,7 @@ public class Endpoint : Endpoint<PurchaseRequest, PurchaseResponse>
         var player = await _playerRepository.GetPlayerAsync(req.PlayerId);
         if (player == null)
         {
-            await SendResultAsync(TypedResults.NotFound());
+            await SendNotFoundAsync();
             return;
         }
         
@@ -69,6 +69,6 @@ public class Endpoint : Endpoint<PurchaseRequest, PurchaseResponse>
             Fulfillment = true
         };
         
-        await SendAsync(response, cancellation: ct);
+        await SendAsync(response);
     }
 }

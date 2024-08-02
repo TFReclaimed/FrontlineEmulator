@@ -33,7 +33,7 @@ public class Endpoint : Endpoint<UpdateGuildRequest, Ok>
         var guild = await _guildRepository.GetGuildAsync(req.GuildId);
         if (guild is null)
         {
-            await SendResultAsync(TypedResults.NotFound());
+            await SendNotFoundAsync();
             return;
         }
         
@@ -44,6 +44,6 @@ public class Endpoint : Endpoint<UpdateGuildRequest, Ok>
         
         await _guildRepository.UpdateGuildAsync(guild);
         
-        await SendResultAsync(TypedResults.Ok());
+        await SendOkAsync();
     }
 }

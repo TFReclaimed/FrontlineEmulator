@@ -6,8 +6,8 @@ namespace Frontline.Features.Profiles.UpdateProfile;
 public class ProfileUpdateRequest
 {
     public int UserId { get; set; }
-    public string DisplayName { get; set; }
-    public string AvatarId { get; set; }
+    public string DisplayName { get; set; } = string.Empty;
+    public string AvatarId { get; set; } = string.Empty;
 }
 
 public class Validator : Validator<ProfileUpdateRequest>

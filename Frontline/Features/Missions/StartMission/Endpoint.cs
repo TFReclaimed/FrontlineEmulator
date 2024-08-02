@@ -37,7 +37,7 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
         if (player is null)
         {
             Logger.LogWarning("Player not found: {UserId}", userId);
-            await SendNotFoundAsync(ct);
+            await SendNotFoundAsync();
             return;
         }
         
@@ -48,7 +48,7 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
         {
             Logger.LogWarning("Player {UserId} attempted to start mission {Key} but mission doesn't exist.",
                 userId, key);
-            await SendNotFoundAsync(ct);
+            await SendNotFoundAsync();
             return;
         }
         
@@ -225,7 +225,7 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
             }
         };
 
-        await SendAsync(response, cancellation: ct);
+        await SendAsync(response);
     }
 
     private async Task<(bool IsValid, ItemEntity? item)> IsValidItem(int userId, int itemId, MissionStage missionData,

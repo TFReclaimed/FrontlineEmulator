@@ -5,13 +5,13 @@ namespace Frontline.Features.Store.GetProducts;
 public class Product
 {
     [JsonPropertyName("ProductID")]
-    public string ProductID { get; set; }
+    public string ProductID { get; set; } = string.Empty;
     [JsonPropertyName("Title")]
-    public string Title { get; set; }
+    public string Title { get; set; } = string.Empty;
     [JsonPropertyName("RealPrice")]
     public float RealPrice { get; set; }
     [JsonPropertyName("RealCurrencyCode")]
-    public string RealCurrencyCode { get; set; }
+    public string RealCurrencyCode { get; set; } = string.Empty;
     [JsonPropertyName("SoftVirtualPrice")]
     public int SoftVirtualPrice { get; set; }
     [JsonPropertyName("HardVirtualPrice")]
@@ -21,7 +21,7 @@ public class Product
     [JsonPropertyName("IsConsumable")]
     public bool IsConsumable { get; set; }
     [JsonPropertyName("SKU_Apple")]
-    public string SkuApple { get; set; }
+    public string SkuApple { get; set; } = string.Empty;
     [JsonPropertyName("SKU_Google")]
-    public string SkuGoogle { get; set; }
+    public string SkuGoogle { get; set; } = string.Empty;
 }

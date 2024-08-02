@@ -8,7 +8,7 @@ public class UpdateMemberRankRequest
     public Guid GuildId { get; set; }
     public int UserId { get; set; }
     [FromBody]
-    public GuildMember Member { get; set; }
+    public required GuildMember Member { get; set; }
 }
 
 public class Validator : Validator<UpdateMemberRankRequest>

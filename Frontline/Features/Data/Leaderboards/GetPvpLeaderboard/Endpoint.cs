@@ -30,6 +30,6 @@ public class Endpoint : EndpointWithoutRequest<LeaderboardPvpResponse, Mapper>
             Entries = Map.FromEntity(players)
         };
         
-        await SendAsync(response, cancellation: ct);
+        await SendAsync(response);
     }
 }

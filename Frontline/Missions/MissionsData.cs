@@ -7,61 +7,61 @@ namespace Frontline.Missions;
 public class MissionsData
 {
     [JsonPropertyName("DT_MissionStage")]
-    public Dictionary<string, MissionStage> MissionStages { get; set; }
+    public required Dictionary<string, MissionStage> MissionStages { get; set; }
     [JsonPropertyName("DT_MissionSet")]
-    public Dictionary<string, MissionSet> MissionSets { get; set; }
+    public required Dictionary<string, MissionSet> MissionSets { get; set; }
     [JsonPropertyName("DT_Slots")]
-    public Dictionary<string, MissionSlot> Slots { get; set; }
+    public required Dictionary<string, MissionSlot> Slots { get; set; }
     [JsonPropertyName("DT_SlotXP")]
-    public Dictionary<string, MissionSlotXp> SlotXp { get; set; }
+    public required Dictionary<string, MissionSlotXp> SlotXp { get; set; }
     [JsonPropertyName("DT_RewardSets")]
-    public Dictionary<string, MissionRewardSet> RewardSets { get; set; }
+    public required Dictionary<string, MissionRewardSet> RewardSets { get; set; }
     [JsonPropertyName("DT_Rewards")]
-    public Dictionary<string, MissionReward> Rewards { get; set; }
+    public required Dictionary<string, MissionReward> Rewards { get; set; }
     [JsonPropertyName("DT_Synergies")]
-    public Dictionary<string, MissionSynergy> Synergies { get; set; }
+    public required Dictionary<string, MissionSynergy> Synergies { get; set; }
     [JsonPropertyName("DT_Intel")]
-    public Dictionary<string, MissionIntel> Intel { get; set; }
+    public required Dictionary<string, MissionIntel> Intel { get; set; }
     [JsonPropertyName("DT_Regions")]
-    public Dictionary<string, MissionRegion> Regions { get; set; }
+    public required Dictionary<string, MissionRegion> Regions { get; set; }
     [JsonPropertyName("DT_SubRegions")]
-    public Dictionary<string, MissionSubRegion> SubRegions { get; set; }
+    public required Dictionary<string, MissionSubRegion> SubRegions { get; set; }
     [JsonPropertyName("DT_Conditionals")]
-    public Dictionary<string, MissionConditional> Conditionals { get; set; }
+    public required Dictionary<string, MissionConditional> Conditionals { get; set; }
     [JsonPropertyName("DT_Reputation")]
-    public Dictionary<string, MissionReputation> Reputation { get; set; }
+    public required Dictionary<string, MissionReputation> Reputation { get; set; }
     [JsonPropertyName("DT_NameMap")]
-    public Dictionary<string, MissionNameMapping> NameMap { get; set; }
+    public required Dictionary<string, MissionNameMapping> NameMap { get; set; }
 }
 
 public class MissionStage
 {
     [JsonPropertyName("ID:S")]
-    public string Id { get; set; }
+    public string Id { get; set; } = string.Empty;
     [JsonPropertyName("MissionID:I")]
     public int MissionId { get; set; }
     [JsonPropertyName("Req1:S")]
-    public string Requirement1 { get; set; }
+    public string Requirement1 { get; set; } = string.Empty;
     [JsonPropertyName("Req2:S")]
-    public string Requirement2 { get; set; }
+    public string Requirement2 { get; set; } = string.Empty;
     [JsonPropertyName("Req3:S")]
-    public string Requirement3 { get; set; }
+    public string Requirement3 { get; set; } = string.Empty;
     [JsonPropertyName("Req4:S")]
-    public string Requirement4 { get; set; }
+    public string Requirement4 { get; set; } = string.Empty;
     [JsonPropertyName("Conj:S")]
-    public string RequirementConjunction { get; set; } // TODO: make into enum
+    public string RequirementConjunction { get; set; } = string.Empty; // TODO: make into enum
     [JsonPropertyName("NotReq:S")]
-    public string NotReq { get; set; }
+    public string NotReq { get; set; } = string.Empty;
     [JsonPropertyName("Region:S")]
     public PveRegion Region { get; set; }
     [JsonPropertyName("SubRegion:S")]
-    public string SubRegion { get; set; }
+    public string SubRegion { get; set; } = string.Empty;
     [JsonPropertyName("Faction:S")]
     public Faction Faction { get; set; }
     [JsonPropertyName("Guild:B")]
     public bool IsGuild { get; set; }
     [JsonPropertyName("Set:X")]
-    public string MissionSet { get; set; }
+    public string MissionSet { get; set; } = string.Empty;
     [JsonPropertyName("Type:S")]
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public MissionType MissionType { get; set; }
@@ -71,9 +71,9 @@ public class MissionStage
     [StringIntConverter(72000)]
     public int Cooldown { get; set; }
     [JsonPropertyName("RepType:X")]
-    public string ReputationType { get; set; }
+    public string ReputationType { get; set; } = string.Empty;
     [JsonPropertyName("RepPct:X")]
-    public string ReputationPercentile { get; set; }
+    public string ReputationPercentile { get; set; } = string.Empty;
     [JsonPropertyName("Supply:I")]
     public int SupplyCost { get; set; }
     [JsonPropertyName("Credit:I")]
@@ -86,12 +86,12 @@ public class MissionStage
     [StringFloatConverter(0.7f)]
     public float SuccessChance { get; set; }
     [JsonPropertyName("SuccessReward:X")]
-    public string SuccessReward { get; set; }
+    public string SuccessReward { get; set; } = string.Empty;
     [JsonPropertyName("NumReqSlots:I=1")]
     [StringIntConverter(1)]
     public int RequiredSlotCount { get; set; }
     [JsonPropertyName("ReqSlot:X")]
-    public string RequiredSlotCondition { get; set; }
+    public string RequiredSlotCondition { get; set; } = string.Empty;
     [JsonPropertyName("ReqConsume:B")]
     public bool RequiredSlotConsume { get; set; }
     [JsonPropertyName("ReqMinCmd:I")]
@@ -106,7 +106,7 @@ public class MissionStage
     [JsonPropertyName("ReqMinRank:I")]
     public int RequiredSlotMinRank { get; set; }
     [JsonPropertyName("Bonus1:X")]
-    public string Bonus1SlotCondition { get; set; }
+    public string Bonus1SlotCondition { get; set; } = string.Empty;
     [JsonPropertyName("B1Consume:B")]
     public bool Bonus1SlotConsume { get; set; }
     [JsonPropertyName("B1MinCmd:I")]
@@ -119,7 +119,7 @@ public class MissionStage
     [JsonPropertyName("B1MinRank:I")]
     public int Bonus1SlotMinRank { get; set; }
     [JsonPropertyName("Bonus2:X")]
-    public string Bonus2SlotCondition { get; set; }
+    public string Bonus2SlotCondition { get; set; } = string.Empty;
     [JsonPropertyName("B2Consume:B")]
     public bool Bonus2SlotConsume { get; set; }
     [JsonPropertyName("B2MinCmd:I")]
@@ -144,7 +144,7 @@ public enum MissionType
 public class MissionSet
 {
     [JsonPropertyName("ID:S")]
-    public string Id { get; set; }
+    public string Id { get; set; } = string.Empty;
     [JsonPropertyName("Period:I")]
     public int Period { get; set; }
     [JsonPropertyName("ElectiveCount:I")]
@@ -154,7 +154,7 @@ public class MissionSet
 public class MissionSlot
 {
     [JsonPropertyName("ID:S")]
-    public string Id { get; set; }
+    public string Id { get; set; } = string.Empty;
     [JsonPropertyName("ReqCasualtyOverride:F=-1")]
     [StringFloatConverter(-1f)]
     public float ReqCasualtyOverride { get; set; }
@@ -165,13 +165,13 @@ public class MissionSlot
     [StringFloatConverter(-1f)]
     public float BonusSuccessOverride { get; set; }
     [JsonPropertyName("BonusSuccessReward:X")]
-    public string BonusSuccessReward { get; set; }
+    public string BonusSuccessReward { get; set; } = string.Empty;
 }
 
 public class MissionSlotXp
 {
     [JsonPropertyName("ID:S")]
-    public string Id { get; set; }
+    public string Id { get; set; } = string.Empty;
     [JsonPropertyName("Base:F")]
     public float Base { get; set; }
     [JsonPropertyName("Uncommon:F")]
@@ -185,20 +185,20 @@ public class MissionSlotXp
 public class MissionRewardSet
 {
     [JsonPropertyName("ID:S")]
-    public string Id { get; set; }
+    public string Id { get; set; } = string.Empty;
     [JsonPropertyName("Type:S")]
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public RewardSetType Type { get; set; }
     [JsonPropertyName("Reward1:X")]
-    public string Reward1 { get; set; }
+    public string Reward1 { get; set; } = string.Empty;
     [JsonPropertyName("Reward2:X")]
-    public string Reward2 { get; set; }
+    public string Reward2 { get; set; } = string.Empty;
     [JsonPropertyName("Reward3:X")]
-    public string Reward3 { get; set; }
+    public string Reward3 { get; set; } = string.Empty;
     [JsonPropertyName("Reward4:X")]
-    public string Reward4 { get; set; }
+    public string Reward4 { get; set; } = string.Empty;
     [JsonPropertyName("Reward5:X")]
-    public string Reward5 { get; set; }
+    public string Reward5 { get; set; } = string.Empty;
 }
 
 public enum RewardSetType
@@ -210,9 +210,9 @@ public enum RewardSetType
 public class MissionReward
 {
     [JsonPropertyName("ID:S")]
-    public string Id { get; set; }
+    public string Id { get; set; } = string.Empty;
     [JsonPropertyName("Element:S")]
-    public string Element { get; set; }
+    public string Element { get; set; } = string.Empty;
     [JsonPropertyName("Qty:I")]
     public int Quantity { get; set; }
     [JsonPropertyName("Once:B")]
@@ -224,16 +224,16 @@ public class MissionReward
 public class MissionSynergy
 {
     [JsonPropertyName("ID:S")]
-    public string Id { get; set; }
+    public string Id { get; set; } = string.Empty;
     [JsonPropertyName("DisplayName:S")]
-    public string DisplayName { get; set; }
+    public string DisplayName { get; set; } = string.Empty;
     [JsonPropertyName("Grouping:S")]
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public MissionSynergyGrouping Grouping { get; set; }
     [JsonPropertyName("Effect:X")]
-    public string Effect { get; set; }
+    public string Effect { get; set; } = string.Empty;
     [JsonPropertyName("Reward:X")]
-    public string Reward { get; set; }
+    public string Reward { get; set; } = string.Empty;
 }
 
 public enum MissionSynergyGrouping
@@ -245,17 +245,17 @@ public enum MissionSynergyGrouping
 public class MissionIntel
 {
     [JsonPropertyName("ID:S")]
-    public string Id { get; set; }
+    public string Id { get; set; } = string.Empty;
     [JsonPropertyName("DisplayName:S")]
-    public string DisplayName { get; set; }
+    public string DisplayName { get; set; } = string.Empty;
 }
 
 public class MissionRegion
 {
     [JsonPropertyName("ID:S")]
-    public string Id { get; set; }
+    public string Id { get; set; } = string.Empty;
     [JsonPropertyName("DisplayName:S")]
-    public string DisplayName { get; set; }
+    public string DisplayName { get; set; } = string.Empty;
     [JsonPropertyName("Locked:B")]
     public bool Locked { get; set; }
     [JsonPropertyName("ShowEmpty:B")]
@@ -265,19 +265,19 @@ public class MissionRegion
 public class MissionSubRegion
 {
     [JsonPropertyName("ID:S")]
-    public string Id { get; set; }
+    public string Id { get; set; } = string.Empty;
     [JsonPropertyName("Name:S")]
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 }
 
 public class MissionConditional
 {
     [JsonPropertyName("ID:S")]
-    public string Id { get; set; }
+    public string Id { get; set; } = string.Empty;
     [JsonPropertyName("RefId:S")]
-    public string RefId { get; set; }
+    public string RefId { get; set; } = string.Empty;
     [JsonPropertyName("NameId:X")]
-    public string NameId { get; set; }
+    public string NameId { get; set; } = string.Empty;
     [JsonPropertyName("GroupPriority:F")]
     public float GroupPriority { get; set; }
     [JsonPropertyName("Attribute:S")]
@@ -285,7 +285,7 @@ public class MissionConditional
     [JsonPropertyName("Operator:S")]
     public Operator Operator { get; set; }
     [JsonPropertyName("Comparison:S")]
-    public string Comparison { get; set; }
+    public string Comparison { get; set; } = string.Empty;
     [JsonPropertyName("Conjunction:S")]
     public Conjunction Conjunction { get; set; }
 }
@@ -326,7 +326,7 @@ public enum Conjunction
 public class MissionReputation
 {
     [JsonPropertyName("ID:S")]
-    public string Id { get; set; }
+    public string Id { get; set; } = string.Empty;
     [JsonPropertyName("Region:S")]
     public PveRegion Region { get; set; }
     [JsonPropertyName("Faction:S")]
@@ -340,7 +340,7 @@ public class MissionReputation
     [JsonPropertyName("Tier1BonusSuccess:F")]
     public float Tier1BonusSuccess { get; set; }
     [JsonPropertyName("Tier1Reward:X")]
-    public string Tier1Reward { get; set; }
+    public string Tier1Reward { get; set; } = string.Empty;
     [JsonPropertyName("Tier2Pct:F")]
     public float Tier2Pct { get; set; }
     [JsonPropertyName("Tier2Success:F")]
@@ -348,7 +348,7 @@ public class MissionReputation
     [JsonPropertyName("Tier2BonusSuccess:F")]
     public float Tier2BonusSuccess { get; set; }
     [JsonPropertyName("Tier2Reward:X")]
-    public string Tier2Reward { get; set; }
+    public string Tier2Reward { get; set; } = string.Empty;
     [JsonPropertyName("Tier3Pct:F")]
     public float Tier3Pct { get; set; }
     [JsonPropertyName("Tier3Success:F")]
@@ -356,7 +356,7 @@ public class MissionReputation
     [JsonPropertyName("Tier3BonusSuccess:F")]
     public float Tier3BonusSuccess { get; set; }
     [JsonPropertyName("Tier3Reward:X")]
-    public string Tier3Reward { get; set; }
+    public string Tier3Reward { get; set; } = string.Empty;
     [JsonPropertyName("Tier4Pct:F")]
     public float Tier4Pct { get; set; }
     [JsonPropertyName("Tier4Success:F")]
@@ -364,7 +364,7 @@ public class MissionReputation
     [JsonPropertyName("Tier4BonusSuccess:F")]
     public float Tier4BonusSuccess { get; set; }
     [JsonPropertyName("Tier4Reward:X")]
-    public string Tier4Reward { get; set; }
+    public string Tier4Reward { get; set; } = string.Empty;
     [JsonPropertyName("Tier5Pct:F")]
     public float Tier5Pct { get; set; }
     [JsonPropertyName("Tier5Success:F")]
@@ -372,7 +372,7 @@ public class MissionReputation
     [JsonPropertyName("Tier5BonusSuccess:F")]
     public float Tier5BonusSuccess { get; set; }
     [JsonPropertyName("Tier5Reward:X")]
-    public string Tier5Reward { get; set; }
+    public string Tier5Reward { get; set; } = string.Empty;
 }
 
 public enum Faction
@@ -401,7 +401,7 @@ public enum PveRegion
 public class MissionNameMapping
 {
     [JsonPropertyName("ID:S")]
-    public string Id { get; set; }
+    public string Id { get; set; } = string.Empty;
     [JsonPropertyName("TemplateId:I")]
     public int TemplateId { get; set; }
 }

@@ -4,7 +4,7 @@ namespace Frontline.Features.Session.Inventory;
 
 public class GetInventoryRequest
 {
-    public InventoryRequest Param { get; set; }
+    public required InventoryRequest Param { get; set; }
 }
 
 public class InventoryRequest

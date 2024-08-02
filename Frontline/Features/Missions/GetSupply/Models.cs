@@ -5,5 +5,5 @@ namespace Frontline.Features.Missions.GetSupply;
 public class GetSupplyResponse
 {
     [JsonPropertyName("LastSupplySync")]
-    public string LastSupplySync { get; set; }
+    public string LastSupplySync { get; set; } = string.Empty;
 }

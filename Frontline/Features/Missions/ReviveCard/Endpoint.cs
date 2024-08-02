@@ -29,7 +29,7 @@ public class Endpoint : Endpoint<ReviveCardRequest>
         if (player is null)
         {
             Logger.LogWarning("Player not found: {UserId}", userId);
-            await SendNotFoundAsync(ct);
+            await SendNotFoundAsync();
             return;
         }
         
@@ -37,7 +37,7 @@ public class Endpoint : Endpoint<ReviveCardRequest>
         if (item is null)
         {
             Logger.LogWarning("Item not found: {InstanceId}", req.InstanceId);
-            await SendNotFoundAsync(ct);
+            await SendNotFoundAsync();
             return;
         }
 
@@ -58,6 +58,6 @@ public class Endpoint : Endpoint<ReviveCardRequest>
         item.Casualty = false;
         await _inventoryRepository.UpdateItemAsync(item);
         
-        await SendOkAsync(ct);
+        await SendOkAsync();
     }
 }
