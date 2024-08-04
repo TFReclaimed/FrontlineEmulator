@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Principal;
@@ -39,7 +40,7 @@ public class SessionAuth : AuthenticationHandler<AuthenticationSchemeOptions>
             return Task.FromResult(AuthenticateResult.Fail("Invalid token"));
         }
 
-        var identity = new ClaimsIdentity(jwt!.Claims, SchemeName);
+        var identity = new ClaimsIdentity(jwt.Claims, SchemeName);
         var principal = new GenericPrincipal(identity, null);
         var ticket = new AuthenticationTicket(principal, SchemeName);
 
@@ -54,7 +55,7 @@ public class SessionAuth : AuthenticationHandler<AuthenticationSchemeOptions>
             .Any() is null or true;
     }
 
-    private bool IsValidToken(StringValues token, out JwtSecurityToken? jwt)
+    private bool IsValidToken(StringValues token, [NotNullWhen(true)] out JwtSecurityToken? jwt)
     {
         var validationParameters = new TokenValidationParameters
         {
