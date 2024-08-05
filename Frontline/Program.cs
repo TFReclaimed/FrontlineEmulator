@@ -22,6 +22,8 @@ builder.Services
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
+builder.Services.AddSingleton<ITokenValidator, TokenValidator>();
+
 var connectionString = config.GetConnectionString("connection");
 
 builder.Services.AddDbContext<AppDb>(o =>

@@ -1,30 +1,24 @@
-using System.Diagnostics.CodeAnalysis;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Principal;
-using System.Text;
 using System.Text.Encodings.Web;
-using Frontline.Options;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Primitives;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Frontline.Auth;
 
 public class SessionAuth : AuthenticationHandler<AuthenticationSchemeOptions>
 {
-    private readonly IOptions<JwtOptions> _jwtOptions;
+    private readonly ITokenValidator _tokenValidator;
     
     public const string SchemeName = "Session";
     
     public const string SessionIdHeaderName = "Sessionid";
 
-    public SessionAuth(IOptions<JwtOptions> jwtOptions, IOptionsMonitor<AuthenticationSchemeOptions> options,
+    public SessionAuth(ITokenValidator tokenValidator, IOptionsMonitor<AuthenticationSchemeOptions> options,
         ILoggerFactory logger, UrlEncoder encoder) : base(options, logger, encoder)
     {
-        _jwtOptions = jwtOptions;
+        _tokenValidator = tokenValidator;
     }
 
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
@@ -35,7 +29,7 @@ public class SessionAuth : AuthenticationHandler<AuthenticationSchemeOptions>
         }
         
         var headerPresent = Request.Headers.TryGetValue(SessionIdHeaderName, out var token);
-        if (!headerPresent || !IsValidToken(token, out var jwt))
+        if (!headerPresent || !_tokenValidator.IsValidToken(token.ToString(), out var jwt))
         {
             return Task.FromResult(AuthenticateResult.Fail("Invalid token"));
         }
@@ -53,31 +47,5 @@ public class SessionAuth : AuthenticationHandler<AuthenticationSchemeOptions>
             .GetEndpoint()?
             .Metadata.OfType<AllowAnonymousAttribute>()
             .Any() is null or true;
-    }
-
-    private bool IsValidToken(StringValues token, [NotNullWhen(true)] out JwtSecurityToken? jwt)
-    {
-        var validationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = false,
-            ValidateAudience = false,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_jwtOptions.Value.Key))
-        };
-
-        try
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            tokenHandler.ValidateToken(token, validationParameters, out var validatedToken);
-            
-            jwt = (JwtSecurityToken) validatedToken;
-            return true;
-        }
-        catch
-        {
-            jwt = null;
-            return false;
-        }
     }
 }
