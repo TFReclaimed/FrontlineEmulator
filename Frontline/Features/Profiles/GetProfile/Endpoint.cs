@@ -38,7 +38,7 @@ public class Endpoint : Endpoint<GetProfileRequest, ProfileDetails, Mapper>
             return;
         }
         
-        var profile = Map.FromEntity(entity!);
+        var profile = Map.FromEntity(entity);
         
         await SendAsync(profile);
     }
