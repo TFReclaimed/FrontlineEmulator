@@ -61,6 +61,13 @@ builder.Services.SwaggerDocument(o =>
 
 var app = builder.Build();
 
+if (app.Environment.IsProduction())
+{
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<AppDb>();
+    db.Database.Migrate();
+}
+
 app.UseHttpLogging();
 
 app.UseAuthorization();
