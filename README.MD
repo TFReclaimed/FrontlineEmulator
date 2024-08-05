@@ -43,9 +43,13 @@ A reverse proxy, such as Caddy or Nginx can be used to achieve this.
   - ✅ Get products
   - ✅ Purchase
     - Works, however due to session header not being present, can't implement securely
-- ⛔ Chat
-  - ⛔ Frontier
-  - ⛔ Guild
+- ✅ Chat
+  - ✅ Frontier
+  - ✅ Guild
+  - ✅ Private messages (Challenges)
+  - ⛔ Persistence
+  - ⛔ TLS
+    - Not required, but would be nice to have. From my testing the game always tries to use TLSv1.0 and OpenSSL doesn't support this.
 - 🚧 Hangar
   - 🚧 Booster packs 
     - ✅ Get booster packs

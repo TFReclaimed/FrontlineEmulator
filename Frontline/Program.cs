@@ -6,6 +6,7 @@ using Frontline.Data.Repositories;
 using Frontline.Game;
 using Frontline.Missions;
 using Frontline.Options;
+using Frontline.Xmpp;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using NSwag;
@@ -22,6 +23,12 @@ builder.Services
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
+builder.Services
+    .AddOptions<ChatOptions>()
+    .Bind(config.GetSection(ChatOptions.SectionName))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+
 builder.Services.AddSingleton<ITokenValidator, TokenValidator>();
 
 var connectionString = config.GetConnectionString("connection");
@@ -35,6 +42,8 @@ builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
 builder.Services.AddScoped<IGuildRepository, GuildRepository>();
 builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 builder.Services.AddScoped<IMissionRepository, MissionRepository>();
+
+builder.Services.AddHostedService<XmppServer>();
 
 builder.Services.AddHttpLogging(_ => { });
 

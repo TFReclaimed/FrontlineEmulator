@@ -30,6 +30,24 @@ public class Endpoint : Endpoint<GetProfileRequest, ProfileDetails, Mapper>
         {
             userId = int.Parse(User.ClaimValue("UserId")!);
         }
+
+        if (userId == -1)
+        {
+            var systemProfile = new ProfileDetails
+            {
+                ProfileId = -1,
+                UserId = -1,
+                DisplayName = "<color=red>SYSTEM</color>",
+                AvatarId = "avatar006",
+                GameProfiles =
+                [
+                    new GameProfile()
+                ]
+            };
+            
+            await SendAsync(systemProfile);
+            return;
+        }
         
         var entity = await _playerRepository.GetPlayerAsync(userId);
         if (entity is null)
