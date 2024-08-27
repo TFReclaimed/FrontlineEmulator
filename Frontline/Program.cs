@@ -29,6 +29,12 @@ builder.Services
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
+builder.Services
+    .AddOptions<UrlOptions>()
+    .Bind(config.GetSection(UrlOptions.SectionName))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+
 builder.Services.AddSingleton<ITokenValidator, TokenValidator>();
 
 var connectionString = config.GetConnectionString("connection");

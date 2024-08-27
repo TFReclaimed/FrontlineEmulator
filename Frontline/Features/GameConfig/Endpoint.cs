@@ -1,9 +1,18 @@
 using FastEndpoints;
+using Frontline.Options;
+using Microsoft.Extensions.Options;
 
 namespace Frontline.Features.GameConfig;
 
 public class Endpoint : EndpointWithoutRequest<GameConfigResponse>
 {
+    private readonly IOptions<UrlOptions> _urlOptions;
+
+    public Endpoint(IOptions<UrlOptions> urlOptions)
+    {
+        _urlOptions = urlOptions;
+    }
+
     public override void Configure()
     {
         Get("/init");
@@ -17,13 +26,13 @@ public class Endpoint : EndpointWithoutRequest<GameConfigResponse>
             AssetBundleInfo = [
                 new AssetBundleInfo
                 {
-                    // yes, the tests really are required
-                    Uri = "http://192.168.0.219/Assets/test/test"
+                    // url has to go two levels deep
+                    Uri = _urlOptions.Value.AssetBundleUrl
                 }
             ],
             PveRuleset = new PveRuleset
             {
-                Uri = "http://192.168.0.219/pve",
+                Uri = _urlOptions.Value.PveRulesetUrl,
                 Version = 1
             },
             //MinClientVersion = "1.0"
