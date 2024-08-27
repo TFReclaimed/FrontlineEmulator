@@ -2,7 +2,7 @@
 	admin off
 }
 
-:80 {
+(common_config) {
 	reverse_proxy :10000
 
 	log {
@@ -13,4 +13,14 @@
 	log_skip /session/polling/
 
 	uri path_regexp /{2,} /
+}
+
+:80 {
+	import common_config
+}
+
+:443 {
+	tls fullchain1.pem privkey1.pem
+
+	import common_config
 }
