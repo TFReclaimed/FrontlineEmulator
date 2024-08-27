@@ -52,6 +52,8 @@ public class Endpoint : Endpoint<ReviveCardRequest>
             return;
         }
         
+        Logger.LogInformation("Player {UserId} revived card {InstanceId}", userId, req.InstanceId);
+        
         player.Tokens -= reviveCost;
         await _playerRepository.UpdatePlayerAsync(player);
         

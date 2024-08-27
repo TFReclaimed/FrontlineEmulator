@@ -59,6 +59,8 @@ public class Endpoint : Endpoint<CompleteMissionRequest, List<MissionStageStatus
             await SendNotFoundAsync();
             return;
         }
+        
+        Logger.LogInformation("Player {UserId} completed mission {Key}.", userId, key);
 
         if (mission.Success && missionData.MissionType is not MissionType.Persistent)
         {

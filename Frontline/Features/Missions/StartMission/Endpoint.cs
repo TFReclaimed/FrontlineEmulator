@@ -119,6 +119,8 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
             await SendResultAsync(TypedResults.BadRequest());
             return;
         }
+        
+        Logger.LogInformation("Player {UserId} started mission {Key}.", userId, key);
 
         var random = new Random();
         

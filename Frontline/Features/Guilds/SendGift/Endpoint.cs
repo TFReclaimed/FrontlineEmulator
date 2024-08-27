@@ -50,6 +50,8 @@ public class Endpoint : Endpoint<SendGiftRequest, SendGiftResponse>
             return;
         }
         
+        Logger.LogInformation("Player {UserId} sent a gift to {ReceiverId}", userId, req.ReceiverId);
+        
         player.LastGiftSent = DateTime.UtcNow;
         await _playerRepository.UpdatePlayerAsync(player);
 

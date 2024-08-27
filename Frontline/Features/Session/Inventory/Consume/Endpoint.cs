@@ -109,6 +109,9 @@ public class Endpoint : Endpoint<ConsumeRequest>
         targetItem.Xp += resourceCardTemplate.ResourceValue;
         await _inventoryRepository.UpdateItemAsync(targetItem);
         
+        Logger.LogInformation("Player {UserId} used XP card {ItemId} on target {TargetId} for {Xp} XP",
+            userId, req.ItemId, req.TargetId, resourceCardTemplate.ResourceValue);
+        
         await SendOkAsync();
     }
 
@@ -138,6 +141,9 @@ public class Endpoint : Endpoint<ConsumeRequest>
         await _inventoryRepository.RemoveItemAsync(item);
         await _playerRepository.UpdatePlayerAsync(player);
         
+        Logger.LogInformation("Player {UserId} retired card {ItemId} for {Credits} credits",
+            userId, req.ItemId, credits);
+        
         var result = new RetireForCreditsResponse
         {
             Credits = credits.ToString()
@@ -163,6 +169,9 @@ public class Endpoint : Endpoint<ConsumeRequest>
         
         await _inventoryRepository.RemoveItemAsync(item);
         await _inventoryRepository.UpdateItemAsync(targetItem);
+        
+        Logger.LogInformation("Player {UserId} retired card {ItemId} to target {TargetId} for {Xp} XP",
+            userId, req.ItemId, req.TargetId, xp);
         
         var result = new RetireForXpResponse
         {

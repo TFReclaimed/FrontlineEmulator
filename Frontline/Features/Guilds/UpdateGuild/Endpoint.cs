@@ -26,6 +26,7 @@ public class Endpoint : Endpoint<UpdateGuildRequest, Ok>
         var member = await _guildRepository.GetPlayerMembershipAsync(userId);
         if (member is null || member.Rank != MemberRank.LEADER || member.GuildId != req.GuildId)
         {
+            Logger.LogWarning("User {UserId} is not the leader of guild {GuildId}", userId, req.GuildId);
             await SendResultAsync(TypedResults.BadRequest());
             return;
         }
@@ -33,9 +34,13 @@ public class Endpoint : Endpoint<UpdateGuildRequest, Ok>
         var guild = await _guildRepository.GetGuildAsync(req.GuildId);
         if (guild is null)
         {
+            Logger.LogWarning("Player {UserId} tried to update non-existing guild {GuildId}", userId, req.GuildId);
             await SendNotFoundAsync();
             return;
         }
+        
+        Logger.LogInformation("Player {UserId} updated guild '{GuildName}' ({GuildId})",
+            userId, guild.Name, req.GuildId);
         
         guild.Description = req.Description;
         guild.Mode = req.Mode;

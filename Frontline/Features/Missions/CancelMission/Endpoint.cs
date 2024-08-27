@@ -44,6 +44,8 @@ public class Endpoint : Endpoint<CancelMissionRequest, List<MissionStageStatus>>
             return;
         }
         
+        Logger.LogInformation("Player {UserId} cancelled mission {Key}.", userId, key);
+        
         await _missionRepository.DeleteActiveMissionAsync(mission);
         
         var response = new List<MissionStageStatus>

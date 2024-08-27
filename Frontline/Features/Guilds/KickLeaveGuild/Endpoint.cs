@@ -26,6 +26,8 @@ public class Endpoint : Endpoint<KickLeaveGuildRequest, Ok>
         var member = await _guildRepository.GetPlayerMembershipAsync(userId);
         if (member is null || member.GuildId != req.GuildId)
         {
+            Logger.LogWarning("Player {UserId} tried to leave guild {GuildId} but is not a member",
+                userId, req.GuildId);
             await SendResultAsync(TypedResults.BadRequest());
             return;
         }
@@ -35,6 +37,8 @@ public class Endpoint : Endpoint<KickLeaveGuildRequest, Ok>
             var guild = await _guildRepository.GetGuildAsync(req.GuildId, true);
             if (guild is null)
             {
+                Logger.LogWarning("Player {UserId} tried to leave guild {GuildId} but the guild does not exist",
+                    userId, req.GuildId);
                 await SendResultAsync(TypedResults.BadRequest());
                 return;
             }
@@ -42,10 +46,14 @@ public class Endpoint : Endpoint<KickLeaveGuildRequest, Ok>
             if (member.Rank == MemberRank.LEADER &&
                 !guild.Members.Any(m => m.Rank == MemberRank.LEADER && m.UserId != userId))
             {
+                Logger.LogInformation("Player {UserId} left their guild '{GuildName}' ({GuildId}), causing it to be deleted",
+                    userId, guild.Name, req.GuildId);
                 await _guildRepository.DeleteGuildAsync(guild);
             }
             else
             {
+                Logger.LogInformation("Player {UserId} left guild '{GuildName}' ({GuildId})",
+                    userId, guild.Name, req.GuildId);
                 await _guildRepository.DeletePlayerMembershipAsync(member);
             }
         }
@@ -54,16 +62,22 @@ public class Endpoint : Endpoint<KickLeaveGuildRequest, Ok>
             var target = await _guildRepository.GetPlayerMembershipAsync(req.UserId);
             if (target is null || target.GuildId != req.GuildId)
             {
+                Logger.LogWarning("Player {UserId} tried to kick player {TargetId} from guild {GuildId} but the target is not a member",
+                    userId, req.UserId, req.GuildId);
                 await SendResultAsync(TypedResults.BadRequest());
                 return;
             }
 
             if (member.Rank < target.Rank)
             {
+                Logger.LogWarning("Player {UserId} tried to kick player {TargetId} from guild {GuildId} but does not have permission",
+                    userId, req.UserId, req.GuildId);
                 await SendResultAsync(TypedResults.BadRequest());
                 return;
             }
 
+            Logger.LogInformation("Player {UserId} kicked player {TargetId} from guild {GuildId}",
+                userId, req.UserId, req.GuildId);
             await _guildRepository.DeletePlayerMembershipAsync(target);
         }
         

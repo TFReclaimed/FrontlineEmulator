@@ -155,6 +155,8 @@ public class Endpoint : Endpoint<SaveDropshipRequest>
         
         await _inventoryRepository.AddDropshipItemsAsync(userId, dropshipItems);
         
+        Logger.LogInformation("Player {UserId} updated dropship {DropshipId}", userId, req.DropshipId);
+        
         await SendOkAsync();
     }
 }

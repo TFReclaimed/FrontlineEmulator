@@ -74,6 +74,9 @@ public class Endpoint : Endpoint<UpgradeRequest, UpgradedCard, Mapper>
         
         await _inventoryRepository.UpdateItemAsync(item);
         
+        Logger.LogInformation("Player {UserId} upgraded item {ItemId} to rank {Rank}",
+            userId, req.ItemId, item.Rank);
+        
         var result = Map.FromEntity(item);
         await SendAsync(result);
     }
