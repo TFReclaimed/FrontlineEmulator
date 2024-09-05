@@ -3,6 +3,7 @@ using FastEndpoints.Swagger;
 using Frontline.Auth;
 using Frontline.Data;
 using Frontline.Data.Repositories;
+using Frontline.Extensions;
 using Frontline.Game;
 using Frontline.Missions;
 using Frontline.Options;
@@ -18,22 +19,9 @@ var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 
 builder.Services
-    .AddOptions<JwtOptions>()
-    .Bind(config.GetSection(JwtOptions.SectionName))
-    .ValidateDataAnnotations()
-    .ValidateOnStart();
-
-builder.Services
-    .AddOptions<ChatOptions>()
-    .Bind(config.GetSection(ChatOptions.SectionName))
-    .ValidateDataAnnotations()
-    .ValidateOnStart();
-
-builder.Services
-    .AddOptions<UrlOptions>()
-    .Bind(config.GetSection(UrlOptions.SectionName))
-    .ValidateDataAnnotations()
-    .ValidateOnStart();
+    .AddConfiguredOptions<JwtOptions>(config)
+    .AddConfiguredOptions<ChatOptions>(config)
+    .AddConfiguredOptions<UrlOptions>(config);
 
 builder.Services.AddSingleton<ITokenValidator, TokenValidator>();
 
