@@ -1,0 +1,71 @@
+{
+  "ProductSettings": {
+    "Products": [
+      {
+        "ProductId": "BOOSTER_1X",
+        "Title": "1 Booster Pack",
+        "RealPrice": 1.99,
+        "RealCurrencyCode": "USD",
+        "SoftVirtualPrice": -1,
+        "HardVirtualPrice": 25,
+        "IsAvailableReal": false,
+        "IsConsumable": true,
+        "SkuApple": "REL_BOOSTER_1X_REAL",
+        "SkuGoogle": "rel_booster_1x_real",
+        "BoosterCount": 1
+      },
+      {
+        "ProductId": "BOOSTER_5X",
+        "Title": "5 Booster Packs",
+        "RealPrice": 9.99,
+        "RealCurrencyCode": "USD",
+        "SoftVirtualPrice": -1,
+        "HardVirtualPrice": 125,
+        "IsAvailableReal": false,
+        "IsConsumable": true,
+        "SkuApple": "REL_BOOSTER_5X_REAL",
+        "SkuGoogle": "rel_booster_5x_real",
+        "BoosterCount": 5
+      },
+      {
+        "ProductId": "BOOSTER_10X",
+        "Title": "10 Booster Packs",
+        "RealPrice": 19.99,
+        "RealCurrencyCode": "USD",
+        "SoftVirtualPrice": -1,
+        "HardVirtualPrice": 250,
+        "IsAvailableReal": false,
+        "IsConsumable": true,
+        "SkuApple": "REL_BOOSTER_10X_REAL",
+        "SkuGoogle": "rel_booster_10x_real",
+        "BoosterCount": 10
+      },
+      {
+        "ProductId": "BOOSTER_20X",
+        "Title": "20 Booster Packs",
+        "RealPrice": 39.99,
+        "RealCurrencyCode": "USD",
+        "SoftVirtualPrice": -1,
+        "HardVirtualPrice": 500,
+        "IsAvailableReal": false,
+        "IsConsumable": true,
+        "SkuApple": "REL_BOOSTER_20X_REAL",
+        "SkuGoogle": "rel_booster_20x_real",
+        "BoosterCount": 20
+      },
+      {
+        "ProductId": "BOOSTER_60X",
+        "Title": "60 Booster Packs",
+        "RealPrice": 99.99,
+        "RealCurrencyCode": "USD",
+        "SoftVirtualPrice": -1,
+        "HardVirtualPrice": 1250,
+        "IsAvailableReal": false,
+        "IsConsumable": true,
+        "SkuApple": "REL_BOOSTER_60X_REAL",
+        "SkuGoogle": "rel_booster_60x_real",
+        "BoosterCount": 60
+      }
+    ]
+  }
+}

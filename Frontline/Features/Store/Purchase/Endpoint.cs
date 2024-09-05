@@ -1,15 +1,20 @@
 using FastEndpoints;
 using Frontline.Data.Repositories;
+using Frontline.Options;
+using Microsoft.Extensions.Options;
 
 namespace Frontline.Features.Store.Purchase;
 
 public class Endpoint : Endpoint<PurchaseRequest, PurchaseResponse>
 {
     private readonly IPlayerRepository _playerRepository;
+    
+    private readonly IOptions<ProductOptions> _productOptions;
 
-    public Endpoint(IPlayerRepository playerRepository)
+    public Endpoint(IPlayerRepository playerRepository, IOptions<ProductOptions> productOptions)
     {
         _playerRepository = playerRepository;
+        _productOptions = productOptions;
     }
 
     public override void Configure()
@@ -25,21 +30,14 @@ public class Endpoint : Endpoint<PurchaseRequest, PurchaseResponse>
         var player = await _playerRepository.GetPlayerAsync(req.PlayerId);
         if (player == null)
         {
+            Logger.LogWarning("Player {PlayerId} does not exist.", req.PlayerId);
+            
             await SendNotFoundAsync();
             return;
         }
         
-        // TODO: Move all product stuff to a config file
-        var priceMap = new Dictionary<string, (int price, int boosterCount)>
-        {
-            { "BOOSTER_1X", (25, 1) },
-            { "BOOSTER_5X", (125, 5) },
-            { "BOOSTER_10X", (250, 10) },
-            { "BOOSTER_20X", (500, 20) },
-            { "BOOSTER_60X", (1250, 60) }
-        };
-        
-        if (!priceMap.TryGetValue(req.Product, out var value))
+        var product = _productOptions.Value.Products.FirstOrDefault(p => p.ProductId == req.Product);
+        if (product is null)
         {
             Logger.LogWarning("Player {PlayerId} attempted to purchase unknown product {Product}.",
                 req.PlayerId, req.Product);
@@ -48,7 +46,7 @@ public class Endpoint : Endpoint<PurchaseRequest, PurchaseResponse>
             return;
         }
         
-        if (player.Tokens < value.price)
+        if (player.Tokens < product.HardVirtualPrice)
         {
             Logger.LogWarning("Player {PlayerId} attempted to purchase product {Product} but doesn't have enough tokens!",
                 req.PlayerId, req.Product);
@@ -60,8 +58,8 @@ public class Endpoint : Endpoint<PurchaseRequest, PurchaseResponse>
         Logger.LogInformation("Player {PlayerId} purchased product {Product} with payment method {PaymentMethod}.",
             req.PlayerId, req.Product, req.PaymentMethod);
         
-        player.Tokens -= value.price;
-        player.BoosterPackCount += value.boosterCount;
+        player.Tokens -= product.HardVirtualPrice;
+        player.BoosterPackCount += product.BoosterCount;
         await _playerRepository.UpdatePlayerAsync(player);
 
         var response = new PurchaseResponse

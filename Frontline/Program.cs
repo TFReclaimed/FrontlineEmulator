@@ -18,10 +18,13 @@ MissionsParser.Initialize();
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 
+config.AddJsonFile("Products.json", false, true);
+
 builder.Services
     .AddConfiguredOptions<JwtOptions>(config)
     .AddConfiguredOptions<ChatOptions>(config)
-    .AddConfiguredOptions<UrlOptions>(config);
+    .AddConfiguredOptions<UrlOptions>(config)
+    .AddConfiguredOptions<ProductOptions>(config);
 
 builder.Services.AddSingleton<ITokenValidator, TokenValidator>();
 
