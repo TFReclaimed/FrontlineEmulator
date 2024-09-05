@@ -39,7 +39,7 @@ public static class RulesetParser
     
     public static CardTemplate? GetCardTemplate(int templateId)
     {
-        return Ruleset?.CardsRuleset.Cards[templateId.ToString()];
+        return Ruleset?.CardsRuleset.Cards.GetValueOrDefault(templateId.ToString());
     }
     
     public static CardXpEntry? GetXpEntry(CardType type, int rank)
