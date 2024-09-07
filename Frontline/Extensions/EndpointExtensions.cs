@@ -1,5 +1,6 @@
 using System.Xml.Serialization;
 using FastEndpoints;
+using FastEndpoints.Security;
 
 namespace Frontline.Extensions;
 
@@ -19,5 +20,10 @@ public static class EndpointExtensions
         xmlSerializer.Serialize(stream, response);
         stream.Position = 0;
         await stream.CopyToAsync(ep.HttpContext.Response.Body, cancellationToken);
+    }
+    
+    public static int GetUserId(this IEndpoint ep)
+    {
+        return int.Parse(ep.HttpContext.User.ClaimValue("UserId")!);
     }
 }

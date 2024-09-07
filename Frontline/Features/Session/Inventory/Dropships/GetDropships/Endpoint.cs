@@ -1,6 +1,6 @@
 using FastEndpoints;
-using FastEndpoints.Security;
 using Frontline.Data.Repositories;
+using Frontline.Extensions;
 using Frontline.Features.Session.Inventory.GetInventory;
 using Frontline.Game;
 
@@ -25,7 +25,7 @@ public class Endpoint : Endpoint<GetInventoryRequest, List<DropshipInfo>>
 
     public override async Task HandleAsync(GetInventoryRequest req, CancellationToken ct)
     {
-        var userId = int.Parse(User.ClaimValue("UserId")!);
+        var userId = this.GetUserId();
         var player = await _playerRepository.GetPlayerAsync(userId);
         if (player is null)
         {

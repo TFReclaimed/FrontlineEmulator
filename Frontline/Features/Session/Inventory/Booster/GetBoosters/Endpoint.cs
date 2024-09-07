@@ -1,6 +1,6 @@
 using FastEndpoints;
-using FastEndpoints.Security;
 using Frontline.Data.Repositories;
+using Frontline.Extensions;
 
 namespace Frontline.Features.Session.Inventory.Booster.GetBoosters;
 
@@ -20,7 +20,7 @@ public class Endpoint : Endpoint<GetInventoryRequest, List<int>>
 
     public override async Task HandleAsync(GetInventoryRequest req, CancellationToken ct)
     {
-        var userId = int.Parse(User.ClaimValue("UserId")!);
+        var userId = this.GetUserId();
         var player = await _playerRepository.GetPlayerAsync(userId);
         if (player is null)
         {

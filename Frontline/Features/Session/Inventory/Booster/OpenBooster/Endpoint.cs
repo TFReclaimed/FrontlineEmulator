@@ -1,6 +1,6 @@
 using FastEndpoints;
-using FastEndpoints.Security;
 using Frontline.Data.Repositories;
+using Frontline.Extensions;
 using Frontline.Game;
 
 namespace Frontline.Features.Session.Inventory.Booster.OpenBooster;
@@ -22,7 +22,7 @@ public class Endpoint : Endpoint<OpenBoosterPackRequest, BoosterPackResponse>
 
     public override async Task HandleAsync(OpenBoosterPackRequest req, CancellationToken ct)
     {
-        var userId = int.Parse(User.ClaimValue("UserId")!);
+        var userId = this.GetUserId();
         var player = await _playerRepository.GetPlayerAsync(userId);
         if (player is null)
         {

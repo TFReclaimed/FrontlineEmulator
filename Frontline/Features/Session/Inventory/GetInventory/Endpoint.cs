@@ -1,6 +1,6 @@
 using FastEndpoints;
-using FastEndpoints.Security;
 using Frontline.Data.Repositories;
+using Frontline.Extensions;
 
 namespace Frontline.Features.Session.Inventory.GetInventory;
 
@@ -20,7 +20,7 @@ public class Endpoint : Endpoint<GetInventoryRequest, InventoryListResponse, Map
 
     public override async Task HandleAsync(GetInventoryRequest req, CancellationToken ct)
     {
-        var userId = int.Parse(User.ClaimValue("UserId")!);
+        var userId = this.GetUserId();
         var items = _inventoryRepository.GetItems(userId, req.Param.MaxItem);
 
         var response = new InventoryListResponse

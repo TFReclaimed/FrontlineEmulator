@@ -1,6 +1,6 @@
 using FastEndpoints;
-using FastEndpoints.Security;
 using Frontline.Data.Repositories;
+using Frontline.Extensions;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Frontline.Features.Profiles.UpdateProfile;
@@ -21,7 +21,7 @@ public class Endpoint : Endpoint<ProfileUpdateRequest, Ok>
 
     public override async Task HandleAsync(ProfileUpdateRequest req, CancellationToken ct)
     {
-        var userId = int.Parse(User.ClaimValue("UserId")!);
+        var userId = this.GetUserId();
         var player = await _playerRepository.GetPlayerAsync(userId);
         if (player is null)
         {

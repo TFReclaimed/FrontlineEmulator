@@ -1,6 +1,6 @@
 using FastEndpoints;
-using FastEndpoints.Security;
 using Frontline.Data.Repositories;
+using Frontline.Extensions;
 using Frontline.Game;
 
 namespace Frontline.Features.Session.Inventory.Upgrade;
@@ -22,7 +22,7 @@ public class Endpoint : Endpoint<UpgradeRequest, UpgradedCard, Mapper>
 
     public override async Task HandleAsync(UpgradeRequest req, CancellationToken ct)
     {
-        var userId = int.Parse(User.ClaimValue("UserId")!);
+        var userId = this.GetUserId();
         
         var item = await _inventoryRepository.GetItemAsync(userId, req.ItemId);
         if (item is null)

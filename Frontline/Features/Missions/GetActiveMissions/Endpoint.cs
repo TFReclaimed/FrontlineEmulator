@@ -1,7 +1,7 @@
 using FastEndpoints;
-using FastEndpoints.Security;
 using Frontline.Data.Entities;
 using Frontline.Data.Repositories;
+using Frontline.Extensions;
 using Frontline.Features.Session.Inventory.GetInventory;
 using Frontline.Missions;
 
@@ -23,7 +23,7 @@ public class Endpoint : EndpointWithoutRequest<List<MissionStageStatus>>
     
     public override async Task HandleAsync(CancellationToken ct)
     {
-        var userId = int.Parse(User.ClaimValue("UserId")!);
+        var userId = this.GetUserId();
 
         var activeMissions = await _missionRepository.GetActiveMissionsAsync(userId);
         var finishedMissions = await _missionRepository.GetFinishedMissionsAsync(userId);

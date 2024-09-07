@@ -1,6 +1,6 @@
 using FastEndpoints;
-using FastEndpoints.Security;
 using Frontline.Data.Repositories;
+using Frontline.Extensions;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Frontline.Features.Guilds.UpdateMemberRank;
@@ -21,7 +21,7 @@ public class Endpoint : Endpoint<UpdateMemberRankRequest, Ok>
 
     public override async Task HandleAsync(UpdateMemberRankRequest req, CancellationToken ct)
     {
-        var userId = int.Parse(User.ClaimValue("UserId")!);
+        var userId = this.GetUserId();
         var member = await _guildRepository.GetPlayerMembershipAsync(userId);
         if (member is null || member.GuildId != req.GuildId)
         {

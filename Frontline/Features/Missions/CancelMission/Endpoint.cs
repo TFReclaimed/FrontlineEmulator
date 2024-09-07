@@ -1,6 +1,6 @@
 using FastEndpoints;
-using FastEndpoints.Security;
 using Frontline.Data.Repositories;
+using Frontline.Extensions;
 using Frontline.Missions;
 
 namespace Frontline.Features.Missions.CancelMission;
@@ -22,7 +22,7 @@ public class Endpoint : Endpoint<CancelMissionRequest, List<MissionStageStatus>>
 
     public override async Task HandleAsync(CancelMissionRequest req, CancellationToken ct)
     {
-        var userId = int.Parse(User.ClaimValue("UserId")!);
+        var userId = this.GetUserId();
         
         var key = MissionsParser.GetMissionKey(req.Key.Region, req.Key.Faction, req.Key.MissionId);
         

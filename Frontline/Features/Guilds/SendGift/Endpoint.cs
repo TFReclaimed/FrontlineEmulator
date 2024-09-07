@@ -1,7 +1,7 @@
 using FastEndpoints;
-using FastEndpoints.Security;
 using Frontline.Data.Entities;
 using Frontline.Data.Repositories;
+using Frontline.Extensions;
 
 namespace Frontline.Features.Guilds.SendGift;
 
@@ -25,7 +25,7 @@ public class Endpoint : Endpoint<SendGiftRequest, SendGiftResponse>
 
     public override async Task HandleAsync(SendGiftRequest req, CancellationToken ct)
     {
-        var userId = int.Parse(User.ClaimValue("UserId")!);
+        var userId = this.GetUserId();
         var player = await _playerRepository.GetPlayerAsync(userId);
         if (player is null)
         {
