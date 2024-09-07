@@ -1,0 +1,24 @@
+{
+  "StarterItemSettings": {
+    "Items": [
+      {
+        "TemplateId": 282,
+        "Dropships": [
+          {
+            "DropshipId": 0,
+            "SlotIndex": 30
+          }
+        ]
+      },
+      {
+        "TemplateId": 283,
+        "Dropships": [
+          {
+            "DropshipId": 1,
+            "SlotIndex": 30
+          }
+        ]
+      }
+    ]
+  }
+}

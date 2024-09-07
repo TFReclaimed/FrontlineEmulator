@@ -6,7 +6,7 @@ namespace Frontline.Data.Repositories;
 public interface IPlayerRepository
 {
     Task<PlayerEntity?> GetPlayerAsync(int id);
-    Task<PlayerEntity> GetOrCreatePlayerAsync(int id);
+    Task<(PlayerEntity entity, bool created)> GetOrCreatePlayerAsync(int id);
     Task UpdatePlayerAsync(PlayerEntity player);
     Task<List<PlayerEntity>> GetTopPlayersAsync(int count);
 }
@@ -25,12 +25,12 @@ public class PlayerRepository : IPlayerRepository
         return await _db.Players.FindAsync(id);
     }
 
-    public async Task<PlayerEntity> GetOrCreatePlayerAsync(int id)
+    public async Task<(PlayerEntity entity, bool created)> GetOrCreatePlayerAsync(int id)
     {
         var player = await GetPlayerAsync(id);
         if (player is not null)
         {
-            return player;
+            return (player, false);
         }
         
         player = new PlayerEntity
@@ -45,7 +45,7 @@ public class PlayerRepository : IPlayerRepository
         _db.Players.Add(player);
         await _db.SaveChangesAsync();
 
-        return player;
+        return (player, true);
     }
 
     public async Task UpdatePlayerAsync(PlayerEntity player)

@@ -19,12 +19,14 @@ var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 
 config.AddJsonFile("Products.json", false, true);
+config.AddJsonFile("StarterItems.json", false, true);
 
 builder.Services
     .AddConfiguredOptions<JwtOptions>(config)
     .AddConfiguredOptions<ChatOptions>(config)
     .AddConfiguredOptions<UrlOptions>(config)
-    .AddConfiguredOptions<ProductOptions>(config);
+    .AddConfiguredOptions<ProductOptions>(config)
+    .AddConfiguredOptions<StarterItemOptions>(config);
 
 builder.Services.AddSingleton<ITokenValidator, TokenValidator>();
 
