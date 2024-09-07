@@ -1,6 +1,6 @@
 using FastEndpoints;
-using FastEndpoints.Security;
 using Frontline.Data.Repositories;
+using Frontline.Extensions;
 
 namespace Frontline.Features.Profiles.GetProfile;
 
@@ -20,17 +20,7 @@ public class Endpoint : Endpoint<GetProfileRequest, ProfileDetails, Mapper>
 
     public override async Task HandleAsync(GetProfileRequest req, CancellationToken ct)
     {
-        int userId;
-        
-        if (req.ProfileType == ProfileType.Public)
-        {
-            userId = req.UserId;
-        }
-        else
-        {
-            userId = int.Parse(User.ClaimValue("UserId")!);
-        }
-
+        var userId = req.ProfileType == ProfileType.Public ? req.UserId : this.GetUserId();
         if (userId == -1)
         {
             var systemProfile = new ProfileDetails
