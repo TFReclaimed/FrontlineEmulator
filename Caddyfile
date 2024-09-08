@@ -11,6 +11,7 @@
 
 	log_skip //session/ping
 	log_skip /session/polling/
+	log_skip /gameserver/polling/*
 
 	uri path_regexp /{2,} /
 }
