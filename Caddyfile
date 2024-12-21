@@ -24,3 +24,13 @@
 
 	import common_config
 }
+
+opentoy.tfflinternal.com {
+	reverse_proxy :5181
+
+	log {
+		format console
+	}
+
+	tls fullchain1.pem privkey1.pem
+}
