@@ -45,5 +45,7 @@ msbuild.wrn
 # Certificates
 *.pem
 
-# TODO: Move assets to a separate repository
+# Game files
+PvEData.json
+ruleset.json
 wwwroot/
