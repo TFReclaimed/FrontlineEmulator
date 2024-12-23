@@ -4,12 +4,15 @@ using Frontline.Data.Entities;
 using Frontline.Data.Repositories;
 using Frontline.Game;
 using Frontline.Options;
+using Frontline.Services;
 using Microsoft.Extensions.Options;
 
 namespace Frontline.Features.Profiles.Login;
 
 public class Endpoint : Endpoint<LoginRequest, PlayerProfile, Mapper>
 {
+    private readonly IToyService _toyService;
+    
     private readonly IPlayerRepository _playerRepository;
     
     private readonly IInventoryRepository _inventoryRepository;
@@ -18,9 +21,11 @@ public class Endpoint : Endpoint<LoginRequest, PlayerProfile, Mapper>
     
     private readonly IOptions<JwtOptions> _jwtOptions;
 
-    public Endpoint(IPlayerRepository playerRepository, IInventoryRepository inventoryRepository,
-        IOptions<StarterItemOptions> starterItemOptions, IOptions<JwtOptions> jwtOptions)
+    public Endpoint(IToyService toyService, IPlayerRepository playerRepository,
+        IInventoryRepository inventoryRepository, IOptions<StarterItemOptions> starterItemOptions,
+        IOptions<JwtOptions> jwtOptions)
     {
+        _toyService = toyService;
         _playerRepository = playerRepository;
         _inventoryRepository = inventoryRepository;
         _starterItemOptions = starterItemOptions;
@@ -39,11 +44,23 @@ public class Endpoint : Endpoint<LoginRequest, PlayerProfile, Mapper>
         Logger.LogInformation("Login request received. Type: {LoginType}, AuthId: {AuthId}, Password {Password}, DeviceId: {DeviceId}, DeviceType: {DeviceType}",
             req.Param.LoginType, req.Param.AuthId, req.Param.Password, req.Param.DeviceId, req.Param.DeviceType);
 
-        // Works fine until I reverse engineer Nexon's API
-        const long startingId = 12530000000025341;
-
+        const long serviceId = 12530000000000000;
         var authId = long.Parse(req.Param.AuthId.Trim('"'));
-        var userId = (int) (authId - startingId);
+        var userId = (int) (authId - serviceId);
+        if (userId < 0)
+        {
+            Logger.LogWarning("Invalid user ID: {UserId}", userId);
+            await SendResultAsync(TypedResults.BadRequest());
+            return;
+        }
+        
+        var loginValid = await _toyService.VerifyUserAsync(authId, req.Param.Password.Trim('"'));
+        if (!loginValid)
+        {
+            Logger.LogWarning("Login failed for user: {AuthId}", req.Param.AuthId);
+            await SendResultAsync(TypedResults.BadRequest());
+            return;
+        }
         
         var (player, created) = await _playerRepository.GetOrCreatePlayerAsync(userId);
 

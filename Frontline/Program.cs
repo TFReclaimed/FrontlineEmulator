@@ -7,6 +7,7 @@ using Frontline.Extensions;
 using Frontline.Game;
 using Frontline.Missions;
 using Frontline.Options;
+using Frontline.Services;
 using Frontline.Xmpp;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
@@ -37,10 +38,14 @@ builder.Services.AddDbContext<AppDb>(o =>
     o.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
 });
 
+builder.Services.AddHttpClient<IToyService>();
+
 builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
 builder.Services.AddScoped<IGuildRepository, GuildRepository>();
 builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 builder.Services.AddScoped<IMissionRepository, MissionRepository>();
+
+builder.Services.AddSingleton<IToyService, ToyService>();
 
 builder.Services.AddHostedService<XmppServer>();
 

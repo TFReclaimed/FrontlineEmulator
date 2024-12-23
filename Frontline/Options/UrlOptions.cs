@@ -8,4 +8,6 @@ public class UrlOptions
     public string PveRulesetUrl { get; set; } = string.Empty;
     
     public string RulesetsUrl { get; set; } = string.Empty;
+    
+    public string ToyUrl { get; set; } = string.Empty;
 }
