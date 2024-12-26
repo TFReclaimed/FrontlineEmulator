@@ -35,6 +35,7 @@ public class PlayerRepository : IPlayerRepository
         
         player = new PlayerEntity
         {
+            Id = id,
             Credits = 100,
             Supply = 900,
             Trophies = 25,

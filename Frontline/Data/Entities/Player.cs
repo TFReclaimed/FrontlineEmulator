@@ -6,7 +6,7 @@ namespace Frontline.Data.Entities;
 public class PlayerEntity
 {
     [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    [DatabaseGenerated(DatabaseGeneratedOption.None)]
     public int Id { get; set; }
     [MaxLength(18)]
     public string Name { get; set; } = string.Empty;
