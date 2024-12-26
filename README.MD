@@ -31,8 +31,12 @@ The following domains need to be pointed to your server:
 - pc-tffl-leaderboard.s3-website-us-east-1.amazonaws.com
 - pc-tffl-html.s3-website-us-east-1.amazonaws.com
 
-If you didn't modify the APK, you'll need to listen on port 443 with a valid SSL certificate.
-A reverse proxy, such as Caddy or Nginx can be used to achieve this.
+You will also need to modify the TOY server address contained in the `AWS_SERVER` variable
+in `smali/kr/co/nexon/toy/api/request/NXToyRequestType.smali` to point to your server.
+Alternatively point `m-api.nexon.com` to your server.
+
+The server requires `ruleset.json` and `PvEData.json` files to be present in the root directory.
+Use AssetRipper to extract these files from the Unity project.
 
 ## Features
 
@@ -57,6 +61,7 @@ A reverse proxy, such as Caddy or Nginx can be used to achieve this.
   - 🚧 Booster packs 
     - ✅ Get booster packs
     - 🚧 Open booster pack
+      - What cards am I supposed to give? Do I just pick random ones from a list of all cards?
   - ✅ Cards
     - ✅ Get cards
     - ✅ Retire card
@@ -75,11 +80,16 @@ A reverse proxy, such as Caddy or Nginx can be used to achieve this.
   - ✅ Cancel mission
   - 🚧 Complete mission
     - Cards are not yet rewarded
+    - What is a synergy?
   - ✅ Revive card
+  - ⛔ Reputation
+    - I have no idea how this mechanic is supposed to work
 - 🚧 Leaderboards
   - ✅ PvP
   - ⛔ PvE
+    - I don't know if you even can access this in the game
   - ⛔ AWS S3 upload
+    - I'd prefer not to wake up to a 1k€ bill so just update the serverAddresses.json file
 - ✅ Guilds
   - ✅ Search guilds
   - ✅ Create guild
