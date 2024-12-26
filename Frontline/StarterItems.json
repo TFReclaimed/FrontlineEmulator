@@ -2,6 +2,249 @@
   "StarterItemSettings": {
     "Items": [
       {
+        "TemplateId": 365,
+        "Dropships": [
+          {
+            "DropshipId": 0,
+            "SlotIndex": 0
+          }
+        ]
+      },
+      {
+        "TemplateId": 202,
+        "Dropships": [
+          {
+            "DropshipId": 0,
+            "SlotIndex": 1
+          }
+        ]
+      },
+      {
+        "TemplateId": 144,
+        "Dropships": [
+          {
+            "DropshipId": 0,
+            "SlotIndex": 2
+          }
+        ]
+      },
+      {
+        "TemplateId": 474,
+        "Dropships": [
+          {
+            "DropshipId": 0,
+            "SlotIndex": 3
+          }
+        ]
+      },
+      {
+        "TemplateId": 159,
+        "Dropships": [
+          {
+            "DropshipId": 0,
+            "SlotIndex": 4
+          }
+        ]
+      },
+      {
+        "TemplateId": 114,
+        "Dropships": [
+          {
+            "DropshipId": 0,
+            "SlotIndex": 5
+          }
+        ]
+      },
+      {
+        "TemplateId": 120,
+        "Dropships": [
+          {
+            "DropshipId": 0,
+            "SlotIndex": 6
+          }
+        ]
+      },
+      {
+        "TemplateId": 161,
+        "Dropships": [
+          {
+            "DropshipId": 0,
+            "SlotIndex": 7
+          }
+        ]
+      },
+      {
+        "TemplateId": 28,
+        "Dropships": [
+          {
+            "DropshipId": 0,
+            "SlotIndex": 8
+          }
+        ]
+      },
+      {
+        "TemplateId": 137,
+        "Dropships": [
+          {
+            "DropshipId": 0,
+            "SlotIndex": 9
+          }
+        ]
+      },
+      {
+        "TemplateId": 147,
+        "Dropships": [
+          {
+            "DropshipId": 0,
+            "SlotIndex": 10
+          }
+        ]
+      },
+      {
+        "TemplateId": 136,
+        "Dropships": [
+          {
+            "DropshipId": 0,
+            "SlotIndex": 11
+          }
+        ]
+      },
+      {
+        "TemplateId": 432,
+        "Dropships": [
+          {
+            "DropshipId": 0,
+            "SlotIndex": 12
+          }
+        ]
+      },
+      {
+        "TemplateId": 334,
+        "Dropships": [
+          {
+            "DropshipId": 0,
+            "SlotIndex": 13
+          }
+        ]
+      },
+      {
+        "TemplateId": 33,
+        "Dropships": [
+          {
+            "DropshipId": 0,
+            "SlotIndex": 14
+          }
+        ]
+      },
+      {
+        "TemplateId": 477,
+        "Dropships": [
+          {
+            "DropshipId": 0,
+            "SlotIndex": 15
+          }
+        ]
+      },
+      {
+        "TemplateId": 483,
+        "Dropships": [
+          {
+            "DropshipId": 0,
+            "SlotIndex": 16
+          }
+        ]
+      },
+      {
+        "TemplateId": 116,
+        "Dropships": [
+          {
+            "DropshipId": 0,
+            "SlotIndex": 17
+          }
+        ]
+      },
+      {
+        "TemplateId": 32,
+        "Dropships": [
+          {
+            "DropshipId": 0,
+            "SlotIndex": 18
+          }
+        ]
+      },
+      {
+        "TemplateId": 29,
+        "Dropships": [
+          {
+            "DropshipId": 0,
+            "SlotIndex": 19
+          }
+        ]
+      },
+      {
+        "TemplateId": 335,
+        "Dropships": [
+          {
+            "DropshipId": 0,
+            "SlotIndex": 20
+          }
+        ]
+      },
+      {
+        "TemplateId": 253,
+        "Dropships": [
+          {
+            "DropshipId": 0,
+            "SlotIndex": 21
+          }
+        ]
+      },
+      {
+        "TemplateId": 198,
+        "Dropships": [
+          {
+            "DropshipId": 0,
+            "SlotIndex": 22
+          }
+        ]
+      },
+      {
+        "TemplateId": 257,
+        "Dropships": [
+          {
+            "DropshipId": 0,
+            "SlotIndex": 23
+          }
+        ]
+      },
+      {
+        "TemplateId": 266,
+        "Dropships": [
+          {
+            "DropshipId": 0,
+            "SlotIndex": 24
+          }
+        ]
+      },
+      {
+        "TemplateId": 249,
+        "Dropships": [
+          {
+            "DropshipId": 0,
+            "SlotIndex": 25
+          }
+        ]
+      },
+      {
+        "TemplateId": 199,
+        "Dropships": [
+          {
+            "DropshipId": 0,
+            "SlotIndex": 26
+          }
+        ]
+      },
+      {
         "TemplateId": 282,
         "Dropships": [
           {
@@ -11,11 +254,344 @@
         ]
       },
       {
+        "TemplateId": 296,
+        "Dropships": [
+          {
+            "DropshipId": 0,
+            "SlotIndex": 31
+          }
+        ]
+      },
+      {
+        "TemplateId": 292,
+        "Dropships": [
+          {
+            "DropshipId": 0,
+            "SlotIndex": 32
+          }
+        ]
+      },
+      {
+        "TemplateId": 398,
+        "Dropships": [
+          {
+            "DropshipId": 0,
+            "SlotIndex": 33
+          }
+        ]
+      },
+      {
+        "TemplateId": 446,
+        "Dropships": [
+          {
+            "DropshipId": 0,
+            "SlotIndex": 34
+          }
+        ]
+      },
+      {
+        "TemplateId": 399,
+        "Dropships": [
+          {
+            "DropshipId": 0,
+            "SlotIndex": 35
+          }
+        ]
+      },
+      {
+        "TemplateId": 454,
+        "Dropships": [
+          {
+            "DropshipId": 0,
+            "SlotIndex": 36
+          }
+        ]
+      },
+      {
+        "TemplateId": 403,
+        "Dropships": [
+          {
+            "DropshipId": 0,
+            "SlotIndex": 37
+          }
+        ]
+      },
+      {
+        "TemplateId": 340,
+        "Dropships": [
+          {
+            "DropshipId": 0,
+            "SlotIndex": 38
+          }
+        ]
+      },
+      {
+        "TemplateId": 397,
+        "Dropships": [
+          {
+            "DropshipId": 0,
+            "SlotIndex": 39
+          }
+        ]
+      },
+      {
+        "TemplateId": 400,
+        "Dropships": [
+          {
+            "DropshipId": 0,
+            "SlotIndex": 40
+          }
+        ]
+      },
+      {
+        "TemplateId": 23,
+        "Dropships": [
+          {
+            "DropshipId": 1,
+            "SlotIndex": 0
+          }
+        ]
+      },
+      {
+        "TemplateId": 365,
+        "Dropships": [
+          {
+            "DropshipId": 1,
+            "SlotIndex": 1
+          }
+        ]
+      },
+      {
+        "TemplateId": 280,
+        "Dropships": [
+          {
+            "DropshipId": 1,
+            "SlotIndex": 2
+          }
+        ]
+      },
+      {
+        "TemplateId": 201,
+        "Dropships": [
+          {
+            "DropshipId": 1,
+            "SlotIndex": 3
+          }
+        ]
+      },
+      {
+        "TemplateId": 281,
+        "Dropships": [
+          {
+            "DropshipId": 1,
+            "SlotIndex": 4
+          }
+        ]
+      },
+      {
+        "TemplateId": 139,
+        "Dropships": [
+          {
+            "DropshipId": 1,
+            "SlotIndex": 5
+          }
+        ]
+      },
+      {
+        "TemplateId": 137,
+        "Dropships": [
+          {
+            "DropshipId": 1,
+            "SlotIndex": 6
+          }
+        ]
+      },
+      {
+        "TemplateId": 186,
+        "Dropships": [
+          {
+            "DropshipId": 1,
+            "SlotIndex": 7
+          }
+        ]
+      },
+      {
+        "TemplateId": 185,
+        "Dropships": [
+          {
+            "DropshipId": 1,
+            "SlotIndex": 8
+          }
+        ]
+      },
+      {
+        "TemplateId": 38,
+        "Dropships": [
+          {
+            "DropshipId": 1,
+            "SlotIndex": 9
+          }
+        ]
+      },
+      {
+        "TemplateId": 588,
+        "Dropships": [
+          {
+            "DropshipId": 1,
+            "SlotIndex": 10
+          }
+        ]
+      },
+      {
+        "TemplateId": 253,
+        "Dropships": [
+          {
+            "DropshipId": 1,
+            "SlotIndex": 11
+          }
+        ]
+      },
+      {
+        "TemplateId": 257,
+        "Dropships": [
+          {
+            "DropshipId": 1,
+            "SlotIndex": 12
+          }
+        ]
+      },
+      {
+        "TemplateId": 184,
+        "Dropships": [
+          {
+            "DropshipId": 1,
+            "SlotIndex": 13
+          }
+        ]
+      },
+      {
+        "TemplateId": 249,
+        "Dropships": [
+          {
+            "DropshipId": 1,
+            "SlotIndex": 14
+          }
+        ]
+      },
+      {
+        "TemplateId": 199,
+        "Dropships": [
+          {
+            "DropshipId": 1,
+            "SlotIndex": 15
+          }
+        ]
+      },
+      {
+        "TemplateId": 271,
+        "Dropships": [
+          {
+            "DropshipId": 1,
+            "SlotIndex": 16
+          }
+        ]
+      },
+      {
         "TemplateId": 283,
         "Dropships": [
           {
             "DropshipId": 1,
             "SlotIndex": 30
+          }
+        ]
+      },
+      {
+        "TemplateId": 285,
+        "Dropships": [
+          {
+            "DropshipId": 1,
+            "SlotIndex": 31
+          }
+        ]
+      },
+      {
+        "TemplateId": 293,
+        "Dropships": [
+          {
+            "DropshipId": 1,
+            "SlotIndex": 32
+          }
+        ]
+      },
+      {
+        "TemplateId": 417,
+        "Dropships": [
+          {
+            "DropshipId": 1,
+            "SlotIndex": 33
+          }
+        ]
+      },
+      {
+        "TemplateId": 383,
+        "Dropships": [
+          {
+            "DropshipId": 1,
+            "SlotIndex": 34
+          }
+        ]
+      },
+      {
+        "TemplateId": 310,
+        "Dropships": [
+          {
+            "DropshipId": 1,
+            "SlotIndex": 35
+          }
+        ]
+      },
+      {
+        "TemplateId": 439,
+        "Dropships": [
+          {
+            "DropshipId": 1,
+            "SlotIndex": 36
+          }
+        ]
+      },
+      {
+        "TemplateId": 384,
+        "Dropships": [
+          {
+            "DropshipId": 1,
+            "SlotIndex": 37
+          }
+        ]
+      },
+      {
+        "TemplateId": 416,
+        "Dropships": [
+          {
+            "DropshipId": 1,
+            "SlotIndex": 38
+          }
+        ]
+      },
+      {
+        "TemplateId": 294,
+        "Dropships": [
+          {
+            "DropshipId": 1,
+            "SlotIndex": 39
+          }
+        ]
+      },
+      {
+        "TemplateId": 406,
+        "Dropships": [
+          {
+            "DropshipId": 1,
+            "SlotIndex": 40
           }
         ]
       }
