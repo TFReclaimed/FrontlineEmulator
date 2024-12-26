@@ -40,6 +40,7 @@ public class PlayerRepository : IPlayerRepository
             Supply = 900,
             Trophies = 25,
             Tokens = 25,
+            HighestTrophies = 25,
             Xp = 325
         };
         
