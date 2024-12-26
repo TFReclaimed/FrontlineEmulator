@@ -5,8 +5,10 @@
   ],
   "packageRules": [
     {
-      "matchPackagePatterns": ["^FastEndpoints.*"],
-      "groupName": "FastEndpoints"
+      "groupName": "FastEndpoints",
+      "matchPackageNames": [
+        "/^FastEndpoints.*/"
+      ]
     }
   ]
 }
