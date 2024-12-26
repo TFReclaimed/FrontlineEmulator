@@ -14,9 +14,11 @@ public class ItemEntity
     public int Xp { get; set; }
     public sbyte Rank { get; set; } = 1;
     public bool Casualty { get; set; }
-    
+
     [NotMapped]
-    public bool IsInDropship { get; set; }
+    public int DropshipId { get; set; } = -1;
+    [NotMapped]
+    public bool IsInDropship => DropshipId != -1;
     [NotMapped]
     public string? CurrentMission { get; set; }
 }

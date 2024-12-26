@@ -328,9 +328,9 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
             return (false, null);
         }
 
-        if (item.IsInDropship)
+        if (item.IsInDropship && item.DropshipId != 0 && item.DropshipId != 1)
         {
-            Logger.LogWarning("Card is in dropship: {ItemId}", item.ItemId);
+            Logger.LogWarning("Card {ItemId} is in dropship {DropshipId}", item.ItemId, item.DropshipId);
             return (false, null);
         }
 

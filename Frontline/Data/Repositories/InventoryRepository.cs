@@ -39,9 +39,11 @@ public class InventoryRepository : IInventoryRepository
                 Xp = item.Xp,
                 Rank = item.Rank,
                 Casualty = item.Casualty,
-                IsInDropship = _db.Dropships
-                    .Any(dropshipItem => dropshipItem.UserId == userId
-                                         && dropshipItem.ItemId == item.ItemId),
+                DropshipId = _db.Dropships
+                    .Where(dropshipItem => dropshipItem.UserId == userId
+                                         && dropshipItem.ItemId == item.ItemId)
+                    .Select(dropshipItem => dropshipItem.DropshipId)
+                    .FirstOrDefault(),
                 CurrentMission = _db.ActiveMissions
                     .Where(mission => mission.UserId == userId
                                       && (mission.RequiredCardItemId == item.ItemId
@@ -68,9 +70,11 @@ public class InventoryRepository : IInventoryRepository
                     Xp = item.Xp,
                     Rank = item.Rank,
                     Casualty = item.Casualty,
-                    IsInDropship = _db.Dropships
-                        .Any(dropshipItem => dropshipItem.UserId == userId
-                                             && dropshipItem.ItemId == item.ItemId),
+                    DropshipId = _db.Dropships
+                        .Where(dropshipItem => dropshipItem.UserId == userId
+                                             && dropshipItem.ItemId == item.ItemId)
+                        .Select(dropshipItem => dropshipItem.DropshipId)
+                        .FirstOrDefault(),
                     CurrentMission = _db.ActiveMissions
                         .Where(mission => mission.UserId == userId
                                           && (mission.RequiredCardItemId == item.ItemId
@@ -94,9 +98,11 @@ public class InventoryRepository : IInventoryRepository
                 Xp = item.Xp,
                 Rank = item.Rank,
                 Casualty = item.Casualty,
-                IsInDropship = _db.Dropships
-                    .Any(dropshipItem => dropshipItem.UserId == userId
-                                         && dropshipItem.ItemId == item.ItemId),
+                DropshipId = _db.Dropships
+                    .Where(dropshipItem => dropshipItem.UserId == userId
+                                         && dropshipItem.ItemId == item.ItemId)
+                    .Select(dropshipItem => dropshipItem.DropshipId)
+                    .FirstOrDefault(),
                 CurrentMission = _db.ActiveMissions
                     .Where(mission => mission.UserId == userId
                                       && (mission.RequiredCardItemId == item.ItemId

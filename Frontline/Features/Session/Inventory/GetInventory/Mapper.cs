@@ -20,7 +20,9 @@ public class Mapper : Mapper<GetInventoryRequest, List<InventoryCard>, List<Item
 
     private static CardData? GetCardData(ItemEntity item)
     {
-        if (item.IsInDropship)
+        // From the few videos on YouTube I believe that this behavior is correct,
+        // however without the original server code it's impossible to be sure.
+        if (item.IsInDropship && item.DropshipId != 0 && item.DropshipId != 1)
         {
             return new CardData
             {
