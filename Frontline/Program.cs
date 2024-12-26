@@ -35,7 +35,10 @@ var connectionString = config.GetConnectionString("connection");
 
 builder.Services.AddDbContext<AppDb>(o =>
 {
-    o.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+    o.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString), o =>
+    {
+        o.TranslateParameterizedCollectionsToConstants();
+    });
 });
 
 builder.Services.AddHttpClient<IToyService>();
