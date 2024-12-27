@@ -8,6 +8,7 @@ public interface IInventoryRepository
     Task<ItemEntity?> GetItemAsync(int userId, int itemId);
     List<ItemEntity> GetItems(int userId, int maxItems = 0);
     List<ItemEntity> GetItems(int userId, List<int> itemIds);
+    Task<int> GetItemCountAsync(int userId);
     List<DropshipEntity> GetDropshipItems(int userId);
     Task AddItemAsync(int userId, ItemEntity item);
     Task AddItemsAsync(int userId, List<ItemEntity> items);
@@ -119,6 +120,13 @@ public class InventoryRepository : IInventoryRepository
         return _db.Items
             .Where(item => item.UserId == userId && itemIds.Contains(item.ItemId))
             .ToList();
+    }
+
+    public async Task<int> GetItemCountAsync(int userId)
+    {
+        return await _db.Items
+            .Where(item => item.UserId == userId)
+            .CountAsync();
     }
 
     public List<DropshipEntity> GetDropshipItems(int userId)

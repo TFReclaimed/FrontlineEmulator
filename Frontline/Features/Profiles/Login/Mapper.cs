@@ -30,7 +30,6 @@ public class Mapper : Mapper<LoginRequest, PlayerProfile, PlayerEntity>
                         Wins = e.Wins,
                         HighestTrophies = e.HighestTrophies,
                         MissionsComplete = e.MissionsComplete,
-                        CardsCollected = 1, // TODO
                         MatchesPlayed = e.MatchesPlayed,
                         Xp = e.Xp
                     }

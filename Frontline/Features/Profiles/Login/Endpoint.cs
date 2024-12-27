@@ -78,6 +78,7 @@ public class Endpoint : Endpoint<LoginRequest, PlayerProfile, Mapper>
 
         var profile = Map.FromEntity(player);
         profile.SessionId = jwtToken;
+        profile.Details.GameProfiles[0].CardsCollected = await _inventoryRepository.GetItemCountAsync(userId);
         
         await SendAsync(profile);
     }

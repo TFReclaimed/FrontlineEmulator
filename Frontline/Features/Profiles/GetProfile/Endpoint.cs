@@ -7,10 +7,13 @@ namespace Frontline.Features.Profiles.GetProfile;
 public class Endpoint : Endpoint<GetProfileRequest, ProfileDetails, Mapper>
 {
     private readonly IPlayerRepository _playerRepository;
+    
+    private readonly IInventoryRepository _inventoryRepository;
 
-    public Endpoint(IPlayerRepository playerRepository)
+    public Endpoint(IPlayerRepository playerRepository, IInventoryRepository inventoryRepository)
     {
         _playerRepository = playerRepository;
+        _inventoryRepository = inventoryRepository;
     }
 
     public override void Configure()
@@ -47,6 +50,7 @@ public class Endpoint : Endpoint<GetProfileRequest, ProfileDetails, Mapper>
         }
         
         var profile = Map.FromEntity(entity);
+        profile.GameProfiles[0].CardsCollected = await _inventoryRepository.GetItemCountAsync(userId);
         
         await SendAsync(profile);
     }

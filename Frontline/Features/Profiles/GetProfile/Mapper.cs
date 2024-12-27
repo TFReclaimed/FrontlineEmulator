@@ -25,7 +25,6 @@ public class Mapper : Mapper<GetProfileRequest, ProfileDetails, PlayerEntity>
                     Wins = e.Wins,
                     HighestTrophies = e.HighestTrophies,
                     MissionsComplete = e.MissionsComplete,
-                    CardsCollected = 1, // TODO
                     MatchesPlayed = e.MatchesPlayed,
                     Xp = e.Xp
                 }
