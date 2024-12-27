@@ -25,8 +25,8 @@ public class ChatRoom
     {
         _chatOptions = chatOptions;
         _name = name;
-        _clients = new List<XmppClient>();
-        _messages = new List<Message>();
+        _clients = [];
+        _messages = [];
     }
     
     public async Task AddClient(XmppClient client)
@@ -56,10 +56,15 @@ public class ChatRoom
     public async Task RemoveClient(XmppClient client)
     {
         _clients.Remove(client);
+
+        if (client.Jid is null)
+        {
+            return;
+        }
         
         var presenceElement = new Presence
         {
-            From = new Jid(_name, Globals.XmppMucAddress, client.Jid!.Local),
+            From = new Jid(_name, Globals.XmppMucAddress, client.Jid.Local),
             Type = PresenceType.Unavailable
         };
         
@@ -68,9 +73,14 @@ public class ChatRoom
     
     public async Task BroadcastMessage(XmppClient sender, string message)
     {
+        if (sender.Jid is null)
+        {
+            return;
+        }
+        
         var messageElement = new Message
         {
-            From = new Jid(_name, Globals.XmppMucAddress, sender.Jid!.Local),
+            From = new Jid(_name, Globals.XmppMucAddress, sender.Jid.Local),
             Body = message,
             Type = MessageType.GroupChat,
             Delay = new Delay(DateTime.UtcNow)

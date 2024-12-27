@@ -87,7 +87,10 @@ public class XmppServer : BackgroundService
 
     private async void OnClientDisconnected(XmppClient client)
     {
-        _xmppClients.Remove(client);
+        if (!_xmppClients.Remove(client))
+        {
+            return;
+        }
         
         foreach (var chatRoom in _chatRooms.Values)
         {

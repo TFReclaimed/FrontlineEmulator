@@ -103,6 +103,7 @@ public class XmppClient
             }
             
             _logger.LogError(e, "{Client} Error receiving XMPP data.", this);
+            Disconnect();
         }
     }
 
