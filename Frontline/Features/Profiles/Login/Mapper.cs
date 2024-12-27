@@ -11,7 +11,7 @@ public class Mapper : Mapper<LoginRequest, PlayerProfile, PlayerEntity>
         {
             Name = e.Name,
             UserId = e.Id,
-            CharacterId = 6969, // TODO: Find out what this is
+            CharacterId = e.Id,
             Details = new ProfileDetails
             {
                 ProfileId = e.Id,
