@@ -123,10 +123,10 @@ public class Endpoint : Endpoint<CompleteMissionRequest, List<MissionStageStatus
             }
             
             await GivePlayerRewards(player, requiredRewardSet, bonus1RewardSet, bonus2RewardSet);
+            
+            player.MissionsComplete++;
+            await _playerRepository.UpdatePlayerAsync(player);
         }
-        
-        player.MissionsComplete++;
-        await _playerRepository.UpdatePlayerAsync(player);
         
         // TODO: xp to cards
         
