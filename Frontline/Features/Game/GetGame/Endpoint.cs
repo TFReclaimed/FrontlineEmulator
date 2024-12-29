@@ -2,6 +2,7 @@ using FastEndpoints;
 using Frontline.Extensions;
 using Frontline.Features.Session.Inventory.GetInventory;
 using Frontline.Features.Session.Rulesets;
+using Frontline.Game;
 using Frontline.Options;
 using Frontline.Services;
 using Microsoft.Extensions.Options;
@@ -43,7 +44,9 @@ public class Endpoint : Endpoint<GetGameRequest, GetGameResponse>
                 GameInstanceId = game.Id,
                 Players =
                 [
-                    new Player
+                    game.Player1!,
+                    game.Player2!
+                    /*new Player
                     {
                         Deck = new Deck
                         {
@@ -150,7 +153,7 @@ public class Endpoint : Endpoint<GetGameRequest, GetGameResponse>
                         },
                         Name = "Second player",
                         UserId = game.Player2Id
-                    }
+                    }*/
                 ],
                 Board = new GameBoard
                 {

@@ -43,7 +43,7 @@ public class Endpoint : Endpoint<RequestGameRequest, RequestGameResponse>
         }
         else
         {
-            game.Player2Id = userId;
+            game.BeginGame(userId);
             _userService.IncrementChangeCounter(game.Player1Id);
             _userService.IncrementChangeCounter(game.Player2Id);
         }

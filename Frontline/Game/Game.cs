@@ -12,7 +12,11 @@ public class CcgGame
 
     public readonly List<GameEventParams> GameEvents;
     
-    public int Player2Id { get; set; }
+    public Player? Player1 { get; private set; }
+    
+    public Player? Player2 { get; private set; }
+    
+    public int Player2Id { get; private set; }
     
     public int GameChangeCounter { get; private set; }
     
@@ -26,6 +30,11 @@ public class CcgGame
         Player1Id = player1Id;
         VersusType = versusType;
         GameEvents = [];
+    }
+
+    public void BeginGame(int player2Id)
+    {
+        Player2Id = player2Id;
     }
     
     public bool IsPlayerInGame(int userId)

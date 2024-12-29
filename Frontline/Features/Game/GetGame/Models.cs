@@ -1,5 +1,4 @@
 using System.Text.Json.Serialization;
-using Frontline.Features.Session.Inventory.GetInventory;
 using Frontline.Features.Session.Rulesets;
 using Frontline.Game;
 
@@ -36,47 +35,6 @@ public class GameState
     public VersusType GameType { get; set; }
 }
 
-public class Player
-{
-    public required Deck Deck { get; set; }
-    public required SupportDeck SupportDeck { get; set; }
-    public required CardCollection Hand { get; set; }
-    public required CardCollection Discard { get; set; }
-    public required GameResources Resources { get; set; }
-    public required CardStack Commander { get; set; }
-    public string Name { get; set; } = string.Empty;
-    public int UserId { get; set; }
-}
-
-public class Deck
-{
-    public required List<InventoryCard> Cards { get; set; }
-    public sbyte Count { get; set; }
-}
-
-public class SupportDeck : Deck
-{
-    public sbyte CurrentSupport { get; set; }
-    public InventoryCard? Repeater { get; set; }
-    public InventoryCard? Ultimate { get; set; }
-    public bool CanRepeat { get; set; }
-    public bool NoShuffle { get; set; }
-}
-
-public class CardCollection
-{
-    public required List<InventoryCard> Cards { get; set; }
-}
-
-public class GameResources
-{
-    public sbyte CommandAccum { get; set; }
-    public sbyte CommandUnits { get; set; }
-    public sbyte Health { get; set; }
-    public sbyte MaxHealth { get; set; }
-    public sbyte DrawDamage { get; set; }
-}
-
 public class GameBoard
 {
     public required List<GameRegion> Regions { get; set; }
@@ -86,11 +44,6 @@ public class GameRegion
 {
     public required List<CardStack> Slots { get; set; }
     public RegionEnum RegionLocation { get; set; }
-}
-
-public class CardStack
-{
-    public InventoryCard? PrimaryCard { get; set; }
 }
 
 public class Rewards
