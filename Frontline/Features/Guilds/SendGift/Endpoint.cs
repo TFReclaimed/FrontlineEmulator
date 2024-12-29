@@ -41,6 +41,13 @@ public class Endpoint : Endpoint<SendGiftRequest, SendGiftResponse>
             return;
         }
         
+        if (player.Id == req.ReceiverId)
+        {
+            Logger.LogWarning("Player {UserId} tried to send a gift to themselves", userId);
+            await SendResultAsync(TypedResults.BadRequest());
+            return;
+        }
+        
         var receiver = await _playerRepository.GetPlayerAsync(req.ReceiverId);
         if (receiver is null)
         {
