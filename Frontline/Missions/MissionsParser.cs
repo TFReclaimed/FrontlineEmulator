@@ -74,7 +74,7 @@ public static class MissionsParser
 
     public static MissionStage? GetMission(string key)
     {
-        return Data?.MissionStages[key];
+        return Data?.MissionStages.TryGetValue(key, out var mission) == true ? mission : null;
     }
     
     public static MissionSlot? GetMissionSlot(string name)
@@ -84,7 +84,7 @@ public static class MissionsParser
             return null;
         }
         
-        return Data?.Slots[name];
+        return Data?.Slots.TryGetValue(name, out var slot) == true ? slot : null;
     }
 
     public static MissionSlotXp? GetMissionSlotXp(string name)
@@ -94,7 +94,7 @@ public static class MissionsParser
             return null;
         }
         
-        return Data?.SlotXp[name];
+        return Data?.SlotXp.TryGetValue(name, out var slotXp) == true ? slotXp : null;
     }
     
     public static MissionRewardSet? GetRewardSet(string name)
@@ -104,7 +104,7 @@ public static class MissionsParser
             return null;
         }
         
-        return Data?.RewardSets[name];
+        return Data?.RewardSets.TryGetValue(name, out var rewardSet) == true ? rewardSet : null;
     }
 
     public static MissionRewardSet? GetBonusRewardSet(string bonusRequirement)
@@ -135,16 +135,16 @@ public static class MissionsParser
             return null;
         }
         
-        return Data?.Rewards[name];
+        return Data?.Rewards.TryGetValue(name, out var reward) == true ? reward : null;
     }
 
     public static MissionConditional? GetConditional(string name)
     {
-        return Data?.Conditionals[name];
+        return Data?.Conditionals.TryGetValue(name, out var conditional) == true ? conditional : null;
     }
     
     public static MissionNameMapping? GetMissionNameMapping(string name)
     {
-        return Data?.NameMap[name];
+        return Data?.NameMap.TryGetValue(name, out var mapping) == true ? mapping : null;
     }
 }
