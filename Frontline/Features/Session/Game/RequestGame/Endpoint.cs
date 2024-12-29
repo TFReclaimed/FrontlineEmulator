@@ -33,6 +33,7 @@ public class Endpoint : Endpoint<RequestGameRequest, RequestGameResponse>
             return;
         }
         
+        // TODO: opponent id not taken into account
         Logger.LogInformation("User {UserId} requested a game of {GameType} against {OpponentId}.",
             userId, req.Param.GameType, req.Param.OpponentId);
 
@@ -43,7 +44,7 @@ public class Endpoint : Endpoint<RequestGameRequest, RequestGameResponse>
         }
         else
         {
-            game.BeginGame(userId);
+            await _gameService.BeginGame(game, userId);
             _userService.IncrementChangeCounter(game.Player1Id);
             _userService.IncrementChangeCounter(game.Player2Id);
         }

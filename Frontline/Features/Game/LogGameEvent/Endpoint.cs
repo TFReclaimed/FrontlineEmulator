@@ -49,6 +49,8 @@ public class Endpoint : Endpoint<GameEventRequest, GameEventResponse>
             };
         }
         
+        Logger.LogInformation("New game event: {GameEvent}", req.Param.GameEvent); // TODO: remove once ready
+        
         game.IncreaseChangeCounter(req.Param);
         
         var response = new GameEventResponse

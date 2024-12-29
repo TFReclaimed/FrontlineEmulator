@@ -1,6 +1,5 @@
 using FastEndpoints;
 using Frontline.Extensions;
-using Frontline.Features.Session.Inventory.GetInventory;
 using Frontline.Features.Session.Rulesets;
 using Frontline.Game;
 using Frontline.Options;
@@ -46,114 +45,6 @@ public class Endpoint : Endpoint<GetGameRequest, GetGameResponse>
                 [
                     game.Player1!,
                     game.Player2!
-                    /*new Player
-                    {
-                        Deck = new Deck
-                        {
-                            Cards = []
-                        },
-                        SupportDeck = new SupportDeck
-                        {
-                            Cards =
-                            [
-                                new InventoryCard
-                                {
-                                    Type = "UnitCard",
-                                    InstanceId = 4,
-                                    TemplateId = 296
-                                },
-                                new InventoryCard
-                                {
-                                    Type = "UnitCard",
-                                    InstanceId = 5,
-                                    TemplateId = 296
-                                }
-                            ],
-                            Count = 2,
-                            CurrentSupport = 1
-                        },
-                        Hand = new CardCollection
-                        {
-                            Cards = []
-                        },
-                        Discard = new CardCollection
-                        {
-                            Cards = []
-                        },
-                        Resources = new GameResources
-                        {
-                            CommandAccum = 0,
-                            CommandUnits = 0,
-                            Health = 20,
-                            MaxHealth = 20,
-                            DrawDamage = 1
-                        },
-                        Commander = new CardStack
-                        {
-                            PrimaryCard = new InventoryCard
-                            {
-                                Type = "CommanderCard",
-                                InstanceId = 1,
-                                TemplateId = 282
-                            }
-                        },
-                        Name = "Firs player",
-                        UserId = game.Player1Id
-                    },
-                    new Player
-                    {
-                        Deck = new Deck
-                        {
-                            Cards = []
-                        },
-                        SupportDeck = new SupportDeck
-                        {
-                            Cards =
-                            [
-                                new InventoryCard
-                                {
-                                    Type = "UnitCard",
-                                    InstanceId = 3,
-                                    TemplateId = 296
-                                },
-                                new InventoryCard
-                                {
-                                    Type = "UnitCard",
-                                    InstanceId = 6,
-                                    TemplateId = 296
-                                }
-                            ],
-                            Count = 2,
-                            CurrentSupport = 1
-                        },
-                        Hand = new CardCollection
-                        {
-                            Cards = []
-                        },
-                        Discard = new CardCollection
-                        {
-                            Cards = []
-                        },
-                        Resources = new GameResources
-                        {
-                            CommandAccum = 0,
-                            CommandUnits = 0,
-                            Health = 20,
-                            MaxHealth = 20,
-                            DrawDamage = 1
-                        },
-                        Commander = new CardStack
-                        {
-                            PrimaryCard = new InventoryCard
-                            {
-                                Type = "CommanderCard",
-                                InstanceId = 2,
-                                TemplateId = 283
-                            }
-                        },
-                        Name = "Second player",
-                        UserId = game.Player2Id
-                    }*/
                 ],
                 Board = new GameBoard
                 {

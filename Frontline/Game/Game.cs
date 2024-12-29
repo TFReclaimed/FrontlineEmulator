@@ -1,4 +1,6 @@
 using System.Text.Json.Serialization;
+using Frontline.Data.Entities;
+using Frontline.Features.Session.Inventory.GetInventory;
 
 namespace Frontline.Game;
 
@@ -32,9 +34,69 @@ public class CcgGame
         GameEvents = [];
     }
 
-    public void BeginGame(int player2Id)
+    public void BeginGame(PlayerEntity player1Entity, PlayerEntity player2Entity)
     {
-        Player2Id = player2Id;
+        Player2Id = player2Entity.Id;
+        Player1 = CreatePlayer(player1Entity);
+        Player2 = CreatePlayer(player2Entity);
+    }
+
+    private Player CreatePlayer(PlayerEntity playerEntity)
+    {
+        return new Player
+        {
+            Deck = new Deck
+            {
+                Cards = []
+            },
+            SupportDeck = new SupportDeck
+            {
+                Cards =
+                [
+                    new InventoryCard
+                    {
+                        Type = "UnitCard",
+                        InstanceId = 3,
+                        TemplateId = 296
+                    },
+                    new InventoryCard
+                    {
+                        Type = "UnitCard",
+                        InstanceId = 6,
+                        TemplateId = 296
+                    }
+                ],
+                Count = 2,
+                CurrentSupport = 1
+            },
+            Hand = new CardCollection
+            {
+                Cards = []
+            },
+            Discard = new CardCollection
+            {
+                Cards = []
+            },
+            Resources = new GameResources
+            {
+                CommandAccum = 0,
+                CommandUnits = 0,
+                Health = 20,
+                MaxHealth = 20,
+                DrawDamage = 1
+            },
+            Commander = new CardStack
+            {
+                PrimaryCard = new InventoryCard
+                {
+                    Type = "CommanderCard",
+                    InstanceId = 2,
+                    TemplateId = 283
+                }
+            },
+            Name = playerEntity.Name,
+            UserId = playerEntity.Id
+        };
     }
     
     public bool IsPlayerInGame(int userId)

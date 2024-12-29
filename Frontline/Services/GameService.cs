@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using Frontline.Data.Repositories;
 using Frontline.Game;
 
 namespace Frontline.Services;
@@ -8,13 +9,21 @@ public interface IGameService
     CcgGame CreateGame(int userId, VersusType type);
     CcgGame? GetGame(Guid gameId);
     CcgGame? GetEmptyGame(VersusType type);
+    Task BeginGame(CcgGame game, int player2Id);
     void DeleteGame(Guid gameId);
     bool IsPlayerInGame(int userId, [NotNullWhen(true)] out CcgGame? game);
 }
 
 public class GameService : IGameService
 {
+    private readonly IServiceScopeFactory _serviceScopeFactory;
+    
     private readonly Dictionary<Guid, CcgGame> _games = new();
+
+    public GameService(IServiceScopeFactory serviceScopeFactory)
+    {
+        _serviceScopeFactory = serviceScopeFactory;
+    }
 
     public CcgGame CreateGame(int userId, VersusType type)
     {
@@ -31,6 +40,22 @@ public class GameService : IGameService
     public CcgGame? GetEmptyGame(VersusType type)
     {
         return _games.Values.FirstOrDefault(g => !g.IsFull && g.VersusType == type);
+    }
+
+    public async Task BeginGame(CcgGame game, int player2Id)
+    {
+        using var scope = _serviceScopeFactory.CreateScope();
+        var playerRepository = scope.ServiceProvider.GetRequiredService<IPlayerRepository>();
+
+        var player1Entity = await playerRepository.GetPlayerAsync(game.Player1Id);
+        var player2Entity = await playerRepository.GetPlayerAsync(player2Id);
+        
+        if (player1Entity is null || player2Entity is null)
+        {
+            throw new Exception("Player 1 or 2 not found.");
+        }
+        
+        game.BeginGame(player1Entity, player2Entity);
     }
 
     public void DeleteGame(Guid gameId)
