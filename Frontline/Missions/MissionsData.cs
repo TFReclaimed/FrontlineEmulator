@@ -131,6 +131,27 @@ public class MissionStage
     public CardRarity Bonus2SlotMinRarity { get; set; }
     [JsonPropertyName("B2MinRank:I")]
     public int Bonus2SlotMinRank { get; set; }
+    
+    public bool IsCalculated => MissionType is MissionType.Elective or MissionType.Once;
+    
+    public VisibilityRarity VisibilityRarity
+    {
+        get
+        {
+            if (!IsCalculated)
+            {
+                return VisibilityRarity.None;
+            }
+
+            return ElectiveSelectionWeight switch
+            {
+                -1f or >= 1f => VisibilityRarity.Common,
+                >= 0.1f => VisibilityRarity.Uncommon,
+                >= 0.01f => VisibilityRarity.Rare,
+                _ => VisibilityRarity.VeryRare
+            };
+        }
+    }
 }
 
 public enum MissionType
@@ -139,6 +160,15 @@ public enum MissionType
     Elective = 1,
     Persistent = 2,
     Once = 3
+}
+
+public enum VisibilityRarity
+{
+    None = -1,
+    Common = 0,
+    Uncommon = 1,
+    Rare = 2,
+    VeryRare = 3
 }
 
 public class MissionSet

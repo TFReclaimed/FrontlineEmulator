@@ -86,6 +86,16 @@ public static class MissionsParser
         
         return Data?.Slots[name];
     }
+
+    public static MissionSlotXp? GetMissionSlotXp(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return null;
+        }
+        
+        return Data?.SlotXp[name];
+    }
     
     public static MissionRewardSet? GetRewardSet(string name)
     {

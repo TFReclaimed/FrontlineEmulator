@@ -128,7 +128,20 @@ public class Endpoint : Endpoint<CompleteMissionRequest, List<MissionStageStatus
             await _playerRepository.UpdatePlayerAsync(player);
         }
         
-        // TODO: xp to cards
+        if (mission.RequiredCardItem is not null && mission.Success)
+        {
+            await GiveCardXp(mission.RequiredCardItem, missionData, missionData.RequiredSlotCount >= 1);
+        }
+        
+        if (mission.BonusCard1Item is not null && mission.Bonus1Success)
+        {
+            await GiveCardXp(mission.BonusCard1Item, missionData, missionData.RequiredSlotCount >= 2);
+        }
+        
+        if (mission.BonusCard2Item is not null && mission.Bonus2Success)
+        {
+            await GiveCardXp(mission.BonusCard2Item, missionData, missionData.RequiredSlotCount >= 3);
+        }
         
         var response = new List<MissionStageStatus>
         {
@@ -280,6 +293,40 @@ public class Endpoint : Endpoint<CompleteMissionRequest, List<MissionStageStatus
                 Rank = (sbyte) cardTemplate.MinimumRank
             });
         }
+    }
+
+    private async Task GiveCardXp(ItemEntity card, MissionStage missionData, bool required)
+    {
+        var cardTemplate = RulesetParser.GetCardTemplate(card.TemplateId);
+        if (cardTemplate is null)
+        {
+            Logger.LogWarning("Card template not found: {TemplateId}", card.TemplateId);
+            return;
+        }
+        
+        if (cardTemplate.Type != CardType.Pilot && cardTemplate.Type != CardType.Titan)
+        {
+            return;
+        }
+        
+        var slotXp = MissionsParser.GetMissionSlotXp(required ? "Required" : "Bonus");
+        if (slotXp is null)
+        {
+            Logger.LogWarning("Slot XP definition not found: {SlotType}", required ? "Required" : "Bonus");
+            return;
+        }
+
+        var multiplier = missionData.VisibilityRarity switch
+        {
+            VisibilityRarity.Uncommon => slotXp.Uncommon,
+            VisibilityRarity.Rare => slotXp.Rare,
+            VisibilityRarity.VeryRare => slotXp.VeryRare,
+            _ => 1f
+        };
+
+        card.Xp += (int) Math.Ceiling(slotXp.Base * multiplier);
+        
+        await _inventoryRepository.UpdateItemAsync(card);
     }
 
     private async Task<List<MissionStageStatus>> GetNextMissions(int userId, string key)
