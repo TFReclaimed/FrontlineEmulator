@@ -10,6 +10,7 @@ public class Player
     public required CardStack Commander { get; set; }
     public string Name { get; set; } = string.Empty;
     public int UserId { get; set; }
+    public bool Surrender { get; set; }
 }
 
 public class GameResources

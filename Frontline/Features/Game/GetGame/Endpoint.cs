@@ -163,6 +163,7 @@ public class Endpoint : Endpoint<GetGameRequest, GetGameResponse>
                     ? (sbyte) 0
                     : (sbyte) 1,
                 WinningPlayer = -1,
+                SurrenderGameOver = game.SurrenderGameOver,
                 NextSummonInstanceId = -1,
                 GameType = game.VersusType,
                 Rewards =

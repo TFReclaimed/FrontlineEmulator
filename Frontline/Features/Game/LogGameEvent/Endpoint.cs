@@ -48,6 +48,10 @@ public class Endpoint : Endpoint<GameEventRequest, GameEventResponse>
                 CardIdsRemovedFromHand = (req.Param as GameEventEndTurnParams)!.HandCardIdsToDiscard
             };
         }
+        else if (req.Param.GameEvent == GameEvent.Surrender)
+        {
+            game.Surrender(req.Param.PlayerIndex);
+        }
         
         Logger.LogInformation("New game event: {GameEvent}", req.Param.GameEvent); // TODO: remove once ready
         

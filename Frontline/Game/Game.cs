@@ -24,6 +24,8 @@ public class CcgGame
     
     public int CurrentEventCount { get; private set; }
     
+    public bool SurrenderGameOver { get; private set; }
+    
     public bool IsFull => Player2Id != 0;
 
     public CcgGame(Guid id, int player1Id, VersusType versusType)
@@ -109,6 +111,20 @@ public class CcgGame
         GameEvents.Add(gameEvent);
         GameChangeCounter++;
         CurrentEventCount++;
+    }
+
+    public void Surrender(sbyte playerIndex)
+    {
+        if (playerIndex == 0)
+        {
+            Player1!.Surrender = true;
+        }
+        else
+        {
+            Player2!.Surrender = true;
+        }
+        
+        SurrenderGameOver = true;
     }
 }
 
