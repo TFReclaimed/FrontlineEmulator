@@ -21,6 +21,8 @@ public class GameService : IGameService
     private readonly IServiceScopeFactory _serviceScopeFactory;
     
     private readonly Dictionary<Guid, CcgGame> _games = new();
+    
+    private readonly Lock _lock = new();
 
     public GameService(ILogger<GameService> logger, IServiceScopeFactory serviceScopeFactory)
     {
@@ -33,18 +35,29 @@ public class GameService : IGameService
         _logger.LogInformation("Creating new game for user {UserId} of type {GameType}.", userId, type);
         
         var game = new CcgGame(Guid.NewGuid(), userId, type);
-        _games.Add(game.Id, game);
+
+        lock (_lock)
+        {
+            _games.Add(game.Id, game);
+        }
+        
         return game;
     }
 
     public CcgGame? GetGame(Guid gameId)
     {
-        return _games.GetValueOrDefault(gameId);
+        lock (_lock)
+        {
+            return _games.GetValueOrDefault(gameId);
+        }
     }
 
     public CcgGame? GetEmptyGame(VersusType type)
     {
-        return _games.Values.FirstOrDefault(g => !g.IsFull && g.VersusType == type);
+        lock (_lock)
+        {
+            return _games.Values.FirstOrDefault(g => !g.IsFull && g.VersusType == type);
+        }
     }
 
     public async Task BeginGame(CcgGame game, int player2Id)
@@ -68,12 +81,18 @@ public class GameService : IGameService
 
     public void DeleteGame(Guid gameId)
     {
-        _games.Remove(gameId);
+        lock (_lock)
+        {
+            _games.Remove(gameId);
+        }
     }
 
     public bool IsPlayerInGame(int userId, [NotNullWhen(true)] out CcgGame? game)
     {
-        game = _games.Values.FirstOrDefault(g => g.Player1Id == userId || g.Player2Id == userId);
-        return game != null;
+        lock (_lock)
+        {
+            game = _games.Values.FirstOrDefault(g => g.Player1Id == userId || g.Player2Id == userId);
+            return game != null;
+        }
     }
 }
