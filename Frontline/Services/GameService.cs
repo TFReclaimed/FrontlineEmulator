@@ -16,17 +16,22 @@ public interface IGameService
 
 public class GameService : IGameService
 {
+    private readonly ILogger<GameService> _logger;
+    
     private readonly IServiceScopeFactory _serviceScopeFactory;
     
     private readonly Dictionary<Guid, CcgGame> _games = new();
 
-    public GameService(IServiceScopeFactory serviceScopeFactory)
+    public GameService(ILogger<GameService> logger, IServiceScopeFactory serviceScopeFactory)
     {
+        _logger = logger;
         _serviceScopeFactory = serviceScopeFactory;
     }
 
     public CcgGame CreateGame(int userId, VersusType type)
     {
+        _logger.LogInformation("Creating new game for user {UserId} of type {GameType}.", userId, type);
+        
         var game = new CcgGame(Guid.NewGuid(), userId, type);
         _games.Add(game.Id, game);
         return game;
@@ -54,6 +59,9 @@ public class GameService : IGameService
         {
             throw new Exception("Player 1 or 2 not found.");
         }
+        
+        _logger.LogInformation("Beginning game {GameId} between players {Player1Id} and {Player2Id}.",
+            game.Id, game.Player1Id, player2Id);
         
         game.BeginGame(player1Entity, player2Entity);
     }
