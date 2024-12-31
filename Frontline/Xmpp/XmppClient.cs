@@ -20,6 +20,8 @@ namespace Frontline.Xmpp;
 public class XmppClient
 {
     private readonly TcpClient _tcpClient;
+    
+    private readonly System.Timers.Timer _timeoutTimer;
 
     private readonly CancellationToken _stoppingToken;
     
@@ -57,11 +59,15 @@ public class XmppClient
         ITokenValidator tokenValidator, IOptions<ChatOptions> chatOptions)
     {
         _tcpClient = tcpClient;
+        _timeoutTimer = new System.Timers.Timer(5000);
         _stoppingToken = stoppingToken;
         _logger = loggerFactory.CreateLogger<XmppClient>();
         _tokenValidator = tokenValidator;
         _chatOptions = chatOptions;
         _streamParser = new StreamParser();
+        
+        _timeoutTimer.Elapsed += (_, _) => DisconnectTimeout();
+        _timeoutTimer.AutoReset = false;
 
         _streamParser.OnStreamStart += OnStreamStart;
         _streamParser.OnStreamElement += OnStreamElement;
@@ -74,6 +80,7 @@ public class XmppClient
     public void StartReceiverTask()
     {
         _ = Task.Run(ReceiveAsync);
+        _timeoutTimer.Start();
     }
 
     private async Task ReceiveAsync()
@@ -124,10 +131,18 @@ public class XmppClient
         }
     }
 
+    private void DisconnectTimeout()
+    {
+        _logger.LogWarning("{Client} Authentication timeout.", this);
+        Disconnect();
+    }
+
     public void Disconnect()
     {
         _logger.LogInformation("{Client} Disconnected.", this);
         _tcpClient.Close();
+        _timeoutTimer.Stop();
+        _timeoutTimer.Dispose();
 
         OnDisconnected?.Invoke(this);
     }
@@ -249,6 +264,7 @@ public class XmppClient
         
         UserId = int.Parse(jwt.Claims.First(claim => claim.Type == "UserId").Value);
         
+        _timeoutTimer.Stop();
         _streamParser.Reset();
 
         _sessionState = SessionState.Authenticated;
