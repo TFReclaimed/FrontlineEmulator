@@ -359,6 +359,14 @@ public class XmppClient
                 return;
             }
             
+            if (subject == ":::CHALLENGED:::" && to == -1)
+            {
+                _logger.LogWarning("{Client} Attempted to challenge system.", this);
+                var systemJid = new Jid("-1", Globals.XmppServerAddress, "-1");
+                await SendPrivateMessage(systemJid, $":::CHALLENGE_REJECTED:::{to}");
+                return;
+            }
+            
             _logger.LogInformation("{Client} [PM #{To}] [{Subject}]: {Body}", this, to, subject, body);
             OnPrivateMessageSent?.Invoke(this, to, subject, body);
         }
