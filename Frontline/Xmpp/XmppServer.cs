@@ -34,7 +34,7 @@ public class XmppServer : BackgroundService
         _tokenValidator = tokenValidator;
         _serviceScopeFactory = serviceScopeFactory;
         _tcpListener = new TcpListener(IPAddress.Any, _chatOptions.Value.Port);
-        _xmppClients = new List<XmppClient>();
+        _xmppClients = [];
         _chatRooms = new Dictionary<string, ChatRoom>();
     }
 
