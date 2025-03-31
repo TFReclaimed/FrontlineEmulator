@@ -85,7 +85,12 @@ public class XmppServer : BackgroundService
         return base.StopAsync(cancellationToken);
     }
 
-    private async void OnClientDisconnected(XmppClient client)
+    private void OnClientDisconnected(XmppClient client)
+    {
+        _ = ProcessOnClientDisconnected(client);
+    }
+
+    private async Task ProcessOnClientDisconnected(XmppClient client)
     {
         if (!_xmppClients.Remove(client))
         {
@@ -98,7 +103,12 @@ public class XmppServer : BackgroundService
         }
     }
     
-    private async void OnClientRequestProfileUpdate(XmppClient client)
+    private void OnClientRequestProfileUpdate(XmppClient client)
+    {
+        _ = ProcessOnClientRequestProfileUpdate(client);
+    }
+    
+    private async Task ProcessOnClientRequestProfileUpdate(XmppClient client)
     {
         using var scope = _serviceScopeFactory.CreateScope();
         var playerRepository = scope.ServiceProvider.GetRequiredService<IPlayerRepository>();
@@ -114,7 +124,12 @@ public class XmppServer : BackgroundService
         client.Avatar = player.AvatarId;
     }
 
-    private async void OnClientEnteredRoom(XmppClient client, string room)
+    private void OnClientEnteredRoom(XmppClient client, string room)
+    {
+        _ = ProcessOnClientEnteredRoom(client, room);
+    }
+
+    private async Task ProcessOnClientEnteredRoom(XmppClient client, string room)
     {
         if (room.StartsWith("guild"))
         {
@@ -141,7 +156,12 @@ public class XmppServer : BackgroundService
         await chatRoom.AddClient(client);
     }
     
-    private async void OnClientExitedRoom(XmppClient client, string room)
+    private void OnClientExitedRoom(XmppClient client, string room)
+    {
+        _ = ProcessOnClientExitedRoom(client, room);
+    }
+    
+    private async Task ProcessOnClientExitedRoom(XmppClient client, string room)
     {
         if (_chatRooms.TryGetValue(room, out var chatRoom))
         {
@@ -149,7 +169,12 @@ public class XmppServer : BackgroundService
         }
     }
     
-    private async void OnClientMucMessageSent(XmppClient client, string room, string message)
+    private void OnClientMucMessageSent(XmppClient client, string room, string message)
+    {
+        _ = ProcessOnClientMucMessageSent(client, room, message);
+    }
+    
+    private async Task ProcessOnClientMucMessageSent(XmppClient client, string room, string message)
     {
         if (_chatRooms.TryGetValue(room, out var chatRoom))
         {

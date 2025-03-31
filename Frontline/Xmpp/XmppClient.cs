@@ -79,7 +79,7 @@ public class XmppClient
 
     public void StartReceiverTask()
     {
-        _ = Task.Run(ReceiveAsync);
+        _ = Task.Run(ReceiveAsync, _stoppingToken);
         _timeoutTimer.Start();
     }
 
@@ -159,8 +159,13 @@ public class XmppClient
         
         await SendAsync(message);
     }
+
+    private void OnStreamStart(XmppXElement element)
+    {
+        _ = ProcessOnStreamStart(element);
+    }
     
-    private async void OnStreamStart(XmppXElement element)
+    private async Task ProcessOnStreamStart(XmppXElement element)
     {
         element.IsStartTag = true;
         
@@ -199,7 +204,12 @@ public class XmppClient
         await SendAsync(features);
     }
 
-    private async void OnStreamElement(XmppXElement element)
+    private void OnStreamElement(XmppXElement element)
+    {
+        _ = ProcessOnStreamElement(element);
+    }
+
+    private async Task ProcessOnStreamElement(XmppXElement element)
     {
         LogXml(element, true);
 
@@ -227,7 +237,12 @@ public class XmppClient
         }
     }
 
-    private async void OnStreamEnd()
+    private void OnStreamEnd()
+    {
+        _ = ProcessOnStreamEnd();
+    }
+    
+    private async Task ProcessOnStreamEnd()
     {
         var stream = new XmppStream
         {
