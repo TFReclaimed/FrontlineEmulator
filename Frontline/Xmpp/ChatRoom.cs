@@ -16,6 +16,8 @@ public class ChatRoom
     private readonly IOptions<ChatOptions> _chatOptions;
     
     private readonly string _name;
+
+    private readonly Jid _systemJid;
     
     private readonly List<XmppClient> _clients;
     
@@ -25,6 +27,7 @@ public class ChatRoom
     {
         _chatOptions = chatOptions;
         _name = name;
+        _systemJid = new Jid(_name, Globals.XmppMucAddress, "-1");
         _clients = [];
         _messages = [];
     }
@@ -50,6 +53,7 @@ public class ChatRoom
             await client.SendAsync(message);
         }
 
+        await SendSystemPresence(client);
         await SendWelcomeMessage(client);
     }
     
@@ -122,12 +126,30 @@ public class ChatRoom
         };
     }
 
+    private async Task SendSystemPresence(XmppClient client)
+    {
+        await client.SendAsync(MakePresence(_systemJid));
+    }
+
     private async Task SendWelcomeMessage(XmppClient client)
     {
-        var systemJid = new Jid(_name, Globals.XmppMucAddress, "-1");
-        
-        await Broadcast(MakePresence(systemJid));
-        
+        if (!string.IsNullOrWhiteSpace(_chatOptions.Value.WelcomeMessage))
+        {
+            await SendSystemMessage(client, _chatOptions.Value.WelcomeMessage);
+        }
+
+        if (_name.StartsWith("guild"))
+        {
+            await SendSystemMessage(client, "Welcome to the guild chat!");
+        }
+        else
+        {
+            await SendSystemMessage(client, "Welcome to the global chat!");
+        }
+    }
+
+    private async Task SendSystemMessage(XmppClient client, string message)
+    {
         if (string.IsNullOrWhiteSpace(_chatOptions.Value.WelcomeMessage))
         {
             return;
@@ -135,8 +157,8 @@ public class ChatRoom
         
         var welcomeMessage = new Message
         {
-            From = systemJid,
-            Body = _chatOptions.Value.WelcomeMessage,
+            From = _systemJid,
+            Body = message,
             Type = MessageType.GroupChat
         };
         
