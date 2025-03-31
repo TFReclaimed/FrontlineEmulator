@@ -66,7 +66,7 @@ public class XmppClient
         _chatOptions = chatOptions;
         _streamParser = new StreamParser();
         
-        _timeoutTimer.Elapsed += (_, _) => DisconnectTimeout();
+        _timeoutTimer.Elapsed += (_, _) => Disconnect("Authentication timeout.");
         _timeoutTimer.AutoReset = false;
 
         _streamParser.OnStreamStart += OnStreamStart;
@@ -109,8 +109,7 @@ public class XmppClient
                 return;
             }
             
-            _logger.LogError(e, "{Client} Error receiving XMPP data.", this);
-            Disconnect();
+            Disconnect($"Error receiving XMPP data. {e.Message}");
         }
     }
 
@@ -126,20 +125,21 @@ public class XmppClient
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "{Client} Error sending XMPP element.", this);
-            Disconnect();
+            Disconnect($"Error sending XMPP element. {e.Message}");
         }
     }
 
-    private void DisconnectTimeout()
+    public void Disconnect(string? reason = null)
     {
-        _logger.LogWarning("{Client} Authentication timeout.", this);
-        Disconnect();
-    }
-
-    public void Disconnect()
-    {
-        _logger.LogInformation("{Client} Disconnected.", this);
+        if (reason != null)
+        {
+            _logger.LogInformation("{Client} Disconnected: {Reason}", this, reason);
+        }
+        else
+        {
+            _logger.LogInformation("{Client} Disconnected.", this);
+        }
+        
         _tcpClient.Close();
         _timeoutTimer.Stop();
         _timeoutTimer.Dispose();
@@ -254,8 +254,7 @@ public class XmppClient
 
     private void OnStreamError(Exception exception)
     {
-        _logger.LogError(exception, "{Client} Error parsing XML stream.", this);
-        Disconnect();
+        Disconnect($"Error parsing XML stream. {exception.Message}");
     }
 
     private async Task HandleAuth(XmppDotNet.Xmpp.Sasl.Auth auth)
