@@ -18,7 +18,7 @@
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0-preview.3.efcore.9.0.0" />
-        <PackageReference Include="XmppDotNet" Version="3.2.4" />
+        <PackageReference Include="XmppDotNet" Version="3.2.5" />
     </ItemGroup>
 
 </Project>
