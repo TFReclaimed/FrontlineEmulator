@@ -30,16 +30,37 @@ public class Endpoint : Endpoint<GameEventRequest, GameEventResponse>
             await SendNotFoundAsync();
             return;
         }
+        
+        var player = game.GetPlayer(userId);
+        if (player is null)
+        {
+            await SendNotFoundAsync();
+            return;
+        }
 
         req.Param.CcgEventsLog = [];
 
         if (req.Param.GameEvent == GameEvent.DoInitialSwap)
         {
-            req.Param.EventResult = new InitialSwapEventResult
+            // TODO: don't trust the client. check if we can do this
+            game.ClearCcgEventLog();
+            
+            var mulliganEvent = (GameEventMulliganParams) req.Param;
+            foreach (var i in mulliganEvent.HandCardIdsToReplace)
             {
-                CardIdsRemovedFromHand = [],
-                DeckReplacementIndices = []
+                Logger.LogInformation(i.ToString());
+            }
+
+            var initialSwapEventResult = new InitialSwapEventResult
+            {
+                CardIdsRemovedFromHand = mulliganEvent.HandCardIdsToReplace,
+                DeckReplacementIndices = new int[mulliganEvent.HandCardIdsToReplace.Length]
             };
+            
+            game.DoInitialSwap(player, initialSwapEventResult.CardIdsRemovedFromHand, initialSwapEventResult.DeckReplacementIndices);
+
+            req.Param.EventResult = initialSwapEventResult;
+            req.Param.CcgEventsLog = game.GetCcgEventLog();
         }
         else if (req.Param.GameEvent == GameEvent.EndTurn)
         {

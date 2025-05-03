@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Frontline.Game;
 
 public class Player
@@ -10,7 +12,10 @@ public class Player
     public required CardStack Commander { get; set; }
     public string Name { get; set; } = string.Empty;
     public int UserId { get; set; }
+    public bool InitialCardsSwapped { get; set; }
     public bool Surrender { get; set; }
+    [JsonIgnore]
+    public sbyte PlayerIndex { get; set; }
 }
 
 public class GameResources

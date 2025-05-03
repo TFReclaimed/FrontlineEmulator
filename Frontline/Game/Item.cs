@@ -3,7 +3,6 @@ using System.Text.Json.Serialization;
 namespace Frontline.Game;
 
 [JsonDerivedType(typeof(Card))]
-[JsonDerivedType(typeof(CommanderCard))]
 [JsonDerivedType(typeof(ResourceCard))]
 public class Item
 {

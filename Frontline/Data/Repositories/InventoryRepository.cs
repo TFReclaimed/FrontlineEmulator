@@ -10,6 +10,7 @@ public interface IInventoryRepository
     List<ItemEntity> GetItems(int userId, List<int> itemIds);
     Task<int> GetItemCountAsync(int userId);
     List<DropshipEntity> GetDropshipItems(int userId);
+    Task<List<DropshipEntity>> GetDropshipItems(int userId, int dropshipId);
     Task AddItemAsync(int userId, ItemEntity item);
     Task AddItemsAsync(int userId, List<ItemEntity> items);
     Task AddDropshipItemsAsync(int userId, List<DropshipEntity> dropshipItems);
@@ -135,6 +136,14 @@ public class InventoryRepository : IInventoryRepository
             .Include(dropship => dropship.Item)
             .Where(dropship => dropship.UserId == userId)
             .ToList();
+    }
+
+    public async Task<List<DropshipEntity>> GetDropshipItems(int userId, int dropshipId)
+    {
+        return await _db.Dropships
+            .Include(dropship => dropship.Item)
+            .Where(dropship => dropship.UserId == userId && dropship.DropshipId == dropshipId)
+            .ToListAsync();
     }
 
     public async Task AddItemAsync(int userId, ItemEntity item)

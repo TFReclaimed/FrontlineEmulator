@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using Frontline.Data.Entities;
 using Frontline.Data.Repositories;
 using Frontline.Game;
 
@@ -64,6 +65,7 @@ public class GameService : IGameService
     {
         using var scope = _serviceScopeFactory.CreateScope();
         var playerRepository = scope.ServiceProvider.GetRequiredService<IPlayerRepository>();
+        var inventoryRepository = scope.ServiceProvider.GetRequiredService<IInventoryRepository>();
 
         var player1Entity = await playerRepository.GetPlayerAsync(game.Player1Id);
         var player2Entity = await playerRepository.GetPlayerAsync(player2Id);
@@ -73,10 +75,25 @@ public class GameService : IGameService
             throw new Exception("Player 1 or 2 not found.");
         }
         
+        var player1Dropship = await inventoryRepository.GetDropshipItems(player1Entity.Id, player1Entity.DropshipId);
+        var player2Dropship = await inventoryRepository.GetDropshipItems(player2Entity.Id, player2Entity.DropshipId);
+
+        GetCardSets(player1Dropship, out var player1Deck,
+            out var player1Support, out var player1Commander);
+        GetCardSets(player2Dropship, out var player2Deck,
+            out var player2Support, out var player2Commander);
+        
+        if (player1Deck.Count == 0 || player1Support.Count == 0 || player1Commander.ItemId == 0 ||
+            player2Deck.Count == 0 || player2Support.Count == 0 || player2Commander.ItemId == 0)
+        {
+            throw new Exception("Player 1 or 2 has an invalid deck.");
+        }
+        
         _logger.LogInformation("Beginning game {GameId} between players {Player1Id} and {Player2Id}.",
             game.Id, game.Player1Id, player2Id);
         
-        game.BeginGame(player1Entity, player2Entity);
+        game.BeginGame(player1Entity, player1Deck, player1Support, player1Commander,
+            player2Entity, player2Deck, player2Support, player2Commander);
     }
 
     public void DeleteGame(Guid gameId)
@@ -93,6 +110,32 @@ public class GameService : IGameService
         {
             game = _games.Values.FirstOrDefault(g => g.Player1Id == userId || g.Player2Id == userId);
             return game != null;
+        }
+    }
+    
+    private void GetCardSets(List<DropshipEntity> dropship, out List<ItemEntity> deck, out List<ItemEntity> support,
+        out ItemEntity commander)
+    {
+        deck = [];
+        support = [];
+        commander = new ItemEntity();
+        
+        foreach (var item in dropship)
+        {
+            switch (item.SlotIndex)
+            {
+                case < 30:
+                    deck.Add(item.Item!);
+                    break;
+                
+                case 30:
+                    commander = item.Item!;
+                    break;
+                
+                case > 30:
+                    support.Add(item.Item!);
+                    break;
+            }
         }
     }
 }

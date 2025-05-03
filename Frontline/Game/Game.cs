@@ -1,6 +1,5 @@
 using System.Text.Json.Serialization;
 using Frontline.Data.Entities;
-using Frontline.Features.Session.Inventory.GetInventory;
 
 namespace Frontline.Game;
 
@@ -13,6 +12,10 @@ public class CcgGame
     public readonly VersusType VersusType;
 
     public readonly List<GameEventParams> GameEvents;
+
+    private readonly List<CcgEventData> _ccgEventLog;
+
+    private readonly Random _random;
     
     public Player? Player1 { get; private set; }
     
@@ -34,42 +37,47 @@ public class CcgGame
         Player1Id = player1Id;
         VersusType = versusType;
         GameEvents = [];
+        _ccgEventLog = [];
+        _random = new Random();
     }
 
-    public void BeginGame(PlayerEntity player1Entity, PlayerEntity player2Entity)
+    public void BeginGame(PlayerEntity player1Entity, List<ItemEntity> player1Deck, List<ItemEntity> player1Support, ItemEntity player1Commander,
+        PlayerEntity player2Entity, List<ItemEntity> player2Deck, List<ItemEntity> player2Support, ItemEntity player2Commander)
     {
         Player2Id = player2Entity.Id;
-        Player1 = CreatePlayer(player1Entity);
-        Player2 = CreatePlayer(player2Entity);
+        Player1 = CreatePlayer(player1Entity, player1Deck, player1Support, player1Commander);
+        Player1.PlayerIndex = 0;
+        Player2 = CreatePlayer(player2Entity, player2Deck, player2Support, player2Commander);
+        Player2.PlayerIndex = 1;
     }
 
-    private Player CreatePlayer(PlayerEntity playerEntity)
+    private Player CreatePlayer(PlayerEntity playerEntity, List<ItemEntity> deck, List<ItemEntity> support,
+        ItemEntity commander)
     {
-        return new Player
+        var player = new Player
         {
             Deck = new Deck
             {
-                Cards = []
+                Cards = deck.Select(deckItem => new GameCard
+                {
+                    Type = "UnitCard",
+                    InstanceId = deckItem.ItemId,
+                    TemplateId = deckItem.TemplateId,
+                    Rank = deckItem.Rank,
+                    Xp = deckItem.Xp
+                }).ToList()
             },
             SupportDeck = new SupportDeck
             {
-                Cards =
-                [
-                    new InventoryCard
-                    {
-                        Type = "UnitCard",
-                        InstanceId = 3,
-                        TemplateId = 296
-                    },
-                    new InventoryCard
-                    {
-                        Type = "UnitCard",
-                        InstanceId = 6,
-                        TemplateId = 296
-                    }
-                ],
-                Count = 2,
-                CurrentSupport = 1
+                Cards = support.Select(supportItem => new GameCard
+                {
+                    Type = "UnitCard",
+                    InstanceId = supportItem.ItemId,
+                    TemplateId = supportItem.TemplateId,
+                    Rank = supportItem.Rank,
+                    Xp = supportItem.Xp
+                }).ToList(),
+                CurrentSupport = 1 // TODO: Check if this is correct
             },
             Hand = new CardCollection
             {
@@ -89,21 +97,34 @@ public class CcgGame
             },
             Commander = new CardStack
             {
-                PrimaryCard = new InventoryCard
+                PrimaryCard = new GameCard
                 {
                     Type = "CommanderCard",
-                    InstanceId = 2,
-                    TemplateId = 283
+                    InstanceId = commander.ItemId,
+                    TemplateId = commander.TemplateId
                 }
             },
             Name = playerEntity.Name,
             UserId = playerEntity.Id
         };
+        
+        // TODO: get initial draw from game template
+        for (var i = 0; i < 5; i++)
+        {
+            player.Hand.DrawFromDeck(player.Deck, player.PlayerIndex);
+        }
+
+        return player;
     }
     
     public bool IsPlayerInGame(int userId)
     {
         return Player1Id == userId || Player2Id == userId;
+    }
+
+    public Player? GetPlayer(int userId)
+    {
+        return Player1Id == userId ? Player1 : Player2Id == userId ? Player2 : null;
     }
     
     public void IncreaseChangeCounter(GameEventParams gameEvent)
@@ -111,6 +132,63 @@ public class CcgGame
         GameEvents.Add(gameEvent);
         GameChangeCounter++;
         CurrentEventCount++;
+    }
+
+    public List<CcgEventData> GetCcgEventLog()
+    {
+        return _ccgEventLog;
+    }
+    
+    public void AddCcgEvent(CcgEventData ccgEvent)
+    {
+        _ccgEventLog.Add(ccgEvent);
+    }
+    
+    public void ClearCcgEventLog()
+    {
+        _ccgEventLog.Clear();
+    }
+
+    public void DoInitialSwap(Player player, int[] cardIdsToReshuffle, int[] deckSwapIndices)
+    {
+        var removedCards = new List<GameCard>();
+        foreach (var cardId in cardIdsToReshuffle)
+        {
+            var card = player.Hand.RemoveCard(cardId);
+            if (card is not null)
+            {
+                removedCards.Add(card);
+            }
+        }
+
+        if (cardIdsToReshuffle.Length > 0)
+        {
+            var mulliganDrawEvent = new MulliganDrawCcgEvent
+            {
+                Owner = player.PlayerIndex
+            };
+            
+            for (var i = 0; i < cardIdsToReshuffle.Length; i++)
+            {
+                var card = player.Hand.DrawFromDeck(player.Deck, player.PlayerIndex);
+                if (card is not null)
+                {
+                    mulliganDrawEvent.AddDrawnCard(card);
+                }
+            }
+            
+            AddCcgEvent(mulliganDrawEvent);
+        }
+        
+        for (var i = 0; i < removedCards.Count; i++)
+        {
+            deckSwapIndices[i] = _random.Next(0, player.Deck.Count + i);
+            player.Deck.InsertCardAtIndex(removedCards[i], deckSwapIndices[i]);
+        }
+
+        player.InitialCardsSwapped = true;
+        
+        // TODO: rest of the function. force starts the game if both players have swapped i think?
     }
 
     public void Surrender(sbyte playerIndex)

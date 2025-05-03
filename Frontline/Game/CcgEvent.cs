@@ -1,7 +1,37 @@
+using System.Text.Json.Serialization;
+
 namespace Frontline.Game;
 
+[JsonDerivedType(typeof(MulliganDrawCcgEvent), "MulliganDrawCCGEvent")]
+[JsonDerivedType(typeof(MulliganDrawCcgEventCardData), "MulliganDrawCCGEventCardData")]
 public class CcgEventData
 {
+}
+
+public class MulliganDrawCcgEvent : CcgEventData
+{
+    public CcgEventType DrawType { get; set; } = CcgEventType.MulliganDraw;
+    public List<MulliganDrawCcgEventCardData> CardsData { get; set; } = [];
+    public sbyte Owner { get; set; }
+
+    public void AddDrawnCard(GameCard card)
+    {
+        CardsData.Add(new MulliganDrawCcgEventCardData(card.InstanceId, card.TemplateId, card.Rank));
+    }
+}
+
+public class MulliganDrawCcgEventCardData : CcgEventData
+{
+    public int InstanceId { get; set; }
+    public int TemplateId { get; set; }
+    public sbyte CardRank { get; set; }
+
+    public MulliganDrawCcgEventCardData(int instanceId, int templateId, sbyte cardRank)
+    {
+        InstanceId = instanceId;
+        TemplateId = templateId;
+        CardRank = cardRank;
+    }
 }
 
 public enum CcgEventType
