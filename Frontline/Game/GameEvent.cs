@@ -46,7 +46,7 @@ public class GameEventRegionTarget : GameEventCardParams
     public int TargetId { get; set; }
     public sbyte TargetOwnerId { get; set; }
     public TargetableArea Area { get; set; } = TargetableArea.AnyAreas;
-    public RegionEnum TargetRegion { get; set; }
+    public RegionEnum Target { get; set; }
     public sbyte SlotIndex { get; set; }
     public sbyte PushDir { get; set; }
 }
