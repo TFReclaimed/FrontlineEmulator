@@ -9,6 +9,4 @@ public class Item
 {
     public int InstanceId { get; set; }
     public int TemplateId { get; set; }
-    [JsonPropertyName("bundle")]
-    public string AssetBundle { get; set; } = string.Empty;
 }
