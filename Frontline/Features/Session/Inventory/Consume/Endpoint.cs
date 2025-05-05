@@ -33,7 +33,7 @@ public class Endpoint : Endpoint<ConsumeRequest>
         {
             Logger.LogWarning("Player {UserId} tried to consume item {ItemId} but it wasn't found!",
                 userId, req.ItemId);
-            await SendNotFoundAsync();
+            await SendResultAsync(Results.NotFound("Item not found!"));
             return;
         }
         
@@ -42,7 +42,7 @@ public class Endpoint : Endpoint<ConsumeRequest>
         {
             Logger.LogWarning("Player {UserId} tried to consume item {ItemId} but card template {TemplateId} wasn't found!",
                 userId, req.ItemId, item.TemplateId);
-            await SendNotFoundAsync();
+            await SendResultAsync(Results.NotFound("Card template not found!"));
             return;
         }
 
@@ -50,7 +50,7 @@ public class Endpoint : Endpoint<ConsumeRequest>
         {
             Logger.LogWarning("Player {UserId} tried to consume item {ItemId} but it's in a dropship!",
                 userId, req.ItemId);
-            await SendResultAsync(TypedResults.BadRequest());
+            await SendResultAsync(Results.BadRequest("Item is in dropship!"));
             return;
         }
         
@@ -58,7 +58,7 @@ public class Endpoint : Endpoint<ConsumeRequest>
         {
             Logger.LogWarning("Player {UserId} tried to consume item {ItemId} but it's on a mission!",
                 userId, req.ItemId);
-            await SendResultAsync(TypedResults.BadRequest());
+            await SendResultAsync(Results.BadRequest("Item is on a mission!"));
             return;
         }
 
@@ -66,7 +66,7 @@ public class Endpoint : Endpoint<ConsumeRequest>
         {
             Logger.LogWarning("Player {UserId} tried to consume item {ItemId} but it's injured/damaged!",
                 userId, req.ItemId);
-            await SendResultAsync(TypedResults.BadRequest());
+            await SendResultAsync(Results.BadRequest("Item is injured/damaged!"));
             return;
         }
 
@@ -91,7 +91,7 @@ public class Endpoint : Endpoint<ConsumeRequest>
         {
             Logger.LogWarning("Player {UserId} tried to use XP card {ItemId} despite it not being one!",
                 userId, req.ItemId);
-            await SendResultAsync(TypedResults.BadRequest());
+            await SendResultAsync(Results.BadRequest("Item is not an XP card!"));
             return;
         }
         
@@ -100,7 +100,7 @@ public class Endpoint : Endpoint<ConsumeRequest>
         {
             Logger.LogWarning("Player {UserId} tried to use XP card {ItemId} for target {TargetId} but target wasn't found!",
                 userId, req.ItemId, req.TargetId);
-            await SendNotFoundAsync();
+            await SendResultAsync(Results.NotFound("Target not found!"));
             return;
         }
 
@@ -121,7 +121,7 @@ public class Endpoint : Endpoint<ConsumeRequest>
         {
             Logger.LogWarning("Player {UserId} tried to retire a resource card {ItemId} for credits!",
                 userId, req.ItemId);
-            await SendResultAsync(TypedResults.BadRequest());
+            await SendResultAsync(Results.BadRequest("Item is a resource card!"));
             return;
         }
         
@@ -130,7 +130,7 @@ public class Endpoint : Endpoint<ConsumeRequest>
         {
             Logger.LogWarning("Player {UserId} tried to retire card {ItemId} but player wasn't found!",
                 userId, req.ItemId);
-            await SendNotFoundAsync();
+            await SendResultAsync(Results.NotFound("Player not found!"));
             return;
         }
         
@@ -159,7 +159,7 @@ public class Endpoint : Endpoint<ConsumeRequest>
         {
             Logger.LogWarning("Player {UserId} tried retire card {ItemId} for XP but target {TargetId} wasn't found!",
                 userId, req.ItemId, req.TargetId);
-            await SendNotFoundAsync();
+            await SendResultAsync(Results.NotFound("Target not found!"));
             return;
         }
 
