@@ -1,4 +1,6 @@
 using System.Text.Json.Serialization;
+using Frontline.Data.Entities;
+using Frontline.Game;
 using Frontline.Missions;
 using Frontline.Utils;
 
@@ -24,6 +26,18 @@ public class InventoryCard
     public CardData? GameData { get; set; }
     public int Xp { get; set; }
     public sbyte Rank { get; set; }
+
+    public static InventoryCard FromItemEntity(ItemEntity item, CardTemplate? template = null)
+    {
+        return new InventoryCard
+        {
+            Type = template is ResourceCardTemplate ? "ResourceCard" : "Card",
+            InstanceId = item.ItemId,
+            TemplateId = item.TemplateId,
+            Xp = item.Xp,
+            Rank = item.Rank
+        };
+    }
 }
 
 public class CardData

@@ -1,4 +1,4 @@
-using Frontline.Game;
+using Frontline.Features.Session.Inventory.GetInventory;
 
 namespace Frontline.Features.Session.Inventory.Booster.OpenBooster;
 
@@ -9,6 +9,6 @@ public class OpenBoosterPackRequest
 
 public class BoosterPackResponse
 {
-    public required List<Card> Cards { get; set; }
-    public required List<ResourceCard> Resources { get; set; }
+    public required List<InventoryCard> Cards { get; set; }
+    public required List<InventoryCard> Resources { get; set; }
 }

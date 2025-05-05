@@ -61,7 +61,6 @@ Use AssetRipper to extract these files from the Unity project.
   - 🚧 Booster packs 
     - ✅ Get booster packs
     - 🚧 Open booster pack
-      - What cards am I supposed to give? Do I just pick random ones from a list of all cards?
   - ✅ Cards
     - ✅ Get cards
     - ✅ Retire card

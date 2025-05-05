@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using Frontline.Game;
 using Microsoft.EntityFrameworkCore;
 
 namespace Frontline.Data.Entities;
@@ -21,6 +22,15 @@ public class ItemEntity
     public bool IsInDropship => DropshipId != -1;
     [NotMapped]
     public string? CurrentMission { get; set; }
+
+    public static ItemEntity FromTemplate(CardTemplate template)
+    {
+        return new ItemEntity
+        {
+            TemplateId = template.CardId,
+            Rank = (sbyte) template.MinimumRank
+        };
+    }
 }
 
 [PrimaryKey(nameof(UserId), nameof(DropshipId), nameof(SlotIndex))]
