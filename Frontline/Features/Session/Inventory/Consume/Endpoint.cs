@@ -72,7 +72,6 @@ public class Endpoint : Endpoint<ConsumeRequest>
 
         if (req.RetireFor is null)
         {
-            // TODO: Doesn't work. Game has all xp resource card instance ids as 0 for some reason
             await UseXpCard(userId, req, item, cardTemplate);
         }
         else if (req.RetireFor == RetireFor.CREDITS)

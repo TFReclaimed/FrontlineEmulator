@@ -1,5 +1,6 @@
 using FastEndpoints;
 using Frontline.Data.Entities;
+using Frontline.Game;
 using Frontline.Missions;
 
 namespace Frontline.Features.Session.Inventory.GetInventory;
@@ -10,12 +11,24 @@ public class Mapper : Mapper<GetInventoryRequest, List<InventoryCard>, List<Item
     {
         return e.Select(item => new InventoryCard
         {
+            Type = GetCardType(item.TemplateId),
             InstanceId = item.ItemId,
             TemplateId = item.TemplateId,
             GameData = GetCardData(item),
             Xp = item.Xp,
             Rank = item.Rank
         }).ToList();
+    }
+
+    private static string GetCardType(int templateId)
+    {
+        if (RulesetParser.Ruleset is null)
+        {
+            return "Card";
+        }
+
+        var template = RulesetParser.Ruleset.CardsRuleset.Cards.Values.FirstOrDefault(x => x.CardId == templateId);
+        return template is ResourceCardTemplate ? "ResourceCard" : "Card";
     }
 
     private static CardData? GetCardData(ItemEntity item)
