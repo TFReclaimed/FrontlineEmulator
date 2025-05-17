@@ -4,6 +4,7 @@ using Frontline.Data.Repositories;
 using Frontline.Extensions;
 using Frontline.Features.Session.Inventory.GetInventory;
 using Frontline.Game;
+using Frontline.Services;
 
 namespace Frontline.Features.Session.Inventory.Booster.OpenBooster;
 
@@ -13,10 +14,13 @@ public class Endpoint : Endpoint<OpenBoosterPackRequest, BoosterPackResponse>
 
     private readonly IInventoryRepository _inventoryRepository;
 
-    public Endpoint(IPlayerRepository playerRepository, IInventoryRepository inventoryRepository)
+    private readonly IUserService _userService;
+
+    public Endpoint(IPlayerRepository playerRepository, IInventoryRepository inventoryRepository, IUserService userService)
     {
         _playerRepository = playerRepository;
         _inventoryRepository = inventoryRepository;
+        _userService = userService;
     }
 
     public override void Configure()
@@ -60,9 +64,31 @@ public class Endpoint : Endpoint<OpenBoosterPackRequest, BoosterPackResponse>
             .ToList();
 
         var potentialResourceCards = RulesetParser.Ruleset.CardsRuleset.Cards.Values
-            .Where(x => x.Type == CardType.Resource && x is ResourceCardTemplate
+            .Where(x =>
             {
-                ResourceType: ResourceType.Xp or ResourceType.Credit or ResourceType.Supply or ResourceType.Intel
+                if (x.Type != CardType.Resource)
+                {
+                    return false;
+                }
+                
+                if (x is ResourceCardTemplate resourceCardTemplate)
+                {
+                    if (resourceCardTemplate.ResourceType is ResourceType.IntelTypeOperational
+                        or ResourceType.IntelTypeTechnical
+                        or ResourceType.IntelTypePersonnel)
+                    {
+                        return true;
+                    }
+                    
+                    if (resourceCardTemplate.ResourceType is ResourceType.Xp
+                        or ResourceType.Credit
+                        or ResourceType.Supply)
+                    {
+                        return resourceCardTemplate.ResourceValue > 0;
+                    }
+                }
+                
+                return false;
             })
             .ToList();
 
@@ -71,17 +97,43 @@ public class Endpoint : Endpoint<OpenBoosterPackRequest, BoosterPackResponse>
             .ToList();
         
         var rareCardTemplate = potentialRareCards[Random.Shared.Next(0, potentialRareCards.Count)];
-        var resourceCardTemplate = potentialResourceCards[Random.Shared.Next(0, potentialResourceCards.Count)];
+        var resourceCardTemplate = (ResourceCardTemplate) potentialResourceCards[Random.Shared.Next(0, potentialResourceCards.Count)];
         var commonCards = potentialCommonCards
             .OrderBy(_ => Random.Shared.Next())
             .Take(3)
             .ToList();
 
+        var addResourceCard = true;
+        if (resourceCardTemplate.ResourceType == ResourceType.Credit)
+        {
+            player.Credits += resourceCardTemplate.ResourceValue;
+            await _playerRepository.UpdatePlayerAsync(player);
+            _userService.IncrementChangeCounter(userId);
+            addResourceCard = false;
+            
+            Logger.LogInformation("Player {UserId} got {ResourceValue} credits from a booster pack.",
+                userId, resourceCardTemplate.ResourceValue);
+        }
+        else if (resourceCardTemplate.ResourceType == ResourceType.Supply)
+        {
+            player.Supply += resourceCardTemplate.ResourceValue;
+            await _playerRepository.UpdatePlayerAsync(player);
+            _userService.IncrementChangeCounter(userId);
+            addResourceCard = false;
+            
+            Logger.LogInformation("Player {UserId} got {ResourceValue} supply from a booster pack.",
+                userId, resourceCardTemplate.ResourceValue);
+        }
+        
         List<CardTemplate> cardTemplates = [
             rareCardTemplate,
-            resourceCardTemplate,
             ..commonCards
         ];
+        
+        if (addResourceCard)
+        {
+            cardTemplates.Add(resourceCardTemplate);
+        }
         
         List<ItemEntity> cardEntities = [];
         foreach (var template in cardTemplates)
@@ -90,7 +142,11 @@ public class Endpoint : Endpoint<OpenBoosterPackRequest, BoosterPackResponse>
         }
 
         await _inventoryRepository.AddItemsAsync(userId, cardEntities);
-        // TODO: handle credit and supply separately
+
+        if (!addResourceCard)
+        {
+            cardEntities.Add(ItemEntity.FromTemplate(resourceCardTemplate));
+        }
 
         var response = new BoosterPackResponse
         {
