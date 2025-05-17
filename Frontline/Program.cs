@@ -49,6 +49,7 @@ builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 builder.Services.AddScoped<IMissionRepository, MissionRepository>();
 
 builder.Services.AddSingleton<IToyService, ToyService>();
+builder.Services.AddSingleton<IUserService, UserService>();
 
 builder.Services.AddHostedService<XmppServer>();
 
