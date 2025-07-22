@@ -31,7 +31,7 @@ public class CardTemplate
     {
         var credits = Type switch
         {
-            CardType.Pilot or CardType.Titan => 25 * (int) Math.Floor(xp * 0.2f),
+            CardType.Pilot or CardType.Titan => 25 + (int) Math.Floor(xp * 0.2f),
             CardType.Support or CardType.BurnCard or CardType.Secret => 25,
             CardType.Commander => 300,
             _ => 0
