@@ -16,6 +16,6 @@ public class Endpoint : EndpointWithoutRequest<GetSupplyResponse>
             LastSupplySync = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")
         };
 
-        await SendAsync(response);
+        await Send.OkAsync(response);
     }
 }

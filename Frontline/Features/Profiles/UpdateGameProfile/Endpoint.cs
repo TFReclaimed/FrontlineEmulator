@@ -25,14 +25,14 @@ public class Endpoint : Endpoint<GameProfileUpdateRequest>
         if (player is null)
         {
             Logger.LogWarning("Player {UserId} tried to update their game profile but it wasn't found!", userId);
-            await SendNotFoundAsync();
+            await Send.NotFoundAsync();
             return;
         }
 
         if ((req.ActiveDeckId == 1 && player.Level < 2) || (req.ActiveDeckId is 10 or 11 && player.Level < 3))
         {
             Logger.LogWarning("Player {UserId} tried to select a dropship they haven't unlocked yet!", userId);
-            await SendForbiddenAsync();
+            await Send.ForbiddenAsync();
             return;
         }
         
@@ -42,6 +42,6 @@ public class Endpoint : Endpoint<GameProfileUpdateRequest>
         player.DropshipId = req.ActiveDeckId;
         await _playerRepository.UpdatePlayerAsync(player);
         
-        await SendOkAsync();
+        await Send.OkAsync();
     }
 }

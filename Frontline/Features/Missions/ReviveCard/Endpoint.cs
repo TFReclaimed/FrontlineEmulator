@@ -29,7 +29,7 @@ public class Endpoint : Endpoint<ReviveCardRequest>
         if (player is null)
         {
             Logger.LogWarning("Player not found: {UserId}", userId);
-            await SendNotFoundAsync();
+            await Send.NotFoundAsync();
             return;
         }
         
@@ -37,7 +37,7 @@ public class Endpoint : Endpoint<ReviveCardRequest>
         if (item is null)
         {
             Logger.LogWarning("Item not found: {InstanceId}", req.InstanceId);
-            await SendNotFoundAsync();
+            await Send.NotFoundAsync();
             return;
         }
 
@@ -48,7 +48,7 @@ public class Endpoint : Endpoint<ReviveCardRequest>
         {
             Logger.LogWarning("Player {UserId} doesn't have enough tokens to revive card {InstanceId}",
                 userId, req.InstanceId);
-            await SendResultAsync(TypedResults.BadRequest());
+            await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
         
@@ -60,6 +60,6 @@ public class Endpoint : Endpoint<ReviveCardRequest>
         item.Casualty = false;
         await _inventoryRepository.UpdateItemAsync(item);
         
-        await SendOkAsync();
+        await Send.OkAsync();
     }
 }

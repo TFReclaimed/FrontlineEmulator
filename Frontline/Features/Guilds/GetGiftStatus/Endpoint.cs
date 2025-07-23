@@ -25,7 +25,7 @@ public class Endpoint : EndpointWithoutRequest<GuildGiftStatusResponse>
         if (player is null)
         {
             Logger.LogWarning("Player {UserId} tried to get gift status but was not found", userId);
-            await SendNotFoundAsync();
+            await Send.NotFoundAsync();
             return;
         }
         
@@ -34,6 +34,6 @@ public class Endpoint : EndpointWithoutRequest<GuildGiftStatusResponse>
             Time = player.LastGiftSent + TimeSpan.FromHours(1)
         };
         
-        await SendAsync(response);
+        await Send.OkAsync(response);
     }
 }

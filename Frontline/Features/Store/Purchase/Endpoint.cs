@@ -32,7 +32,7 @@ public class Endpoint : Endpoint<PurchaseRequest, PurchaseResponse>
         {
             Logger.LogWarning("Player {PlayerId} does not exist.", req.PlayerId);
             
-            await SendNotFoundAsync();
+            await Send.NotFoundAsync();
             return;
         }
         
@@ -42,7 +42,7 @@ public class Endpoint : Endpoint<PurchaseRequest, PurchaseResponse>
             Logger.LogWarning("Player {PlayerId} attempted to purchase unknown product {Product}.",
                 req.PlayerId, req.Product);
             
-            await SendResultAsync(TypedResults.BadRequest());
+            await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
         
@@ -51,7 +51,7 @@ public class Endpoint : Endpoint<PurchaseRequest, PurchaseResponse>
             Logger.LogWarning("Player {PlayerId} attempted to purchase product {Product} but doesn't have enough tokens!",
                 req.PlayerId, req.Product);
             
-            await SendResultAsync(TypedResults.BadRequest());
+            await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
         
@@ -67,6 +67,6 @@ public class Endpoint : Endpoint<PurchaseRequest, PurchaseResponse>
             Fulfillment = true
         };
         
-        await SendAsync(response);
+        await Send.OkAsync(response);
     }
 }

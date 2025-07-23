@@ -31,7 +31,7 @@ public class Endpoint : Endpoint<CancelMissionRequest, List<MissionStageStatus>>
         {
             Logger.LogWarning("Player {UserId} attempted to cancel mission {Key} but mission doesn't exist.",
                 userId, key);
-            await SendNotFoundAsync();
+            await Send.NotFoundAsync();
             return;
         }
         
@@ -40,7 +40,7 @@ public class Endpoint : Endpoint<CancelMissionRequest, List<MissionStageStatus>>
         {
             Logger.LogWarning("Player {UserId} attempted to cancel mission {Key} but mission is not started.",
                 userId, key);
-            await SendNotFoundAsync();
+            await Send.NotFoundAsync();
             return;
         }
         
@@ -59,6 +59,6 @@ public class Endpoint : Endpoint<CancelMissionRequest, List<MissionStageStatus>>
             }
         };
 
-        await SendAsync(response);
+        await Send.OkAsync(response);
     }
 }

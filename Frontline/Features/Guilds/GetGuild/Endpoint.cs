@@ -22,12 +22,12 @@ public class Endpoint : Endpoint<GetGuildRequest, GuildProfile, Mapper>
         var guild = await _guildRepository.GetGuildAsync(req.GuildId, true);
         if (guild is null)
         {
-            await SendNotFoundAsync();
+            await Send.NotFoundAsync();
             return;
         }
         
         var response = Map.FromEntity(guild);
         
-        await SendAsync(response);
+        await Send.OkAsync(response);
     }
 }

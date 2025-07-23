@@ -30,21 +30,21 @@ public class Endpoint : Endpoint<SendGiftRequest, SendGiftResponse>
         if (player is null)
         {
             Logger.LogWarning("Player {UserId} tried to send a gift but was not found", userId);
-            await SendNotFoundAsync();
+            await Send.NotFoundAsync();
             return;
         }
         
         if (DateTime.UtcNow - player.LastGiftSent < TimeSpan.FromHours(1))
         {
             Logger.LogWarning("Player {UserId} tried to send a gift too soon", userId);
-            await SendResultAsync(TypedResults.BadRequest());
+            await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
         
         if (player.Id == req.ReceiverId)
         {
             Logger.LogWarning("Player {UserId} tried to send a gift to themselves", userId);
-            await SendResultAsync(TypedResults.BadRequest());
+            await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
         
@@ -53,7 +53,7 @@ public class Endpoint : Endpoint<SendGiftRequest, SendGiftResponse>
         {
             Logger.LogWarning("Player {UserId} tried to send a gift to {ReceiverId} but the receiver was not found",
                 userId, req.ReceiverId);
-            await SendNotFoundAsync();
+            await Send.NotFoundAsync();
             return;
         }
         
@@ -75,6 +75,6 @@ public class Endpoint : Endpoint<SendGiftRequest, SendGiftResponse>
             Fulfillment = true
         };
 
-        await SendAsync(result);
+        await Send.OkAsync(result);
     }
 }

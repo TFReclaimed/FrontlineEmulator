@@ -28,6 +28,6 @@ public class Endpoint : EndpointWithoutRequest<SessionInfoResponse>
             UserChangeCounter = _userService.GetChangeCounter(userId)
         };
         
-        await SendAsync(response);
+        await Send.OkAsync(response);
     }
 }

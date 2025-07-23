@@ -50,7 +50,7 @@ public class Endpoint : Endpoint<LoginRequest, PlayerProfile, Mapper>
         if (userId < 0)
         {
             Logger.LogWarning("Invalid user ID: {UserId}", userId);
-            await SendResultAsync(TypedResults.BadRequest());
+            await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
         
@@ -58,7 +58,7 @@ public class Endpoint : Endpoint<LoginRequest, PlayerProfile, Mapper>
         if (!loginValid)
         {
             Logger.LogWarning("Login failed for user: {AuthId}", req.Param.AuthId);
-            await SendResultAsync(TypedResults.BadRequest());
+            await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
         
@@ -80,7 +80,7 @@ public class Endpoint : Endpoint<LoginRequest, PlayerProfile, Mapper>
         profile.SessionId = jwtToken;
         profile.Details.GameProfiles[0].CardsCollected = await _inventoryRepository.GetItemCountAsync(userId);
         
-        await SendAsync(profile);
+        await Send.OkAsync(profile);
     }
 
     private async Task CreateStarterItems(int userId)

@@ -37,7 +37,7 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
         if (player is null)
         {
             Logger.LogWarning("Player not found: {UserId}", userId);
-            await SendNotFoundAsync();
+            await Send.NotFoundAsync();
             return;
         }
         
@@ -48,7 +48,7 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
         {
             Logger.LogWarning("Player {UserId} attempted to start mission {Key} but mission doesn't exist.",
                 userId, key);
-            await SendNotFoundAsync();
+            await Send.NotFoundAsync();
             return;
         }
         
@@ -58,7 +58,7 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
         {
             Logger.LogWarning("Player {UserId} attempted to start mission {Key} but doesn't have enough resources.",
                 userId, key);
-            await SendResultAsync(TypedResults.BadRequest());
+            await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
 
@@ -67,7 +67,7 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
         {
             Logger.LogWarning("Player {UserId} attempted to start mission {Key} but mission is in progress.",
                 userId, key);
-            await SendResultAsync(TypedResults.BadRequest());
+            await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
 
@@ -76,7 +76,7 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
         {
             Logger.LogWarning("Player {UserId} attempted to start mission {Key} but mission is already finished.",
                 userId, key);
-            await SendResultAsync(TypedResults.BadRequest());
+            await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
 
@@ -91,7 +91,7 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
         {
             Logger.LogWarning("Player {UserId} attempted to start mission {Key} but card items are invalid.",
                 userId, key);
-            await SendResultAsync(TypedResults.BadRequest());
+            await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
         
@@ -100,7 +100,7 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
         {
             Logger.LogWarning("Player {UserId} attempted to start mission {Key} but a card is already on mission.",
                 userId, key);
-            await SendResultAsync(TypedResults.BadRequest());
+            await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
 
@@ -108,7 +108,7 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
         {
             Logger.LogWarning("Player {UserId} attempted to start mission {Key} but card items are duplicates.",
                 userId, key);
-            await SendResultAsync(TypedResults.BadRequest());
+            await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
         
@@ -116,7 +116,7 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
         {
             Logger.LogWarning("Player {UserId} attempted to start mission {Key} but requirements are not met.",
                 userId, key);
-            await SendResultAsync(TypedResults.BadRequest());
+            await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
         
@@ -227,7 +227,7 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
             }
         };
 
-        await SendAsync(response);
+        await Send.OkAsync(response);
     }
 
     private async Task<(bool IsValid, ItemEntity? item)> IsValidItem(int userId, int itemId, MissionStage missionData,

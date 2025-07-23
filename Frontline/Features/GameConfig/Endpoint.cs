@@ -39,6 +39,6 @@ public class Endpoint : EndpointWithoutRequest<GameConfigResponse>
             MinClientVersion = "1.0.15816"
         };
 
-        await SendAsync(response);
+        await Send.OkAsync(response);
     }
 }

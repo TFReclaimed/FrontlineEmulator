@@ -27,6 +27,6 @@ public class Endpoint : EndpointWithoutRequest<RulesetPathResponse>
             Version = 0
         };
         
-        await SendAsync(response);
+        await Send.OkAsync(response);
     }
 }

@@ -22,6 +22,6 @@ public class Endpoint : EndpointWithoutRequest<List<ProductDto>, Mapper>
     public override async Task HandleAsync(CancellationToken ct)
     {
         var products = Map.FromEntity(_productOptions.Value.Products);
-        await SendAsync(products);
+        await Send.OkAsync(products);
     }
 }

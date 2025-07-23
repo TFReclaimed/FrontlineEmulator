@@ -38,20 +38,20 @@ public class Endpoint : Endpoint<GetProfileRequest, ProfileDetails, Mapper>
                 ]
             };
             
-            await SendAsync(systemProfile);
+            await Send.OkAsync(systemProfile);
             return;
         }
         
         var entity = await _playerRepository.GetPlayerAsync(userId);
         if (entity is null)
         {
-            await SendNotFoundAsync();
+            await Send.NotFoundAsync();
             return;
         }
         
         var profile = Map.FromEntity(entity);
         profile.GameProfiles[0].CardsCollected = await _inventoryRepository.GetItemCountAsync(userId);
         
-        await SendAsync(profile);
+        await Send.OkAsync(profile);
     }
 }

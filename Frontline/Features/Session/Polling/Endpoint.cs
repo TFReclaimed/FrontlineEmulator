@@ -32,6 +32,6 @@ public class Endpoint : EndpointWithoutRequest<PollingResponse>
             ChangeCounter = _userService.GetChangeCounter(userId)
         };
         
-        await SendAsync(response);
+        await Send.OkAsync(response);
     }
 }

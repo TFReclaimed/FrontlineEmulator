@@ -49,6 +49,6 @@ public class Endpoint : EndpointWithoutRequest<LeaderboardPveResponse>
             ]
         };
         
-        await SendAsync(response);
+        await Send.OkAsync(response);
     }
 }

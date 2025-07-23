@@ -28,7 +28,7 @@ public class Endpoint : Endpoint<KickLeaveGuildRequest, Ok>
         {
             Logger.LogWarning("Player {UserId} tried to leave guild {GuildId} but is not a member",
                 userId, req.GuildId);
-            await SendResultAsync(TypedResults.BadRequest());
+            await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
 
@@ -39,7 +39,7 @@ public class Endpoint : Endpoint<KickLeaveGuildRequest, Ok>
             {
                 Logger.LogWarning("Player {UserId} tried to leave guild {GuildId} but the guild does not exist",
                     userId, req.GuildId);
-                await SendResultAsync(TypedResults.BadRequest());
+                await Send.ResultAsync(TypedResults.BadRequest());
                 return;
             }
             
@@ -64,7 +64,7 @@ public class Endpoint : Endpoint<KickLeaveGuildRequest, Ok>
             {
                 Logger.LogWarning("Player {UserId} tried to kick player {TargetId} from guild {GuildId} but the target is not a member",
                     userId, req.UserId, req.GuildId);
-                await SendResultAsync(TypedResults.BadRequest());
+                await Send.ResultAsync(TypedResults.BadRequest());
                 return;
             }
 
@@ -72,7 +72,7 @@ public class Endpoint : Endpoint<KickLeaveGuildRequest, Ok>
             {
                 Logger.LogWarning("Player {UserId} tried to kick player {TargetId} from guild {GuildId} but does not have permission",
                     userId, req.UserId, req.GuildId);
-                await SendResultAsync(TypedResults.BadRequest());
+                await Send.ResultAsync(TypedResults.BadRequest());
                 return;
             }
 
@@ -81,6 +81,6 @@ public class Endpoint : Endpoint<KickLeaveGuildRequest, Ok>
             await _guildRepository.DeletePlayerMembershipAsync(target);
         }
         
-        await SendOkAsync();
+        await Send.OkAsync();
     }
 }

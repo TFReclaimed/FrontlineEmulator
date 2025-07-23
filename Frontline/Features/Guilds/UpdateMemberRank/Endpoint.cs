@@ -27,7 +27,7 @@ public class Endpoint : Endpoint<UpdateMemberRankRequest, Ok>
         {
             Logger.LogWarning("Player {UserId} attempted to update a member rank in guild {GuildId} but is not a member of that guild",
                 userId, req.GuildId);
-            await SendResultAsync(TypedResults.BadRequest());
+            await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
         
@@ -36,7 +36,7 @@ public class Endpoint : Endpoint<UpdateMemberRankRequest, Ok>
         {
             Logger.LogWarning("Player {UserId} attempted to update a member rank in guild {GuildId} but the target member does not exist",
                 userId, req.GuildId);
-            await SendResultAsync(TypedResults.BadRequest());
+            await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
         
@@ -44,7 +44,7 @@ public class Endpoint : Endpoint<UpdateMemberRankRequest, Ok>
         {
             Logger.LogWarning("Player {UserId} attempted to update a member rank in guild {GuildId} but does not have permission",
                 userId, req.GuildId);
-            await SendResultAsync(TypedResults.Forbid());
+            await Send.ForbiddenAsync();
             return;
         }
         
@@ -54,6 +54,6 @@ public class Endpoint : Endpoint<UpdateMemberRankRequest, Ok>
         target.Rank = req.Member.Rank;
         await _guildRepository.UpdatePlayerMembershipAsync(target);
         
-        await SendOkAsync();
+        await Send.OkAsync();
     }
 }

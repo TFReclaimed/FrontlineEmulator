@@ -36,21 +36,21 @@ public class Endpoint : Endpoint<OpenBoosterPackRequest, BoosterPackResponse>
         if (player is null)
         {
             Logger.LogWarning("Player {UserId} tried to open a booster pack but the profile wasn't found!", userId);
-            await SendNotFoundAsync();
+            await Send.NotFoundAsync();
             return;
         }
         
         if (player.BoosterPackCount <= 0)
         {
             Logger.LogWarning("Player {UserId} tried to open a booster pack but they don't have any!", userId);
-            await SendResultAsync(TypedResults.BadRequest());
+            await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
 
         if (RulesetParser.Ruleset is null)
         {
             Logger.LogWarning("Player {UserId} tried to open a booster pack but card ruleset is null!", userId);
-            await SendResultAsync(TypedResults.InternalServerError());
+            await Send.ResultAsync(TypedResults.InternalServerError());
             return;
         }
 
@@ -160,6 +160,6 @@ public class Endpoint : Endpoint<OpenBoosterPackRequest, BoosterPackResponse>
                 .ToList()
         };
         
-        await SendAsync(response);
+        await Send.OkAsync(response);
     }
 }

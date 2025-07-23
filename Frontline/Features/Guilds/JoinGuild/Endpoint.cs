@@ -26,7 +26,7 @@ public class Endpoint : Endpoint<JoinGuildRequest, Ok>
         if (member is not null)
         {
             Logger.LogWarning("User {UserId} is already a member of a guild", userId);
-            await SendResultAsync(TypedResults.BadRequest());
+            await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
         
@@ -34,14 +34,14 @@ public class Endpoint : Endpoint<JoinGuildRequest, Ok>
         if (guild is null)
         {
             Logger.LogWarning("Player {UserId} tried to join non-existing guild {GuildId}", userId, req.GuildId);
-            await SendNotFoundAsync();
+            await Send.NotFoundAsync();
             return;
         }
         
         if (guild.Members.Count >= guild.MaxNumberOfMembers)
         {
             Logger.LogWarning("Player {UserId} tried to join guild {GuildId} which is full", userId, req.GuildId);
-            await SendResultAsync(TypedResults.BadRequest());
+            await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
         
@@ -49,6 +49,6 @@ public class Endpoint : Endpoint<JoinGuildRequest, Ok>
         
         await _guildRepository.JoinGuildAsync(userId, req.GuildId);
         
-        await SendOkAsync();
+        await Send.OkAsync();
     }
 }

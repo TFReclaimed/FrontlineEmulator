@@ -27,7 +27,7 @@ public class Endpoint : Endpoint<CreateGuildRequest, Ok>
         if (guild is not null)
         {
             Logger.LogWarning("User {UserId} tried to create a guild while already being in one", userId);
-            await SendResultAsync(TypedResults.BadRequest());
+            await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
         
@@ -51,6 +51,6 @@ public class Endpoint : Endpoint<CreateGuildRequest, Ok>
         
         await _guildRepository.CreateGuildAsync(newGuild, member);
         
-        await SendOkAsync();
+        await Send.OkAsync();
     }
 }

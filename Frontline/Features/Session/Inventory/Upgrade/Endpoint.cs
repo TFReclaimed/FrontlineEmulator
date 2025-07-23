@@ -29,7 +29,7 @@ public class Endpoint : Endpoint<UpgradeRequest, UpgradedCard, Mapper>
         {
             Logger.LogWarning("Player {UserId} tried to upgrade item {ItemId} but it wasn't found!",
                 userId, req.ItemId);
-            await SendNotFoundAsync();
+            await Send.NotFoundAsync();
             return;
         }
         
@@ -38,7 +38,7 @@ public class Endpoint : Endpoint<UpgradeRequest, UpgradedCard, Mapper>
         {
             Logger.LogWarning("Player {UserId} tried to upgrade item {ItemId} but card template {TemplateId} wasn't found!",
                 userId, req.ItemId, item.TemplateId);
-            await SendNotFoundAsync();
+            await Send.NotFoundAsync();
             return;
         }
 
@@ -46,7 +46,7 @@ public class Endpoint : Endpoint<UpgradeRequest, UpgradedCard, Mapper>
         {
             Logger.LogWarning("Player {UserId} tried to upgrade item {ItemId} but it's not a combat unit!",
                 userId, req.ItemId);
-            await SendResultAsync(TypedResults.BadRequest());
+            await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
 
@@ -57,7 +57,7 @@ public class Endpoint : Endpoint<UpgradeRequest, UpgradedCard, Mapper>
         {
             Logger.LogWarning("Player {UserId} tried to upgrade item {ItemId} but xp entry for rank {Rank} wasn't found!",
                 userId, req.ItemId, nextRank);
-            await SendNotFoundAsync();
+            await Send.NotFoundAsync();
             return;
         }
         
@@ -66,7 +66,7 @@ public class Endpoint : Endpoint<UpgradeRequest, UpgradedCard, Mapper>
         {
             Logger.LogWarning("Player {UserId} tried to upgrade item {ItemId} but it doesn't have enough xp!",
                 userId, req.ItemId);
-            await SendResultAsync(TypedResults.BadRequest());
+            await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
         
@@ -78,7 +78,7 @@ public class Endpoint : Endpoint<UpgradeRequest, UpgradedCard, Mapper>
             userId, req.ItemId, item.Rank);
         
         var result = Map.FromEntity(item);
-        await SendAsync(result);
+        await Send.OkAsync(result);
     }
 
     private int CalculateUpgradeCost(CardType type, int rank)

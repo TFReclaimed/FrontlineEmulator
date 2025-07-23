@@ -31,7 +31,7 @@ public class Endpoint : Endpoint<SaveDropshipRequest>
         if (player is null)
         {
             Logger.LogWarning("Player {UserId} not found", userId);
-            await SendNotFoundAsync();
+            await Send.NotFoundAsync();
             return;
         }
         
@@ -39,7 +39,7 @@ public class Endpoint : Endpoint<SaveDropshipRequest>
         {
             Logger.LogWarning("Player {UserId} attempted to save invalid dropship {DropshipId}",
                 userId, req.DropshipId);
-            await SendResultAsync(TypedResults.BadRequest());
+            await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
         
@@ -49,14 +49,14 @@ public class Endpoint : Endpoint<SaveDropshipRequest>
         if (!await _inventoryRepository.HasItemsAsync(userId, usedItems))
         {
             Logger.LogWarning("Player {UserId} attempted to save dropship with invalid items", userId);
-            await SendResultAsync(TypedResults.BadRequest());
+            await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
         
         if (usedItems.GroupBy(x => x).Any(x => x.Count() > 1))
         {
             Logger.LogWarning("Player {UserId} attempted to save dropship with duplicate items", userId);
-            await SendResultAsync(TypedResults.BadRequest());
+            await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
         
@@ -75,7 +75,7 @@ public class Endpoint : Endpoint<SaveDropshipRequest>
             {
                 Logger.LogWarning("Player {UserId} attempted to save dropship with item on mission {ItemId}",
                     userId, itemId);
-                await SendResultAsync(TypedResults.BadRequest());
+                await Send.ResultAsync(TypedResults.BadRequest());
                 return;
             }
 
@@ -83,7 +83,7 @@ public class Endpoint : Endpoint<SaveDropshipRequest>
             {
                 Logger.LogWarning("Player {UserId} attempted to save dropship with injured item {ItemId}",
                     userId, itemId);
-                await SendResultAsync(TypedResults.BadRequest());
+                await Send.ResultAsync(TypedResults.BadRequest());
                 return;
             }
             
@@ -91,7 +91,7 @@ public class Endpoint : Endpoint<SaveDropshipRequest>
             if (cardTemplate is null)
             {
                 Logger.LogWarning("Could not find card template for item {ItemId}", itemId);
-                await SendResultAsync(TypedResults.BadRequest());
+                await Send.ResultAsync(TypedResults.BadRequest());
                 return;
             }
 
@@ -104,7 +104,7 @@ public class Endpoint : Endpoint<SaveDropshipRequest>
                 
                 Logger.LogWarning("Player {UserId} attempted to save dropship with invalid deck card {ItemId}",
                     userId, itemId);
-                await SendResultAsync(TypedResults.BadRequest());
+                await Send.ResultAsync(TypedResults.BadRequest());
                 return;
             }
 
@@ -117,7 +117,7 @@ public class Endpoint : Endpoint<SaveDropshipRequest>
                 
                 Logger.LogWarning("Player {UserId} attempted to save dropship with invalid commander card {ItemId}",
                     userId, itemId);
-                await SendResultAsync(TypedResults.BadRequest());
+                await Send.ResultAsync(TypedResults.BadRequest());
                 return;
             }
 
@@ -128,7 +128,7 @@ public class Endpoint : Endpoint<SaveDropshipRequest>
             
             Logger.LogWarning("Player {UserId} attempted to save dropship with invalid support card {ItemId}",
                 userId, itemId);
-            await SendResultAsync(TypedResults.BadRequest());
+            await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
         
@@ -157,6 +157,6 @@ public class Endpoint : Endpoint<SaveDropshipRequest>
         
         Logger.LogInformation("Player {UserId} updated dropship {DropshipId}", userId, req.DropshipId);
         
-        await SendOkAsync();
+        await Send.OkAsync();
     }
 }

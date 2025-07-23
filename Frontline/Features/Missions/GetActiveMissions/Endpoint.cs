@@ -95,7 +95,7 @@ public class Endpoint : EndpointWithoutRequest<List<MissionStageStatus>>
             }
         }
 
-        await SendAsync(response);
+        await Send.OkAsync(response);
     }
 
     private bool AreRequirementsMet(MissionStage mission, List<ActiveMissionEntity> activeMissions,
