@@ -13,7 +13,7 @@ public class Endpoint : EndpointWithoutRequest<GetSupplyResponse>
     {
         var response = new GetSupplyResponse
         {
-            LastSupplySync = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")
+            LastSupplySync = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff")
         };
 
         await Send.OkAsync(response);

@@ -155,6 +155,6 @@ public class Endpoint : EndpointWithoutRequest<List<MissionStageStatus>>
         }
         
         var finishTime = mission.Start.AddSeconds(missionData.Duration);
-        return DateTime.Now < finishTime;
+        return DateTime.UtcNow < finishTime;
     }
 }

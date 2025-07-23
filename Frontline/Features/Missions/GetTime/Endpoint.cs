@@ -11,7 +11,7 @@ public class Endpoint : EndpointWithoutRequest<string>
     
     public override async Task HandleAsync(CancellationToken ct)
     {
-        var time = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
+        var time = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff");
         await Send.StringAsync(time);
     }
 }

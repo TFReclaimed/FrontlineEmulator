@@ -159,7 +159,7 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
         {
             UserId = userId,
             MissionKey = key,
-            Start = DateTime.Now,
+            Start = DateTime.UtcNow,
             RequiredCardItemId = req.RequiredCardItemId,
             BonusCard1ItemId = req.BonusCard1ItemId == 0 ? null : req.BonusCard1ItemId,
             BonusCard2ItemId = req.BonusCard2ItemId == 0 ? null : req.BonusCard2ItemId,
