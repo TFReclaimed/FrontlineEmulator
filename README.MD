@@ -1,7 +1,7 @@
 # Frontline Server Emulator
 
 This is a server emulator for the cancelled Titanfall card collection game, Frontline.
-Versions 1.0.15816, 1.0.16585 and 1.0.17334 are supported with later versions requiring newer asset bundles.
+Versions 1.0.15816, 1.0.16585 and 1.0.17334 are supported with later versions requiring newer asset bundles and API changes.
 (If you still have the game installed, please contact me so we can back them up!)
 This project is a work in progress and is not yet feature complete.
 
@@ -13,27 +13,16 @@ This project is a work in progress and is not yet feature complete.
    - [1.0.17334](https://apkpure.com/titanfall-frontline/com.nexonm.tffl/download/1.0.17334)
    - [1.0.16585](https://apkpure.com/titanfall-frontline/com.nexonm.tffl/download/1.0.16585)
    - [1.0.15816](https://www.apkmirror.com/apk/nexon-m-inc/titanfall-frontline/titanfall-frontline-1-0-15816-release/)
-2. Install the APK on your device.
+2. Create a patched APK with the default options using [FrontlinePatcher](https://github.com/TFInternal/FrontlinePatcher).
+3. Install the APK on your device.
 
-No further changes needed as we're in control of the original server domain and S3 bucket!
+Note: The official server is currently only accessible to whitelisted users.
+This is to prevent users with the game still installed from overwriting their files.
 
 ### Your own server
 
-You'll need to either modify the `assets/serverAddresses.json` file in the APK to point to your server
-or modify your DNS/hosts file to point to your server.
-
-The following domains need to be pointed to your server:
-- prod-us-east-1-gameserver-lb.tfflinternal.com
-- prod-us-east-1-store-lb.tfflinternal.com
-- prod-us-east-1-virtu2-lb.tfflinternal.com
-- prod-us-east-1-chat-lb.tfflinternal.com
-- conference.prod-us-east-1-chat-lb.tfflinternal.com
-- pc-tffl-leaderboard.s3-website-us-east-1.amazonaws.com
-- pc-tffl-html.s3-website-us-east-1.amazonaws.com
-
-You will also need to modify the TOY server address contained in the `AWS_SERVER` variable
-in `smali/kr/co/nexon/toy/api/request/NXToyRequestType.smali` to point to your server.
-Alternatively point `m-api.nexon.com` to your server.
+You will need to create your own patched APK with [FrontlinePatcher](https://github.com/TFInternal/FrontlinePatcher).
+Use the `--frontline-url` and `--opentoy-url` options to point to your server's URL.
 
 The server requires `ruleset.json` and `PvEData.json` files to be present in the root directory.
 Use AssetRipper to extract these files from the Unity project.
@@ -58,9 +47,9 @@ Use AssetRipper to extract these files from the Unity project.
   - ⛔ TLS
     - Not required, but would be nice to have. From my testing the game always tries to use TLSv1.0 and OpenSSL doesn't support this.
 - 🚧 Hangar
-  - 🚧 Booster packs 
+  - ✅ Booster packs 
     - ✅ Get booster packs
-    - 🚧 Open booster pack
+    - ✅ Open booster pack
   - ✅ Cards
     - ✅ Get cards
     - ✅ Retire card
@@ -78,17 +67,14 @@ Use AssetRipper to extract these files from the Unity project.
     - Missing various checks with some likely being incorrect
   - ✅ Cancel mission
   - 🚧 Complete mission
-    - Cards are not yet rewarded
     - What is a synergy?
   - ✅ Revive card
   - ⛔ Reputation
     - I have no idea how this mechanic is supposed to work
-- 🚧 Leaderboards
+- ✅ Leaderboards
   - ✅ PvP
   - ⛔ PvE
-    - I don't know if you even can access this in the game
-  - ⛔ AWS S3 upload
-    - I'd prefer not to wake up to a 1k€ bill so just update the serverAddresses.json file
+    - I don't think you can even access this in the game
 - ✅ Guilds
   - ✅ Search guilds
   - ✅ Create guild
