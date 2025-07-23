@@ -41,8 +41,9 @@ public class Endpoint : Endpoint<LoginRequest, PlayerProfile, Mapper>
 
     public override async Task HandleAsync(LoginRequest req, CancellationToken ct)
     {
-        Logger.LogInformation("Login request received. Type: {LoginType}, AuthId: {AuthId}, Password {Password}, DeviceId: {DeviceId}, DeviceType: {DeviceType}",
-            req.Param.LoginType, req.Param.AuthId, req.Param.Password, req.Param.DeviceId, req.Param.DeviceType);
+        var password = Env.IsProduction() ? "[REDACTED]" : req.Param.Password;
+        Logger.LogInformation("Login request received. Type: {LoginType}, AuthId: {AuthId}, Password: {Password}, DeviceId: {DeviceId}, DeviceType: {DeviceType}",
+            req.Param.LoginType, req.Param.AuthId, password, req.Param.DeviceId, req.Param.DeviceType);
 
         const long serviceId = 12530000000000000;
         var authId = long.Parse(req.Param.AuthId.Trim('"'));
