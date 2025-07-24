@@ -46,18 +46,18 @@ Use AssetRipper to extract these files from the Unity project.
   - ⛔ Persistence
   - ⛔ TLS
     - Not required, but would be nice to have. From my testing the game always tries to use TLSv1.0 and OpenSSL doesn't support this.
-- 🚧 Hangar
+- ✅ Hangar
   - ✅ Booster packs 
     - ✅ Get booster packs
     - ✅ Open booster pack
   - ✅ Cards
     - ✅ Get cards
     - ✅ Retire card
-  - 🚧 Dropships
+  - ✅ Dropships
     - ✅ Get dropships
     - ✅ Edit dropship
     - ✅ Set active dropship
-    - ⛔ Unlock as you level up
+    - ✅ Custom dropships
 - ⛔ Matchmaking
   - ⛔ Create game request
   - ⛔ Cancel game request

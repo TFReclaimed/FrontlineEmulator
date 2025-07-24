@@ -250,6 +250,10 @@
           {
             "DropshipId": 0,
             "SlotIndex": 30
+          },
+          {
+            "DropshipId": 10,
+            "SlotIndex": 30
           }
         ]
       },
@@ -501,6 +505,10 @@
         "Dropships": [
           {
             "DropshipId": 1,
+            "SlotIndex": 30
+          },
+          {
+            "DropshipId": 11,
             "SlotIndex": 30
           }
         ]
