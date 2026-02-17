@@ -9,13 +9,13 @@ namespace Frontline.Features.Session.Inventory.Dropships.GetDropships;
 public class Endpoint : Endpoint<GetInventoryRequest, List<DropshipInfo>>
 {
     private readonly IPlayerRepository _playerRepository;
-    
-    private readonly IInventoryRepository _inventoryRepository;
 
-    public Endpoint(IPlayerRepository playerRepository, IInventoryRepository inventoryRepository)
+    private readonly IDropshipRepository _dropshipRepository;
+
+    public Endpoint(IPlayerRepository playerRepository, IDropshipRepository dropshipRepository)
     {
         _playerRepository = playerRepository;
-        _inventoryRepository = inventoryRepository;
+        _dropshipRepository = dropshipRepository;
     }
 
     public override void Configure()
@@ -34,23 +34,23 @@ public class Endpoint : Endpoint<GetInventoryRequest, List<DropshipInfo>>
             return;
         }
 
-        var dropshipItems = await _inventoryRepository.GetDropshipItems(userId);
+        var dropshipItems = await _dropshipRepository.GetDropshipItems(userId);
 
         var response = new List<DropshipInfo>();
-        
+
         foreach (var dropship in dropshipItems.GroupBy(x => x.DropshipId).ToList())
         {
             var slottedCards = new InventoryCard?[41];
-            
+
             var dropshipEntities = dropship.ToList();
-            
+
             foreach (var dropshipEntity in dropshipEntities)
             {
                 var item = dropshipEntity.Item!;
-                
+
                 var cardTemplate = RulesetParser.GetCardTemplate(item.TemplateId);
                 var isCommander = cardTemplate!.Type == CardType.Commander;
-                
+
                 slottedCards[dropshipEntity.SlotIndex] = new InventoryCard
                 {
                     Type = isCommander ? "CommanderCard" : "Card",
@@ -60,14 +60,14 @@ public class Endpoint : Endpoint<GetInventoryRequest, List<DropshipInfo>>
                     Xp = item.Xp
                 };
             }
-            
+
             for (var i = 0; i < 41; i++)
             {
                 if (slottedCards[i] != null)
                 {
                     continue;
                 }
-                
+
                 slottedCards[i] = new InventoryCard
                 {
                     Type = "Card",
@@ -75,7 +75,7 @@ public class Endpoint : Endpoint<GetInventoryRequest, List<DropshipInfo>>
                     TemplateId = 0
                 };
             }
-            
+
             response.Add(new DropshipInfo
             {
                 Index = dropship.Key,
@@ -83,7 +83,7 @@ public class Endpoint : Endpoint<GetInventoryRequest, List<DropshipInfo>>
                 InstanceId = dropship.Key
             });
         }
-        
+
         await Send.OkAsync(response);
     }
 }

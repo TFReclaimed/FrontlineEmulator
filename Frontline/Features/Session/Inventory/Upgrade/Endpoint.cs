@@ -23,7 +23,7 @@ public class Endpoint : Endpoint<UpgradeRequest, UpgradedCard, Mapper>
     public override async Task HandleAsync(UpgradeRequest req, CancellationToken ct)
     {
         var userId = this.GetUserId();
-        
+
         var item = await _inventoryRepository.GetItemAsync(userId, req.ItemId);
         if (item is null)
         {
@@ -32,7 +32,7 @@ public class Endpoint : Endpoint<UpgradeRequest, UpgradedCard, Mapper>
             await Send.NotFoundAsync();
             return;
         }
-        
+
         var cardTemplate = RulesetParser.GetCardTemplate(item.TemplateId);
         if (cardTemplate is null)
         {
@@ -51,7 +51,7 @@ public class Endpoint : Endpoint<UpgradeRequest, UpgradedCard, Mapper>
         }
 
         var nextRank = item.Rank + 1;
-        
+
         var xpEntry = RulesetParser.GetXpEntry(cardTemplate.Type, nextRank);
         if (xpEntry is null)
         {
@@ -60,7 +60,7 @@ public class Endpoint : Endpoint<UpgradeRequest, UpgradedCard, Mapper>
             await Send.NotFoundAsync();
             return;
         }
-        
+
         var upgradeCost = CalculateUpgradeCost(cardTemplate.Type, nextRank);
         if (item.Xp < upgradeCost)
         {
@@ -69,14 +69,14 @@ public class Endpoint : Endpoint<UpgradeRequest, UpgradedCard, Mapper>
             await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
-        
+
         item.Rank = (sbyte) nextRank;
-        
-        await _inventoryRepository.UpdateItemAsync(item);
-        
+
+        await _inventoryRepository.UpdateAsync(item);
+
         Logger.LogInformation("Player {UserId} upgraded item {ItemId} to rank {Rank}",
             userId, req.ItemId, item.Rank);
-        
+
         var result = Map.FromEntity(item);
         await Send.OkAsync(result);
     }
@@ -84,7 +84,7 @@ public class Endpoint : Endpoint<UpgradeRequest, UpgradedCard, Mapper>
     private int CalculateUpgradeCost(CardType type, int rank)
     {
         var totalCost = 0;
-        
+
         for (var i = 0; i < rank; i++)
         {
             var xpEntry = RulesetParser.GetXpEntry(type, i);
@@ -93,7 +93,7 @@ public class Endpoint : Endpoint<UpgradeRequest, UpgradedCard, Mapper>
                 totalCost += xpEntry.XpRequired;
             }
         }
-        
+
         return totalCost;
     }
 }

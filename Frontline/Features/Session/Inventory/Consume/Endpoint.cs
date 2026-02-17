@@ -9,7 +9,7 @@ namespace Frontline.Features.Session.Inventory.Consume;
 public class Endpoint : Endpoint<ConsumeRequest>
 {
     private readonly IInventoryRepository _inventoryRepository;
-    
+
     private readonly IPlayerRepository _playerRepository;
 
     public Endpoint(IInventoryRepository inventoryRepository, IPlayerRepository playerRepository)
@@ -36,7 +36,7 @@ public class Endpoint : Endpoint<ConsumeRequest>
             await Send.ResultAsync(Results.NotFound("Item not found!"));
             return;
         }
-        
+
         var cardTemplate = RulesetParser.GetCardTemplate(item.TemplateId);
         if (cardTemplate is null)
         {
@@ -53,7 +53,7 @@ public class Endpoint : Endpoint<ConsumeRequest>
             await Send.ResultAsync(Results.BadRequest("Item is in dropship!"));
             return;
         }
-        
+
         if (item.CurrentMission is not null)
         {
             Logger.LogWarning("Player {UserId} tried to consume item {ItemId} but it's on a mission!",
@@ -93,7 +93,7 @@ public class Endpoint : Endpoint<ConsumeRequest>
             await Send.ResultAsync(Results.BadRequest("Item is not an XP card!"));
             return;
         }
-        
+
         var targetItem = await _inventoryRepository.GetItemAsync(userId, req.TargetId!.Value);
         if (targetItem is null)
         {
@@ -103,14 +103,14 @@ public class Endpoint : Endpoint<ConsumeRequest>
             return;
         }
 
-        await _inventoryRepository.RemoveItemAsync(item);
-        
+        await _inventoryRepository.DeleteAsync(item);
+
         targetItem.Xp += resourceCardTemplate.ResourceValue;
-        await _inventoryRepository.UpdateItemAsync(targetItem);
-        
+        await _inventoryRepository.UpdateAsync(targetItem);
+
         Logger.LogInformation("Player {UserId} used XP card {ItemId} on target {TargetId} for {Xp} XP",
             userId, req.ItemId, req.TargetId, resourceCardTemplate.ResourceValue);
-        
+
         await Send.OkAsync();
     }
 
@@ -123,7 +123,7 @@ public class Endpoint : Endpoint<ConsumeRequest>
             await Send.ResultAsync(Results.BadRequest("Item is a resource card!"));
             return;
         }
-        
+
         var player = await _playerRepository.GetByIdAsync(userId);
         if (player is null)
         {
@@ -132,22 +132,22 @@ public class Endpoint : Endpoint<ConsumeRequest>
             await Send.ResultAsync(Results.NotFound("Player not found!"));
             return;
         }
-        
+
         var credits = cardTemplate.CreditsIfRetired(item.Xp);
-        
+
         player.Credits += credits;
-        
-        await _inventoryRepository.RemoveItemAsync(item);
+
+        await _inventoryRepository.DeleteAsync(item);
         await _playerRepository.UpdateAsync(player);
-        
+
         Logger.LogInformation("Player {UserId} retired card {ItemId} for {Credits} credits",
             userId, req.ItemId, credits);
-        
+
         var result = new RetireForCreditsResponse
         {
             Credits = credits.ToString()
         };
-        
+
         await Send.OkAsync(result);
     }
 
@@ -163,20 +163,20 @@ public class Endpoint : Endpoint<ConsumeRequest>
         }
 
         var xp = cardTemplate.XpIfRetired(item.Xp);
-        
+
         targetItem.Xp += xp;
-        
-        await _inventoryRepository.RemoveItemAsync(item);
-        await _inventoryRepository.UpdateItemAsync(targetItem);
-        
+
+        await _inventoryRepository.DeleteAsync(item);
+        await _inventoryRepository.UpdateAsync(targetItem);
+
         Logger.LogInformation("Player {UserId} retired card {ItemId} to target {TargetId} for {Xp} XP",
             userId, req.ItemId, req.TargetId, xp);
-        
+
         var result = new RetireForXpResponse
         {
             Xp = xp.ToString()
         };
-        
+
         await Send.OkAsync(result);
     }
 }

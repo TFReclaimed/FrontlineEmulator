@@ -9,13 +9,17 @@ namespace Frontline.Features.Session.Inventory.Dropships.SaveDropship;
 public class Endpoint : Endpoint<SaveDropshipRequest>
 {
     private readonly IPlayerRepository _playerRepository;
-    
+
     private readonly IInventoryRepository _inventoryRepository;
 
-    public Endpoint(IPlayerRepository playerRepository, IInventoryRepository inventoryRepository)
+    private readonly IDropshipRepository _dropshipRepository;
+
+    public Endpoint(IPlayerRepository playerRepository, IInventoryRepository inventoryRepository,
+        IDropshipRepository dropshipRepository)
     {
         _playerRepository = playerRepository;
         _inventoryRepository = inventoryRepository;
+        _dropshipRepository = dropshipRepository;
     }
 
     public override void Configure()
@@ -34,7 +38,7 @@ public class Endpoint : Endpoint<SaveDropshipRequest>
             await Send.NotFoundAsync();
             return;
         }
-        
+
         if (req.DropshipId != 10 && req.DropshipId != 11 && player.Level < 3)
         {
             Logger.LogWarning("Player {UserId} attempted to save invalid dropship {DropshipId}",
@@ -42,9 +46,9 @@ public class Endpoint : Endpoint<SaveDropshipRequest>
             await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
-        
+
         var itemIds = req.Param.InstanceIds;
-        
+
         var usedItems = itemIds.Where(x => x != 0).ToList();
         if (!await _inventoryRepository.HasItemsAsync(userId, usedItems))
         {
@@ -52,16 +56,16 @@ public class Endpoint : Endpoint<SaveDropshipRequest>
             await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
-        
+
         if (usedItems.GroupBy(x => x).Any(x => x.Count() > 1))
         {
             Logger.LogWarning("Player {UserId} attempted to save dropship with duplicate items", userId);
             await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
-        
+
         var itemEntities = await _inventoryRepository.GetItems(userId, usedItems);
-        
+
         for (var i = 0; i < itemIds.Length; i++)
         {
             var itemId = itemIds[i];
@@ -69,7 +73,7 @@ public class Endpoint : Endpoint<SaveDropshipRequest>
             {
                 continue;
             }
-            
+
             var item = itemEntities.First(x => x.ItemId == itemId);
             if (item.CurrentMission is not null)
             {
@@ -86,7 +90,7 @@ public class Endpoint : Endpoint<SaveDropshipRequest>
                 await Send.ResultAsync(TypedResults.BadRequest());
                 return;
             }
-            
+
             var cardTemplate = RulesetParser.GetCardTemplate(item.TemplateId);
             if (cardTemplate is null)
             {
@@ -101,7 +105,7 @@ public class Endpoint : Endpoint<SaveDropshipRequest>
                 {
                     continue;
                 }
-                
+
                 Logger.LogWarning("Player {UserId} attempted to save dropship with invalid deck card {ItemId}",
                     userId, itemId);
                 await Send.ResultAsync(TypedResults.BadRequest());
@@ -114,7 +118,7 @@ public class Endpoint : Endpoint<SaveDropshipRequest>
                 {
                     continue;
                 }
-                
+
                 Logger.LogWarning("Player {UserId} attempted to save dropship with invalid commander card {ItemId}",
                     userId, itemId);
                 await Send.ResultAsync(TypedResults.BadRequest());
@@ -125,17 +129,17 @@ public class Endpoint : Endpoint<SaveDropshipRequest>
             {
                 continue;
             }
-            
+
             Logger.LogWarning("Player {UserId} attempted to save dropship with invalid support card {ItemId}",
                 userId, itemId);
             await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
-        
-        await _inventoryRepository.ClearDropshipItemsAsync(userId, req.DropshipId);
-        
+
+        await _dropshipRepository.ClearDropshipItemsAsync(userId, req.DropshipId);
+
         var dropshipItems = new List<DropshipEntity>();
-        
+
         for (var i = 0; i < itemIds.Length; i++)
         {
             var itemId = itemIds[i];
@@ -143,7 +147,7 @@ public class Endpoint : Endpoint<SaveDropshipRequest>
             {
                 continue;
             }
-            
+
             dropshipItems.Add(new DropshipEntity
             {
                 UserId = userId,
@@ -152,11 +156,11 @@ public class Endpoint : Endpoint<SaveDropshipRequest>
                 ItemId = itemId
             });
         }
-        
-        await _inventoryRepository.AddDropshipItemsAsync(userId, dropshipItems);
-        
+
+        await _dropshipRepository.AddRangeAsync(dropshipItems);
+
         Logger.LogInformation("Player {UserId} updated dropship {DropshipId}", userId, req.DropshipId);
-        
+
         await Send.OkAsync();
     }
 }

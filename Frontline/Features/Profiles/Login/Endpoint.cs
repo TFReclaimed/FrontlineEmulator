@@ -12,22 +12,25 @@ namespace Frontline.Features.Profiles.Login;
 public class Endpoint : Endpoint<LoginRequest, PlayerProfile, Mapper>
 {
     private readonly IToyService _toyService;
-    
+
     private readonly IPlayerRepository _playerRepository;
-    
+
     private readonly IInventoryRepository _inventoryRepository;
-    
+
+    private readonly IDropshipRepository _dropshipRepository;
+
     private readonly IOptions<StarterItemOptions> _starterItemOptions;
-    
+
     private readonly IOptions<JwtOptions> _jwtOptions;
 
     public Endpoint(IToyService toyService, IPlayerRepository playerRepository,
-        IInventoryRepository inventoryRepository, IOptions<StarterItemOptions> starterItemOptions,
-        IOptions<JwtOptions> jwtOptions)
+        IInventoryRepository inventoryRepository, IDropshipRepository dropshipRepository,
+        IOptions<StarterItemOptions> starterItemOptions, IOptions<JwtOptions> jwtOptions)
     {
         _toyService = toyService;
         _playerRepository = playerRepository;
         _inventoryRepository = inventoryRepository;
+        _dropshipRepository = dropshipRepository;
         _starterItemOptions = starterItemOptions;
         _jwtOptions = jwtOptions;
     }
@@ -54,7 +57,7 @@ public class Endpoint : Endpoint<LoginRequest, PlayerProfile, Mapper>
             await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
-        
+
         var loginValid = await _toyService.VerifyUserAsync(authId, req.Param.Password.Trim('"'));
         if (!loginValid)
         {
@@ -62,7 +65,7 @@ public class Endpoint : Endpoint<LoginRequest, PlayerProfile, Mapper>
             await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
-        
+
         var (player, created) = await _playerRepository.GetOrCreatePlayerAsync(userId);
 
         if (created)
@@ -80,7 +83,7 @@ public class Endpoint : Endpoint<LoginRequest, PlayerProfile, Mapper>
         var profile = Map.FromEntity(player);
         profile.SessionId = jwtToken;
         profile.Details.GameProfiles[0].CardsCollected = await _inventoryRepository.GetItemCountAsync(userId);
-        
+
         await Send.OkAsync(profile);
     }
 
@@ -111,7 +114,7 @@ public class Endpoint : Endpoint<LoginRequest, PlayerProfile, Mapper>
             {
                 continue;
             }
-            
+
             foreach (var dropship in starterItem.Dropships)
             {
                 var dropshipItem = new DropshipEntity
@@ -130,10 +133,10 @@ public class Endpoint : Endpoint<LoginRequest, PlayerProfile, Mapper>
         {
             return;
         }
-        
+
         await _inventoryRepository.AddItemsAsync(userId, items);
-        await _inventoryRepository.AddDropshipItemsAsync(userId, dropshipItems);
-        
+        await _dropshipRepository.AddRangeAsync(dropshipItems);
+
         Logger.LogInformation("Gave starter items to user: {UserId}", userId);
     }
 }
