@@ -6,7 +6,7 @@ namespace Frontline.Data.Repositories;
 public interface IGuildRepository
 {
     Task<GuildEntity?> GetGuildAsync(Guid id, bool includeMembers = false);
-    List<GuildEntity> GetGuilds(int page, int maxCount, string search);
+    Task<List<GuildEntity>> GetGuilds(int page, int maxCount, string search);
     Task<GuildEntity?> GetPlayerGuildAsync(int playerId, bool includeMembers = false);
     Task<GuildMemberEntity?> GetPlayerMembershipAsync(int playerId);
     Task UpdatePlayerMembershipAsync(GuildMemberEntity member);
@@ -39,14 +39,14 @@ public class GuildRepository : IGuildRepository
         return await _db.Guilds.FindAsync(id);
     }
 
-    public List<GuildEntity> GetGuilds(int page, int maxCount, string search)
+    public async Task<List<GuildEntity>> GetGuilds(int page, int maxCount, string search)
     {
-        return _db.Guilds
+        return await _db.Guilds
             .Where(g => g.Name.Contains(search))
             .OrderBy(g => g.Name)
             .Skip(page * maxCount)
             .Take(maxCount)
-            .ToList();
+            .ToListAsync();
     }
 
     public async Task<GuildEntity?> GetPlayerGuildAsync(int playerId, bool includeMembers = false)
@@ -80,30 +80,30 @@ public class GuildRepository : IGuildRepository
         await _db.SaveChangesAsync();
     }
 
-    public Task DeletePlayerMembershipAsync(GuildMemberEntity member)
+    public async Task DeletePlayerMembershipAsync(GuildMemberEntity member)
     {
         _db.GuildMembers.Remove(member);
-        return _db.SaveChangesAsync();
+        await _db.SaveChangesAsync();
     }
 
     public async Task CreateGuildAsync(GuildEntity guild, GuildMemberEntity member)
     {
-        _db.Guilds.Add(guild);
+        await _db.Guilds.AddAsync(guild);
         await _db.SaveChangesAsync();
         
         member.GuildId = guild.Id;
         
-        _db.GuildMembers.Add(member);
+        await _db.GuildMembers.AddAsync(member);
         await _db.SaveChangesAsync();
     }
 
-    public Task UpdateGuildAsync(GuildEntity guild)
+    public async Task UpdateGuildAsync(GuildEntity guild)
     {
         _db.Guilds.Update(guild);
-        return _db.SaveChangesAsync();
+        await _db.SaveChangesAsync();
     }
 
-    public Task JoinGuildAsync(int playerId, Guid guildId)
+    public async Task JoinGuildAsync(int playerId, Guid guildId)
     {
         var member = new GuildMemberEntity
         {
@@ -112,13 +112,13 @@ public class GuildRepository : IGuildRepository
             Rank = MemberRank.MEMBER
         };
         
-        _db.GuildMembers.Add(member);
-        return _db.SaveChangesAsync();
+        await _db.GuildMembers.AddAsync(member);
+        await _db.SaveChangesAsync();
     }
 
-    public Task DeleteGuildAsync(GuildEntity guild)
+    public async Task DeleteGuildAsync(GuildEntity guild)
     {
         _db.Guilds.Remove(guild);
-        return _db.SaveChangesAsync();
+        await _db.SaveChangesAsync();
     }
 }

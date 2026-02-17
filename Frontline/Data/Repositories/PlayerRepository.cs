@@ -44,7 +44,7 @@ public class PlayerRepository : IPlayerRepository
             Xp = 325
         };
         
-        _db.Players.Add(player);
+        await _db.Players.AddAsync(player);
         await _db.SaveChangesAsync();
 
         return (player, true);

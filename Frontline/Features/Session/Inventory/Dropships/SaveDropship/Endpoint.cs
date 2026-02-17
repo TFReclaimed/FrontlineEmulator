@@ -60,7 +60,7 @@ public class Endpoint : Endpoint<SaveDropshipRequest>
             return;
         }
         
-        var itemEntities = _inventoryRepository.GetItems(userId, usedItems);
+        var itemEntities = await _inventoryRepository.GetItems(userId, usedItems);
         
         for (var i = 0; i < itemIds.Length; i++)
         {

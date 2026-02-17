@@ -34,7 +34,7 @@ public class Endpoint : Endpoint<GetInventoryRequest, List<DropshipInfo>>
             return;
         }
 
-        var dropshipItems = _inventoryRepository.GetDropshipItems(userId);
+        var dropshipItems = await _inventoryRepository.GetDropshipItems(userId);
 
         var response = new List<DropshipInfo>();
         

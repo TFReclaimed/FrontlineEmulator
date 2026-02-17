@@ -19,7 +19,7 @@ public class Endpoint : Endpoint<SearchGuildRequest, GuildListResponse, Mapper>
 
     public override async Task HandleAsync(SearchGuildRequest req, CancellationToken ct)
     {
-        var guilds = _guildRepository.GetGuilds(req.Page, req.MaxCount, req.Search);
+        var guilds = await _guildRepository.GetGuilds(req.Page, req.MaxCount, req.Search);
 
         var response = new GuildListResponse
         {

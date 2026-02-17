@@ -21,7 +21,7 @@ public class Endpoint : Endpoint<GetInventoryRequest, InventoryListResponse, Map
     public override async Task HandleAsync(GetInventoryRequest req, CancellationToken ct)
     {
         var userId = this.GetUserId();
-        var items = _inventoryRepository.GetItems(userId, req.Param.MaxItem);
+        var items = await _inventoryRepository.GetItems(userId, req.Param.MaxItem);
 
         var response = new InventoryListResponse
         {

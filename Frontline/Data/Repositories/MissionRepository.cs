@@ -61,13 +61,13 @@ public class MissionRepository : IMissionRepository
 
     public async Task AddActiveMissionAsync(ActiveMissionEntity mission)
     {
-        _db.ActiveMissions.Add(mission);
+        await _db.ActiveMissions.AddAsync(mission);
         await _db.SaveChangesAsync();
     }
 
     public async Task AddFinishedMissionAsync(FinishedMissionEntity mission)
     {
-        _db.FinishedMissions.Add(mission);
+        await _db.FinishedMissions.AddAsync(mission);
         await _db.SaveChangesAsync();
     }
 
