@@ -10,16 +10,19 @@ namespace Frontline.Features.Missions.CompleteMission;
 public class Endpoint : Endpoint<CompleteMissionRequest, List<MissionStageStatus>>
 {
     private readonly IPlayerRepository _playerRepository;
-    
-    private readonly IMissionRepository _missionRepository;
+
+    private readonly IActiveMissionRepository _activeMissionRepository;
+
+    private readonly IFinishedMissionRepository _finishedMissionRepository;
 
     private readonly IInventoryRepository _inventoryRepository;
 
-    public Endpoint(IPlayerRepository playerRepository, IMissionRepository missionRepository,
-        IInventoryRepository inventoryRepository)
+    public Endpoint(IPlayerRepository playerRepository, IActiveMissionRepository activeMissionRepository,
+        IFinishedMissionRepository finishedMissionRepository, IInventoryRepository inventoryRepository)
     {
         _playerRepository = playerRepository;
-        _missionRepository = missionRepository;
+        _activeMissionRepository = activeMissionRepository;
+        _finishedMissionRepository = finishedMissionRepository;
         _inventoryRepository = inventoryRepository;
     }
 
@@ -39,9 +42,9 @@ public class Endpoint : Endpoint<CompleteMissionRequest, List<MissionStageStatus
             await Send.NotFoundAsync();
             return;
         }
-        
+
         var key = MissionsParser.GetMissionKey(req.Key.Region, req.Key.Faction, req.Key.MissionId);
-        
+
         var missionData = MissionsParser.GetMission(key);
         if (missionData is null)
         {
@@ -50,8 +53,8 @@ public class Endpoint : Endpoint<CompleteMissionRequest, List<MissionStageStatus
             await Send.NotFoundAsync();
             return;
         }
-        
-        var mission = await _missionRepository.GetActiveMissionAsync(userId, key);
+
+        var mission = await _activeMissionRepository.GetActiveMissionAsync(userId, key);
         if (mission is null)
         {
             Logger.LogWarning("Player {UserId} attempted to complete mission {Key} but mission isn't started.",
@@ -59,7 +62,7 @@ public class Endpoint : Endpoint<CompleteMissionRequest, List<MissionStageStatus
             await Send.NotFoundAsync();
             return;
         }
-        
+
         Logger.LogInformation("Player {UserId} completed mission {Key}.", userId, key);
 
         if (mission.Success && missionData.MissionType is not MissionType.Persistent)
@@ -69,12 +72,12 @@ public class Endpoint : Endpoint<CompleteMissionRequest, List<MissionStageStatus
                 UserId = mission.UserId,
                 MissionKey = mission.MissionKey
             };
-            
-            await _missionRepository.AddFinishedMissionAsync(finishedMission);
+
+            await _finishedMissionRepository.AddAsync(finishedMission);
         }
 
-        await _missionRepository.DeleteActiveMissionAsync(mission);
-        
+        await _activeMissionRepository.DeleteAsync(mission);
+
         if (missionData.RequiredSlotConsume && mission.RequiredCardItem is not null)
         {
             await _inventoryRepository.RemoveItemAsync(mission.RequiredCardItem);
@@ -94,7 +97,7 @@ public class Endpoint : Endpoint<CompleteMissionRequest, List<MissionStageStatus
             mission.BonusCard1Item.Casualty = true;
             await _inventoryRepository.UpdateItemAsync(mission.BonusCard1Item);
         }
-        
+
         if (missionData.Bonus2SlotConsume && mission.BonusCard2Item is not null)
         {
             await _inventoryRepository.RemoveItemAsync(mission.BonusCard2Item);
@@ -108,7 +111,7 @@ public class Endpoint : Endpoint<CompleteMissionRequest, List<MissionStageStatus
         if (mission.Success)
         {
             var requiredRewardSet = MissionsParser.GetRewardSet(missionData.SuccessReward);
-            
+
             MissionRewardSet? bonus1RewardSet = null;
             MissionRewardSet? bonus2RewardSet = null;
 
@@ -121,28 +124,28 @@ public class Endpoint : Endpoint<CompleteMissionRequest, List<MissionStageStatus
             {
                 bonus2RewardSet = MissionsParser.GetBonusRewardSet(missionData.Bonus2SlotCondition);
             }
-            
+
             await GivePlayerRewards(player, requiredRewardSet, bonus1RewardSet, bonus2RewardSet);
-            
+
             player.MissionsComplete++;
             await _playerRepository.UpdateAsync(player);
         }
-        
+
         if (mission.RequiredCardItem is not null && mission.Success)
         {
             await GiveCardXp(mission.RequiredCardItem, missionData, missionData.RequiredSlotCount >= 1);
         }
-        
+
         if (mission.BonusCard1Item is not null && mission.Bonus1Success)
         {
             await GiveCardXp(mission.BonusCard1Item, missionData, missionData.RequiredSlotCount >= 2);
         }
-        
+
         if (mission.BonusCard2Item is not null && mission.Bonus2Success)
         {
             await GiveCardXp(mission.BonusCard2Item, missionData, missionData.RequiredSlotCount >= 3);
         }
-        
+
         var response = new List<MissionStageStatus>
         {
             new()
@@ -153,9 +156,9 @@ public class Endpoint : Endpoint<CompleteMissionRequest, List<MissionStageStatus
                 CurrentState = mission.Success ? MissionStageState.Finalized : MissionStageState.Available
             }
         };
-        
+
         response.AddRange(await GetNextMissions(userId, key));
-        
+
         await Send.OkAsync(response);
     }
 
@@ -163,7 +166,7 @@ public class Endpoint : Endpoint<CompleteMissionRequest, List<MissionStageStatus
     {
         var playerUpdated = false;
         List<ItemEntity> items = [];
-        
+
         foreach (var rewardSet in rewardSets)
         {
             if (rewardSet is null)
@@ -176,7 +179,7 @@ public class Endpoint : Endpoint<CompleteMissionRequest, List<MissionStageStatus
             GivePlayerReward(player, items, rewardSet.Reward3, out var playerUpdated3);
             GivePlayerReward(player, items, rewardSet.Reward4, out var playerUpdated4);
             GivePlayerReward(player, items, rewardSet.Reward5, out var playerUpdated5);
-            
+
             playerUpdated = playerUpdated || playerUpdated1 || playerUpdated2 || playerUpdated3
                             || playerUpdated4 || playerUpdated5;
         }
@@ -196,7 +199,7 @@ public class Endpoint : Endpoint<CompleteMissionRequest, List<MissionStageStatus
         out bool playerUpdated)
     {
         playerUpdated = false;
-        
+
         var reward = MissionsParser.GetReward(rewardName);
         if (reward is null)
         {
@@ -240,13 +243,13 @@ public class Endpoint : Endpoint<CompleteMissionRequest, List<MissionStageStatus
         if (cardTemplate.Type == CardType.Resource)
         {
             var resourceCardTemplate = (ResourceCardTemplate) cardTemplate;
-            
+
             var resourceValue = resourceCardTemplate.ResourceValue;
             if (resourceValue == 0)
             {
                 resourceValue = 1;
             }
-            
+
             var amount = resourceValue * reward.Quantity;
 
             switch (resourceCardTemplate.ResourceType)
@@ -254,19 +257,19 @@ public class Endpoint : Endpoint<CompleteMissionRequest, List<MissionStageStatus
                 case ResourceType.Credit:
                     player.Credits += amount;
                     break;
-                
+
                 case ResourceType.Xp:
                     player.Xp += amount;
                     break;
-                
+
                 case ResourceType.Supply:
                     player.Supply += amount;
                     break;
-                
+
                 case ResourceType.Token:
                     player.Tokens += amount;
                     break;
-                
+
                 case ResourceType.IntelTypeOperational:
                 case ResourceType.IntelTypeTechnical:
                 case ResourceType.IntelTypePersonnel:
@@ -275,14 +278,14 @@ public class Endpoint : Endpoint<CompleteMissionRequest, List<MissionStageStatus
                         TemplateId = resourceCardTemplate.CardId,
                         Rank = (sbyte) resourceCardTemplate.MinimumRank
                     });
-                    
+
                     return;
-                
+
                 default:
                     Logger.LogWarning("Unhandled resource type: {ResourceType}", resourceCardTemplate.ResourceType);
                     return;
             }
-            
+
             playerUpdated = true;
         }
         else
@@ -303,12 +306,12 @@ public class Endpoint : Endpoint<CompleteMissionRequest, List<MissionStageStatus
             Logger.LogWarning("Card template not found: {TemplateId}", card.TemplateId);
             return;
         }
-        
+
         if (cardTemplate.Type != CardType.Pilot && cardTemplate.Type != CardType.Titan)
         {
             return;
         }
-        
+
         var slotXp = MissionsParser.GetMissionSlotXp(required ? "Required" : "Bonus");
         if (slotXp is null)
         {
@@ -325,7 +328,7 @@ public class Endpoint : Endpoint<CompleteMissionRequest, List<MissionStageStatus
         };
 
         card.Xp += (int) Math.Ceiling(slotXp.Base * multiplier);
-        
+
         await _inventoryRepository.UpdateItemAsync(card);
     }
 
@@ -342,24 +345,24 @@ public class Endpoint : Endpoint<CompleteMissionRequest, List<MissionStageStatus
             {
                 continue;
             }
-            
+
             var requirements = new List<string>();
-            
+
             if (!string.IsNullOrEmpty(mission.Requirement1))
             {
                 requirements.Add(mission.Requirement1);
             }
-            
+
             if (!string.IsNullOrEmpty(mission.Requirement2))
             {
                 requirements.Add(mission.Requirement2);
             }
-            
+
             if (!string.IsNullOrEmpty(mission.Requirement3))
             {
                 requirements.Add(mission.Requirement3);
             }
-            
+
             if (!string.IsNullOrEmpty(mission.Requirement4))
             {
                 requirements.Add(mission.Requirement4);
@@ -374,16 +377,16 @@ public class Endpoint : Endpoint<CompleteMissionRequest, List<MissionStageStatus
                     MissionId = mission.MissionId,
                     CurrentState = MissionStageState.Available
                 });
-                
+
                 continue;
             }
 
-            var requirementsMet = await _missionRepository.HasCompletedMissionsAsync(userId, requirements);
+            var requirementsMet = await _finishedMissionRepository.HasCompletedMissionsAsync(userId, requirements);
             if (!requirementsMet)
             {
                 continue;
             }
-            
+
             nextMissions.Add(new MissionStageStatus
             {
                 Region = mission.Region,
@@ -392,7 +395,7 @@ public class Endpoint : Endpoint<CompleteMissionRequest, List<MissionStageStatus
                 CurrentState = MissionStageState.Available
             });
         }
-        
+
         return nextMissions;
     }
 }

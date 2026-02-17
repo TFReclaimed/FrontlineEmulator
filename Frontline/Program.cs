@@ -44,7 +44,8 @@ builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
 builder.Services.AddScoped<IGuildRepository, GuildRepository>();
 builder.Services.AddScoped<IGuildMemberRepository, GuildMemberRepository>();
 builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
-builder.Services.AddScoped<IMissionRepository, MissionRepository>();
+builder.Services.AddScoped<IActiveMissionRepository, ActiveMissionRepository>();
+builder.Services.AddScoped<IFinishedMissionRepository, FinishedMissionRepository>();
 
 builder.Services.AddSingleton<IToyService, ToyService>();
 builder.Services.AddSingleton<IUserService, UserService>();

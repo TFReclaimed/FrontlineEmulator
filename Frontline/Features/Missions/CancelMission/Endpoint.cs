@@ -7,11 +7,11 @@ namespace Frontline.Features.Missions.CancelMission;
 
 public class Endpoint : Endpoint<CancelMissionRequest, List<MissionStageStatus>>
 {
-    private readonly IMissionRepository _missionRepository;
+    private readonly IActiveMissionRepository _activeMissionRepository;
 
-    public Endpoint(IMissionRepository missionRepository)
+    public Endpoint(IActiveMissionRepository activeMissionRepository)
     {
-        _missionRepository = missionRepository;
+        _activeMissionRepository = activeMissionRepository;
     }
 
     public override void Configure()
@@ -23,9 +23,9 @@ public class Endpoint : Endpoint<CancelMissionRequest, List<MissionStageStatus>>
     public override async Task HandleAsync(CancelMissionRequest req, CancellationToken ct)
     {
         var userId = this.GetUserId();
-        
+
         var key = MissionsParser.GetMissionKey(req.Key.Region, req.Key.Faction, req.Key.MissionId);
-        
+
         var missionData = MissionsParser.GetMission(key);
         if (missionData is null)
         {
@@ -34,8 +34,8 @@ public class Endpoint : Endpoint<CancelMissionRequest, List<MissionStageStatus>>
             await Send.NotFoundAsync();
             return;
         }
-        
-        var mission = await _missionRepository.GetActiveMissionAsync(userId, key);
+
+        var mission = await _activeMissionRepository.GetActiveMissionAsync(userId, key);
         if (mission is null)
         {
             Logger.LogWarning("Player {UserId} attempted to cancel mission {Key} but mission is not started.",
@@ -43,11 +43,11 @@ public class Endpoint : Endpoint<CancelMissionRequest, List<MissionStageStatus>>
             await Send.NotFoundAsync();
             return;
         }
-        
+
         Logger.LogInformation("Player {UserId} cancelled mission {Key}.", userId, key);
-        
-        await _missionRepository.DeleteActiveMissionAsync(mission);
-        
+
+        await _activeMissionRepository.DeleteAsync(mission);
+
         var response = new List<MissionStageStatus>
         {
             new()

@@ -9,27 +9,31 @@ namespace Frontline.Features.Missions.GetActiveMissions;
 
 public class Endpoint : EndpointWithoutRequest<List<MissionStageStatus>>
 {
-    private readonly IMissionRepository _missionRepository;
+    private readonly IActiveMissionRepository _activeMissionRepository;
 
-    public Endpoint(IMissionRepository missionRepository)
+    private readonly IFinishedMissionRepository _finishedMissionRepository;
+
+    public Endpoint(IActiveMissionRepository activeMissionRepository,
+        IFinishedMissionRepository finishedMissionRepository)
     {
-        _missionRepository = missionRepository;
+        _activeMissionRepository = activeMissionRepository;
+        _finishedMissionRepository = finishedMissionRepository;
     }
 
     public override void Configure()
     {
         Get("/Missions/v1/activemissions");
     }
-    
+
     public override async Task HandleAsync(CancellationToken ct)
     {
         var userId = this.GetUserId();
 
-        var activeMissions = await _missionRepository.GetActiveMissionsAsync(userId);
-        var finishedMissions = await _missionRepository.GetFinishedMissionsAsync(userId);
-        
+        var activeMissions = await _activeMissionRepository.GetActiveMissionsByUserIdAsync(userId);
+        var finishedMissions = await _finishedMissionRepository.GetFinishedMissionsAsync(userId);
+
         var response = new List<MissionStageStatus>();
-        
+
         foreach (var mission in MissionsParser.Data!.MissionStages.Values)
         {
             if (!AreRequirementsMet(mission, activeMissions, finishedMissions, out var missionEntity))
@@ -52,7 +56,7 @@ public class Endpoint : EndpointWithoutRequest<List<MissionStageStatus>>
                 var requiredRewardSet = MissionsParser.GetRewardSet(mission.SuccessReward);
                 var bonus1RewardSet = MissionsParser.GetBonusRewardSet(mission.Bonus1SlotCondition);
                 var bonus2RewardSet = MissionsParser.GetBonusRewardSet(mission.Bonus2SlotCondition);
-                
+
                 response.Add(new MissionStageStatus
                 {
                     Region = mission.Region,
@@ -102,15 +106,15 @@ public class Endpoint : EndpointWithoutRequest<List<MissionStageStatus>>
         List<FinishedMissionEntity> finishedMissions, out ActiveMissionEntity? missionEntity)
     {
         var key = MissionsParser.GetMissionKey(mission);
-        
+
         if (finishedMissions.Any(m => m.MissionKey == key))
         {
             missionEntity = null;
             return false;
         }
-        
+
         missionEntity = activeMissions.FirstOrDefault(m => m.MissionKey == key);
-        
+
         if (!string.IsNullOrEmpty(mission.Requirement1))
         {
             if (!finishedMissions.Any(m => m.MissionKey == mission.Requirement1))
@@ -118,7 +122,7 @@ public class Endpoint : EndpointWithoutRequest<List<MissionStageStatus>>
                 return false;
             }
         }
-        
+
         if (!string.IsNullOrEmpty(mission.Requirement2))
         {
             if (!finishedMissions.Any(m => m.MissionKey == mission.Requirement2))
@@ -126,7 +130,7 @@ public class Endpoint : EndpointWithoutRequest<List<MissionStageStatus>>
                 return false;
             }
         }
-        
+
         if (!string.IsNullOrEmpty(mission.Requirement3))
         {
             if (!finishedMissions.Any(m => m.MissionKey == mission.Requirement3))
@@ -134,7 +138,7 @@ public class Endpoint : EndpointWithoutRequest<List<MissionStageStatus>>
                 return false;
             }
         }
-        
+
         if (!string.IsNullOrEmpty(mission.Requirement4))
         {
             if (!finishedMissions.Any(m => m.MissionKey == mission.Requirement4))
@@ -153,7 +157,7 @@ public class Endpoint : EndpointWithoutRequest<List<MissionStageStatus>>
         {
             return false;
         }
-        
+
         var finishTime = mission.Start.AddSeconds(missionData.Duration);
         return DateTime.UtcNow < finishTime;
     }

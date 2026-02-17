@@ -11,16 +11,19 @@ namespace Frontline.Features.Missions.StartMission;
 public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
 {
     private readonly IPlayerRepository _playerRepository;
-    
-    private readonly IMissionRepository _missionRepository;
+
+    private readonly IActiveMissionRepository _activeMissionRepository;
+
+    private readonly IFinishedMissionRepository _finishedMissionRepository;
 
     private readonly IInventoryRepository _inventoryRepository;
 
-    public Endpoint(IPlayerRepository playerRepository, IMissionRepository missionRepository,
-        IInventoryRepository inventoryRepository)
+    public Endpoint(IPlayerRepository playerRepository, IActiveMissionRepository activeMissionRepository,
+        IFinishedMissionRepository finishedMissionRepository, IInventoryRepository inventoryRepository)
     {
         _playerRepository = playerRepository;
-        _missionRepository = missionRepository;
+        _activeMissionRepository = activeMissionRepository;
+        _finishedMissionRepository = finishedMissionRepository;
         _inventoryRepository = inventoryRepository;
     }
 
@@ -40,9 +43,9 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
             await Send.NotFoundAsync();
             return;
         }
-        
+
         var key = MissionsParser.GetMissionKey(req.Key.Region, req.Key.Faction, req.Key.MissionId);
-        
+
         var missionData = MissionsParser.GetMission(key);
         if (missionData is null)
         {
@@ -51,7 +54,7 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
             await Send.NotFoundAsync();
             return;
         }
-        
+
         if (player.Supply < missionData.SupplyCost
             || player.Credits < missionData.CreditCost
             || player.Tokens < missionData.TokenCost)
@@ -62,7 +65,7 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
             return;
         }
 
-        var activeMission = await _missionRepository.GetActiveMissionAsync(userId, key);
+        var activeMission = await _activeMissionRepository.GetActiveMissionAsync(userId, key);
         if (activeMission is not null)
         {
             Logger.LogWarning("Player {UserId} attempted to start mission {Key} but mission is in progress.",
@@ -71,7 +74,7 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
             return;
         }
 
-        var finishedMission = await _missionRepository.GetFinishedMissionAsync(userId, key);
+        var finishedMission = await _finishedMissionRepository.GetByIdAsync(userId, key);
         if (finishedMission is not null)
         {
             Logger.LogWarning("Player {UserId} attempted to start mission {Key} but mission is already finished.",
@@ -86,7 +89,7 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
             MissionSlotId.Bonus1);
         var (bonus2IsValid, bonus2Item) = await IsValidItem(userId, req.BonusCard2ItemId, missionData,
             MissionSlotId.Bonus2);
-        
+
         if (!requiredIsValid || !bonus1IsValid || !bonus2IsValid)
         {
             Logger.LogWarning("Player {UserId} attempted to start mission {Key} but card items are invalid.",
@@ -94,9 +97,9 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
             await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
-        
+
         var itemIds = new List<int> {req.RequiredCardItemId, req.BonusCard1ItemId, req.BonusCard2ItemId};
-        if (await _missionRepository.IsCardOnMissionAsync(userId, itemIds))
+        if (await _activeMissionRepository.IsCardOnMissionAsync(userId, itemIds))
         {
             Logger.LogWarning("Player {UserId} attempted to start mission {Key} but a card is already on mission.",
                 userId, key);
@@ -111,7 +114,7 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
             await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
-        
+
         if (!await RequirementsMet(userId, missionData))
         {
             Logger.LogWarning("Player {UserId} attempted to start mission {Key} but requirements are not met.",
@@ -119,18 +122,18 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
             await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
-        
+
         Logger.LogInformation("Player {UserId} started mission {Key}.", userId, key);
 
         var random = new Random();
-        
+
         var missionSuccessful = random.NextDouble() <= GetSuccessChance(missionData, MissionSlotId.Required,
             requiredItem, bonus1Item, bonus2Item);
         var bonus1Successful = bonus1Item != null && random.NextDouble() <= GetSuccessChance(missionData,
             MissionSlotId.Bonus1, requiredItem, bonus1Item, bonus2Item);
         var bonus2Successful = bonus2Item != null && random.NextDouble() <= GetSuccessChance(missionData,
             MissionSlotId.Bonus2, requiredItem, bonus1Item, bonus2Item);
-        
+
         if (missionData.RequiredSlotCount == 1 && !missionSuccessful)
         {
             bonus1Successful = false;
@@ -170,8 +173,8 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
             Bonus1Casualty = bonus1Casualty,
             Bonus2Casualty = bonus2Casualty
         };
-        
-        await _missionRepository.AddActiveMissionAsync(mission);
+
+        await _activeMissionRepository.AddAsync(mission);
 
         if (missionData.SupplyCost > 0 || missionData.CreditCost > 0 || missionData.TokenCost > 0)
         {
@@ -185,7 +188,7 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
         var requiredRewardSet = MissionsParser.GetRewardSet(missionData.SuccessReward);
         var bonus1RewardSet = MissionsParser.GetBonusRewardSet(missionData.Bonus1SlotCondition);
         var bonus2RewardSet = MissionsParser.GetBonusRewardSet(missionData.Bonus2SlotCondition);
-        
+
         var response = new List<MissionStageStatus>
         {
             new()
@@ -243,7 +246,7 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
         {
             return (true, null);
         }
-        
+
         var slotCondition = slot switch
         {
             MissionSlotId.Required => missionData.RequiredSlotCondition,
@@ -256,21 +259,21 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
         {
             return (true, null);
         }
-        
+
         var item = await _inventoryRepository.GetItemAsync(userId, itemId);
         if (item is null)
         {
             Logger.LogWarning("Item not found: {ItemId}", itemId);
             return (false, null);
         }
-        
+
         var template = RulesetParser.GetCardTemplate(item.TemplateId);
         if (template is null)
         {
             Logger.LogWarning("Card template not found: {TemplateId}", item.TemplateId);
             return (false, null);
         }
-        
+
         var minCommand = slot switch
         {
             MissionSlotId.Required => missionData.RequiredSlotMinCommand,
@@ -278,7 +281,7 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
             MissionSlotId.Bonus2 => missionData.Bonus2SlotMinCommand,
             _ => 0
         };
-        
+
         var maxCommand = slot switch
         {
             MissionSlotId.Required => missionData.RequiredSlotMaxCommand,
@@ -286,7 +289,7 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
             MissionSlotId.Bonus2 => missionData.Bonus2SlotMaxCommand,
             _ => 0
         };
-        
+
         var minRarity = slot switch
         {
             MissionSlotId.Required => missionData.RequiredSlotMinRarity,
@@ -294,7 +297,7 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
             MissionSlotId.Bonus2 => missionData.Bonus2SlotMinRarity,
             _ => CardRarity.Common
         };
-        
+
         var minRank = slot switch
         {
             MissionSlotId.Required => missionData.RequiredSlotMinRank,
@@ -302,16 +305,16 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
             MissionSlotId.Bonus2 => missionData.Bonus2SlotMinRank,
             _ => 0
         };
-        
+
         // TODO: add command check
-        
+
         if (template.Rarity < minRarity && minRarity != CardRarity.NumRarities)
         {
             Logger.LogWarning("Card rarity too low. ID: {ItemId}, Rarity: {Rarity}, MinRarity: {MinRarity}",
                 item.ItemId, template.Rarity, minRarity);
             return (false, null);
         }
-        
+
         if (slot == MissionSlotId.Required
             && missionData.RequiredSlotMaxRarity != CardRarity.Common
             && template.Rarity > missionData.RequiredSlotMaxRarity)
@@ -320,7 +323,7 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
                 item.ItemId, template.Rarity, missionData.RequiredSlotMaxRarity);
             return (false, null);
         }
-        
+
         if (item.Rank < minRank)
         {
             Logger.LogWarning("Card rank too low. ID: {ItemId}, Rank: {Rank}, MinRank: {MinRank}",
@@ -339,7 +342,7 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
         {
             return (false, null);
         }
-        
+
         var isValid = CheckConditional(item, template, conditional);
         return (isValid, item);
     }
@@ -353,10 +356,10 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
                 {
                     return CompareValues(conditional.Operator, template.Type, type);
                 }
-                
+
                 Logger.LogWarning("Unknown card type: {Type}", conditional.Comparison);
                 return false;
-            
+
             case ConditionalAttribute.IsUnitType:
                 if (Enum.TryParse<UnitType>(conditional.Comparison, out var unitType))
                 {
@@ -368,18 +371,18 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
                     Logger.LogWarning("Card is not a unit card: {TemplateId}", item.TemplateId);
                     return false;
                 }
-                
+
                 Logger.LogWarning("Unknown unit type: {UnitType}", conditional.Comparison);
                 break;
-            
+
             case ConditionalAttribute.HasTrait:
                 // TODO: implement this
                 break;
-            
+
             case ConditionalAttribute.HasFlag:
                 // TODO: implement this
                 break;
-            
+
             case ConditionalAttribute.IsName:
                 var nameMapping = MissionsParser.GetMissionNameMapping(conditional.Comparison);
                 if (nameMapping is not null)
@@ -393,13 +396,13 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
             case ConditionalAttribute.Command:
                 // TODO: implement this
                 break;
-            
+
             case ConditionalAttribute.IsRarity:
                 if (Enum.TryParse<CardRarity>(conditional.Comparison, out var rarity))
                 {
                     return CompareValues(conditional.Operator, template.Rarity, rarity);
                 }
-                
+
                 Logger.LogWarning("Unknown rarity: {Rarity}", conditional.Comparison);
                 return false;
 
@@ -412,7 +415,7 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
                 Logger.LogWarning("Invalid rank: {Rank}", conditional.Comparison);
                 return false;
         }
-        
+
         Logger.LogWarning("Unimplemented conditional attribute: {Attribute}", conditional.Attribute);
         return false;
     }
@@ -423,19 +426,19 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
         {
             case Operator.IsEqual:
                 return obj1.Equals(obj2);
-            
+
             case Operator.IsNotEqual:
                 return !obj1.Equals(obj2);
-            
+
             case Operator.IsGreaterThan:
                 return (double) obj1 > (double) obj2;
-            
+
             case Operator.IsLessThan:
                 return (double) obj1 < (double) obj2;
-            
+
             case Operator.IsGreaterThanOrEqual:
                 return (double) obj1 >= (double) obj2;
-            
+
             case Operator.IsLessThanOrEqual:
                 return (double) obj1 <= (double) obj2;
 
@@ -448,33 +451,33 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
     private async Task<bool> RequirementsMet(int userId, MissionStage missionData)
     {
         var requirements = new List<string>();
-        
+
         if (!string.IsNullOrEmpty(missionData.Requirement1))
         {
             requirements.Add(missionData.Requirement1);
         }
-        
+
         if (!string.IsNullOrEmpty(missionData.Requirement2))
         {
             requirements.Add(missionData.Requirement2);
         }
-        
+
         if (!string.IsNullOrEmpty(missionData.Requirement3))
         {
             requirements.Add(missionData.Requirement3);
         }
-        
+
         if (!string.IsNullOrEmpty(missionData.Requirement4))
         {
             requirements.Add(missionData.Requirement4);
         }
-        
+
         if (requirements.Count == 0)
         {
             return true;
         }
-        
-        return await _missionRepository.HasCompletedMissionsAsync(userId, requirements);
+
+        return await _finishedMissionRepository.HasCompletedMissionsAsync(userId, requirements);
     }
 
     private float GetSuccessChance(MissionStage missionData, MissionSlotId slot, ItemEntity? requiredItem,
@@ -482,7 +485,7 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
     {
         var success = GetBaseSuccessChance(missionData, slot);
         success += GetSuccessBonus(slot, requiredItem, bonus1Item, bonus2Item);
-        
+
         return Math.Clamp(success, 0f, 1f);
     }
 
@@ -495,15 +498,15 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
             case MissionSlotId.Required:
                 success = missionData.SuccessChance;
                 break;
-            
+
             case MissionSlotId.Bonus1:
                 if (!GetBonusSuccessOverride(missionData, MissionSlotId.Bonus1, out success))
                 {
                     success = 0.5f;
                 }
-                
+
                 break;
-            
+
             case MissionSlotId.Bonus2:
                 if (!GetBonusSuccessOverride(missionData, MissionSlotId.Bonus2, out success))
                 {
@@ -512,7 +515,7 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
 
                 break;
         }
-        
+
         return success;
     }
 
@@ -532,7 +535,7 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
             success = missionSlot.BonusSuccessOverride;
             return true;
         }
-        
+
         success = 0f;
         return false;
     }
@@ -545,7 +548,7 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
         {
             bonus1Template = RulesetParser.GetCardTemplate(bonus1Item.TemplateId);
         }
-        
+
         CardTemplate? bonus2Template = null;
         if (bonus2Item is not null)
         {
@@ -561,46 +564,46 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
                 {
                     bonus += GetSuccessBonus(MissionSlotId.Required, MissionSlotId.Required, requiredItem.Rank);
                 }
-                
+
                 if (bonus1Template is not null)
                 {
                     bonus += GetSuccessBonus(MissionSlotId.Required, MissionSlotId.Bonus1, bonus1Template.Rarity);
                 }
-                
+
                 if (bonus2Template is not null)
                 {
                     bonus += GetSuccessBonus(MissionSlotId.Required, MissionSlotId.Bonus2, bonus2Template.Rarity);
                 }
-                
+
                 break;
-            
+
             case MissionSlotId.Bonus1:
                 if (requiredItem is not null)
                 {
                     bonus += GetSuccessBonus(MissionSlotId.Bonus1, MissionSlotId.Required, requiredItem.Rank);
                 }
-                
+
                 if (bonus1Template is not null)
                 {
                     bonus += GetSuccessBonus(MissionSlotId.Bonus1, MissionSlotId.Bonus1, bonus1Template.Rarity);
                 }
-                
+
                 break;
-            
+
             case MissionSlotId.Bonus2:
                 if (requiredItem is not null)
                 {
                     bonus += GetSuccessBonus(MissionSlotId.Bonus2, MissionSlotId.Required, requiredItem.Rank);
                 }
-                
+
                 if (bonus2Template is not null)
                 {
                     bonus += GetSuccessBonus(MissionSlotId.Bonus2, MissionSlotId.Bonus2, bonus2Template.Rarity);
                 }
-                
+
                 break;
         }
-        
+
         return bonus;
     }
 
@@ -624,9 +627,9 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
                         _ => bonus
                     };
                 }
-                
+
                 break;
-            
+
             case MissionSlotId.Bonus1:
             case MissionSlotId.Bonus2:
                 if (fromSlot == MissionSlotId.Required)
@@ -642,10 +645,10 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
                         _ => bonus
                     };
                 }
-                
+
                 break;
         }
-        
+
         return bonus;
     }
 
@@ -668,9 +671,9 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
                         _ => bonus
                     };
                 }
-                
+
                 break;
-            
+
             case MissionSlotId.Bonus1:
             case MissionSlotId.Bonus2:
                 if (fromSlot is MissionSlotId.Bonus1 or MissionSlotId.Bonus2)
@@ -685,17 +688,17 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
                         _ => bonus
                     };
                 }
-                
+
                 break;
         }
-        
+
         return bonus;
     }
 
     private float GetCasualtyChance(MissionStage missionData, MissionSlotId slot)
     {
         var casualty = 0f;
-        
+
         var slotName = slot switch
         {
             MissionSlotId.Required => missionData.RequiredSlotCondition,
@@ -729,9 +732,9 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
                     casualty = missionSlot.ReqCasualtyOverride;
                     return true;
                 }
-                
+
                 break;
-                
+
             case MissionSlotId.Bonus1:
             case MissionSlotId.Bonus2:
                 if (missionSlot.BonusCasualtyOverride != -1f)
@@ -739,14 +742,14 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
                     casualty = missionSlot.BonusCasualtyOverride;
                     return true;
                 }
-                
+
                 break;
         }
-        
+
         casualty = 0f;
         return false;
     }
-    
+
     private enum MissionSlotId
     {
         Required,
