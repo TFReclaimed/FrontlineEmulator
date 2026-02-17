@@ -26,7 +26,7 @@ public class Endpoint : Endpoint<SendGiftRequest, SendGiftResponse>
     public override async Task HandleAsync(SendGiftRequest req, CancellationToken ct)
     {
         var userId = this.GetUserId();
-        var player = await _playerRepository.GetPlayerAsync(userId);
+        var player = await _playerRepository.GetByIdAsync(userId);
         if (player is null)
         {
             Logger.LogWarning("Player {UserId} tried to send a gift but was not found", userId);
@@ -48,7 +48,7 @@ public class Endpoint : Endpoint<SendGiftRequest, SendGiftResponse>
             return;
         }
         
-        var receiver = await _playerRepository.GetPlayerAsync(req.ReceiverId);
+        var receiver = await _playerRepository.GetByIdAsync(req.ReceiverId);
         if (receiver is null)
         {
             Logger.LogWarning("Player {UserId} tried to send a gift to {ReceiverId} but the receiver was not found",
@@ -60,7 +60,7 @@ public class Endpoint : Endpoint<SendGiftRequest, SendGiftResponse>
         Logger.LogInformation("Player {UserId} sent a gift to {ReceiverId}", userId, req.ReceiverId);
         
         player.LastGiftSent = DateTime.UtcNow;
-        await _playerRepository.UpdatePlayerAsync(player);
+        await _playerRepository.UpdateAsync(player);
 
         var gift = new ItemEntity
         {

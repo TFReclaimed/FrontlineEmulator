@@ -124,7 +124,7 @@ public class Endpoint : Endpoint<ConsumeRequest>
             return;
         }
         
-        var player = await _playerRepository.GetPlayerAsync(userId);
+        var player = await _playerRepository.GetByIdAsync(userId);
         if (player is null)
         {
             Logger.LogWarning("Player {UserId} tried to retire card {ItemId} but player wasn't found!",
@@ -138,7 +138,7 @@ public class Endpoint : Endpoint<ConsumeRequest>
         player.Credits += credits;
         
         await _inventoryRepository.RemoveItemAsync(item);
-        await _playerRepository.UpdatePlayerAsync(player);
+        await _playerRepository.UpdateAsync(player);
         
         Logger.LogInformation("Player {UserId} retired card {ItemId} for {Credits} credits",
             userId, req.ItemId, credits);

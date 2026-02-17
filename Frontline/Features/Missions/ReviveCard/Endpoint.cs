@@ -25,7 +25,7 @@ public class Endpoint : Endpoint<ReviveCardRequest>
     public override async Task HandleAsync(ReviveCardRequest req, CancellationToken ct)
     {
         var userId = this.GetUserId();
-        var player = await _playerRepository.GetPlayerAsync(userId);
+        var player = await _playerRepository.GetByIdAsync(userId);
         if (player is null)
         {
             Logger.LogWarning("Player not found: {UserId}", userId);
@@ -55,7 +55,7 @@ public class Endpoint : Endpoint<ReviveCardRequest>
         Logger.LogInformation("Player {UserId} revived card {InstanceId}", userId, req.InstanceId);
         
         player.Tokens -= reviveCost;
-        await _playerRepository.UpdatePlayerAsync(player);
+        await _playerRepository.UpdateAsync(player);
         
         item.Casualty = false;
         await _inventoryRepository.UpdateItemAsync(item);

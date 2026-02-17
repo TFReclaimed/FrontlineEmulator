@@ -21,7 +21,7 @@ public class Endpoint : EndpointWithoutRequest<GuildGiftStatusResponse>
     public override async Task HandleAsync(CancellationToken ct)
     {
         var userId = this.GetUserId();
-        var player = await _playerRepository.GetPlayerAsync(userId);
+        var player = await _playerRepository.GetByIdAsync(userId);
         if (player is null)
         {
             Logger.LogWarning("Player {UserId} tried to get gift status but was not found", userId);

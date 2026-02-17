@@ -32,7 +32,7 @@ public class Endpoint : Endpoint<CompleteMissionRequest, List<MissionStageStatus
     public override async Task HandleAsync(CompleteMissionRequest req, CancellationToken ct)
     {
         var userId = this.GetUserId();
-        var player = await _playerRepository.GetPlayerAsync(userId);
+        var player = await _playerRepository.GetByIdAsync(userId);
         if (player is null)
         {
             Logger.LogWarning("Player not found: {UserId}", userId);
@@ -125,7 +125,7 @@ public class Endpoint : Endpoint<CompleteMissionRequest, List<MissionStageStatus
             await GivePlayerRewards(player, requiredRewardSet, bonus1RewardSet, bonus2RewardSet);
             
             player.MissionsComplete++;
-            await _playerRepository.UpdatePlayerAsync(player);
+            await _playerRepository.UpdateAsync(player);
         }
         
         if (mission.RequiredCardItem is not null && mission.Success)
@@ -183,7 +183,7 @@ public class Endpoint : Endpoint<CompleteMissionRequest, List<MissionStageStatus
 
         if (playerUpdated)
         {
-            await _playerRepository.UpdatePlayerAsync(player);
+            await _playerRepository.UpdateAsync(player);
         }
 
         if (items.Count > 0)

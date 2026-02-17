@@ -27,7 +27,7 @@ public class Endpoint : Endpoint<PurchaseRequest, PurchaseResponse>
     public override async Task HandleAsync(PurchaseRequest req, CancellationToken ct)
     {
         // TODO: Figure out if we can make this endpoint secure despite the lack of auth headers
-        var player = await _playerRepository.GetPlayerAsync(req.PlayerId);
+        var player = await _playerRepository.GetByIdAsync(req.PlayerId);
         if (player == null)
         {
             Logger.LogWarning("Player {PlayerId} does not exist.", req.PlayerId);
@@ -60,7 +60,7 @@ public class Endpoint : Endpoint<PurchaseRequest, PurchaseResponse>
         
         player.Tokens -= product.HardVirtualPrice;
         player.BoosterPackCount += product.BoosterCount;
-        await _playerRepository.UpdatePlayerAsync(player);
+        await _playerRepository.UpdateAsync(player);
 
         var response = new PurchaseResponse
         {

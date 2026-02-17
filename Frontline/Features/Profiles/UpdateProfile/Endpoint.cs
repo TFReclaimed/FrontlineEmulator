@@ -22,7 +22,7 @@ public class Endpoint : Endpoint<ProfileUpdateRequest, Ok>
     public override async Task HandleAsync(ProfileUpdateRequest req, CancellationToken ct)
     {
         var userId = this.GetUserId();
-        var player = await _playerRepository.GetPlayerAsync(userId);
+        var player = await _playerRepository.GetByIdAsync(userId);
         if (player is null)
         {
             Logger.LogWarning("Player {UserId} tried to update their profile but it wasn't found!", userId);
@@ -36,7 +36,7 @@ public class Endpoint : Endpoint<ProfileUpdateRequest, Ok>
         player.Name = req.DisplayName;
         player.AvatarId = req.AvatarId;
         
-        await _playerRepository.UpdatePlayerAsync(player);
+        await _playerRepository.UpdateAsync(player);
         
         await Send.OkAsync();
     }

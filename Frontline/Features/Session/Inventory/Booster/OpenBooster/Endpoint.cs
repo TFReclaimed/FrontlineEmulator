@@ -32,7 +32,7 @@ public class Endpoint : Endpoint<OpenBoosterPackRequest, BoosterPackResponse>
     public override async Task HandleAsync(OpenBoosterPackRequest req, CancellationToken ct)
     {
         var userId = this.GetUserId();
-        var player = await _playerRepository.GetPlayerAsync(userId);
+        var player = await _playerRepository.GetByIdAsync(userId);
         if (player is null)
         {
             Logger.LogWarning("Player {UserId} tried to open a booster pack but the profile wasn't found!", userId);
@@ -55,7 +55,7 @@ public class Endpoint : Endpoint<OpenBoosterPackRequest, BoosterPackResponse>
         }
 
         player.BoosterPackCount--;
-        await _playerRepository.UpdatePlayerAsync(player);
+        await _playerRepository.UpdateAsync(player);
 
         var isUltraRare = Random.Shared.Next(0, 2) == 0;
         var potentialRareCards = RulesetParser.Ruleset.CardsRuleset.Cards.Values
@@ -107,7 +107,7 @@ public class Endpoint : Endpoint<OpenBoosterPackRequest, BoosterPackResponse>
         if (resourceCardTemplate.ResourceType == ResourceType.Credit)
         {
             player.Credits += resourceCardTemplate.ResourceValue;
-            await _playerRepository.UpdatePlayerAsync(player);
+            await _playerRepository.UpdateAsync(player);
             _userService.IncrementChangeCounter(userId);
             addResourceCard = false;
             
@@ -117,7 +117,7 @@ public class Endpoint : Endpoint<OpenBoosterPackRequest, BoosterPackResponse>
         else if (resourceCardTemplate.ResourceType == ResourceType.Supply)
         {
             player.Supply += resourceCardTemplate.ResourceValue;
-            await _playerRepository.UpdatePlayerAsync(player);
+            await _playerRepository.UpdateAsync(player);
             _userService.IncrementChangeCounter(userId);
             addResourceCard = false;
             

@@ -21,7 +21,7 @@ public class Endpoint : Endpoint<GameProfileUpdateRequest>
     public override async Task HandleAsync(GameProfileUpdateRequest req, CancellationToken ct)
     {
         var userId = this.GetUserId();
-        var player = await _playerRepository.GetPlayerAsync(userId);
+        var player = await _playerRepository.GetByIdAsync(userId);
         if (player is null)
         {
             Logger.LogWarning("Player {UserId} tried to update their game profile but it wasn't found!", userId);
@@ -40,7 +40,7 @@ public class Endpoint : Endpoint<GameProfileUpdateRequest>
             userId, req.ActiveDeckId);
         
         player.DropshipId = req.ActiveDeckId;
-        await _playerRepository.UpdatePlayerAsync(player);
+        await _playerRepository.UpdateAsync(player);
         
         await Send.OkAsync();
     }

@@ -21,7 +21,7 @@ public class Endpoint : Endpoint<GetInventoryRequest, List<int>>
     public override async Task HandleAsync(GetInventoryRequest req, CancellationToken ct)
     {
         var userId = this.GetUserId();
-        var player = await _playerRepository.GetPlayerAsync(userId);
+        var player = await _playerRepository.GetByIdAsync(userId);
         if (player is null)
         {
             Logger.LogWarning("Player {UserId} tried to get their booster packs but the profile wasn't found!", userId);

@@ -33,7 +33,7 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
     public override async Task HandleAsync(StartMissionRequest req, CancellationToken ct)
     {
         var userId = this.GetUserId();
-        var player = await _playerRepository.GetPlayerAsync(userId);
+        var player = await _playerRepository.GetByIdAsync(userId);
         if (player is null)
         {
             Logger.LogWarning("Player not found: {UserId}", userId);
@@ -179,7 +179,7 @@ public class Endpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
             player.Credits -= missionData.CreditCost;
             player.Tokens -= missionData.TokenCost;
 
-            await _playerRepository.UpdatePlayerAsync(player);
+            await _playerRepository.UpdateAsync(player);
         }
 
         var requiredRewardSet = MissionsParser.GetRewardSet(missionData.SuccessReward);

@@ -42,7 +42,7 @@ public class Endpoint : Endpoint<GetProfileRequest, ProfileDetails, Mapper>
             return;
         }
         
-        var entity = await _playerRepository.GetPlayerAsync(userId);
+        var entity = await _playerRepository.GetByIdAsync(userId);
         if (entity is null)
         {
             await Send.NotFoundAsync();
