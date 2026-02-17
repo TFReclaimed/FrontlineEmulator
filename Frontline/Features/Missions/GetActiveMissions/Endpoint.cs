@@ -2,7 +2,6 @@ using FastEndpoints;
 using Frontline.Data.Entities;
 using Frontline.Data.Repositories;
 using Frontline.Extensions;
-using Frontline.Features.Session.Inventory.GetInventory;
 using Frontline.Missions;
 
 namespace Frontline.Features.Missions.GetActiveMissions;
