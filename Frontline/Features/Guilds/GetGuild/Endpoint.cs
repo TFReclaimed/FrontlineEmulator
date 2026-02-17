@@ -19,15 +19,14 @@ public class Endpoint : Endpoint<GetGuildRequest, GuildProfile, Mapper>
 
     public override async Task HandleAsync(GetGuildRequest req, CancellationToken ct)
     {
-        var guild = await _guildRepository.GetGuildAsync(req.GuildId, true);
+        var guild = await _guildRepository.GetWithMembersAsync(req.GuildId);
         if (guild is null)
         {
             await Send.NotFoundAsync();
             return;
         }
-        
+
         var response = Map.FromEntity(guild);
-        
         await Send.OkAsync(response);
     }
 }

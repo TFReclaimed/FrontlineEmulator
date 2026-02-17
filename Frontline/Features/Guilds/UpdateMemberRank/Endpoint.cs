@@ -7,11 +7,11 @@ namespace Frontline.Features.Guilds.UpdateMemberRank;
 
 public class Endpoint : Endpoint<UpdateMemberRankRequest, Ok>
 {
-    private readonly IGuildRepository _guildRepository;
+    private readonly IGuildMemberRepository _guildMemberRepository;
 
-    public Endpoint(IGuildRepository guildRepository)
+    public Endpoint(IGuildMemberRepository guildMemberRepository)
     {
-        _guildRepository = guildRepository;
+        _guildMemberRepository = guildMemberRepository;
     }
 
     public override void Configure()
@@ -22,7 +22,7 @@ public class Endpoint : Endpoint<UpdateMemberRankRequest, Ok>
     public override async Task HandleAsync(UpdateMemberRankRequest req, CancellationToken ct)
     {
         var userId = this.GetUserId();
-        var member = await _guildRepository.GetPlayerMembershipAsync(userId);
+        var member = await _guildMemberRepository.GetByIdAsync(userId);
         if (member is null || member.GuildId != req.GuildId)
         {
             Logger.LogWarning("Player {UserId} attempted to update a member rank in guild {GuildId} but is not a member of that guild",
@@ -30,8 +30,8 @@ public class Endpoint : Endpoint<UpdateMemberRankRequest, Ok>
             await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
-        
-        var target = await _guildRepository.GetPlayerMembershipAsync(req.UserId);
+
+        var target = await _guildMemberRepository.GetByIdAsync(req.UserId);
         if (target is null || target.GuildId != req.GuildId)
         {
             Logger.LogWarning("Player {UserId} attempted to update a member rank in guild {GuildId} but the target member does not exist",
@@ -39,7 +39,7 @@ public class Endpoint : Endpoint<UpdateMemberRankRequest, Ok>
             await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
-        
+
         if (member.Rank < req.Member.Rank)
         {
             Logger.LogWarning("Player {UserId} attempted to update a member rank in guild {GuildId} but does not have permission",
@@ -47,13 +47,13 @@ public class Endpoint : Endpoint<UpdateMemberRankRequest, Ok>
             await Send.ForbiddenAsync();
             return;
         }
-        
+
         Logger.LogInformation("Player {UserId} updated the rank of member {TargetUserId} in guild {GuildId} from {OldRank} to {NewRank}",
             userId, req.UserId, req.GuildId, target.Rank, req.Member.Rank);
-        
+
         target.Rank = req.Member.Rank;
-        await _guildRepository.UpdatePlayerMembershipAsync(target);
-        
+        await _guildMemberRepository.UpdateAsync(target);
+
         await Send.OkAsync();
     }
 }

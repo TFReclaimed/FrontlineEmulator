@@ -10,9 +10,12 @@ public class Endpoint : Endpoint<CreateGuildRequest, Ok>
 {
     private readonly IGuildRepository _guildRepository;
 
-    public Endpoint(IGuildRepository guildRepository)
+    private readonly IGuildMemberRepository _guildMemberRepository;
+
+    public Endpoint(IGuildRepository guildRepository, IGuildMemberRepository guildMemberRepository)
     {
         _guildRepository = guildRepository;
+        _guildMemberRepository = guildMemberRepository;
     }
 
     public override void Configure()
@@ -30,7 +33,9 @@ public class Endpoint : Endpoint<CreateGuildRequest, Ok>
             await Send.ResultAsync(TypedResults.BadRequest());
             return;
         }
-        
+
+        Logger.LogInformation("User {UserId} created guild '{GuildName}'", userId, req.Name);
+
         var newGuild = new GuildEntity
         {
             Name = req.Name,
@@ -39,18 +44,18 @@ public class Endpoint : Endpoint<CreateGuildRequest, Ok>
             Mode = req.Mode,
             Locale = req.Locale
         };
-        
-        var member = new GuildMemberEntity
+
+        await _guildRepository.AddAsync(newGuild);
+
+        var newMember = new GuildMemberEntity
         {
             UserId = userId,
             GuildId = newGuild.Id,
             Rank = MemberRank.LEADER
         };
-        
-        Logger.LogInformation("User {UserId} created guild '{GuildName}'", userId, newGuild.Name);
-        
-        await _guildRepository.CreateGuildAsync(newGuild, member);
-        
+
+        await _guildMemberRepository.AddAsync(newMember);
+
         await Send.OkAsync();
     }
 }
