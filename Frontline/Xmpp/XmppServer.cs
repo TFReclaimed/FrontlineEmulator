@@ -67,6 +67,10 @@ public class XmppServer : BackgroundService
                 
                 _xmppClients.Add(xmppClient);
             }
+            catch (OperationCanceledException)
+            {
+                return;
+            }
             catch (Exception e)
             {
                 if (stoppingToken.IsCancellationRequested)
@@ -79,10 +83,10 @@ public class XmppServer : BackgroundService
         }
     }
 
-    public override Task StopAsync(CancellationToken cancellationToken)
+    public override async Task StopAsync(CancellationToken cancellationToken)
     {
+        await base.StopAsync(cancellationToken);
         _tcpListener.Stop();
-        return base.StopAsync(cancellationToken);
     }
 
     private void OnClientDisconnected(XmppClient client)
