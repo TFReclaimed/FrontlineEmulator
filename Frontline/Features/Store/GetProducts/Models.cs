@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Frontline.Options;
 
 namespace Frontline.Features.Store.GetProducts;
 
@@ -24,4 +25,21 @@ public class ProductDto
     public string SkuApple { get; set; } = string.Empty;
     [JsonPropertyName("SKU_Google")]
     public string SkuGoogle { get; set; } = string.Empty;
+
+    public static ProductDto FromProduct(Product product)
+    {
+        return new ProductDto
+        {
+            ProductId = product.ProductId,
+            Title = product.Title,
+            RealPrice = product.RealPrice,
+            RealCurrencyCode = product.RealCurrencyCode,
+            SoftVirtualPrice = product.SoftVirtualPrice,
+            HardVirtualPrice = product.HardVirtualPrice,
+            IsAvailableReal = product.IsAvailableReal,
+            IsConsumable = product.IsConsumable,
+            SkuApple = product.SkuApple,
+            SkuGoogle = product.SkuGoogle
+        };
+    }
 }

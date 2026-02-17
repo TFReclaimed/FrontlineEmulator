@@ -4,10 +4,10 @@ using Frontline.Extensions;
 
 namespace Frontline.Features.Profiles.GetProfile;
 
-public class Endpoint : Endpoint<GetProfileRequest, ProfileDetails, Mapper>
+public class Endpoint : Endpoint<GetProfileRequest, ProfileDetails>
 {
     private readonly IPlayerRepository _playerRepository;
-    
+
     private readonly IInventoryRepository _inventoryRepository;
 
     public Endpoint(IPlayerRepository playerRepository, IInventoryRepository inventoryRepository)
@@ -37,21 +37,21 @@ public class Endpoint : Endpoint<GetProfileRequest, ProfileDetails, Mapper>
                     new GameProfile()
                 ]
             };
-            
+
             await Send.OkAsync(systemProfile);
             return;
         }
-        
-        var entity = await _playerRepository.GetByIdAsync(userId);
-        if (entity is null)
+
+        var player = await _playerRepository.GetByIdAsync(userId);
+        if (player is null)
         {
             await Send.NotFoundAsync();
             return;
         }
-        
-        var profile = Map.FromEntity(entity);
+
+        var profile = ProfileDetails.FromEntity(player);
         profile.GameProfiles[0].CardsCollected = await _inventoryRepository.GetItemCountAsync(userId);
-        
+
         await Send.OkAsync(profile);
     }
 }

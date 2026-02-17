@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using Frontline.Features.Session.Inventory.GetInventory;
+using Frontline.Data.Entities;
 using Frontline.Missions;
 
 namespace Frontline.Features.Missions;

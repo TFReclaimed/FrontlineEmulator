@@ -1,3 +1,5 @@
+using Frontline.Data.Entities;
+
 namespace Frontline.Features.Data.Leaderboards.GetPvpLeaderboard;
 
 public class LeaderboardPvpResponse
@@ -15,4 +17,16 @@ public class LeaderboardPvpEntry
     public int Trophies { get; set; }
     public string Avatar { get; set; } = string.Empty;
     public int Id { get; set; }
+
+    public static LeaderboardPvpEntry FromEntity(PlayerEntity entity)
+    {
+        return new LeaderboardPvpEntry
+        {
+            Name = entity.Name,
+            GuildName = entity.GuildName,
+            Trophies = entity.Trophies,
+            Avatar = entity.AvatarId,
+            Id = entity.Id
+        };
+    }
 }

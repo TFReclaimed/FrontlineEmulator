@@ -2,7 +2,6 @@ using FastEndpoints;
 using Frontline.Data.Entities;
 using Frontline.Data.Repositories;
 using Frontline.Extensions;
-using Frontline.Features.Session.Inventory.GetInventory;
 using Frontline.Game;
 using Frontline.Services;
 
@@ -39,7 +38,7 @@ public class Endpoint : Endpoint<OpenBoosterPackRequest, BoosterPackResponse>
             await Send.NotFoundAsync();
             return;
         }
-        
+
         if (player.BoosterPackCount <= 0)
         {
             Logger.LogWarning("Player {UserId} tried to open a booster pack but they don't have any!", userId);
@@ -70,7 +69,7 @@ public class Endpoint : Endpoint<OpenBoosterPackRequest, BoosterPackResponse>
                 {
                     return false;
                 }
-                
+
                 if (x is ResourceCardTemplate resourceCardTemplate)
                 {
                     if (resourceCardTemplate.ResourceType is ResourceType.IntelTypeOperational
@@ -79,7 +78,7 @@ public class Endpoint : Endpoint<OpenBoosterPackRequest, BoosterPackResponse>
                     {
                         return true;
                     }
-                    
+
                     if (resourceCardTemplate.ResourceType is ResourceType.Xp
                         or ResourceType.Credit
                         or ResourceType.Supply)
@@ -95,7 +94,7 @@ public class Endpoint : Endpoint<OpenBoosterPackRequest, BoosterPackResponse>
         var potentialCommonCards = RulesetParser.Ruleset.CardsRuleset.Cards.Values
             .Where(x => x.Type != CardType.Resource && x.Rarity == CardRarity.Common)
             .ToList();
-        
+
         var rareCardTemplate = potentialRareCards[Random.Shared.Next(0, potentialRareCards.Count)];
         var resourceCardTemplate = (ResourceCardTemplate) potentialResourceCards[Random.Shared.Next(0, potentialResourceCards.Count)];
         var commonCards = potentialCommonCards
@@ -110,7 +109,7 @@ public class Endpoint : Endpoint<OpenBoosterPackRequest, BoosterPackResponse>
             await _playerRepository.UpdateAsync(player);
             _userService.IncrementChangeCounter(userId);
             addResourceCard = false;
-            
+
             Logger.LogInformation("Player {UserId} got {ResourceValue} credits from a booster pack.",
                 userId, resourceCardTemplate.ResourceValue);
         }
@@ -120,21 +119,21 @@ public class Endpoint : Endpoint<OpenBoosterPackRequest, BoosterPackResponse>
             await _playerRepository.UpdateAsync(player);
             _userService.IncrementChangeCounter(userId);
             addResourceCard = false;
-            
+
             Logger.LogInformation("Player {UserId} got {ResourceValue} supply from a booster pack.",
                 userId, resourceCardTemplate.ResourceValue);
         }
-        
+
         List<CardTemplate> cardTemplates = [
             rareCardTemplate,
             ..commonCards
         ];
-        
+
         if (addResourceCard)
         {
             cardTemplates.Add(resourceCardTemplate);
         }
-        
+
         List<ItemEntity> cardEntities = [];
         foreach (var template in cardTemplates)
         {
@@ -152,14 +151,14 @@ public class Endpoint : Endpoint<OpenBoosterPackRequest, BoosterPackResponse>
         {
             Cards = cardEntities
                 .Where(x => x.TemplateId != resourceCardTemplate.CardId)
-                .Select(x => InventoryCard.FromItemEntity(x))
+                .Select(CardDto.FromEntity)
                 .ToList(),
             Resources = cardEntities
                 .Where(x => x.TemplateId == resourceCardTemplate.CardId)
-                .Select(x => InventoryCard.FromItemEntity(x, resourceCardTemplate))
+                .Select(CardDto.FromEntity)
                 .ToList()
         };
-        
+
         await Send.OkAsync(response);
     }
 }

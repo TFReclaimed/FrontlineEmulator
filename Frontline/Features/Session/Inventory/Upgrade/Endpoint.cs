@@ -5,7 +5,7 @@ using Frontline.Game;
 
 namespace Frontline.Features.Session.Inventory.Upgrade;
 
-public class Endpoint : Endpoint<UpgradeRequest, UpgradedCard, Mapper>
+public class Endpoint : Endpoint<UpgradeRequest, UpgradedCard>
 {
     private readonly IInventoryRepository _inventoryRepository;
 
@@ -77,7 +77,7 @@ public class Endpoint : Endpoint<UpgradeRequest, UpgradedCard, Mapper>
         Logger.LogInformation("Player {UserId} upgraded item {ItemId} to rank {Rank}",
             userId, req.ItemId, item.Rank);
 
-        var result = Map.FromEntity(item);
+        var result = UpgradedCard.FromEntity(item);
         await Send.OkAsync(result);
     }
 

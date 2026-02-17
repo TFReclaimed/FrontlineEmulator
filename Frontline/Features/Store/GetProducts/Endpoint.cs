@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 
 namespace Frontline.Features.Store.GetProducts;
 
-public class Endpoint : EndpointWithoutRequest<List<ProductDto>, Mapper>
+public class Endpoint : EndpointWithoutRequest<List<ProductDto>>
 {
     private readonly IOptions<ProductOptions> _productOptions;
 
@@ -21,7 +21,10 @@ public class Endpoint : EndpointWithoutRequest<List<ProductDto>, Mapper>
 
     public override async Task HandleAsync(CancellationToken ct)
     {
-        var products = Map.FromEntity(_productOptions.Value.Products);
+        var products = _productOptions.Value.Products
+            .Select(ProductDto.FromProduct)
+            .ToList();
+
         await Send.OkAsync(products);
     }
 }

@@ -9,7 +9,7 @@ using Microsoft.Extensions.Options;
 
 namespace Frontline.Features.Profiles.Login;
 
-public class Endpoint : Endpoint<LoginRequest, PlayerProfile, Mapper>
+public class Endpoint : Endpoint<LoginRequest, PlayerProfile>
 {
     private readonly IToyService _toyService;
 
@@ -80,7 +80,7 @@ public class Endpoint : Endpoint<LoginRequest, PlayerProfile, Mapper>
             o.User["UserId"] = player.Id.ToString();
         });
 
-        var profile = Map.FromEntity(player);
+        var profile = PlayerProfile.FromEntity(player);
         profile.SessionId = jwtToken;
         profile.Details.GameProfiles[0].CardsCollected = await _inventoryRepository.GetItemCountAsync(userId);
 

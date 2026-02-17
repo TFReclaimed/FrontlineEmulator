@@ -1,10 +1,11 @@
 using FastEndpoints;
+using Frontline.Data.Entities;
 using Frontline.Data.Repositories;
 using Frontline.Extensions;
 
 namespace Frontline.Features.Session.Inventory.GetInventory;
 
-public class Endpoint : Endpoint<GetInventoryRequest, InventoryListResponse, Mapper>
+public class Endpoint : Endpoint<GetInventoryRequest, InventoryListResponse>
 {
     private readonly IInventoryRepository _inventoryRepository;
 
@@ -25,9 +26,9 @@ public class Endpoint : Endpoint<GetInventoryRequest, InventoryListResponse, Map
 
         var response = new InventoryListResponse
         {
-            Items = Map.FromEntity(items)
+            Items = items.Select(CardDto.FromEntity).ToList()
         };
-        
+
         await Send.OkAsync(response);
     }
 }

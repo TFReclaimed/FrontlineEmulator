@@ -1,7 +1,7 @@
 using FastEndpoints;
+using Frontline.Data.Entities;
 using Frontline.Data.Repositories;
 using Frontline.Extensions;
-using Frontline.Features.Session.Inventory.GetInventory;
 using Frontline.Game;
 
 namespace Frontline.Features.Session.Inventory.Dropships.GetDropships;
@@ -40,7 +40,7 @@ public class Endpoint : Endpoint<GetInventoryRequest, List<DropshipInfo>>
 
         foreach (var dropship in dropshipItems.GroupBy(x => x.DropshipId).ToList())
         {
-            var slottedCards = new InventoryCard?[41];
+            var slottedCards = new CardDto?[41];
 
             var dropshipEntities = dropship.ToList();
 
@@ -51,7 +51,7 @@ public class Endpoint : Endpoint<GetInventoryRequest, List<DropshipInfo>>
                 var cardTemplate = RulesetParser.GetCardTemplate(item.TemplateId);
                 var isCommander = cardTemplate!.Type == CardType.Commander;
 
-                slottedCards[dropshipEntity.SlotIndex] = new InventoryCard
+                slottedCards[dropshipEntity.SlotIndex] = new CardDto
                 {
                     Type = isCommander ? "CommanderCard" : "Card",
                     InstanceId = item.ItemId,
@@ -68,7 +68,7 @@ public class Endpoint : Endpoint<GetInventoryRequest, List<DropshipInfo>>
                     continue;
                 }
 
-                slottedCards[i] = new InventoryCard
+                slottedCards[i] = new CardDto
                 {
                     Type = "Card",
                     InstanceId = 0,

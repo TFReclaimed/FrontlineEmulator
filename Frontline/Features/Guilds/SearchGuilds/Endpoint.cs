@@ -3,7 +3,7 @@ using Frontline.Data.Repositories;
 
 namespace Frontline.Features.Guilds.SearchGuilds;
 
-public class Endpoint : Endpoint<SearchGuildRequest, GuildListResponse, Mapper>
+public class Endpoint : Endpoint<SearchGuildRequest, GuildListResponse>
 {
     private readonly IGuildRepository _guildRepository;
 
@@ -23,7 +23,7 @@ public class Endpoint : Endpoint<SearchGuildRequest, GuildListResponse, Mapper>
 
         var response = new GuildListResponse
         {
-            Guilds = Map.FromEntity(guilds),
+            Guilds = guilds.Select(GuildProfileDto.FromEntity).ToList(),
             FirstPage = req.Page == 0,
             LastPage = guilds.Count < req.MaxCount
         };

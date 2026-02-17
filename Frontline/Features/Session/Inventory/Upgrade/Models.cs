@@ -1,3 +1,5 @@
+using Frontline.Data.Entities;
+
 namespace Frontline.Features.Session.Inventory.Upgrade;
 
 public class UpgradeRequest
@@ -9,4 +11,12 @@ public class UpgradeRequest
 public class UpgradedCard
 {
     public int Rank { get; set; }
+
+    public static UpgradedCard FromEntity(ItemEntity entity)
+    {
+        return new UpgradedCard
+        {
+            Rank = entity.Rank
+        };
+    }
 }

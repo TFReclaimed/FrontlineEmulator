@@ -14,7 +14,7 @@ public class SearchGuildRequest
 public class GuildListResponse
 {
     [JsonPropertyName("content")]
-    public required List<GuildProfile> Guilds { get; set; }
+    public required List<GuildProfileDto> Guilds { get; set; }
     [JsonPropertyName("first")]
     public bool FirstPage { get; set; }
     [JsonPropertyName("last")]

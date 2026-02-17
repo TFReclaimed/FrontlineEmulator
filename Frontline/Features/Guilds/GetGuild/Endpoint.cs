@@ -3,7 +3,7 @@ using Frontline.Data.Repositories;
 
 namespace Frontline.Features.Guilds.GetGuild;
 
-public class Endpoint : Endpoint<GetGuildRequest, GuildProfile, Mapper>
+public class Endpoint : Endpoint<GetGuildRequest, GuildProfileDto>
 {
     private readonly IGuildRepository _guildRepository;
 
@@ -26,7 +26,7 @@ public class Endpoint : Endpoint<GetGuildRequest, GuildProfile, Mapper>
             return;
         }
 
-        var response = Map.FromEntity(guild);
+        var response = GuildProfileDto.FromEntity(guild);
         await Send.OkAsync(response);
     }
 }
