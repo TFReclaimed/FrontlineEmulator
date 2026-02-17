@@ -103,7 +103,8 @@ public class MissionStage
     public CardRarity RequiredSlotMinRarity { get; set; }
     [JsonPropertyName("ReqMaxRarity:S")]
     public CardRarity RequiredSlotMaxRarity { get; set; }
-    [JsonPropertyName("ReqMinRank:I")]
+    // Yes, this is a typo in the original data.
+    [JsonPropertyName("ReqMaxRank:I")]
     public int RequiredSlotMinRank { get; set; }
     [JsonPropertyName("Bonus1:X")]
     public string Bonus1SlotCondition { get; set; } = string.Empty;
@@ -116,7 +117,8 @@ public class MissionStage
     public int Bonus1SlotMaxCommand { get; set; }
     [JsonPropertyName("B1MinRarity:S")]
     public CardRarity Bonus1SlotMinRarity { get; set; }
-    [JsonPropertyName("B1MinRank:I")]
+    // Yes, this is a typo in the original data.
+    [JsonPropertyName("B1MaxRank:I")]
     public int Bonus1SlotMinRank { get; set; }
     [JsonPropertyName("Bonus2:X")]
     public string Bonus2SlotCondition { get; set; } = string.Empty;
@@ -129,7 +131,8 @@ public class MissionStage
     public int Bonus2SlotMaxCommand { get; set; }
     [JsonPropertyName("B2MinRarity:S")]
     public CardRarity Bonus2SlotMinRarity { get; set; }
-    [JsonPropertyName("B2MinRank:I")]
+    // Yes, this is a typo in the original data.
+    [JsonPropertyName("B2MaxRank:I")]
     public int Bonus2SlotMinRank { get; set; }
     
     public bool IsCalculated => MissionType is MissionType.Elective or MissionType.Once;
