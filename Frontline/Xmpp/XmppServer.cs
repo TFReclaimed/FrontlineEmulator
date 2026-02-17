@@ -113,7 +113,7 @@ public class XmppServer : BackgroundService
         using var scope = _serviceScopeFactory.CreateScope();
         var playerRepository = scope.ServiceProvider.GetRequiredService<IPlayerRepository>();
         
-        var player = await playerRepository.GetPlayerAsync(client.UserId);
+        var player = await playerRepository.GetByIdAsync(client.UserId);
         if (player is null)
         {
             _logger.LogWarning("{Client} wants to update their profile, but the player does not exist.", client);

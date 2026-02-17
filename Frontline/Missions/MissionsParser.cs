@@ -1,5 +1,5 @@
 using System.Text.Json;
-using Frontline.Features.Missions;
+using Frontline.Endpoints.Missions;
 using Frontline.Missions.Json;
 
 namespace Frontline.Missions;

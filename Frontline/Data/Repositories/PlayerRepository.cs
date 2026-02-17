@@ -3,36 +3,26 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Frontline.Data.Repositories;
 
-public interface IPlayerRepository
+public interface IPlayerRepository : IRepository<PlayerEntity>
 {
-    Task<PlayerEntity?> GetPlayerAsync(int id);
     Task<(PlayerEntity entity, bool created)> GetOrCreatePlayerAsync(int id);
-    Task UpdatePlayerAsync(PlayerEntity player);
     Task<List<PlayerEntity>> GetTopPlayersAsync(int count);
 }
 
-public class PlayerRepository : IPlayerRepository
+public class PlayerRepository : RepositoryBase<PlayerEntity>, IPlayerRepository
 {
-    private readonly AppDb _db;
-    
-    public PlayerRepository(AppDb db)
+    public PlayerRepository(AppDb db) : base(db)
     {
-        _db = db;
-    }
-    
-    public async Task<PlayerEntity?> GetPlayerAsync(int id)
-    {
-        return await _db.Players.FindAsync(id);
     }
 
     public async Task<(PlayerEntity entity, bool created)> GetOrCreatePlayerAsync(int id)
     {
-        var player = await GetPlayerAsync(id);
+        var player = await GetByIdAsync(id);
         if (player is not null)
         {
             return (player, false);
         }
-        
+
         player = new PlayerEntity
         {
             Id = id,
@@ -43,29 +33,22 @@ public class PlayerRepository : IPlayerRepository
             HighestTrophies = 25,
             Xp = 325
         };
-        
-        _db.Players.Add(player);
-        await _db.SaveChangesAsync();
+
+        await AddAsync(player);
 
         return (player, true);
     }
 
-    public async Task UpdatePlayerAsync(PlayerEntity player)
-    {
-        _db.Update(player);
-        await _db.SaveChangesAsync();
-    }
-
     public async Task<List<PlayerEntity>> GetTopPlayersAsync(int count)
     {
-        var players = await _db.Players
+        var players = await Db.Players
             .Where(p => p.Name != string.Empty)
             .OrderByDescending(p => p.Trophies)
             .Take(count)
             .Select(p => new 
             {
                 Player = p,
-                GuildName = _db.GuildMembers
+                GuildName = Db.GuildMembers
                     .Where(gm => gm.UserId == p.Id)
                     .Select(gm => gm.Guild!.Name)
                     .FirstOrDefault()

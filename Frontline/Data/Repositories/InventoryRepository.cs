@@ -3,34 +3,26 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Frontline.Data.Repositories;
 
-public interface IInventoryRepository
+public interface IInventoryRepository : IRepository<ItemEntity>
 {
     Task<ItemEntity?> GetItemAsync(int userId, int itemId);
-    List<ItemEntity> GetItems(int userId, int maxItems = 0);
-    List<ItemEntity> GetItems(int userId, List<int> itemIds);
+    Task<List<ItemEntity>> GetItems(int userId, int maxItems = 0);
+    Task<List<ItemEntity>> GetItems(int userId, List<int> itemIds);
     Task<int> GetItemCountAsync(int userId);
-    List<DropshipEntity> GetDropshipItems(int userId);
     Task AddItemAsync(int userId, ItemEntity item);
     Task AddItemsAsync(int userId, List<ItemEntity> items);
-    Task AddDropshipItemsAsync(int userId, List<DropshipEntity> dropshipItems);
-    Task UpdateItemAsync(ItemEntity item);
-    Task RemoveItemAsync(ItemEntity item);
-    Task ClearDropshipItemsAsync(int userId, int dropshipId);
     Task<bool> HasItemsAsync(int userId, List<int> itemIds);
 }
 
-public class InventoryRepository : IInventoryRepository
+public class InventoryRepository : RepositoryBase<ItemEntity>, IInventoryRepository
 {
-    private readonly AppDb _db;
-
-    public InventoryRepository(AppDb db)
+    public InventoryRepository(AppDb db) : base(db)
     {
-        _db = db;
     }
 
-    public Task<ItemEntity?> GetItemAsync(int userId, int itemId)
+    public async Task<ItemEntity?> GetItemAsync(int userId, int itemId)
     {
-        return _db.Items
+        return await Db.Items
             .Where(item => item.UserId == userId && item.ItemId == itemId)
             .Select(item => new ItemEntity
             {
@@ -40,12 +32,12 @@ public class InventoryRepository : IInventoryRepository
                 Xp = item.Xp,
                 Rank = item.Rank,
                 Casualty = item.Casualty,
-                DropshipId = _db.Dropships
+                DropshipId = Db.Dropships
                     .Where(dropshipItem => dropshipItem.UserId == userId
                                          && dropshipItem.ItemId == item.ItemId)
                     .Select(dropshipItem => (int?) dropshipItem.DropshipId)
                     .FirstOrDefault() ?? -1,
-                CurrentMission = _db.ActiveMissions
+                CurrentMission = Db.ActiveMissions
                     .Where(mission => mission.UserId == userId
                                       && (mission.RequiredCardItemId == item.ItemId
                                           || mission.BonusCard1ItemId == item.ItemId
@@ -56,11 +48,11 @@ public class InventoryRepository : IInventoryRepository
             .FirstOrDefaultAsync();
     }
 
-    public List<ItemEntity> GetItems(int userId, int maxItems = 0)
+    public async Task<List<ItemEntity>> GetItems(int userId, int maxItems = 0)
     {
         if (maxItems <= 0)
         {
-            return _db.Items
+            return await Db.Items
                 .Where(item => item.UserId == userId)
                 .OrderBy(item => item.ItemId)
                 .Select(item => new ItemEntity
@@ -71,12 +63,12 @@ public class InventoryRepository : IInventoryRepository
                     Xp = item.Xp,
                     Rank = item.Rank,
                     Casualty = item.Casualty,
-                    DropshipId = _db.Dropships
+                    DropshipId = Db.Dropships
                         .Where(dropshipItem => dropshipItem.UserId == userId
                                              && dropshipItem.ItemId == item.ItemId)
                         .Select(dropshipItem => (int?) dropshipItem.DropshipId)
                         .FirstOrDefault() ?? -1,
-                    CurrentMission = _db.ActiveMissions
+                    CurrentMission = Db.ActiveMissions
                         .Where(mission => mission.UserId == userId
                                           && (mission.RequiredCardItemId == item.ItemId
                                               || mission.BonusCard1ItemId == item.ItemId
@@ -84,10 +76,10 @@ public class InventoryRepository : IInventoryRepository
                         .Select(mission => mission.MissionKey)
                         .FirstOrDefault()
                 })
-                .ToList();
+                .ToListAsync();
         }
-        
-        return _db.Items
+
+        return await Db.Items
             .Where(item => item.UserId == userId)
             .OrderBy(item => item.ItemId)
             .Take(maxItems)
@@ -99,12 +91,12 @@ public class InventoryRepository : IInventoryRepository
                 Xp = item.Xp,
                 Rank = item.Rank,
                 Casualty = item.Casualty,
-                DropshipId = _db.Dropships
+                DropshipId = Db.Dropships
                     .Where(dropshipItem => dropshipItem.UserId == userId
                                          && dropshipItem.ItemId == item.ItemId)
                     .Select(dropshipItem => (int?) dropshipItem.DropshipId)
                     .FirstOrDefault() ?? -1,
-                CurrentMission = _db.ActiveMissions
+                CurrentMission = Db.ActiveMissions
                     .Where(mission => mission.UserId == userId
                                       && (mission.RequiredCardItemId == item.ItemId
                                           || mission.BonusCard1ItemId == item.ItemId
@@ -112,96 +104,57 @@ public class InventoryRepository : IInventoryRepository
                     .Select(mission => mission.MissionKey)
                     .FirstOrDefault()
             })
-            .ToList();
+            .ToListAsync();
     }
 
-    public List<ItemEntity> GetItems(int userId, List<int> itemIds)
+    public async Task<List<ItemEntity>> GetItems(int userId, List<int> itemIds)
     {
-        return _db.Items
+        return await Db.Items
             .Where(item => item.UserId == userId && itemIds.Contains(item.ItemId))
-            .ToList();
+            .ToListAsync();
     }
 
     public async Task<int> GetItemCountAsync(int userId)
     {
-        return await _db.Items
+        return await Db.Items
             .Where(item => item.UserId == userId)
             .CountAsync();
-    }
-
-    public List<DropshipEntity> GetDropshipItems(int userId)
-    {
-        return _db.Dropships
-            .Include(dropship => dropship.Item)
-            .Where(dropship => dropship.UserId == userId)
-            .ToList();
     }
 
     public async Task AddItemAsync(int userId, ItemEntity item)
     {
         item.UserId = userId;
-        item.ItemId = GetNextItemIdForUser(userId);
-        
-        _db.Items.Add(item);
-        await _db.SaveChangesAsync();
+        item.ItemId = await GetNextItemIdForUser(userId);
+
+        await AddAsync(item);
     }
 
     public async Task AddItemsAsync(int userId, List<ItemEntity> items)
     {
-        var nextItemId = GetNextItemIdForUser(userId);
-        
+        var nextItemId = await GetNextItemIdForUser(userId);
+
         foreach (var item in items)
         {
             item.UserId = userId;
             item.ItemId = nextItemId;
             nextItemId++;
         }
-        
-        _db.Items.AddRange(items);
-        await _db.SaveChangesAsync();
-    }
 
-    public async Task AddDropshipItemsAsync(int userId, List<DropshipEntity> dropshipItems)
-    {
-        foreach (var dropshipItem in dropshipItems)
-        {
-            _db.Dropships.Add(dropshipItem);
-        }
-        
-        await _db.SaveChangesAsync();
-    }
-
-    public async Task UpdateItemAsync(ItemEntity item)
-    {
-        _db.Items.Update(item);
-        await _db.SaveChangesAsync();
-    }
-
-    public async Task RemoveItemAsync(ItemEntity item)
-    {
-        _db.Items.Remove(item);
-        await _db.SaveChangesAsync();
-    }
-
-    public async Task ClearDropshipItemsAsync(int userId, int dropshipId)
-    {
-        await _db.Dropships
-            .Where(dropshipItem => dropshipItem.UserId == userId && dropshipItem.DropshipId == dropshipId)
-            .ExecuteDeleteAsync();
+        await AddRangeAsync(items);
     }
 
     public async Task<bool> HasItemsAsync(int userId, List<int> itemIds)
     {
-        return await _db.Items
+        return await Db.Items
             .Where(item => item.UserId == userId && itemIds.Contains(item.ItemId))
             .CountAsync() == itemIds.Count;
     }
 
-    private int GetNextItemIdForUser(int userId)
+    private async Task<int> GetNextItemIdForUser(int userId)
     {
-        var maxItemId = _db.Items
+        var maxItemId = await Db.Items
             .Where(item => item.UserId == userId)
-            .Max(item => (int?) item.ItemId) ?? 0;
+            .MaxAsync(item => (int?) item.ItemId) ?? 0;
         return maxItemId + 1;
     }
 }
