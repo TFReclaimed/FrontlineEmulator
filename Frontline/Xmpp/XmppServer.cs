@@ -54,7 +54,7 @@ public class XmppServer : BackgroundService
             try
             {
                 var tcpClient = await _tcpListener.AcceptTcpClientAsync(stoppingToken);
-                _logger.LogInformation("Accepted XMPP client {Client}.", tcpClient.Client.RemoteEndPoint);
+                _logger.LogDebug("Accepted XMPP client {Client}.", tcpClient.Client.RemoteEndPoint);
                 
                 var xmppClient = new XmppClient(tcpClient, stoppingToken, _loggerFactory, _tokenValidator, _chatOptions);
                 xmppClient.OnDisconnected += OnClientDisconnected;

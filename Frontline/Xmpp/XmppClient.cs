@@ -131,15 +131,18 @@ public class XmppClient
 
     public void Disconnect(string? reason = null)
     {
-        if (reason != null)
+        if (UserId != 0)
         {
-            _logger.LogInformation("{Client} Disconnected: {Reason}", this, reason);
+            if (reason != null)
+            {
+                _logger.LogInformation("{Client} Disconnected: {Reason}", this, reason);
+            }
+            else
+            {
+                _logger.LogInformation("{Client} Disconnected.", this);
+            }
         }
-        else
-        {
-            _logger.LogInformation("{Client} Disconnected.", this);
-        }
-        
+
         _tcpClient.Close();
         _timeoutTimer.Stop();
         _timeoutTimer.Dispose();
@@ -197,7 +200,10 @@ public class XmppClient
                 break;
             
             default:
-                _logger.LogWarning("{Client} Unknown session state.", this);
+                if (UserId != 0)
+                {
+                    _logger.LogWarning("{Client} Unknown session state.", this);
+                }
                 break;
         }
 
@@ -232,7 +238,10 @@ public class XmppClient
                 break;
             
             default:
-                _logger.LogWarning("{Client} Unhandled XMPP element.", this);
+                if (UserId != 0)
+                {
+                    _logger.LogWarning("{Client} Unhandled XMPP element.", this);
+                }
                 break;
         }
     }
