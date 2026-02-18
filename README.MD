@@ -29,7 +29,6 @@ Use AssetRipper to extract these files from the Unity project.
 
 ## Features
 
-- ✅ Asset hosting
 - ✅ FUE (Tutorial)
 - ✅ Authentication
   - ✅ Registration/login 

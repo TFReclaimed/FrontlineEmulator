@@ -21,13 +21,19 @@ public class GetGameConfigEndpoint : EndpointWithoutRequest<GameConfigResponse>
     
     public override async Task HandleAsync(CancellationToken ct)
     {
+        var assetBundleUrl = _urlOptions.Value.AssetBundleUrl;
+        if (!assetBundleUrl.Contains("cdn"))
+        {
+            // url has to go two levels deep
+            assetBundleUrl = assetBundleUrl.TrimEnd('/') + "/test/test/";
+        }
+
         var response = new GameConfigResponse
         {
             AssetBundleInfo = [
                 new AssetBundleInfo
                 {
-                    // url has to go two levels deep
-                    Uri = _urlOptions.Value.AssetBundleUrl
+                    Uri = assetBundleUrl
                 }
             ],
             PveRuleset = new PveRuleset

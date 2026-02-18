@@ -93,9 +93,4 @@ app.UseFastEndpoints();
 
 app.UseSwaggerGen();
 
-app.UseStaticFiles(new StaticFileOptions
-{
-    ServeUnknownFileTypes = true
-});
-
 app.Run();
