@@ -1,4 +1,3 @@
-using System.Text.Json.Serialization;
 using FastEndpoints;
 using FluentValidation;
 using Frontline.Data.Entities;
@@ -9,10 +8,8 @@ public class CreateGuildRequest
 {
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
-    [JsonConverter(typeof(JsonStringEnumConverter))]
     public GuildMode Mode { get; set; }
     public string AvatarId { get; set; } = string.Empty;
-    [JsonConverter(typeof(JsonStringEnumConverter))]
     public GuildLocale Locale { get; set; }
 }
 

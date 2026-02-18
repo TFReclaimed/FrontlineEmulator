@@ -25,7 +25,7 @@ public class GetPveLeaderboardEndpoint : EndpointWithoutRequest<LeaderboardPveRe
                 new LeaderboardPveEntry
                 {
                     Territory = Territory.Harmony,
-                    Faction = Faction.IMC,
+                    Faction = Faction.Imc,
                     Rank = 20
                 },
                 new LeaderboardPveEntry
@@ -37,7 +37,7 @@ public class GetPveLeaderboardEndpoint : EndpointWithoutRequest<LeaderboardPveRe
                 new LeaderboardPveEntry
                 {
                     Territory = Territory.Kraken,
-                    Faction = Faction.IMC,
+                    Faction = Faction.Imc,
                     Rank = 3
                 },
                 new LeaderboardPveEntry

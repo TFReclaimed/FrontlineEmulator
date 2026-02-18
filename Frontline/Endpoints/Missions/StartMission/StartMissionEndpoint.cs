@@ -124,13 +124,11 @@ public class StartMissionEndpoint : Endpoint<StartMissionRequest, List<MissionSt
 
         Logger.LogInformation("Player {UserId} started mission {Key}.", userId, key);
 
-        var random = new Random();
-
-        var missionSuccessful = random.NextDouble() <= GetSuccessChance(missionData, MissionSlotId.Required,
+        var missionSuccessful = Random.Shared.NextDouble() <= GetSuccessChance(missionData, MissionSlotId.Required,
             requiredItem, bonus1Item, bonus2Item);
-        var bonus1Successful = bonus1Item != null && random.NextDouble() <= GetSuccessChance(missionData,
+        var bonus1Successful = bonus1Item != null && Random.Shared.NextDouble() <= GetSuccessChance(missionData,
             MissionSlotId.Bonus1, requiredItem, bonus1Item, bonus2Item);
-        var bonus2Successful = bonus2Item != null && random.NextDouble() <= GetSuccessChance(missionData,
+        var bonus2Successful = bonus2Item != null && Random.Shared.NextDouble() <= GetSuccessChance(missionData,
             MissionSlotId.Bonus2, requiredItem, bonus1Item, bonus2Item);
 
         if (missionData.RequiredSlotCount == 1 && !missionSuccessful)
@@ -151,10 +149,10 @@ public class StartMissionEndpoint : Endpoint<StartMissionRequest, List<MissionSt
             bonus2Successful = false;
         }
 
-        var casualty = random.NextDouble() <= GetCasualtyChance(missionData, MissionSlotId.Required);
-        var bonus1Casualty = bonus1Item != null && random.NextDouble() <= GetCasualtyChance(missionData,
+        var casualty = Random.Shared.NextDouble() <= GetCasualtyChance(missionData, MissionSlotId.Required);
+        var bonus1Casualty = bonus1Item != null && Random.Shared.NextDouble() <= GetCasualtyChance(missionData,
             MissionSlotId.Bonus1);
-        var bonus2Casualty = bonus2Item != null && random.NextDouble() <= GetCasualtyChance(missionData,
+        var bonus2Casualty = bonus2Item != null && Random.Shared.NextDouble() <= GetCasualtyChance(missionData,
             MissionSlotId.Bonus2);
 
         var mission = new ActiveMissionEntity

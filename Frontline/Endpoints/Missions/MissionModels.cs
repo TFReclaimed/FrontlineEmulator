@@ -54,12 +54,12 @@ public class MissionStageStatus
 
 public enum MissionStageState
 {
-    Unavailable = 0,
-    Available = 1,
-    InProgress = 2,
-    Finished = 3,
-    Rewarded = 4,
-    Finalized = 5
+    Unavailable,
+    Available,
+    InProgress,
+    Finished,
+    Rewarded,
+    Finalized
 }
 
 public enum CardSlotState

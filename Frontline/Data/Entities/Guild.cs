@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Frontline.Data.Entities;
 
@@ -34,12 +35,16 @@ public class GuildMemberEntity
     public MemberRank Rank { get; set; }
 }
 
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum GuildMode
 {
-    PUBLIC = 0,
-    PRIVATE = 1
+    [JsonStringEnumMemberName("PUBLIC")]
+    Public,
+    [JsonStringEnumMemberName("PRIVATE")]
+    Private
 }
 
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum GuildLocale
 {
     NONE = 0,
@@ -56,10 +61,15 @@ public enum GuildLocale
     THA = 11
 }
 
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum MemberRank
 {
-    INVALID = 0,
-    MEMBER = 1,
-    OFFICER = 2,
-    LEADER = 3
+    [JsonStringEnumMemberName("INVALID")]
+    Invalid,
+    [JsonStringEnumMemberName("MEMBER")]
+    Member,
+    [JsonStringEnumMemberName("OFFICER")]
+    Officer,
+    [JsonStringEnumMemberName("LEADER")]
+    Leader
 }

@@ -46,8 +46,8 @@ public class KickLeaveGuildEndpoint : Endpoint<KickLeaveGuildRequest, Ok>
                 return;
             }
 
-            if (member.Rank == MemberRank.LEADER &&
-                !guild.Members.Any(m => m.Rank == MemberRank.LEADER && m.UserId != userId))
+            if (member.Rank == MemberRank.Leader &&
+                !guild.Members.Any(m => m.Rank == MemberRank.Leader && m.UserId != userId))
             {
                 Logger.LogInformation("Player {UserId} left their guild '{GuildName}' ({GuildId}), causing it to be deleted",
                     userId, guild.Name, req.GuildId);

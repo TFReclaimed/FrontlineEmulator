@@ -74,11 +74,11 @@ public class ConsumeEndpoint : Endpoint<ConsumeRequest>
         {
             await UseXpCard(userId, req, item, cardTemplate);
         }
-        else if (req.RetireFor == RetireFor.CREDITS)
+        else if (req.RetireFor == RetireFor.Credits)
         {
             await RetireForCredits(userId, req, item, cardTemplate);
         }
-        else if (req.RetireFor == RetireFor.XP)
+        else if (req.RetireFor == RetireFor.Xp)
         {
             await RetireForXp(userId, req, item, cardTemplate);
         }

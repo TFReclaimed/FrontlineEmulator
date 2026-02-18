@@ -12,8 +12,10 @@ public class ConsumeRequest
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum RetireFor
 {
-    CREDITS,
-    XP
+    [JsonStringEnumMemberName("CREDITS")]
+    Credits,
+    [JsonStringEnumMemberName("XP")]
+    Xp
 }
 
 // Yes, they really used strings instead of integers...

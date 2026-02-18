@@ -11,18 +11,19 @@ public class InventoryRequest
 {
     public int MinItem { get; set; }
     public int MaxItem { get; set; } = -1;
-    [JsonConverter(typeof(JsonStringEnumConverter))]
     public InventoryType Type { get; set; }
 }
 
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum InventoryType
 {
-    Card = 0,
-    Dropship = 1,
-    BoosterPack = 2,
-    CardXPBoost = 3,
-    OperationalIntel = 4,
-    TechnicalIntel = 5,
-    PersonnelIntel = 6,
-    NumTypes = 7
+    Card,
+    Dropship,
+    BoosterPack,
+    [JsonStringEnumMemberName("CardXPBoost")]
+    CardXpBoost,
+    OperationalIntel,
+    TechnicalIntel,
+    PersonnelIntel,
+    NumTypes
 }

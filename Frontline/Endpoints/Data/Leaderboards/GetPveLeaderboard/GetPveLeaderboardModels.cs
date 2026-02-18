@@ -20,13 +20,14 @@ public class LeaderboardPveEntry
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum Territory
 {
-    Harmony = 0,
-    Kraken = 1
+    Harmony,
+    Kraken
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum Faction
 {
-    IMC = 0,
-    Militia = 1
+    [JsonStringEnumMemberName("IMC")]
+    Imc,
+    Militia
 }

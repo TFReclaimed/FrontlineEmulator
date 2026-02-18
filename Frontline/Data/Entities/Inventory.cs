@@ -157,8 +157,8 @@ public class CardAvailability
 
 public enum CardState
 {
-    None = 0,
-    OnMission = 1,
-    InDropship = 2,
-    Casualty = 3
+    None,
+    OnMission,
+    InDropship,
+    Casualty
 }

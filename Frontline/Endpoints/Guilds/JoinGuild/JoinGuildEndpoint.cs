@@ -55,7 +55,7 @@ public class JoinGuildEndpoint : Endpoint<JoinGuildRequest, Ok>
         {
             UserId = userId,
             GuildId = req.GuildId,
-            Rank = MemberRank.MEMBER
+            Rank = MemberRank.Member
         };
 
         await _guildMemberRepository.AddAsync(newMember);

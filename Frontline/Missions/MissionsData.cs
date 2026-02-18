@@ -159,10 +159,10 @@ public class MissionStage
 
 public enum MissionType
 {
-    Progression = 0,
-    Elective = 1,
-    Persistent = 2,
-    Once = 3
+    Progression,
+    Elective,
+    Persistent,
+    Once
 }
 
 public enum VisibilityRarity
@@ -236,8 +236,8 @@ public class MissionRewardSet
 
 public enum RewardSetType
 {
-    All = 0,
-    Pick = 1
+    All,
+    Pick
 }
 
 public class MissionReward
@@ -271,8 +271,8 @@ public class MissionSynergy
 
 public enum MissionSynergyGrouping
 {
-    One = 0,
-    All = 1
+    One,
+    All
 }
 
 public class MissionIntel
@@ -410,25 +410,25 @@ public class MissionReputation
 
 public enum Faction
 {
-    Neutral = 0,
-    IMC = 1,
-    Militia = 2,
-    NumFactions = 3
+    Neutral,
+    IMC,
+    Militia,
+    NumFactions
 }
 
 public enum PveRegion
 {
-    Demeter = 0,
-    Swampland = 1,
-    DeepSpace = 2,
-    Harmony = 3,
-    Kraken = 4,
-    Coliseum = 5,
-    Badlands = 6,
-    Epic = 7,
-    Ops = 8,
-    TEST = 9,
-    NumRegions = 10
+    Demeter,
+    Swampland,
+    DeepSpace,
+    Harmony,
+    Kraken,
+    Coliseum,
+    Badlands,
+    Epic,
+    Ops,
+    TEST,
+    NumRegions
 }
 
 public class MissionNameMapping

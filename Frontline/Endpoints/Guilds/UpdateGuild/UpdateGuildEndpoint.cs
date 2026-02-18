@@ -27,7 +27,7 @@ public class UpdateGuildEndpoint : Endpoint<UpdateGuildRequest, Ok>
     {
         var userId = this.GetUserId();
         var member = await _guildMemberRepository.GetByIdAsync(userId);
-        if (member is null || member.Rank != MemberRank.LEADER || member.GuildId != req.GuildId)
+        if (member is null || member.Rank != MemberRank.Leader || member.GuildId != req.GuildId)
         {
             Logger.LogWarning("User {UserId} is not the leader of guild {GuildId}", userId, req.GuildId);
             await Send.ResultAsync(TypedResults.BadRequest());
