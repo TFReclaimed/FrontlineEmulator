@@ -21,7 +21,7 @@ public class ConsumeEndpoint : Endpoint<ConsumeRequest>
     public override void Configure()
     {
         Post("/session/consume/{ItemId}");
-        AllowFormData(urlEncoded: true);
+        AllowFormData(true);
     }
 
     public override async Task HandleAsync(ConsumeRequest req, CancellationToken ct)

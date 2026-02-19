@@ -38,7 +38,7 @@ public class LoginEndpoint : Endpoint<LoginRequest, PlayerProfile>
     public override void Configure()
     {
         Post("/virtu/accts");
-        AllowFormData(urlEncoded: true);
+        AllowFormData(true);
         AllowAnonymous();
     }
 

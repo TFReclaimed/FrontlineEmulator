@@ -29,7 +29,7 @@ public class StartMissionEndpoint : Endpoint<StartMissionRequest, List<MissionSt
     public override void Configure()
     {
         Post("/Missions/v1/startmission");
-        AllowFormData(urlEncoded: true);
+        AllowFormData(true);
     }
 
     public override async Task HandleAsync(StartMissionRequest req, CancellationToken ct)

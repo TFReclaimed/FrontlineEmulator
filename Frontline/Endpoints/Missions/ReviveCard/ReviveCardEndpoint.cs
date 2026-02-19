@@ -19,7 +19,7 @@ public class ReviveCardEndpoint : Endpoint<ReviveCardRequest>
     public override void Configure()
     {
         Post("/Missions/v1/revivecard");
-        AllowFormData(urlEncoded: true);
+        AllowFormData(true);
     }
 
     public override async Task HandleAsync(ReviveCardRequest req, CancellationToken ct)

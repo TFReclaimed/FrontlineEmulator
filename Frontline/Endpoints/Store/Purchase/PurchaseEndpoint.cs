@@ -20,7 +20,7 @@ public class PurchaseEndpoint : Endpoint<PurchaseRequest, PurchaseResponse>
     public override void Configure()
     {
         Post("/Store/v1/purchase");
-        AllowFormData(urlEncoded: true);
+        AllowFormData(true);
         AllowAnonymous(); // Yes, the game really doesn't pass in any auth headers for this endpoint
     }
 

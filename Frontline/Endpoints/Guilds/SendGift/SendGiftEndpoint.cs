@@ -20,7 +20,7 @@ public class SendGiftEndpoint : Endpoint<SendGiftRequest, SendGiftResponse>
     public override void Configure()
     {
         Post("/Dealership/v1/guild");
-        AllowFormData(urlEncoded: true);
+        AllowFormData(true);
     }
 
     public override async Task HandleAsync(SendGiftRequest req, CancellationToken ct)

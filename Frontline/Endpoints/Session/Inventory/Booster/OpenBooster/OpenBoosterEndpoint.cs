@@ -25,7 +25,7 @@ public class OpenBoosterEndpoint : Endpoint<OpenBoosterPackRequest, BoosterPackR
     public override void Configure()
     {
         Post("/session/booster/{BoosterId}");
-        AllowFormData(urlEncoded: true);
+        AllowFormData(true);
     }
 
     public override async Task HandleAsync(OpenBoosterPackRequest req, CancellationToken ct)

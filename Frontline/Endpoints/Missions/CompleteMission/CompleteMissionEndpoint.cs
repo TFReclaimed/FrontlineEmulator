@@ -29,7 +29,7 @@ public class CompleteMissionEndpoint : Endpoint<CompleteMissionRequest, List<Mis
     public override void Configure()
     {
         Post("/Missions/v1/completemission");
-        AllowFormData(urlEncoded: true);
+        AllowFormData(true);
     }
 
     public override async Task HandleAsync(CompleteMissionRequest req, CancellationToken ct)

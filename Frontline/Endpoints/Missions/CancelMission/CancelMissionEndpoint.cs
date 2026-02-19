@@ -17,7 +17,7 @@ public class CancelMissionEndpoint : Endpoint<CancelMissionRequest, List<Mission
     public override void Configure()
     {
         Post("/Missions/v1/cancelmission");
-        AllowFormData(urlEncoded: true);
+        AllowFormData(true);
     }
 
     public override async Task HandleAsync(CancelMissionRequest req, CancellationToken ct)

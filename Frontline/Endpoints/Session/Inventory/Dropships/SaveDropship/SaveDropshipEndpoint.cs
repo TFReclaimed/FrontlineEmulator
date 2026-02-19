@@ -25,7 +25,7 @@ public class SaveDropshipEndpoint : Endpoint<SaveDropshipRequest>
     public override void Configure()
     {
         Post("/session/dropship/{DropshipId}");
-        AllowFormData(urlEncoded: true);
+        AllowFormData(true);
     }
 
     public override async Task HandleAsync(SaveDropshipRequest req, CancellationToken ct)

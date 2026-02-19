@@ -17,7 +17,7 @@ public class UpgradeEndpoint : Endpoint<UpgradeRequest, UpgradedCard>
     public override void Configure()
     {
         Post("/session/upgrade/{ItemId}");
-        AllowFormData(urlEncoded: true);
+        AllowFormData(true);
     }
 
     public override async Task HandleAsync(UpgradeRequest req, CancellationToken ct)
