@@ -1,6 +1,8 @@
 using FastEndpoints;
 using FastEndpoints.Swagger;
 using Frontline.Auth;
+using Frontline.Battle;
+using Frontline.Battle.Matchmaking;
 using Frontline.Data;
 using Frontline.Data.Repositories;
 using Frontline.Extensions;
@@ -50,7 +52,10 @@ builder.Services.AddScoped<IFinishedMissionRepository, FinishedMissionRepository
 
 builder.Services.AddSingleton<IToyService, ToyService>();
 builder.Services.AddSingleton<IUserService, UserService>();
+builder.Services.AddSingleton<IBattleService, BattleService>();
+builder.Services.AddSingleton<IMatchmakingService, MatchmakingService>();
 
+builder.Services.AddHostedService<MatchmakingWorker>();
 builder.Services.AddHostedService<XmppServer>();
 
 builder.Services.AddHttpLogging(_ => { });
