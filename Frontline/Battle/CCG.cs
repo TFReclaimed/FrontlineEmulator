@@ -139,6 +139,9 @@ public class CCG
         }
 
         PlayerTurn = -2;
+
+        winGameRewards.Add(RulesetParser.GetRewardsTemplate(gameRules.WinRewardId)!);
+        loseGameRewards.Add(RulesetParser.GetRewardsTemplate(gameRules.LossRewardId)!);
     }
 
     public Card FindTraitActor(sbyte playerIndex, int cardId)
