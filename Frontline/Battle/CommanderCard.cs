@@ -1,4 +1,5 @@
 using Frontline.Battle.CcgEvents;
+using Frontline.Data.Entities;
 using Frontline.Game.Card;
 
 namespace Frontline.Battle;
@@ -25,6 +26,11 @@ public class CommanderCard : Card
             Secrets = commanderCard.Secrets;
             Defense = commanderCard.Defense;
         }
+    }
+
+    public CommanderCard(CCG game, ItemEntity itemEntity)
+        : base(game, itemEntity)
+    {
     }
 
     public override void Setup()

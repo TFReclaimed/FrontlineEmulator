@@ -58,7 +58,7 @@ public class MatchmakingService : IMatchmakingService
                 _matchmakingQueue.TryGetValue(ticket.OpponentId.Value, out var opponentTicket) &&
                 opponentTicket.VersusType == VersusType.PvpCasual && opponentTicket.OpponentId == ticket.UserId)
             {
-                FinalizeMatch(ticket, opponentTicket);
+                FinalizeMatch(ticket, opponentTicket).Wait();
 
                 _matchmakingQueue.Remove(ticket.UserId);
                 _matchmakingQueue.Remove(opponentTicket.UserId);
@@ -101,7 +101,7 @@ public class MatchmakingService : IMatchmakingService
                 var ticket1 = rankedTickets[0];
                 var ticket2 = rankedTickets[1];
 
-                FinalizeMatch(ticket1, ticket2);
+                FinalizeMatch(ticket1, ticket2).Wait();
 
                 rankedTickets.RemoveRange(0, 2);
 
@@ -141,9 +141,9 @@ public class MatchmakingService : IMatchmakingService
         }
     }
 
-    private void FinalizeMatch(MatchmakingTicket ticket1, MatchmakingTicket ticket2)
+    private async Task FinalizeMatch(MatchmakingTicket ticket1, MatchmakingTicket ticket2)
     {
-        _battleService.CreateBattle(ticket1.UserId, ticket2.UserId, ticket1.VersusType);
+        await _battleService.CreateBattle(ticket1.UserId, ticket2.UserId, ticket1.VersusType);
 
         _userService.IncrementChangeCounter(ticket1.UserId);
         _userService.IncrementChangeCounter(ticket2.UserId);

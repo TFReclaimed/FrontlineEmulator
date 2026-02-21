@@ -1,4 +1,5 @@
 using Frontline.Battle.CcgEvents;
+using Frontline.Data.Entities;
 using Frontline.Game;
 using Frontline.Game.Card;
 
@@ -29,6 +30,15 @@ public class Card : Item
     {
         GameState = game;
         Copy(other);
+    }
+
+    public Card(CCG game, ItemEntity itemEntity)
+    {
+        GameState = game;
+        InstanceId = itemEntity.ItemId;
+        TemplateId = itemEntity.TemplateId;
+        Xp = itemEntity.Xp;
+        Rank = itemEntity.Rank;
     }
 
     public Card GenerateAndInit(CCG game)

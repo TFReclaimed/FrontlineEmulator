@@ -1,4 +1,5 @@
 using Frontline.Battle.GameEvents;
+using Frontline.Data.Entities;
 using Frontline.Endpoints.Session.Rulesets;
 
 namespace Frontline.Battle;
@@ -21,7 +22,8 @@ public class CcgGame
 
     public int CurrentEventCount { get; private set; }
 
-    public CcgGame(int player1Id, int player2Id, VersusType versusType)
+    public CcgGame(int player1Id, int player2Id, VersusType versusType, List<ItemEntity>[] deckEntities,
+        List<ItemEntity>[] supportEntities, List<ItemEntity> commanderEntities)
     {
         Id = Guid.NewGuid();
         Player1Id = player1Id;
@@ -29,7 +31,41 @@ public class CcgGame
         VersusType = versusType;
 
         GameState = new CCG(this);
-        //GameState.Create();
+
+        var deckCards = new List<List<Card>>();
+        for (int i = 0; i < 2; i++)
+        {
+            var playerDeckCards = new List<Card>();
+            foreach (var deckEntity in deckEntities[i])
+            {
+                playerDeckCards.Add(new Card(GameState, deckEntity));
+            }
+
+            deckCards.Add(playerDeckCards);
+        }
+
+        var supportCards = new List<List<Card>>();
+        for (int i = 0; i < 2; i++)
+        {
+            var playerSupportCards = new List<Card>();
+            foreach (var supportEntity in supportEntities[i])
+            {
+                playerSupportCards.Add(new Card(GameState, supportEntity));
+            }
+
+            supportCards.Add(playerSupportCards);
+        }
+
+        var commanders = new List<Card>();
+        foreach (var commanderEntity in commanderEntities)
+        {
+            var card = new CommanderCard(GameState, commanderEntity);
+            card.Setup();
+            commanders.Add(card);
+        }
+
+        GameState.Create(Id, 1, [player1Id, player2Id], ["player one", "player two"],
+            deckCards, supportCards, commanders, [false, false]);
 
         RulesetPath = new RulesetPathResponse
         {
