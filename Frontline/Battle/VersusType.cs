@@ -7,6 +7,7 @@ public enum VersusType
 {
     [JsonStringEnumMemberName("PVP_RANKED")]
     PvpRanked,
+
     [JsonStringEnumMemberName("PVP_CASUAL")]
     PvpCasual
 }

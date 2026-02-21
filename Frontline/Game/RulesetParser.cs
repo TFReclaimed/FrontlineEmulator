@@ -1,4 +1,6 @@
 using System.Text.Json;
+using Frontline.Battle;
+using Frontline.Game.Card;
 
 namespace Frontline.Game;
 
@@ -41,7 +43,35 @@ public static class RulesetParser
     {
         return Ruleset?.CardsRuleset.Cards.GetValueOrDefault(templateId.ToString());
     }
-    
+
+    public static CardTemplate? GetCardTemplate(int templateId, sbyte rank)
+    {
+        var cardTemplate = GetCardTemplate(templateId);
+        return cardTemplate?.GetRankedTemplate(rank);
+    }
+
+    public static BaseTrait? GetTraitTemplate(int traitId)
+    {
+        var trait = Ruleset?.CardsRuleset.Traits.GetValueOrDefault(traitId.ToString());
+        trait?.effects = GetTraitEffectsList(traitId);
+        return trait;
+    }
+
+    public static List<BaseTraitEffect> GetTraitEffectsList(int traitId)
+    {
+        return Ruleset?.CardsRuleset.Effects.GetValueOrDefault(traitId.ToString()) ?? [];
+    }
+
+    public static GameTemplate? GetGameTemplate(int id)
+    {
+        return Ruleset?.GamesRuleset.Games.GetValueOrDefault(id.ToString());
+    }
+
+    public static RewardsTemplate? GetRewardsTemplate(int id)
+    {
+        return Ruleset?.GamesRuleset.Rewards.GetValueOrDefault(id.ToString());
+    }
+
     public static CardXpEntry? GetXpEntry(CardType type, int rank)
     {
         var xpRanks = type switch
@@ -53,7 +83,13 @@ public static class RulesetParser
 
         return xpRanks?.FirstOrDefault(entry => entry.Rank == rank);
     }
-    
+
+    public static int GetXpTrigger(string triggerName)
+    {
+        var trigger = Ruleset?.XpTriggers.Triggers.FirstOrDefault(t => t.Trigger == triggerName);
+        return trigger?.Xp ?? 0;
+    }
+
     public static bool IsCommandDeckCard(int templateId)
     {
         return CommandDeckCardIds.Contains(templateId);

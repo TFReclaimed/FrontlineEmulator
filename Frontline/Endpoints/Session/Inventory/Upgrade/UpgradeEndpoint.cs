@@ -2,6 +2,7 @@ using FastEndpoints;
 using Frontline.Data.Repositories;
 using Frontline.Extensions;
 using Frontline.Game;
+using Frontline.Game.Card;
 
 namespace Frontline.Endpoints.Session.Inventory.Upgrade;
 

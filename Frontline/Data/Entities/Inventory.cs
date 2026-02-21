@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 using Frontline.Game;
+using Frontline.Game.Card;
 using Frontline.Missions;
 using Frontline.Utils;
 using Microsoft.EntityFrameworkCore;
