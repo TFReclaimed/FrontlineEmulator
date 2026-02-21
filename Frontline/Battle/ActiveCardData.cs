@@ -1,5 +1,9 @@
+using System.Text.Json.Serialization;
+
 namespace Frontline.Battle;
 
+[JsonDerivedType(typeof(ActiveEntityCardData), "ActiveEntityCardData")]
+[JsonDerivedType(typeof(ActiveUnitCardData), "ActiveUnitCardData")]
 public class ActiveCardData
 {
     public List<ActiveTrait> ActiveTraits { get; set; }
