@@ -4,17 +4,17 @@ namespace Frontline.Battle.CcgEvents;
 
 public class CombatCCGEvent : CCGEventData
 {
-    public CCGEventType CombatType { get; }
+    public CCGEventType CombatType { get; set; }
 
     [JsonPropertyName("attackerCardID")]
-    public int AttackerCardId { get; }
+    public int AttackerCardId { get; set; }
 
-    public sbyte AttackCardOwner { get; }
+    public sbyte AttackCardOwner { get; set; }
 
     [JsonPropertyName("targetCardID")]
-    public int TargetCardId { get; }
+    public int TargetCardId { get; set; }
 
-    public sbyte TargetCardOwner { get; }
+    public sbyte TargetCardOwner { get; set; }
 
     public sbyte AttackTotal { get; set; }
 

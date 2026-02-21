@@ -2,9 +2,9 @@ namespace Frontline.Battle.CcgEvents;
 
 public class ServerDataEvent : CCGEventData
 {
-    public CCGEventType DataType { get; }
+    public CCGEventType DataType { get; set; }
 
-    public int DataValue { get; }
+    public int DataValue { get; set; }
 
     public ServerDataEvent()
     {

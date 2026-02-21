@@ -6,9 +6,9 @@ public class CardTransitionCCGEvent : CCGEventData
 {
     public CCGEventType Transition { get; set; }
 
-    public RegionEnum TargetRegion { get; }
+    public RegionEnum TargetRegion { get; set; }
 
-    public int CardId { get; }
+    public int CardId { get; set; }
 
     public int TargetId { get; set; }
 
@@ -22,13 +22,13 @@ public class CardTransitionCCGEvent : CCGEventData
 
     public sbyte Rank { get; set; }
 
-    public sbyte PlayerOwner { get; }
+    public sbyte PlayerOwner { get; set; }
 
     public sbyte TargetOwner { get; set; }
 
-    public sbyte TargetSlot { get; }
+    public sbyte TargetSlot { get; set; }
 
-    public sbyte Dir { get; }
+    public sbyte Dir { get; set; }
 
     public bool Embark { get; set; }
 

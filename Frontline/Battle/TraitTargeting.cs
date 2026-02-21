@@ -5,16 +5,16 @@ namespace Frontline.Battle;
 
 public class TraitTargeting
 {
-    public TraitTargetType Type { get; } = TraitTargetType.AnyType;
+    public TraitTargetType Type { get; set; } = TraitTargetType.AnyType;
 
-    public TargetTypeMod Mod { get; } = TargetTypeMod.NumMods;
+    public TargetTypeMod Mod { get; set; } = TargetTypeMod.NumMods;
 
-    public TraitTargetScope Scope { get; } = TraitTargetScope.AnyScope;
+    public TraitTargetScope Scope { get; set; } = TraitTargetScope.AnyScope;
 
-    public TargetableArea Area { get; } = TargetableArea.AnyAreas;
+    public TargetableArea Area { get; set; } = TargetableArea.AnyAreas;
 
     [JsonPropertyName("targetId")]
-    public int TargetId { get; }
+    public int TargetId { get; set; }
 
     public bool CheckFriendly()
     {

@@ -2,7 +2,7 @@ namespace Frontline.Battle.GameEvents;
 
 public class GameEventMessageParams : GameEventParams
 {
-    public sbyte MessageId { get; }
+    public sbyte MessageId { get; set; }
 
     public GameEventMessageParams()
     {

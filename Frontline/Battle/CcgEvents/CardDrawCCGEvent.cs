@@ -2,15 +2,15 @@ namespace Frontline.Battle.CcgEvents;
 
 public class CardDrawCCGEvent : CCGEventData
 {
-    public CCGEventType DrawType { get; }
+    public CCGEventType DrawType { get; set; }
 
-    public int CardId { get; }
+    public int CardId { get; set; }
 
-    public int TemplateId { get; }
+    public int TemplateId { get; set; }
 
-    public sbyte Rank { get; }
+    public sbyte Rank { get; set; }
 
-    public sbyte Owner { get; }
+    public sbyte Owner { get; set; }
 
     public CardDrawCCGEvent()
     {

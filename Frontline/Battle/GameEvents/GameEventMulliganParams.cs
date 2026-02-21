@@ -2,7 +2,7 @@ namespace Frontline.Battle.GameEvents;
 
 public class GameEventMulliganParams : GameEventParams
 {
-    public int[] HandCardIdsToReplace { get; }
+    public int[] HandCardIdsToReplace { get; set; }
 
     public GameEventMulliganParams()
     {

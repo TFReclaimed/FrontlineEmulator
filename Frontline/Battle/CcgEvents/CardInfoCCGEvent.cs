@@ -2,15 +2,15 @@ namespace Frontline.Battle.CcgEvents;
 
 public class CardInfoCCGEvent : CCGEventData
 {
-    public CCGEventType EventType { get; }
+    public CCGEventType EventType { get; set; }
 
-    public int InstanceId { get; }
+    public int InstanceId { get; set; }
 
-    public int Data { get; }
+    public int Data { get; set; }
 
-    public sbyte Owner { get; }
+    public sbyte Owner { get; set; }
 
-    public string Info { get; }
+    public string Info { get; set; }
 
     public CardInfoCCGEvent()
     {

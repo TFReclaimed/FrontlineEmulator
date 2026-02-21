@@ -2,9 +2,9 @@ namespace Frontline.Battle.CcgEvents;
 
 public class DiscardEffectCCGEvent : CCGEventData
 {
-    public sbyte PlayerIndex { get; }
+    public sbyte PlayerIndex { get; set; }
 
-    public MulliganDrawCCGEventCardData[] CardsInfo { get; }
+    public MulliganDrawCCGEventCardData[] CardsInfo { get; set; }
 
     public int EffectId { get; set; }
 

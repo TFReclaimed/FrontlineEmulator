@@ -4,29 +4,29 @@ namespace Frontline.Battle.CcgEvents;
 
 public class TraitInfoCCGEvent : CCGEventData
 {
-    public CCGEventType InfoType { get; }
+    public CCGEventType InfoType { get; set; }
 
     [JsonPropertyName("traitID")]
-    public int TraitId { get; }
+    public int TraitId { get; set; }
 
     [JsonPropertyName("effectID")]
-    public int EffectId { get; }
+    public int EffectId { get; set; }
 
     [JsonPropertyName("targetCardID")]
-    public int TargetCardId { get; }
+    public int TargetCardId { get; set; }
 
-    public sbyte TargetOwner { get; }
+    public sbyte TargetOwner { get; set; }
 
     [JsonPropertyName("sourceCardID")]
-    public int SourceCardId { get; }
+    public int SourceCardId { get; set; }
 
-    public sbyte SourceOwner { get; }
+    public sbyte SourceOwner { get; set; }
 
-    public sbyte Data { get; }
+    public sbyte Data { get; set; }
 
-    public RegionEnum Region { get; } = RegionEnum.NumRegions;
+    public RegionEnum Region { get; set; } = RegionEnum.NumRegions;
 
-    public ActiveTraitCardInfo[] Targets { get; }
+    public ActiveTraitCardInfo[] Targets { get; set; }
 
     public TraitInfoCCGEvent()
     {

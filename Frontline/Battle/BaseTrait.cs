@@ -5,19 +5,19 @@ namespace Frontline.Battle;
 
 public class BaseTrait
 {
-    public int[] GlossaryIds { get; }
+    public int[] GlossaryIds { get; set; }
 
-    public int TraitId { get; }
+    public int TraitId { get; set; }
 
-    public TraitType TraitType { get; } = TraitType.Passive;
+    public TraitType TraitType { get; set; } = TraitType.Passive;
 
-    public bool EmbarkedInherit { get; }
+    public bool EmbarkedInherit { get; set; }
 
-    public bool Hidden { get; }
+    public bool Hidden { get; set; }
 
-    public bool Functional { get; }
+    public bool Functional { get; set; }
 
-    public TraitActivationReq ActRequirement { get; }
+    public TraitActivationReq ActRequirement { get; set; }
 
     public List<BaseTraitEffect> Effects { get; set; }
 

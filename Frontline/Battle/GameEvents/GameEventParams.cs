@@ -13,11 +13,11 @@ namespace Frontline.Battle.GameEvents;
 [JsonDerivedType(typeof(GameEventRegionTarget), "GameEventRegionTarget")]
 public class GameEventParams
 {
-    public sbyte PlayerIndex { get; } = -1;
+    public sbyte PlayerIndex { get; set; } = -1;
 
     public GameEvent GameEvent { get; set; } = GameEvent.NumEvents;
 
-    public GameEventResult EventResult { get; }
+    public GameEventResult EventResult { get; set; }
 
     public List<CCGEventData> CcgEventsLog { get; set; }
 

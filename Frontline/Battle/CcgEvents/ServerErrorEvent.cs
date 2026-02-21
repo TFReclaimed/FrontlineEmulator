@@ -2,7 +2,7 @@ namespace Frontline.Battle.CcgEvents;
 
 public class ServerErrorEvent : CCGEventData
 {
-    public string ErrorMsg { get; }
+    public string ErrorMsg { get; set; }
 
     public ServerErrorEvent()
     {

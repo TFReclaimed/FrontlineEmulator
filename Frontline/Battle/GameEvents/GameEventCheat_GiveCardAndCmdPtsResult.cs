@@ -2,7 +2,7 @@ namespace Frontline.Battle.GameEvents;
 
 internal class GameEventCheat_GiveCardAndCmdPtsResult : GameEventResult
 {
-    public byte PlayerIndex { get; }
+    public byte PlayerIndex { get; set; }
 
     public int CardTemplateId { get; set; }
 

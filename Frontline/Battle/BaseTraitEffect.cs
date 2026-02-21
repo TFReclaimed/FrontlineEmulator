@@ -42,22 +42,22 @@ namespace Frontline.Battle;
 public class BaseTraitEffect
 {
     [JsonPropertyName("effectTraitID")]
-    public int EffectTraitId { get; }
+    public int EffectTraitId { get; set; }
 
     [JsonPropertyName("traitParentID")]
-    public int TraitParentId { get; }
+    public int TraitParentId { get; set; }
 
-    public bool TargetPrimary { get; }
+    public bool TargetPrimary { get; set; }
 
-    public bool EmbarkedInherit { get; }
+    public bool EmbarkedInherit { get; set; }
 
-    public bool Deterable { get; } = true;
+    public bool Deterable { get; set; } = true;
 
-    public sbyte Priority { get; }
+    public sbyte Priority { get; set; }
 
-    public TraitTargeting Targets { get; }
+    public TraitTargeting Targets { get; set; }
 
-    public TraitDuration DurationData { get; }
+    public TraitDuration DurationData { get; set; }
 
     protected CCG GameState = null!;
 

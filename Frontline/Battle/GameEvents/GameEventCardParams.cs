@@ -2,7 +2,7 @@ namespace Frontline.Battle.GameEvents;
 
 public class GameEventCardParams : GameEventParams
 {
-    public int ActingCardId { get; }
+    public int ActingCardId { get; set; }
 
     public GameEventCardParams()
     {

@@ -4,17 +4,17 @@ namespace Frontline.Battle.CcgEvents;
 
 public class CombatBuffsCCGEvent : CCGEventData
 {
-    public CCGEventType BuffType { get; }
+    public CCGEventType BuffType { get; set; }
 
     [JsonPropertyName("attackerCardID")]
-    public int AttackerCardId { get; }
+    public int AttackerCardId { get; set; }
 
-    public sbyte AttackCardOwner { get; }
+    public sbyte AttackCardOwner { get; set; }
 
     [JsonPropertyName("targetCardID")]
-    public int TargetCardId { get; }
+    public int TargetCardId { get; set; }
 
-    public sbyte TargetCardOwner { get; }
+    public sbyte TargetCardOwner { get; set; }
 
     public EventLogTraitCardInfo[] BuffTraits { get; set; }
 

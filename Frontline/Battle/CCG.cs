@@ -24,9 +24,9 @@ public class CCG
 
     public long PlayerTurnStart { get; set; }
 
-    public long PlayerDiscardStart { get; }
+    public long PlayerDiscardStart { get; set; }
 
-    public sbyte LocalPlayer { get; }
+    public sbyte LocalPlayer { get; set; }
 
     public sbyte WinningPlayer { get; set; } = -1;
 
@@ -36,7 +36,7 @@ public class CCG
 
     public int NextSummonInstanceId { get; set; } = -1;
 
-    public VersusType GameType { get; }
+    public VersusType GameType { get; set; }
 
     private GameTemplate gameRules;
 

@@ -6,12 +6,12 @@ public class GameEventInteractionsParams : GameEventParams
 {
     public const string InteractionTitleMarker = "INTERACTIONEVENT";
 
-    public int Type { get; }
+    public int Type { get; set; }
 
-    public TargetableArea Location { get; }
+    public TargetableArea Location { get; set; }
 
     [JsonPropertyName("instanceID")]
-    public int InstanceId { get; }
+    public int InstanceId { get; set; }
 
     public GameEventInteractionsParams()
     {

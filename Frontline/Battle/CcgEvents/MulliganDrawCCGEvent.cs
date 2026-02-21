@@ -2,11 +2,11 @@ namespace Frontline.Battle.CcgEvents;
 
 public class MulliganDrawCCGEvent : CCGEventData
 {
-    public CCGEventType DrawType { get; } = CCGEventType.MulliganDraw;
+    public CCGEventType DrawType { get; set; } = CCGEventType.MulliganDraw;
 
-    public List<MulliganDrawCCGEventCardData> CardsData { get; } = new List<MulliganDrawCCGEventCardData>();
+    public List<MulliganDrawCCGEventCardData> CardsData { get; set; } = new List<MulliganDrawCCGEventCardData>();
 
-    public sbyte Owner { get; }
+    public sbyte Owner { get; set; }
 
     public MulliganDrawCCGEvent()
     {

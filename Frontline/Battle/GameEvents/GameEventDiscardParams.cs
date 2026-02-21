@@ -2,7 +2,7 @@ namespace Frontline.Battle.GameEvents;
 
 public class GameEventDiscardParams : GameEventParams
 {
-    public int[] HandCardIdsToDiscard { get; }
+    public int[] HandCardIdsToDiscard { get; set; }
 
     public GameEventDiscardParams()
     {

@@ -5,18 +5,18 @@ namespace Frontline.Battle.GameEvents;
 public class GameEventRegionTarget : GameEventCardParams
 {
     [JsonPropertyName("targetID")]
-    public int TargetId { get; }
+    public int TargetId { get; set; }
 
     [JsonPropertyName("targetOwnerID")]
-    public sbyte TargetOwnerId { get; }
+    public sbyte TargetOwnerId { get; set; }
 
-    public TargetableArea Area { get; } = TargetableArea.AnyAreas;
+    public TargetableArea Area { get; set; } = TargetableArea.AnyAreas;
 
-    public RegionEnum Target { get; } = RegionEnum.NumRegions;
+    public RegionEnum Target { get; set; } = RegionEnum.NumRegions;
 
-    public sbyte SlotIndex { get; }
+    public sbyte SlotIndex { get; set; }
 
-    public sbyte PushDir { get; }
+    public sbyte PushDir { get; set; }
 
     public GameEventRegionTarget()
     {

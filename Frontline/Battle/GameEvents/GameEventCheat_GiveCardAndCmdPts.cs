@@ -2,11 +2,11 @@ namespace Frontline.Battle.GameEvents;
 
 internal class GameEventCheat_GiveCardAndCmdPts : GameEventParams
 {
-    public int CardTemplateId { get; }
+    public int CardTemplateId { get; set; }
 
-    public int CardRank { get; }
+    public int CardRank { get; set; }
 
-    public int CommandPoints { get; }
+    public int CommandPoints { get; set; }
 
     public GameEventCheat_GiveCardAndCmdPts()
     {
