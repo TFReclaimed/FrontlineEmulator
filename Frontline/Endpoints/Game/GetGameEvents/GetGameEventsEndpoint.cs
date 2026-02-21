@@ -31,10 +31,10 @@ public class GetGameEventsEndpoint : Endpoint<GetGameEventsRequest, GetGameEvent
         }
 
         var events = new List<GameEventParams>();
-        /*if (req.Param.StartIndex < game.GameEvents.Count)
+        if (req.Param.StartIndex < game.GameEvents.Count)
         {
             events = game.GameEvents.Skip(req.Param.StartIndex).ToList();
-        }*/
+        }
 
         var response = new GetGameEventsResponse
         {

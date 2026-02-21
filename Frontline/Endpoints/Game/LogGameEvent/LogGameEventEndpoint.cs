@@ -30,8 +30,7 @@ public class LogGameEventEndpoint : Endpoint<LogGameEventRequest>
             return;
         }
 
-        // TODO: send it over to ccg
-
+        game.PlayGameEvent(req.Param);
         await Send.OkAsync();
     }
 }

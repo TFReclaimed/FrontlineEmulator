@@ -14,6 +14,8 @@ public class CcgGame
 
     public readonly VersusType VersusType;
 
+    public readonly List<GameEventParams> GameEvents = [];
+
     public CCG GameState { get; set; }
 
     public RulesetPathResponse RulesetPath { get; set; }
@@ -77,6 +79,14 @@ public class CcgGame
     public bool IsPlayerInGame(int userId)
     {
         return Player1Id == userId || Player2Id == userId;
+    }
+
+    public void PlayGameEvent(GameEventParams gameEventParams)
+    {
+        var result = gameEventParams.ReplayEvent(this);
+        gameEventParams.EventResult = result;
+        GameEvents.Add(gameEventParams);
+        GameChangeCounter++;
     }
 
     public int Deploy(sbyte playerIndex, int cardId, sbyte targetIndex, int targetId, TargetableArea area,
