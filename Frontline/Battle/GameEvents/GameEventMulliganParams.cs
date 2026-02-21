@@ -2,7 +2,7 @@ namespace Frontline.Battle.GameEvents;
 
 public class GameEventMulliganParams : GameEventParams
 {
-    public int[] HandCardIdsToReplace;
+    public int[] HandCardIdsToReplace { get; }
 
     public GameEventMulliganParams()
     {
@@ -16,15 +16,15 @@ public class GameEventMulliganParams : GameEventParams
 
     public override GameEventResult ReplayEvent(CcgGame game)
     {
-        InitialSwapEventResult initialSwapEventResult = (InitialSwapEventResult) eventResult;
+        InitialSwapEventResult initialSwapEventResult = (InitialSwapEventResult) EventResult;
         initialSwapEventResult = new InitialSwapEventResult();
         initialSwapEventResult.CardIdsRemovedFromHand = HandCardIdsToReplace;
         initialSwapEventResult.DeckReplacementIndices = new int[HandCardIdsToReplace.Length];
 
-        if (game.DoInitialSwap(playerIndex, initialSwapEventResult.CardIdsRemovedFromHand,
+        if (game.DoInitialSwap(PlayerIndex, initialSwapEventResult.CardIdsRemovedFromHand,
                 initialSwapEventResult.DeckReplacementIndices, true) == 1)
         {
-            ccgEventsLog = game.GameState.GetCCGEventLog();
+            CcgEventsLog = game.GameState.GetCCGEventLog();
             return initialSwapEventResult;
         }
 

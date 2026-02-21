@@ -2,11 +2,11 @@ namespace Frontline.Battle.CcgEvents;
 
 public class MulliganDrawCCGEvent : CCGEventData
 {
-    public CCGEventType drawType = CCGEventType.MulliganDraw;
+    public CCGEventType DrawType { get; } = CCGEventType.MulliganDraw;
 
-    public List<MulliganDrawCCGEventCardData> CardsData = new List<MulliganDrawCCGEventCardData>();
+    public List<MulliganDrawCCGEventCardData> CardsData { get; } = new List<MulliganDrawCCGEventCardData>();
 
-    public sbyte owner;
+    public sbyte Owner { get; }
 
     public MulliganDrawCCGEvent()
     {
@@ -14,14 +14,14 @@ public class MulliganDrawCCGEvent : CCGEventData
 
     public MulliganDrawCCGEvent(sbyte drawOwner)
     {
-        owner = drawOwner;
+        Owner = drawOwner;
     }
 
     public void AddDrawnCard(Card card)
     {
         if (card != null)
         {
-            AddDrawnCard(card.instanceId, card.templateId, card.rank);
+            AddDrawnCard(card.InstanceId, card.TemplateId, card.Rank);
         }
     }
 
@@ -37,7 +37,7 @@ public class MulliganDrawCCGEvent : CCGEventData
 
     public override CCGEventData Sanitize(sbyte playerIndex)
     {
-        if (drawType == CCGEventType.DeckDraw && owner != playerIndex)
+        if (DrawType == CCGEventType.DeckDraw && Owner != playerIndex)
         {
             MulliganDrawCCGEvent mulliganDrawCCGEvent = new MulliganDrawCCGEvent();
             for (int i = 0; i < CardsData.Count; i++)

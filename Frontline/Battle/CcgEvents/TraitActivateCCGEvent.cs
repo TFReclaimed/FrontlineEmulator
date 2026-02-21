@@ -1,20 +1,25 @@
+using System.Text.Json.Serialization;
+
 namespace Frontline.Battle.CcgEvents;
 
 public class TraitActivateCCGEvent : CCGEventData
 {
-    public int traitID;
+    [JsonPropertyName("traitID")]
+    public int TraitId { get; set; }
 
-    public int effectID;
+    [JsonPropertyName("effectID")]
+    public int EffectId { get; set; }
 
-    public int cardID;
+    [JsonPropertyName("cardID")]
+    public int CardId { get; set; }
 
-    public sbyte owner;
+    public sbyte Owner { get; set; }
 
-    public bool deactivate;
+    public bool Deactivate { get; set; }
 
-    public RegionEnum region = RegionEnum.NumRegions;
+    public RegionEnum Region { get; set; } = RegionEnum.NumRegions;
 
-    public ActiveTraitCardInfo[] targets;
+    public ActiveTraitCardInfo[] Targets { get; set; }
 
     public TraitActivateCCGEvent()
     {
@@ -23,11 +28,11 @@ public class TraitActivateCCGEvent : CCGEventData
     public TraitActivateCCGEvent(int baseTraitID, int traitEffectID, int sourceCardID, sbyte cardOwner,
         bool deactivateTrait)
     {
-        traitID = baseTraitID;
-        effectID = traitEffectID;
-        cardID = sourceCardID;
-        owner = cardOwner;
-        deactivate = deactivateTrait;
+        TraitId = baseTraitID;
+        EffectId = traitEffectID;
+        CardId = sourceCardID;
+        Owner = cardOwner;
+        Deactivate = deactivateTrait;
     }
 
     public override CCGEventType Type()

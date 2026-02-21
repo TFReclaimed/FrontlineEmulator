@@ -10,8 +10,8 @@ public class ReactiveDamage : BaseTraitEffect
 
     public override void CardAttacked(Card attacker, Card target, ActiveTrait active)
     {
-        if (target.EqualsTo(active.GetTraitTarget()) && (!deterable || !active.detered) &&
-            (durationData.charges <= 0 || active.durationData.charges != 0) &&
+        if (target.EqualsTo(active.GetTraitTarget()) && (!Deterable || !active.Detered) &&
+            (DurationData.Charges <= 0 || active.DurationData.Charges != 0) &&
             TraitTargeting.DoesMatchType(attackerType, TargetTypeMod.NumMods, 0, attacker))
         {
             sbyte attack = damage;
@@ -20,18 +20,18 @@ public class ReactiveDamage : BaseTraitEffect
             {
                 attack = attacker.GetCurrentHealth(false);
             }
-            else if (damage > 0 && active.dataValue > 0)
+            else if (damage > 0 && active.DataValue > 0)
             {
-                attack = (sbyte) active.dataValue;
+                attack = (sbyte) active.DataValue;
             }
 
             if (bypass == -1)
             {
                 b = attacker.GetCurrentHealth(false);
             }
-            else if (bypass > 0 && active.dataValue > 0)
+            else if (bypass > 0 && active.DataValue > 0)
             {
-                b = (sbyte) active.dataValue;
+                b = (sbyte) active.DataValue;
             }
 
             attacker.TakeDamage(attack, b, target, true);

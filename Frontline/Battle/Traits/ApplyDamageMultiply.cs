@@ -15,7 +15,7 @@ public class ApplyDamageMultiply : ApplyDamage
             List<Card> list2 = null;
             for (int i = 0; i < list.Count; i++)
             {
-                list2 = list[i].primaryCard.GetSecrets();
+                list2 = list[i].PrimaryCard.GetSecrets();
                 if (list2 == null)
                 {
                     continue;
@@ -30,7 +30,7 @@ public class ApplyDamageMultiply : ApplyDamage
                 }
             }
 
-            card.Discard(GameState.players);
+            card.Discard(GameState.Players);
             return;
         }
 
@@ -51,18 +51,18 @@ public class ApplyDamageMultiply : ApplyDamage
         {
             attack = currentHealth;
         }
-        else if (damage > 0 && active.dataValue > 0)
+        else if (damage > 0 && active.DataValue > 0)
         {
-            attack = (sbyte) (active.dataValue * num2);
+            attack = (sbyte) (active.DataValue * num2);
         }
 
         if (bypassDefense == -1)
         {
             bypass = currentHealth;
         }
-        else if (bypassDefense > 0 && active.dataValue > 0)
+        else if (bypassDefense > 0 && active.DataValue > 0)
         {
-            bypass = (sbyte) (active.dataValue * num2);
+            bypass = (sbyte) (active.DataValue * num2);
         }
 
         if (currentHealth > 0)

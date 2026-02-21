@@ -6,21 +6,21 @@ namespace Frontline.Battle;
 
 public class ActiveTrait
 {
-    public TraitDuration durationData;
+    public TraitDuration DurationData { get; set; }
 
-    public int traitSourceId;
+    public int TraitSourceId { get; set; }
 
-    public int traitEffectId;
+    public int TraitEffectId { get; set; }
 
-    public int dataValue;
+    public int DataValue { get; set; }
 
-    public ActiveTraitCardInfo source;
+    public ActiveTraitCardInfo Source { get; set; }
 
-    public ActiveTraitCardInfo target;
+    public ActiveTraitCardInfo Target { get; set; }
 
-    public bool detered;
+    public bool Detered { get; set; }
 
-    public bool triggered;
+    public bool Triggered { get; set; }
 
     private BaseTraitEffect trait;
 
@@ -33,45 +33,45 @@ public class ActiveTrait
         trait = traitInfo;
         if (trait == null)
         {
-            Console.WriteLine(" INVALID TRAIT! null effect data for trait #" + traitSourceId);
+            Console.WriteLine(" INVALID TRAIT! null effect data for trait #" + TraitSourceId);
             trait = new BaseTraitEffect();
         }
 
         traitSource = sourceCard;
         traitTarget = targetCard;
-        source = new ActiveTraitCardInfo();
-        source.instanceId = sourceCard.instanceId;
-        source.owner = sourceCard.activeData.owner;
-        target = new ActiveTraitCardInfo();
-        target.instanceId = targetCard.instanceId;
-        target.owner = targetCard.activeData.owner;
-        traitSourceId = trait.traitParentID;
-        traitEffectId = trait.effectTraitID;
-        detered = false;
-        triggered = false;
-        durationData = null;
+        Source = new ActiveTraitCardInfo();
+        Source.InstanceId = sourceCard.InstanceId;
+        Source.Owner = sourceCard.ActiveData.Owner;
+        Target = new ActiveTraitCardInfo();
+        Target.InstanceId = targetCard.InstanceId;
+        Target.Owner = targetCard.ActiveData.Owner;
+        TraitSourceId = trait.TraitParentId;
+        TraitEffectId = trait.EffectTraitId;
+        Detered = false;
+        Triggered = false;
+        DurationData = null;
         if (duration != null)
         {
-            durationData = new TraitDuration();
-            durationData.type = duration.type;
-            durationData.duration = duration.duration;
-            durationData.charges = duration.charges;
+            DurationData = new TraitDuration();
+            DurationData.Type = duration.Type;
+            DurationData.Duration = duration.Duration;
+            DurationData.Charges = duration.Charges;
         }
     }
 
     public void Init(CCG game, Card owner)
     {
-        List<BaseTraitEffect> traitEffectsList = RulesetParser.GetTraitEffectsList(traitSourceId);
+        List<BaseTraitEffect> traitEffectsList = RulesetParser.GetTraitEffectsList(TraitSourceId);
         if (traitEffectsList == null)
         {
-            Console.WriteLine(" INVALID TRAIT! No Trait effects found for trait #" + traitSourceId);
+            Console.WriteLine(" INVALID TRAIT! No Trait effects found for trait #" + TraitSourceId);
             Init(new BaseTraitEffect(), game, owner);
             return;
         }
 
         for (int i = 0; i < traitEffectsList.Count; i++)
         {
-            if (traitEffectsList[i].effectTraitID == traitEffectId)
+            if (traitEffectsList[i].EffectTraitId == TraitEffectId)
             {
                 Init(traitEffectsList[i], game, owner);
                 break;
@@ -84,28 +84,28 @@ public class ActiveTrait
         trait = newTrait;
         if (trait == null)
         {
-            Console.WriteLine(" INVALID TRAIT! null effect data for trait #" + traitSourceId);
+            Console.WriteLine(" INVALID TRAIT! null effect data for trait #" + TraitSourceId);
             trait = new BaseTraitEffect();
         }
 
-        sbyte owner2 = owner.activeData.owner;
-        int instanceId = owner.instanceId;
-        if (source.instanceId == instanceId && source.owner == owner2)
+        sbyte owner2 = owner.ActiveData.Owner;
+        int instanceId = owner.InstanceId;
+        if (Source.InstanceId == instanceId && Source.Owner == owner2)
         {
             traitSource = owner;
         }
         else
         {
-            traitSource = game.FindTraitActor(source.owner, source.instanceId);
+            traitSource = game.FindTraitActor(Source.Owner, Source.InstanceId);
         }
 
-        if (target.instanceId == instanceId && target.owner == owner2)
+        if (Target.InstanceId == instanceId && Target.Owner == owner2)
         {
             traitTarget = owner;
         }
         else
         {
-            traitTarget = game.FindTraitActor(target.owner, target.instanceId);
+            traitTarget = game.FindTraitActor(Target.Owner, Target.InstanceId);
         }
 
         trait.Init(traitTarget, traitSource, this);
@@ -114,7 +114,7 @@ public class ActiveTrait
     public void Deactivate(bool validCheck)
     {
         trait.Deactivate(this);
-        traitTarget.activeData.activeTraits.Remove(this);
+        traitTarget.ActiveData.ActiveTraits.Remove(this);
         if (validCheck)
         {
             traitTarget.TestCardDeathState();
@@ -124,37 +124,37 @@ public class ActiveTrait
     public void NewTurn(Card owner, sbyte playerIndex)
     {
         trait.NewTurn(this, playerIndex);
-        if (trait.durationData.charges > 0 && trait.durationData.type == TraitDurationType.Permanent)
+        if (trait.DurationData.Charges > 0 && trait.DurationData.Type == TraitDurationType.Permanent)
         {
-            durationData.charges = trait.durationData.charges;
+            DurationData.Charges = trait.DurationData.Charges;
         }
 
-        if (durationData.duration <= 0)
+        if (DurationData.Duration <= 0)
         {
             return;
         }
 
-        sbyte owner2 = traitSource.activeData.owner;
-        if (durationData.type == TraitDurationType.StartOfTurn)
+        sbyte owner2 = traitSource.ActiveData.Owner;
+        if (DurationData.Type == TraitDurationType.StartOfTurn)
         {
-            durationData.duration--;
-            if (durationData.duration == 0)
+            DurationData.Duration--;
+            if (DurationData.Duration == 0)
             {
                 Deactivate(true);
             }
         }
-        else if (durationData.type == TraitDurationType.StartOfMyTurn && owner2 == playerIndex)
+        else if (DurationData.Type == TraitDurationType.StartOfMyTurn && owner2 == playerIndex)
         {
-            durationData.duration--;
-            if (durationData.duration == 0)
+            DurationData.Duration--;
+            if (DurationData.Duration == 0)
             {
                 Deactivate(true);
             }
         }
-        else if (durationData.type == TraitDurationType.StartOfEnemyTurn && owner2 != playerIndex)
+        else if (DurationData.Type == TraitDurationType.StartOfEnemyTurn && owner2 != playerIndex)
         {
-            durationData.duration--;
-            if (durationData.duration == 0)
+            DurationData.Duration--;
+            if (DurationData.Duration == 0)
             {
                 Deactivate(true);
             }
@@ -164,32 +164,32 @@ public class ActiveTrait
     public void EndTurn(Card owner, sbyte playerIndex)
     {
         trait.EndTurn(this, playerIndex);
-        if (durationData.duration <= 0)
+        if (DurationData.Duration <= 0)
         {
             return;
         }
 
-        sbyte owner2 = traitSource.activeData.owner;
-        if (durationData.type == TraitDurationType.EndOfTurn)
+        sbyte owner2 = traitSource.ActiveData.Owner;
+        if (DurationData.Type == TraitDurationType.EndOfTurn)
         {
-            durationData.duration--;
-            if (durationData.duration == 0)
+            DurationData.Duration--;
+            if (DurationData.Duration == 0)
             {
                 Deactivate(true);
             }
         }
-        else if (durationData.type == TraitDurationType.EndOfMyTurn && owner2 == playerIndex)
+        else if (DurationData.Type == TraitDurationType.EndOfMyTurn && owner2 == playerIndex)
         {
-            durationData.duration--;
-            if (durationData.duration == 0)
+            DurationData.Duration--;
+            if (DurationData.Duration == 0)
             {
                 Deactivate(true);
             }
         }
-        else if (durationData.type == TraitDurationType.EndOfEnemyTurn && owner2 != playerIndex)
+        else if (DurationData.Type == TraitDurationType.EndOfEnemyTurn && owner2 != playerIndex)
         {
-            durationData.duration--;
-            if (durationData.duration == 0)
+            DurationData.Duration--;
+            if (DurationData.Duration == 0)
             {
                 Deactivate(true);
             }
@@ -253,16 +253,16 @@ public class ActiveTrait
 
     public void ExpendCharge(CCG gameState)
     {
-        if (durationData.charges > 0)
+        if (DurationData.Charges > 0)
         {
-            durationData.charges--;
+            DurationData.Charges--;
         }
 
-        TraitInfoCCGEvent logData = new TraitInfoCCGEvent(CCGEventType.TraitExpendCharge, trait.traitParentID,
-            trait.effectTraitID, traitTarget.instanceId, traitTarget.activeData.owner, traitSource.instanceId,
-            traitSource.activeData.owner, durationData.charges);
+        TraitInfoCCGEvent logData = new TraitInfoCCGEvent(CCGEventType.TraitExpendCharge, trait.TraitParentId,
+            trait.EffectTraitId, traitTarget.InstanceId, traitTarget.ActiveData.Owner, traitSource.InstanceId,
+            traitSource.ActiveData.Owner, DurationData.Charges);
         gameState.AddCCGEventLog(logData);
-        if (durationData.charges == 0 && durationData.type != TraitDurationType.Permanent)
+        if (DurationData.Charges == 0 && DurationData.Type != TraitDurationType.Permanent)
         {
             Deactivate(true);
         }
@@ -270,22 +270,22 @@ public class ActiveTrait
 
     public bool HasCharges()
     {
-        return durationData.charges > 0;
+        return DurationData.Charges > 0;
     }
 
     public bool HasDuration()
     {
-        if (durationData.type == TraitDurationType.Instant)
+        if (DurationData.Type == TraitDurationType.Instant)
         {
             return false;
         }
 
-        if (durationData.type == TraitDurationType.Permanent)
+        if (DurationData.Type == TraitDurationType.Permanent)
         {
             return true;
         }
 
-        return durationData.duration > 0;
+        return DurationData.Duration > 0;
     }
 
     public bool EmbarkedCheck()
@@ -295,7 +295,7 @@ public class ActiveTrait
             UnitCard unitCard = (UnitCard) traitTarget;
             if (unitCard.IsEmbarked())
             {
-                return trait.embarkedInherit;
+                return trait.EmbarkedInherit;
             }
         }
 
@@ -304,9 +304,9 @@ public class ActiveTrait
 
     public void Embark()
     {
-        if (!detered)
+        if (!Detered)
         {
-            detered = !EmbarkedCheck();
+            Detered = !EmbarkedCheck();
         }
 
         trait.Embark(this);
@@ -314,9 +314,9 @@ public class ActiveTrait
 
     public void Disembark(bool hasDeter)
     {
-        if (!hasDeter && detered)
+        if (!hasDeter && Detered)
         {
-            detered = false;
+            Detered = false;
         }
 
         trait.Disembark(this);

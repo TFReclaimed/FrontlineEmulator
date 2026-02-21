@@ -2,11 +2,11 @@ namespace Frontline.Battle.CcgEvents;
 
 public class MulliganDrawCCGEventCardData : CCGEventData
 {
-    public int InstanceId;
+    public int InstanceId { get; }
 
-    public int TemplateId;
+    public int TemplateId { get; }
 
-    public sbyte CardRank;
+    public sbyte CardRank { get; }
 
     public MulliganDrawCCGEventCardData()
     {

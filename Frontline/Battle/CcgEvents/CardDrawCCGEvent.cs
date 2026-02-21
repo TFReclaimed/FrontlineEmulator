@@ -2,15 +2,15 @@ namespace Frontline.Battle.CcgEvents;
 
 public class CardDrawCCGEvent : CCGEventData
 {
-    public CCGEventType drawType;
+    public CCGEventType DrawType { get; }
 
-    public int cardId;
+    public int CardId { get; }
 
-    public int templateId;
+    public int TemplateId { get; }
 
-    public sbyte rank;
+    public sbyte Rank { get; }
 
-    public sbyte owner;
+    public sbyte Owner { get; }
 
     public CardDrawCCGEvent()
     {
@@ -18,23 +18,23 @@ public class CardDrawCCGEvent : CCGEventData
 
     public CardDrawCCGEvent(CCGEventType type, int drawnId, sbyte drawOwner, int template, sbyte cardRank)
     {
-        drawType = type;
-        cardId = drawnId;
-        owner = drawOwner;
-        templateId = template;
-        rank = cardRank;
+        DrawType = type;
+        CardId = drawnId;
+        Owner = drawOwner;
+        TemplateId = template;
+        Rank = cardRank;
     }
 
     public override CCGEventType Type()
     {
-        return drawType;
+        return DrawType;
     }
 
     public override CCGEventData Sanitize(sbyte playerIndex)
     {
-        if (drawType == CCGEventType.DeckDraw && owner != playerIndex)
+        if (DrawType == CCGEventType.DeckDraw && Owner != playerIndex)
         {
-            return new CardDrawCCGEvent(drawType, cardId, owner, 0, 0);
+            return new CardDrawCCGEvent(DrawType, CardId, Owner, 0, 0);
         }
 
         return base.Sanitize(playerIndex);

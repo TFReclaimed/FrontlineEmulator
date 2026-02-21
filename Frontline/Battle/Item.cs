@@ -8,9 +8,9 @@ namespace Frontline.Battle;
 [JsonDerivedType(typeof(UnitCard), "UnitCard")]
 public class Item
 {
-    public int instanceId;
+    public int InstanceId { get; set; }
 
-    public int templateId;
+    public int TemplateId { get; set; }
 
     protected Item()
     {

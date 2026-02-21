@@ -1,40 +1,42 @@
+using System.Text.Json.Serialization;
 using Frontline.Game.Card;
 
 namespace Frontline.Battle;
 
 public class TraitTargeting
 {
-    public TraitTargetType type = TraitTargetType.AnyType;
+    public TraitTargetType Type { get; } = TraitTargetType.AnyType;
 
-    public TargetTypeMod mod = TargetTypeMod.NumMods;
+    public TargetTypeMod Mod { get; } = TargetTypeMod.NumMods;
 
-    public TraitTargetScope scope = TraitTargetScope.AnyScope;
+    public TraitTargetScope Scope { get; } = TraitTargetScope.AnyScope;
 
-    public TargetableArea area = TargetableArea.AnyAreas;
+    public TargetableArea Area { get; } = TargetableArea.AnyAreas;
 
-    public int targetID;
+    [JsonPropertyName("targetId")]
+    public int TargetId { get; }
 
     public bool CheckFriendly()
     {
-        return scope == TraitTargetScope.AnyScope || scope == TraitTargetScope.AllFriendly ||
-               scope == TraitTargetScope.AllFriendlyNotSelf || scope == TraitTargetScope.FriendlyUnit ||
-               scope == TraitTargetScope.FriendlyUnitNotSelf || scope == TraitTargetScope.RandomFriendly ||
-               scope == TraitTargetScope.RandomFriendlyNotSelf || scope == TraitTargetScope.Self ||
-               scope == TraitTargetScope.UnitStack;
+        return Scope == TraitTargetScope.AnyScope || Scope == TraitTargetScope.AllFriendly ||
+               Scope == TraitTargetScope.AllFriendlyNotSelf || Scope == TraitTargetScope.FriendlyUnit ||
+               Scope == TraitTargetScope.FriendlyUnitNotSelf || Scope == TraitTargetScope.RandomFriendly ||
+               Scope == TraitTargetScope.RandomFriendlyNotSelf || Scope == TraitTargetScope.Self ||
+               Scope == TraitTargetScope.UnitStack;
     }
 
     public bool CheckEnemy()
     {
-        return scope == TraitTargetScope.AnyScope || scope == TraitTargetScope.AllEnemy ||
-               scope == TraitTargetScope.RandomEnemy || scope == TraitTargetScope.EnemyUnit ||
-               scope == TraitTargetScope.UnitStack;
+        return Scope == TraitTargetScope.AnyScope || Scope == TraitTargetScope.AllEnemy ||
+               Scope == TraitTargetScope.RandomEnemy || Scope == TraitTargetScope.EnemyUnit ||
+               Scope == TraitTargetScope.UnitStack;
     }
 
     public bool HasAreaTarget()
     {
-        return scope == TraitTargetScope.AnyScope || scope == TraitTargetScope.AllEnemy ||
-               scope == TraitTargetScope.AllFriendly || scope == TraitTargetScope.RandomEnemy ||
-               scope == TraitTargetScope.RandomFriendly || scope == TraitTargetScope.AllFriendlyNotSelf;
+        return Scope == TraitTargetScope.AnyScope || Scope == TraitTargetScope.AllEnemy ||
+               Scope == TraitTargetScope.AllFriendly || Scope == TraitTargetScope.RandomEnemy ||
+               Scope == TraitTargetScope.RandomFriendly || Scope == TraitTargetScope.AllFriendlyNotSelf;
     }
 
     public bool CheckRegion(RegionEnum checkRegion, sbyte owner)
@@ -42,7 +44,7 @@ public class TraitTargeting
         if (checkRegion != RegionEnum.NumRegions)
         {
             RegionEnum regionEnum = (RegionEnum) (0 + (byte) owner);
-            switch (area)
+            switch (Area)
             {
                 case TargetableArea.AnyAreas:
                     return true;
@@ -112,7 +114,7 @@ public class TraitTargeting
             cardStack = list[0];
         }
 
-        switch (scope)
+        switch (Scope)
         {
             case TraitTargetScope.Self:
                 if (!card.EqualsTo(source))
@@ -130,7 +132,7 @@ public class TraitTargeting
                 break;
             case TraitTargetScope.FriendlyUnit:
             case TraitTargetScope.AllFriendly:
-                if (card.activeData.owner != source.activeData.owner)
+                if (card.ActiveData.Owner != source.ActiveData.Owner)
                 {
                     return false;
                 }
@@ -139,7 +141,7 @@ public class TraitTargeting
             case TraitTargetScope.FriendlyUnitNotSelf:
             case TraitTargetScope.AllFriendlyNotSelf:
             case TraitTargetScope.RandomFriendlyNotSelf:
-                if (card.EqualsTo(source) || card.activeData.owner != source.activeData.owner)
+                if (card.EqualsTo(source) || card.ActiveData.Owner != source.ActiveData.Owner)
                 {
                     return false;
                 }
@@ -147,7 +149,7 @@ public class TraitTargeting
                 break;
             case TraitTargetScope.EnemyUnit:
             case TraitTargetScope.AllEnemy:
-                if (card.activeData.owner == source.activeData.owner)
+                if (card.ActiveData.Owner == source.ActiveData.Owner)
                 {
                     return false;
                 }
@@ -155,36 +157,36 @@ public class TraitTargeting
                 break;
         }
 
-        RegionEnum traitActorRegion = gameState.GetTraitActorRegion(card.activeData.owner, card.instanceId);
-        if (area == TargetableArea.CurrentRegion)
+        RegionEnum traitActorRegion = gameState.GetTraitActorRegion(card.ActiveData.Owner, card.InstanceId);
+        if (Area == TargetableArea.CurrentRegion)
         {
-            if (traitActorRegion != gameState.GetTraitActorRegion(source.activeData.owner, source.instanceId))
+            if (traitActorRegion != gameState.GetTraitActorRegion(source.ActiveData.Owner, source.InstanceId))
             {
                 return false;
             }
         }
-        else if (area == TargetableArea.BattleFieldNC)
+        else if (Area == TargetableArea.BattleFieldNC)
         {
             if (card.GetTemplate().Type == CardType.Commander)
             {
                 return false;
             }
         }
-        else if (area == TargetableArea.FriendlyCommander)
+        else if (Area == TargetableArea.FriendlyCommander)
         {
-            if (card.GetTemplate().Type != CardType.Commander || card.activeData.owner != source.activeData.owner)
+            if (card.GetTemplate().Type != CardType.Commander || card.ActiveData.Owner != source.ActiveData.Owner)
             {
                 return false;
             }
         }
-        else if (area == TargetableArea.EnemyCommander)
+        else if (Area == TargetableArea.EnemyCommander)
         {
-            if (card.GetTemplate().Type != CardType.Commander || card.activeData.owner == source.activeData.owner)
+            if (card.GetTemplate().Type != CardType.Commander || card.ActiveData.Owner == source.ActiveData.Owner)
             {
                 return false;
             }
         }
-        else if (!CheckRegion(traitActorRegion, source.activeData.owner))
+        else if (!CheckRegion(traitActorRegion, source.ActiveData.Owner))
         {
             return false;
         }
@@ -199,7 +201,7 @@ public class TraitTargeting
 
     public bool DoesMatchType(Card card)
     {
-        return DoesMatchType(type, mod, targetID, card);
+        return DoesMatchType(Type, Mod, TargetId, card);
     }
 
     public static bool DoesMatchType(TraitTargetType type, TargetTypeMod mod, int targetID, Card card)
@@ -232,7 +234,7 @@ public class TraitTargeting
                 if (mod == TargetTypeMod.EmbarkedPilot)
                 {
                     UnitCard unitCard = (UnitCard) card;
-                    if (!unitCard.pilotEmbarked)
+                    if (!unitCard.PilotEmbarked)
                     {
                         return false;
                     }
@@ -250,7 +252,7 @@ public class TraitTargeting
                     case TargetTypeMod.Piloted:
                     {
                         UnitCard unitCard3 = (UnitCard) card;
-                        if (unitCard3.embarkedPilot == null)
+                        if (unitCard3.EmbarkedPilot == null)
                         {
                             return false;
                         }
@@ -260,7 +262,7 @@ public class TraitTargeting
                     case TargetTypeMod.NotPiloted:
                     {
                         UnitCard unitCard2 = (UnitCard) card;
-                        if (unitCard2.embarkedPilot != null)
+                        if (unitCard2.EmbarkedPilot != null)
                         {
                             return false;
                         }
@@ -385,9 +387,9 @@ public class TraitTargeting
         {
             case TargetTypeMod.HasIntercept:
             {
-                for (int num = card.activeData.activeTraits.Count - 1; num >= 0; num--)
+                for (int num = card.ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
                 {
-                    ActiveTrait activeTrait = card.activeData.activeTraits[num];
+                    ActiveTrait activeTrait = card.ActiveData.ActiveTraits[num];
                     if (activeTrait.GetTraitInfo().IsIntercept(activeTrait))
                     {
                         return true;
@@ -398,9 +400,9 @@ public class TraitTargeting
             }
             case TargetTypeMod.HasStealth:
             {
-                for (int num2 = card.activeData.activeTraits.Count - 1; num2 >= 0; num2--)
+                for (int num2 = card.ActiveData.ActiveTraits.Count - 1; num2 >= 0; num2--)
                 {
-                    ActiveTrait activeTrait2 = card.activeData.activeTraits[num2];
+                    ActiveTrait activeTrait2 = card.ActiveData.ActiveTraits[num2];
                     if (activeTrait2.GetTraitInfo().IsCombatManipulationPassive(1, activeTrait2))
                     {
                         return true;
@@ -478,10 +480,10 @@ public class TraitTargeting
     {
         int num = 0;
         RegionEnum region = RegionEnum.NumRegions;
-        if (area == TargetableArea.CurrentRegion)
+        if (Area == TargetableArea.CurrentRegion)
         {
-            region = gameState.GetTraitActorRegion(active.GetTraitTarget().activeData.owner,
-                active.GetTraitTarget().instanceId);
+            region = gameState.GetTraitActorRegion(active.GetTraitTarget().ActiveData.Owner,
+                active.GetTraitTarget().InstanceId);
         }
 
         List<CardStack> list = gameState.FindCards(this, region, active.GetTraitSource());
@@ -489,7 +491,7 @@ public class TraitTargeting
         List<Card> list2 = null;
         for (int i = 0; i < list.Count; i++)
         {
-            card = list[i].primaryCard;
+            card = list[i].PrimaryCard;
             if (DoesMatchType(card))
             {
                 num++;

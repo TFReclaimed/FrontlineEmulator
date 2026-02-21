@@ -53,7 +53,7 @@ public static class RulesetParser
     public static BaseTrait? GetTraitTemplate(int traitId)
     {
         var trait = Ruleset?.CardsRuleset.Traits.GetValueOrDefault(traitId.ToString());
-        trait?.effects = GetTraitEffectsList(traitId);
+        trait?.Effects = GetTraitEffectsList(traitId);
         return trait;
     }
 

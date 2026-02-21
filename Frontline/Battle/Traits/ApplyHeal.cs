@@ -14,9 +14,9 @@ public class ApplyHeal : BaseTraitEffect
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
         sbyte b = heal;
-        if (active.dataValue > 0)
+        if (active.DataValue > 0)
         {
-            b = (sbyte) active.dataValue;
+            b = (sbyte) active.DataValue;
         }
 
         if (card.GetCurrentHealth(false) > 0)
@@ -26,22 +26,22 @@ public class ApplyHeal : BaseTraitEffect
 
         if (b > 0)
         {
-            CardTraumaCCGEvent logData = new CardTraumaCCGEvent(CCGEventType.CardHeal, b, source.instanceId,
-                source.activeData.owner, card.instanceId, card.activeData.owner);
+            CardTraumaCCGEvent logData = new CardTraumaCCGEvent(CCGEventType.CardHeal, b, source.InstanceId,
+                source.ActiveData.Owner, card.InstanceId, card.ActiveData.Owner);
             GameState.AddCCGEventLog(logData);
         }
     }
 
     public override void OnNewTurnEvent(Card owner, sbyte playerIndex)
     {
-        if (!owner.IsCardTraitsDetered() && durationData.type == TraitDurationType.Permanent &&
-            owner.activeData.owner == playerIndex)
+        if (!owner.IsCardTraitsDetered() && DurationData.Type == TraitDurationType.Permanent &&
+            owner.ActiveData.Owner == playerIndex)
         {
             RegionEnum region = RegionEnum.NumRegions;
             CardStack target = GameState.FindCardStack(owner)[0];
-            if (targets.area == TargetableArea.CurrentRegion)
+            if (Targets.Area == TargetableArea.CurrentRegion)
             {
-                region = GameState.GetTraitActorRegion(playerIndex, owner.instanceId);
+                region = GameState.GetTraitActorRegion(playerIndex, owner.InstanceId);
             }
 
             Activate(owner, target, region);

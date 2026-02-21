@@ -2,11 +2,11 @@ namespace Frontline.Battle.GameEvents;
 
 internal class GameEventCheat_GiveCardAndCmdPts : GameEventParams
 {
-    public int cardTemplateId;
+    public int CardTemplateId { get; }
 
-    public int cardRank;
+    public int CardRank { get; }
 
-    public int commandPoints;
+    public int CommandPoints { get; }
 
     public GameEventCheat_GiveCardAndCmdPts()
     {
@@ -15,25 +15,25 @@ internal class GameEventCheat_GiveCardAndCmdPts : GameEventParams
     public GameEventCheat_GiveCardAndCmdPts(int _cardTemplateId, int _rank, int _commandPoints, sbyte player)
         : base(GameEvent.Cheat_GiveCardAndCmdPts, player)
     {
-        cardTemplateId = _cardTemplateId;
-        commandPoints = _commandPoints;
-        cardRank = _rank;
+        CardTemplateId = _cardTemplateId;
+        CommandPoints = _commandPoints;
+        CardRank = _rank;
     }
 
     public override GameEventResult ReplayEvent(CcgGame game)
     {
         GameEventCheat_GiveCardAndCmdPtsResult gameEventCheat_GiveCardAndCmdPtsResult =
-            (GameEventCheat_GiveCardAndCmdPtsResult) eventResult;
+            (GameEventCheat_GiveCardAndCmdPtsResult) EventResult;
         gameEventCheat_GiveCardAndCmdPtsResult = new GameEventCheat_GiveCardAndCmdPtsResult();
-        gameEventCheat_GiveCardAndCmdPtsResult.cardTemplateId = cardTemplateId;
-        gameEventCheat_GiveCardAndCmdPtsResult.commandPoints = commandPoints;
-        gameEventCheat_GiveCardAndCmdPtsResult.cardRank = cardRank;
+        gameEventCheat_GiveCardAndCmdPtsResult.CardTemplateId = CardTemplateId;
+        gameEventCheat_GiveCardAndCmdPtsResult.CommandPoints = CommandPoints;
+        gameEventCheat_GiveCardAndCmdPtsResult.CardRank = CardRank;
 
-        if (game.Cheat_GiveCardAndCommandPoints(playerIndex, gameEventCheat_GiveCardAndCmdPtsResult.cardTemplateId,
-                gameEventCheat_GiveCardAndCmdPtsResult.cardRank, gameEventCheat_GiveCardAndCmdPtsResult.commandPoints,
+        if (game.Cheat_GiveCardAndCommandPoints(PlayerIndex, gameEventCheat_GiveCardAndCmdPtsResult.CardTemplateId,
+                gameEventCheat_GiveCardAndCmdPtsResult.CardRank, gameEventCheat_GiveCardAndCmdPtsResult.CommandPoints,
                 true) == 1)
         {
-            ccgEventsLog = game.GameState.GetCCGEventLog();
+            CcgEventsLog = game.GameState.GetCCGEventLog();
             return gameEventCheat_GiveCardAndCmdPtsResult;
         }
 

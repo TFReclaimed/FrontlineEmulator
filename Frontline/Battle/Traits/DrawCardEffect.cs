@@ -8,21 +8,21 @@ public class DrawCardEffect : BaseTraitEffect
 
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
-        Player player = GameState.players[source.activeData.owner];
+        Player player = GameState.Players[source.ActiveData.Owner];
         sbyte drawCount = numberOfCards;
-        if (numberOfCards > 0 && active.dataValue > 0)
+        if (numberOfCards > 0 && active.DataValue > 0)
         {
-            drawCount = (sbyte) active.dataValue;
+            drawCount = (sbyte) active.DataValue;
         }
 
         if (regularDraw)
         {
-            player.DrawFromDeck(source.activeData.owner, drawCount, false);
+            player.DrawFromDeck(source.ActiveData.Owner, drawCount, false);
         }
         else
         {
             drawCount = 1;
-            player.supportDeck.DrawCard(player.resources.commandAccum, false);
+            player.SupportDeck.DrawCard(player.Resources.CommandAccum, false);
         }
     }
 }

@@ -8,7 +8,7 @@ public class DamageImmunity : BaseTraitEffect
 
     public override bool IsDamageImmunity(bool bypass, ActiveTrait active)
     {
-        if (deterable && active.detered)
+        if (Deterable && active.Detered)
         {
             return false;
         }

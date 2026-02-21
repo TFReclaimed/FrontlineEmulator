@@ -1,12 +1,11 @@
 using Frontline.Battle.CcgEvents;
-using Frontline.Game;
 using Frontline.Game.Card;
 
 namespace Frontline.Battle;
 
 public class EntityCard : Card
 {
-    public List<Card> secrets;
+    public List<Card> Secrets { get; set; }
 
     private sbyte maxHealth;
 
@@ -22,7 +21,7 @@ public class EntityCard : Card
     public EntityCard(CCG game, Card other)
         : base(game, other)
     {
-        secrets = other.GetSecrets();
+        Secrets = other.GetSecrets();
     }
 
     public override void Setup()
@@ -30,23 +29,23 @@ public class EntityCard : Card
         base.Setup();
         EntityCardTemplate entityTemplate = (EntityCardTemplate) GetTemplate();
         maxHealth = entityTemplate.Health;
-        secrets = new List<Card>();
+        Secrets = new List<Card>();
         myDeathCard = null;
         isDead = false;
     }
 
     public override List<Card> GetSecrets()
     {
-        return secrets;
+        return Secrets;
     }
 
     public override void InitStackedCards()
     {
-        if (secrets != null)
+        if (Secrets != null)
         {
-            for (int num = secrets.Count - 1; num >= 0; num--)
+            for (int num = Secrets.Count - 1; num >= 0; num--)
             {
-                secrets[num] = secrets[num].GenerateAndInit(GameState);
+                Secrets[num] = Secrets[num].GenerateAndInit(GameState);
             }
         }
 
@@ -66,15 +65,15 @@ public class EntityCard : Card
             return card;
         }
 
-        if (secrets == null)
+        if (Secrets == null)
         {
             return card;
         }
 
-        for (int i = 0; i < secrets.Count; i++)
+        for (int i = 0; i < Secrets.Count; i++)
         {
-            card = secrets[i];
-            if (card.instanceId == cardId && card.activeData.owner == ownerId)
+            card = Secrets[i];
+            if (card.InstanceId == cardId && card.ActiveData.Owner == ownerId)
             {
                 return card;
             }
@@ -90,14 +89,14 @@ public class EntityCard : Card
             return true;
         }
 
-        if (secrets == null)
+        if (Secrets == null)
         {
             return true;
         }
 
-        for (int i = 0; i < secrets.Count; i++)
+        for (int i = 0; i < Secrets.Count; i++)
         {
-            if (secrets[i].DoesMatchTargetingInfo(info, source))
+            if (Secrets[i].DoesMatchTargetingInfo(info, source))
             {
                 return true;
             }
@@ -113,10 +112,10 @@ public class EntityCard : Card
 
     public override bool Deploy(CardStack stack, bool embark, RegionEnum target, CardTransitionCCGEvent deployEvent)
     {
-        if (stack.primaryCard == null)
+        if (stack.PrimaryCard == null)
         {
             SetActed(15);
-            stack.primaryCard = this;
+            stack.PrimaryCard = this;
             for (int i = 0; i < cardTraits.Length; i++)
             {
                 BaseTrait baseTrait = cardTraits[i];
@@ -132,7 +131,7 @@ public class EntityCard : Card
         if (!embark)
         {
             Console.WriteLine("DEPLOY FAILED - EntityCard.Deploy target cardstack was not empty ID" +
-                              stack.primaryCard.instanceId);
+                              stack.PrimaryCard.InstanceId);
         }
 
         return false;
@@ -140,39 +139,39 @@ public class EntityCard : Card
 
     public override bool Move(CardStack target, RegionEnum region, RegionEnum origin, bool embark)
     {
-        if (target.primaryCard != null)
+        if (target.PrimaryCard != null)
         {
             if (!embark)
             {
                 Console.WriteLine("MOVE FAILED - EntityCard.Move - target CardStack not empty. CID-" +
-                                  target.primaryCard.instanceId);
+                                  target.PrimaryCard.InstanceId);
             }
 
             return false;
         }
 
-        target.primaryCard = this;
+        target.PrimaryCard = this;
         SetActed(14);
-        activeData.MoveTraits(target, region, embark);
+        ActiveData.MoveTraits(target, region, embark);
         return base.Move(target, region, origin, embark);
     }
 
     public override bool HasActed()
     {
-        ActiveEntityCardData activeEntityCardData = (ActiveEntityCardData) activeData;
-        return activeEntityCardData.acted != 0;
+        ActiveEntityCardData activeEntityCardData = (ActiveEntityCardData) ActiveData;
+        return activeEntityCardData.Acted != 0;
     }
 
     public override bool HasActed(sbyte actions)
     {
-        ActiveEntityCardData activeEntityCardData = (ActiveEntityCardData) activeData;
-        return ((byte) activeEntityCardData.acted & (byte) actions) != 0;
+        ActiveEntityCardData activeEntityCardData = (ActiveEntityCardData) ActiveData;
+        return ((byte) activeEntityCardData.Acted & (byte) actions) != 0;
     }
 
     public override bool HasAnyActionsAvailable()
     {
-        ActiveEntityCardData activeEntityCardData = (ActiveEntityCardData) activeData;
-        return (((byte) activeEntityCardData.acted & 0xE) ^ 0xE) != 0;
+        ActiveEntityCardData activeEntityCardData = (ActiveEntityCardData) ActiveData;
+        return (((byte) activeEntityCardData.Acted & 0xE) ^ 0xE) != 0;
     }
 
     public override bool CanActivate(Card target, RegionEnum region)
@@ -189,9 +188,9 @@ public class EntityCard : Card
         }
 
         BaseTraitEffect primaryTargeting = activationTrait.GetPrimaryTargeting(0);
-        if (primaryTargeting.targets.HasAreaTarget())
+        if (primaryTargeting.Targets.HasAreaTarget())
         {
-            return activationTrait.CanActivate(region, activeData.owner);
+            return activationTrait.CanActivate(region, ActiveData.Owner);
         }
 
         if (target == null)
@@ -204,7 +203,7 @@ public class EntityCard : Card
 
     public override bool CanAttack(CardStack source, CardStack target)
     {
-        if (target.primaryCard == null)
+        if (target.PrimaryCard == null)
         {
             Console.WriteLine("EntityCard.CanAttack false - Target stack is empty");
             return false;
@@ -222,10 +221,10 @@ public class EntityCard : Card
         }
 
         bool flag = false;
-        bool flag2 = GameState.HasInterceptBattleEffect(activeData.owner);
+        bool flag2 = GameState.HasInterceptBattleEffect(ActiveData.Owner);
         if (flag2)
         {
-            flag = target.primaryCard.HasIntercept();
+            flag = target.PrimaryCard.HasIntercept();
         }
 
         if (flag2 && !flag)
@@ -244,7 +243,7 @@ public class EntityCard : Card
         }
 
         SetActed(14);
-        activeData.AttackTraits(target);
+        ActiveData.AttackTraits(target);
         List<CardStack> list = GameState.FindCardStack(target);
         if (list.Count > 0)
         {
@@ -261,13 +260,13 @@ public class EntityCard : Card
         ActiveTrait activeTrait = null;
         for (int i = 0; i < cardTraits.Length; i++)
         {
-            if (cardTraits[i].traitType == TraitType.OneShot && !activeData.traitActivated[i])
+            if (cardTraits[i].TraitType == TraitType.OneShot && !ActiveData.TraitActivated[i])
             {
                 SetActed(14);
-                activeData.traitActivated[i] = true;
-                for (int num = activeData.activeTraits.Count - 1; num >= 0; num--)
+                ActiveData.TraitActivated[i] = true;
+                for (int num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
                 {
-                    activeTrait = activeData.activeTraits[num];
+                    activeTrait = ActiveData.ActiveTraits[num];
                     activeTrait.GetTraitInfo().ActivateAction(target, region, activeTrait);
                 }
 
@@ -279,15 +278,15 @@ public class EntityCard : Card
 
     public override void TakeDamage(sbyte attack, sbyte bypass, Card source, bool checkDeath)
     {
-        ActiveEntityCardData activeEntityCardData = (ActiveEntityCardData) activeData;
-        sbyte currentHealth = activeEntityCardData.currentHealth;
+        ActiveEntityCardData activeEntityCardData = (ActiveEntityCardData) ActiveData;
+        sbyte currentHealth = activeEntityCardData.CurrentHealth;
         sbyte b = attack;
         sbyte b2 = bypass;
         sbyte b3 = 0;
         ActiveTrait activeTrait = null;
-        for (int i = 0; i < activeData.activeTraits.Count; i++)
+        for (int i = 0; i < ActiveData.ActiveTraits.Count; i++)
         {
-            activeTrait = activeData.activeTraits[i];
+            activeTrait = ActiveData.ActiveTraits[i];
             if (activeTrait.GetTraitInfo().IsDamageImmunity(false, activeTrait))
             {
                 b = 0;
@@ -304,8 +303,8 @@ public class EntityCard : Card
         {
             SetCurrentHealth((sbyte) (currentHealth - b3));
             GameState.CardDamaged(this, source);
-            CardTraumaCCGEvent logData = new CardTraumaCCGEvent(CCGEventType.CardDamage, b3, source.instanceId,
-                source.activeData.owner, instanceId, activeData.owner);
+            CardTraumaCCGEvent logData = new CardTraumaCCGEvent(CCGEventType.CardDamage, b3, source.InstanceId,
+                source.ActiveData.Owner, InstanceId, ActiveData.Owner);
             GameState.AddCCGEventLog(logData);
             if (myDeathCard == null && CanDiscard())
             {
@@ -327,7 +326,7 @@ public class EntityCard : Card
         }
 
         isDead = true;
-        RegionEnum traitActorRegion = GameState.GetTraitActorRegion(activeData.owner, instanceId);
+        RegionEnum traitActorRegion = GameState.GetTraitActorRegion(ActiveData.Owner, InstanceId);
         List<CardStack> list = GameState.FindCardStack(this);
         CardStack cardStack = null;
         if (list == null || list.Count == 0)
@@ -338,16 +337,16 @@ public class EntityCard : Card
         cardStack = list[0];
         for (int i = 0; i < cardTraits.Length; i++)
         {
-            if (cardTraits[i].traitType == TraitType.LastStand && !activeData.traitActivated[i])
+            if (cardTraits[i].TraitType == TraitType.LastStand && !ActiveData.TraitActivated[i])
             {
-                activeData.traitActivated[i] = true;
+                ActiveData.TraitActivated[i] = true;
                 cardTraits[i].Activate(this, cardStack, traitActorRegion, GameState);
             }
         }
 
         GameState.CardDied(this, myDeathCard);
         CardTraumaCCGEvent logData = new CardTraumaCCGEvent(CCGEventType.CardDeath, GetCurrentHealth(false),
-            myDeathCard.instanceId, myDeathCard.activeData.owner, instanceId, activeData.owner);
+            myDeathCard.InstanceId, myDeathCard.ActiveData.Owner, InstanceId, ActiveData.Owner);
         GameState.AddCCGEventLog(logData);
         if (myDeathCard.GetTemplate().IsCombatUnit())
         {
@@ -356,7 +355,7 @@ public class EntityCard : Card
             unitCard.CheckAndUpdateXP(xpTrigger);
             if (unitCard.HasPilot())
             {
-                unitCard.embarkedPilot.CheckAndUpdateXP(xpTrigger);
+                unitCard.EmbarkedPilot.CheckAndUpdateXP(xpTrigger);
             }
         }
 
@@ -368,17 +367,17 @@ public class EntityCard : Card
         EntityCard embarkedPilot = GetEmbarkedPilot();
         for (int j = 0; j < embarkedPilot.cardTraits.Length; j++)
         {
-            if (embarkedPilot.cardTraits[j].traitType == TraitType.LastStand &&
-                !embarkedPilot.activeData.traitActivated[j])
+            if (embarkedPilot.cardTraits[j].TraitType == TraitType.LastStand &&
+                !embarkedPilot.ActiveData.TraitActivated[j])
             {
-                embarkedPilot.activeData.traitActivated[j] = true;
+                embarkedPilot.ActiveData.TraitActivated[j] = true;
                 embarkedPilot.cardTraits[j].Activate(embarkedPilot, cardStack, traitActorRegion, GameState);
             }
         }
 
         GameState.CardDied(embarkedPilot, myDeathCard);
-        logData = new CardTraumaCCGEvent(CCGEventType.CardDeath, GetCurrentHealth(false), myDeathCard.instanceId,
-            myDeathCard.activeData.owner, embarkedPilot.instanceId, embarkedPilot.activeData.owner);
+        logData = new CardTraumaCCGEvent(CCGEventType.CardDeath, GetCurrentHealth(false), myDeathCard.InstanceId,
+            myDeathCard.ActiveData.Owner, embarkedPilot.InstanceId, embarkedPilot.ActiveData.Owner);
         GameState.AddCCGEventLog(logData);
         if (myDeathCard.GetTemplate().IsCombatUnit())
         {
@@ -387,7 +386,7 @@ public class EntityCard : Card
             unitCard2.CheckAndUpdateXP(xpTrigger2);
             if (unitCard2.HasPilot())
             {
-                unitCard2.embarkedPilot.CheckAndUpdateXP(xpTrigger2);
+                unitCard2.EmbarkedPilot.CheckAndUpdateXP(xpTrigger2);
             }
         }
     }
@@ -407,8 +406,8 @@ public class EntityCard : Card
 
     public override sbyte HealDamage(CardStack stack, sbyte heal)
     {
-        ActiveEntityCardData activeEntityCardData = (ActiveEntityCardData) activeData;
-        sbyte currentHealth = activeEntityCardData.currentHealth;
+        ActiveEntityCardData activeEntityCardData = (ActiveEntityCardData) ActiveData;
+        sbyte currentHealth = activeEntityCardData.CurrentHealth;
         sbyte b = currentHealth;
         currentHealth = ((currentHealth + heal <= maxHealth) ? ((sbyte) (currentHealth + heal)) : maxHealth);
         SetCurrentHealth(currentHealth);
@@ -422,8 +421,8 @@ public class EntityCard : Card
 
     public override sbyte GetCurrentHealth(bool combatLog)
     {
-        ActiveEntityCardData activeEntityCardData = (ActiveEntityCardData) activeData;
-        sbyte b = activeEntityCardData.currentHealth;
+        ActiveEntityCardData activeEntityCardData = (ActiveEntityCardData) ActiveData;
+        sbyte b = activeEntityCardData.CurrentHealth;
         sbyte b2 = 0;
         ActiveTrait activeTrait = null;
         EventLogTraitCardInfo eventLogTraitCardInfo = null;
@@ -433,20 +432,20 @@ public class EntityCard : Card
             list = new List<EventLogTraitCardInfo>();
         }
 
-        for (int i = 0; i < activeData.activeTraits.Count; i++)
+        for (int i = 0; i < ActiveData.ActiveTraits.Count; i++)
         {
-            activeTrait = activeData.activeTraits[i];
+            activeTrait = ActiveData.ActiveTraits[i];
             b2 = activeTrait.GetTraitInfo().GetHealthBonus(activeTrait);
             if (b2 != 0)
             {
                 if (combatLog)
                 {
                     eventLogTraitCardInfo = new EventLogTraitCardInfo();
-                    eventLogTraitCardInfo.instanceId = activeTrait.GetTraitSource().instanceId;
-                    eventLogTraitCardInfo.owner = activeTrait.GetTraitSource().activeData.owner;
-                    eventLogTraitCardInfo.effectID = activeTrait.GetTraitInfo().effectTraitID;
-                    eventLogTraitCardInfo.traitID = activeTrait.GetTraitInfo().traitParentID;
-                    eventLogTraitCardInfo.data = b2;
+                    eventLogTraitCardInfo.InstanceId = activeTrait.GetTraitSource().InstanceId;
+                    eventLogTraitCardInfo.Owner = activeTrait.GetTraitSource().ActiveData.Owner;
+                    eventLogTraitCardInfo.EffectId = activeTrait.GetTraitInfo().EffectTraitId;
+                    eventLogTraitCardInfo.TraitId = activeTrait.GetTraitInfo().TraitParentId;
+                    eventLogTraitCardInfo.Data = b2;
                     list.Add(eventLogTraitCardInfo);
                 }
 
@@ -458,11 +457,11 @@ public class EntityCard : Card
         {
             int count = list.Count;
             CombatBuffsCCGEvent combatBuffsCCGEvent =
-                new CombatBuffsCCGEvent(CCGEventType.CombatBuffsAttack, instanceId, activeData.owner, 0, 0);
-            combatBuffsCCGEvent.buffTraits = new EventLogTraitCardInfo[count];
+                new CombatBuffsCCGEvent(CCGEventType.CombatBuffsAttack, InstanceId, ActiveData.Owner, 0, 0);
+            combatBuffsCCGEvent.BuffTraits = new EventLogTraitCardInfo[count];
             for (int j = 0; j < count; j++)
             {
-                combatBuffsCCGEvent.buffTraits[j] = list[j];
+                combatBuffsCCGEvent.BuffTraits[j] = list[j];
             }
 
             GameState.AddCCGEventLog(combatBuffsCCGEvent);
@@ -473,8 +472,8 @@ public class EntityCard : Card
 
     public void SetCurrentHealth(sbyte health)
     {
-        ActiveEntityCardData activeEntityCardData = (ActiveEntityCardData) activeData;
-        activeEntityCardData.currentHealth = health;
+        ActiveEntityCardData activeEntityCardData = (ActiveEntityCardData) ActiveData;
+        activeEntityCardData.CurrentHealth = health;
     }
 
     public sbyte GetMaxHealth()
@@ -492,9 +491,9 @@ public class EntityCard : Card
         sbyte b = maxHealth;
         sbyte b2 = 0;
         ActiveTrait activeTrait = null;
-        for (int i = 0; i < activeData.activeTraits.Count; i++)
+        for (int i = 0; i < ActiveData.ActiveTraits.Count; i++)
         {
-            activeTrait = activeData.activeTraits[i];
+            activeTrait = ActiveData.ActiveTraits[i];
             b2 = activeTrait.GetTraitInfo().GetHealthBonus(activeTrait);
             if (b2 != 0)
             {
@@ -507,16 +506,16 @@ public class EntityCard : Card
 
     public override void CreateActiveData()
     {
-        if (activeData == null)
+        if (ActiveData == null)
         {
-            activeData = new ActiveEntityCardData();
-            activeData.Setup(this);
+            ActiveData = new ActiveEntityCardData();
+            ActiveData.Setup(this);
         }
     }
 
     public override void InitActiveData()
     {
-        if (activeData != null)
+        if (ActiveData != null)
         {
             base.InitActiveData();
         }
@@ -525,44 +524,44 @@ public class EntityCard : Card
         maxHealth = entityTemplate.Health;
         myDeathCard = null;
         isDead = false;
-        if (secrets == null)
+        if (Secrets == null)
         {
-            secrets = new List<Card>();
+            Secrets = new List<Card>();
             return;
         }
 
-        for (int i = 0; i < secrets.Count; i++)
+        for (int i = 0; i < Secrets.Count; i++)
         {
-            secrets[i].InitActiveData();
+            Secrets[i].InitActiveData();
         }
     }
 
     protected void SetActed(sbyte action)
     {
-        ActiveEntityCardData activeEntityCardData = (ActiveEntityCardData) activeData;
-        activeEntityCardData.acted = (sbyte) ((byte) activeEntityCardData.acted | (byte) action);
+        ActiveEntityCardData activeEntityCardData = (ActiveEntityCardData) ActiveData;
+        activeEntityCardData.Acted = (sbyte) ((byte) activeEntityCardData.Acted | (byte) action);
     }
 
     private void ClearActed()
     {
-        ActiveEntityCardData activeEntityCardData = (ActiveEntityCardData) activeData;
-        activeEntityCardData.acted = 0;
+        ActiveEntityCardData activeEntityCardData = (ActiveEntityCardData) ActiveData;
+        activeEntityCardData.Acted = 0;
     }
 
     public void ClearActed(sbyte action)
     {
-        ActiveEntityCardData activeEntityCardData = (ActiveEntityCardData) activeData;
-        activeEntityCardData.acted = (sbyte) ((byte) activeEntityCardData.acted & ~(byte) action);
+        ActiveEntityCardData activeEntityCardData = (ActiveEntityCardData) ActiveData;
+        activeEntityCardData.Acted = (sbyte) ((byte) activeEntityCardData.Acted & ~(byte) action);
     }
 
     public override void CardDeployed(Card deployed)
     {
         base.CardDeployed(deployed);
-        if (secrets != null)
+        if (Secrets != null)
         {
-            for (int num = secrets.Count - 1; num >= 0; num--)
+            for (int num = Secrets.Count - 1; num >= 0; num--)
             {
-                secrets[num].CardDeployed(deployed);
+                Secrets[num].CardDeployed(deployed);
             }
         }
     }
@@ -571,14 +570,14 @@ public class EntityCard : Card
     {
         base.NewTurn(playerIndex);
         ClearActed();
-        if (secrets == null)
+        if (Secrets == null)
         {
             return;
         }
 
-        for (int num = secrets.Count - 1; num >= 0; num--)
+        for (int num = Secrets.Count - 1; num >= 0; num--)
         {
-            secrets[num].NewTurn(playerIndex);
+            Secrets[num].NewTurn(playerIndex);
         }
 
         if (CanDiscard())
@@ -595,11 +594,11 @@ public class EntityCard : Card
     public override void EndTurn(sbyte playerIndex)
     {
         base.EndTurn(playerIndex);
-        if (secrets != null)
+        if (Secrets != null)
         {
-            for (int num = secrets.Count - 1; num >= 0; num--)
+            for (int num = Secrets.Count - 1; num >= 0; num--)
             {
-                secrets[num].EndTurn(playerIndex);
+                Secrets[num].EndTurn(playerIndex);
             }
         }
     }
@@ -607,11 +606,11 @@ public class EntityCard : Card
     public override void CardMoved(Card card, CardStack target, RegionEnum region, RegionEnum origin)
     {
         base.CardMoved(card, target, region, origin);
-        if (secrets != null)
+        if (Secrets != null)
         {
-            for (int num = secrets.Count - 1; num >= 0; num--)
+            for (int num = Secrets.Count - 1; num >= 0; num--)
             {
-                secrets[num].CardMoved(card, target, region, origin);
+                Secrets[num].CardMoved(card, target, region, origin);
             }
         }
     }
@@ -619,11 +618,11 @@ public class EntityCard : Card
     public override void CardAttacked(Card attacker, Card target)
     {
         base.CardAttacked(attacker, target);
-        if (secrets != null)
+        if (Secrets != null)
         {
-            for (int num = secrets.Count - 1; num >= 0; num--)
+            for (int num = Secrets.Count - 1; num >= 0; num--)
             {
-                secrets[num].CardAttacked(attacker, target);
+                Secrets[num].CardAttacked(attacker, target);
             }
         }
     }
@@ -631,11 +630,11 @@ public class EntityCard : Card
     public override void CardCounterAttacked(Card attacker, Card target)
     {
         base.CardCounterAttacked(attacker, target);
-        if (secrets != null)
+        if (Secrets != null)
         {
-            for (int num = secrets.Count - 1; num >= 0; num--)
+            for (int num = Secrets.Count - 1; num >= 0; num--)
             {
-                secrets[num].CardCounterAttacked(attacker, target);
+                Secrets[num].CardCounterAttacked(attacker, target);
             }
         }
     }
@@ -643,11 +642,11 @@ public class EntityCard : Card
     public override void CardGainedStatus(Card theCard, Card source, sbyte statusType)
     {
         base.CardGainedStatus(theCard, source, statusType);
-        if (secrets != null)
+        if (Secrets != null)
         {
-            for (int num = secrets.Count - 1; num >= 0; num--)
+            for (int num = Secrets.Count - 1; num >= 0; num--)
             {
-                secrets[num].CardGainedStatus(theCard, source, statusType);
+                Secrets[num].CardGainedStatus(theCard, source, statusType);
             }
         }
     }
@@ -655,11 +654,11 @@ public class EntityCard : Card
     public override void CardDamaged(Card damagedCard, Card source)
     {
         base.CardDamaged(damagedCard, source);
-        if (secrets != null)
+        if (Secrets != null)
         {
-            for (int num = secrets.Count - 1; num >= 0; num--)
+            for (int num = Secrets.Count - 1; num >= 0; num--)
             {
-                secrets[num].CardDamaged(damagedCard, source);
+                Secrets[num].CardDamaged(damagedCard, source);
             }
         }
     }
@@ -667,11 +666,11 @@ public class EntityCard : Card
     public override void CardDied(Card deadCard, Card source)
     {
         base.CardDied(deadCard, source);
-        if (secrets != null)
+        if (Secrets != null)
         {
-            for (int num = secrets.Count - 1; num >= 0; num--)
+            for (int num = Secrets.Count - 1; num >= 0; num--)
             {
-                secrets[num].CardDied(deadCard, source);
+                Secrets[num].CardDied(deadCard, source);
             }
         }
     }
@@ -679,11 +678,11 @@ public class EntityCard : Card
     public override void CardDrawn(Card drawnCard, bool regularDraw, bool isNewTurn)
     {
         base.CardDrawn(drawnCard, regularDraw, isNewTurn);
-        if (secrets != null)
+        if (Secrets != null)
         {
-            for (int num = secrets.Count - 1; num >= 0; num--)
+            for (int num = Secrets.Count - 1; num >= 0; num--)
             {
-                secrets[num].CardDrawn(drawnCard, regularDraw, isNewTurn);
+                Secrets[num].CardDrawn(drawnCard, regularDraw, isNewTurn);
             }
         }
     }
@@ -691,11 +690,11 @@ public class EntityCard : Card
     public override void CardDiscardEffect(sbyte playerIndex, int numberOfCards)
     {
         base.CardDiscardEffect(playerIndex, numberOfCards);
-        if (secrets != null)
+        if (Secrets != null)
         {
-            for (int num = secrets.Count - 1; num >= 0; num--)
+            for (int num = Secrets.Count - 1; num >= 0; num--)
             {
-                secrets[num].CardDiscardEffect(playerIndex, numberOfCards);
+                Secrets[num].CardDiscardEffect(playerIndex, numberOfCards);
             }
         }
     }
@@ -703,11 +702,11 @@ public class EntityCard : Card
     public override void SecretTriggered(Card secret, Card source)
     {
         base.SecretTriggered(secret, source);
-        if (secrets != null)
+        if (Secrets != null)
         {
-            for (int num = secrets.Count - 1; num >= 0; num--)
+            for (int num = Secrets.Count - 1; num >= 0; num--)
             {
-                secrets[num].SecretTriggered(secret, source);
+                Secrets[num].SecretTriggered(secret, source);
             }
         }
     }
@@ -715,11 +714,11 @@ public class EntityCard : Card
     public override void SecretDestroyed(Card secret, Card source)
     {
         base.SecretDestroyed(secret, source);
-        if (secrets != null)
+        if (Secrets != null)
         {
-            for (int num = secrets.Count - 1; num >= 0; num--)
+            for (int num = Secrets.Count - 1; num >= 0; num--)
             {
-                secrets[num].SecretDestroyed(secret, source);
+                Secrets[num].SecretDestroyed(secret, source);
             }
         }
     }
@@ -727,11 +726,11 @@ public class EntityCard : Card
     public override void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack target, RegionEnum region)
     {
         base.TraitEffectActivating(effect, source, target, region);
-        if (secrets != null)
+        if (Secrets != null)
         {
-            for (int num = secrets.Count - 1; num >= 0; num--)
+            for (int num = Secrets.Count - 1; num >= 0; num--)
             {
-                secrets[num].TraitEffectActivating(effect, source, target, region);
+                Secrets[num].TraitEffectActivating(effect, source, target, region);
             }
         }
     }
@@ -739,11 +738,11 @@ public class EntityCard : Card
     public override void Discard(Player[] players)
     {
         base.Discard(players);
-        if (secrets != null)
+        if (Secrets != null)
         {
-            for (int num = secrets.Count - 1; num >= 0; num--)
+            for (int num = Secrets.Count - 1; num >= 0; num--)
             {
-                secrets[num].Discard(players);
+                Secrets[num].Discard(players);
             }
         }
     }

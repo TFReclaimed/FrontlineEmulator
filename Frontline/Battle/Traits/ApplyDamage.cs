@@ -22,7 +22,7 @@ public class ApplyDamage : BaseTraitEffect
             List<Card> list2 = null;
             for (int i = 0; i < list.Count; i++)
             {
-                list2 = list[i].primaryCard.GetSecrets();
+                list2 = list[i].PrimaryCard.GetSecrets();
                 if (list2 == null)
                 {
                     continue;
@@ -37,7 +37,7 @@ public class ApplyDamage : BaseTraitEffect
                 }
             }
 
-            card.Discard(GameState.players);
+            card.Discard(GameState.Players);
             return;
         }
 
@@ -57,18 +57,18 @@ public class ApplyDamage : BaseTraitEffect
         {
             attack = currentHealth;
         }
-        else if (damage > 0 && active.dataValue > 0)
+        else if (damage > 0 && active.DataValue > 0)
         {
-            attack = (sbyte) active.dataValue;
+            attack = (sbyte) active.DataValue;
         }
 
         if (bypassDefense == -1)
         {
             bypass = currentHealth;
         }
-        else if (bypassDefense > 0 && active.dataValue > 0)
+        else if (bypassDefense > 0 && active.DataValue > 0)
         {
-            bypass = (sbyte) active.dataValue;
+            bypass = (sbyte) active.DataValue;
         }
 
         if (currentHealth > 0)
@@ -79,14 +79,14 @@ public class ApplyDamage : BaseTraitEffect
 
     public override void OnNewTurnEvent(Card owner, sbyte playerIndex)
     {
-        if (!owner.IsCardTraitsDetered() && durationData.type == TraitDurationType.Permanent &&
-            owner.activeData.owner == playerIndex)
+        if (!owner.IsCardTraitsDetered() && DurationData.Type == TraitDurationType.Permanent &&
+            owner.ActiveData.Owner == playerIndex)
         {
             RegionEnum region = RegionEnum.NumRegions;
             CardStack target = GameState.FindCardStack(owner)[0];
-            if (targets.area == TargetableArea.CurrentRegion)
+            if (Targets.Area == TargetableArea.CurrentRegion)
             {
-                region = GameState.GetTraitActorRegion(playerIndex, owner.instanceId);
+                region = GameState.GetTraitActorRegion(playerIndex, owner.InstanceId);
             }
 
             Activate(owner, target, region);

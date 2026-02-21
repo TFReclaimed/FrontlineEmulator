@@ -12,7 +12,7 @@ public class ActedModExlusive : BaseTraitEffect
 
     public override void Move(CardStack location, RegionEnum region, bool embark, ActiveTrait active)
     {
-        if ((!deterable || !active.detered) && (durationData.charges <= 0 || active.durationData.charges != 0) && move)
+        if ((!Deterable || !active.Detered) && (DurationData.Charges <= 0 || active.DurationData.Charges != 0) && move)
         {
             EntityCard entityCard = (EntityCard) active.GetTraitTarget();
             entityCard.ClearActed(10);
@@ -25,7 +25,7 @@ public class ActedModExlusive : BaseTraitEffect
 
     public override void Attack(Card target, ActiveTrait active)
     {
-        if ((!deterable || !active.detered) && (durationData.charges <= 0 || active.durationData.charges != 0) &&
+        if ((!Deterable || !active.Detered) && (DurationData.Charges <= 0 || active.DurationData.Charges != 0) &&
             attack)
         {
             EntityCard entityCard = (EntityCard) active.GetTraitTarget();
@@ -39,7 +39,7 @@ public class ActedModExlusive : BaseTraitEffect
 
     public override void ActivateAction(CardStack location, RegionEnum region, ActiveTrait active)
     {
-        if ((!deterable || !active.detered) && (durationData.charges <= 0 || active.durationData.charges != 0) &&
+        if ((!Deterable || !active.Detered) && (DurationData.Charges <= 0 || active.DurationData.Charges != 0) &&
             activate)
         {
             EntityCard entityCard = (EntityCard) active.GetTraitTarget();

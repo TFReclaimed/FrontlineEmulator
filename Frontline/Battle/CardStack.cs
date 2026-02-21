@@ -2,29 +2,29 @@ namespace Frontline.Battle;
 
 public class CardStack
 {
-    public Card primaryCard;
+    public Card PrimaryCard { get; set; }
 
     private EntityCard ejectedCard;
 
     public void Create()
     {
-        primaryCard = null;
+        PrimaryCard = null;
         ejectedCard = null;
     }
 
     public void Init(CCG game)
     {
-        if (primaryCard != null)
+        if (PrimaryCard != null)
         {
-            primaryCard = primaryCard.GenerateAndInit(game);
+            PrimaryCard = PrimaryCard.GenerateAndInit(game);
         }
     }
 
     public void InitActiveData()
     {
-        if (primaryCard != null)
+        if (PrimaryCard != null)
         {
-            primaryCard.InitActiveData();
+            PrimaryCard.InitActiveData();
         }
     }
 
@@ -36,7 +36,7 @@ public class CardStack
             return false;
         }
 
-        return HasCard(card.instanceId, card.activeData.owner);
+        return HasCard(card.InstanceId, card.ActiveData.Owner);
     }
 
     public bool HasCard(int cardId, sbyte ownerId)
@@ -46,12 +46,12 @@ public class CardStack
 
     public Card FindTraitActor(int cardId, sbyte ownerId)
     {
-        if (primaryCard == null)
+        if (PrimaryCard == null)
         {
             return null;
         }
 
-        Card card = primaryCard.FindTraitActor(cardId, ownerId);
+        Card card = PrimaryCard.FindTraitActor(cardId, ownerId);
         if (card != null)
         {
             return card;
@@ -67,11 +67,11 @@ public class CardStack
 
     public void FindCards(TraitTargeting info, Card source, List<CardStack> found)
     {
-        if (primaryCard != null &&
-            ((info.scope != TraitTargetScope.AllFriendlyNotSelf && info.scope != TraitTargetScope.FriendlyUnitNotSelf &&
-              info.scope != TraitTargetScope.RandomFriendlyNotSelf) || !source.EqualsTo(primaryCard)))
+        if (PrimaryCard != null &&
+            ((info.Scope != TraitTargetScope.AllFriendlyNotSelf && info.Scope != TraitTargetScope.FriendlyUnitNotSelf &&
+              info.Scope != TraitTargetScope.RandomFriendlyNotSelf) || !source.EqualsTo(PrimaryCard)))
         {
-            if (primaryCard.DoesMatchTargetingInfo(info, source))
+            if (PrimaryCard.DoesMatchTargetingInfo(info, source))
             {
                 found.Add(this);
             }
@@ -118,16 +118,16 @@ public class CardStack
     public Card RemoveCard(Card card)
     {
         Card card2 = null;
-        if (primaryCard != null)
+        if (PrimaryCard != null)
         {
-            if (primaryCard.EqualsTo(card))
+            if (PrimaryCard.EqualsTo(card))
             {
-                card2 = primaryCard;
-                primaryCard = null;
+                card2 = PrimaryCard;
+                PrimaryCard = null;
                 return card2;
             }
 
-            List<Card> secrets = primaryCard.GetSecrets();
+            List<Card> secrets = PrimaryCard.GetSecrets();
             if (secrets != null)
             {
                 for (int i = 0; i < secrets.Count; i++)
@@ -141,13 +141,13 @@ public class CardStack
                 }
             }
 
-            if (primaryCard.HasPilot())
+            if (PrimaryCard.HasPilot())
             {
-                card2 = primaryCard.GetEmbarkedPilot();
+                card2 = PrimaryCard.GetEmbarkedPilot();
                 if (card2.EqualsTo(card))
                 {
-                    UnitCard unitCard = (UnitCard) primaryCard;
-                    unitCard.embarkedPilot = null;
+                    UnitCard unitCard = (UnitCard) PrimaryCard;
+                    unitCard.EmbarkedPilot = null;
                     return card2;
                 }
             }
@@ -182,9 +182,9 @@ public class CardStack
 
     public void CardDeployed(Card deployed)
     {
-        if (primaryCard != null)
+        if (PrimaryCard != null)
         {
-            primaryCard.CardDeployed(deployed);
+            PrimaryCard.CardDeployed(deployed);
             if (ejectedCard != null)
             {
                 ejectedCard.CardDeployed(deployed);
@@ -194,9 +194,9 @@ public class CardStack
 
     public void NewTurn(sbyte playerIndex)
     {
-        if (primaryCard != null)
+        if (PrimaryCard != null)
         {
-            primaryCard.NewTurn(playerIndex);
+            PrimaryCard.NewTurn(playerIndex);
         }
 
         if (ejectedCard != null)
@@ -207,9 +207,9 @@ public class CardStack
 
     public void EndTurn(sbyte playerIndex)
     {
-        if (primaryCard != null)
+        if (PrimaryCard != null)
         {
-            primaryCard.EndTurn(playerIndex);
+            PrimaryCard.EndTurn(playerIndex);
         }
 
         if (ejectedCard != null)
@@ -220,9 +220,9 @@ public class CardStack
 
     public void CardMoved(Card card, CardStack target, RegionEnum region, RegionEnum origin)
     {
-        if (primaryCard != null)
+        if (PrimaryCard != null)
         {
-            primaryCard.CardMoved(card, target, region, origin);
+            PrimaryCard.CardMoved(card, target, region, origin);
         }
 
         if (ejectedCard != null)
@@ -233,9 +233,9 @@ public class CardStack
 
     public void CardGainedStatus(Card theCard, Card source, sbyte statusType)
     {
-        if (primaryCard != null)
+        if (PrimaryCard != null)
         {
-            primaryCard.CardGainedStatus(theCard, source, statusType);
+            PrimaryCard.CardGainedStatus(theCard, source, statusType);
         }
 
         if (ejectedCard != null)
@@ -246,9 +246,9 @@ public class CardStack
 
     public void CardAttacked(Card attacker, Card target)
     {
-        if (primaryCard != null)
+        if (PrimaryCard != null)
         {
-            primaryCard.CardAttacked(attacker, target);
+            PrimaryCard.CardAttacked(attacker, target);
         }
 
         if (ejectedCard != null)
@@ -259,9 +259,9 @@ public class CardStack
 
     public void CardCounterAttacked(Card attacker, Card target)
     {
-        if (primaryCard != null)
+        if (PrimaryCard != null)
         {
-            primaryCard.CardCounterAttacked(attacker, target);
+            PrimaryCard.CardCounterAttacked(attacker, target);
         }
 
         if (ejectedCard != null)
@@ -272,9 +272,9 @@ public class CardStack
 
     public void CardDamaged(Card damagedCard, Card source)
     {
-        if (primaryCard != null)
+        if (PrimaryCard != null)
         {
-            primaryCard.CardDamaged(damagedCard, source);
+            PrimaryCard.CardDamaged(damagedCard, source);
         }
 
         if (ejectedCard != null)
@@ -285,9 +285,9 @@ public class CardStack
 
     public void CardDied(Card deadCard, Card source)
     {
-        if (primaryCard != null)
+        if (PrimaryCard != null)
         {
-            primaryCard.CardDied(deadCard, source);
+            PrimaryCard.CardDied(deadCard, source);
         }
 
         if (ejectedCard != null)
@@ -298,9 +298,9 @@ public class CardStack
 
     public void CardDrawn(Card drawnCard, bool regularDraw, bool isNewTurn)
     {
-        if (primaryCard != null)
+        if (PrimaryCard != null)
         {
-            primaryCard.CardDrawn(drawnCard, regularDraw, isNewTurn);
+            PrimaryCard.CardDrawn(drawnCard, regularDraw, isNewTurn);
         }
 
         if (ejectedCard != null)
@@ -311,9 +311,9 @@ public class CardStack
 
     public void CardDiscardEffect(sbyte playerIndex, int numberOfCards)
     {
-        if (primaryCard != null)
+        if (PrimaryCard != null)
         {
-            primaryCard.CardDiscardEffect(playerIndex, numberOfCards);
+            PrimaryCard.CardDiscardEffect(playerIndex, numberOfCards);
         }
 
         if (ejectedCard != null)
@@ -324,9 +324,9 @@ public class CardStack
 
     public void SecretTriggered(Card secret, Card source)
     {
-        if (primaryCard != null)
+        if (PrimaryCard != null)
         {
-            primaryCard.SecretTriggered(secret, source);
+            PrimaryCard.SecretTriggered(secret, source);
         }
 
         if (ejectedCard != null)
@@ -337,9 +337,9 @@ public class CardStack
 
     public void SecretDestroyed(Card secret, Card source)
     {
-        if (primaryCard != null)
+        if (PrimaryCard != null)
         {
-            primaryCard.SecretDestroyed(secret, source);
+            PrimaryCard.SecretDestroyed(secret, source);
         }
 
         if (ejectedCard != null)
@@ -350,9 +350,9 @@ public class CardStack
 
     public void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack target, RegionEnum region)
     {
-        if (primaryCard != null)
+        if (PrimaryCard != null)
         {
-            primaryCard.TraitEffectActivating(effect, source, target, region);
+            PrimaryCard.TraitEffectActivating(effect, source, target, region);
         }
 
         if (ejectedCard != null)
@@ -363,13 +363,13 @@ public class CardStack
 
     public bool CheckDiscard(Player[] players)
     {
-        if (primaryCard != null && primaryCard.CanDiscard())
+        if (PrimaryCard != null && PrimaryCard.CanDiscard())
         {
-            primaryCard.Discard(players);
-            primaryCard = null;
+            PrimaryCard.Discard(players);
+            PrimaryCard = null;
             if (ejectedCard != null)
             {
-                primaryCard = ejectedCard;
+                PrimaryCard = ejectedCard;
                 ejectedCard = null;
             }
 
@@ -381,14 +381,14 @@ public class CardStack
 
     public void SetEjectedCard(Card card)
     {
-        if (primaryCard != null && primaryCard.HasPilot())
+        if (PrimaryCard != null && PrimaryCard.HasPilot())
         {
-            UnitCard unitCard = (UnitCard) primaryCard;
-            if (unitCard.embarkedPilot.EqualsTo(card))
+            UnitCard unitCard = (UnitCard) PrimaryCard;
+            if (unitCard.EmbarkedPilot.EqualsTo(card))
             {
-                unitCard.embarkedPilot.pilotEmbarked = false;
-                ejectedCard = unitCard.embarkedPilot;
-                unitCard.embarkedPilot = null;
+                unitCard.EmbarkedPilot.PilotEmbarked = false;
+                ejectedCard = unitCard.EmbarkedPilot;
+                unitCard.EmbarkedPilot = null;
             }
         }
     }

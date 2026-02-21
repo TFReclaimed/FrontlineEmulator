@@ -24,12 +24,12 @@ public class CombatManipulationPassive : BaseTraitEffect
 
     public override bool IsCombatManipulationPassive(sbyte effectID, ActiveTrait active)
     {
-        if (deterable && active.detered)
+        if (Deterable && active.Detered)
         {
             return false;
         }
 
-        if (durationData.charges > 0 && active.durationData.charges == 0)
+        if (DurationData.Charges > 0 && active.DurationData.Charges == 0)
         {
             return false;
         }
@@ -39,8 +39,8 @@ public class CombatManipulationPassive : BaseTraitEffect
 
     public override void CheckCardDeployed(Card deployed, Card source)
     {
-        if (targets.scope != 0 && targets.scope != TraitTargetScope.UnitStack &&
-            durationData.type == TraitDurationType.Permanent)
+        if (Targets.Scope != 0 && Targets.Scope != TraitTargetScope.UnitStack &&
+            DurationData.Type == TraitDurationType.Permanent)
         {
             CheckAndApplyTrait(deployed, source, true, false);
         }
@@ -48,7 +48,7 @@ public class CombatManipulationPassive : BaseTraitEffect
 
     public override void CardGainedStatus(Card theCard, Card source, sbyte statusType, ActiveTrait active)
     {
-        if (targets.scope != 0 && targets.scope != TraitTargetScope.UnitStack &&
+        if (Targets.Scope != 0 && Targets.Scope != TraitTargetScope.UnitStack &&
             ApplyStatus.IsDeterStatus(statusType) && theCard.EqualsTo(active.GetTraitSource()))
         {
             active.Deactivate(true);
@@ -57,7 +57,7 @@ public class CombatManipulationPassive : BaseTraitEffect
 
     public override bool CanCounterAttack(CardStack target, ActiveTrait active)
     {
-        if (deterable && active.detered)
+        if (Deterable && active.Detered)
         {
             return true;
         }

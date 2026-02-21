@@ -2,13 +2,13 @@ namespace Frontline.Battle;
 
 public class CardCollection
 {
-    public List<Card> cards;
+    public List<Card> Cards { get; set; }
 
     public void Create(sbyte drawCount, Deck theDeck, CCG game, sbyte playerIndex)
     {
         if (drawCount > 0)
         {
-            cards = new List<Card>(drawCount);
+            Cards = new List<Card>(drawCount);
             for (int i = 0; i < drawCount; i++)
             {
                 DrawFromDeck(theDeck, game, playerIndex);
@@ -16,23 +16,23 @@ public class CardCollection
         }
         else
         {
-            cards = new List<Card>();
+            Cards = new List<Card>();
         }
     }
 
     public void Init(CCG game)
     {
-        for (int i = 0; i < cards.Count; i++)
+        for (int i = 0; i < Cards.Count; i++)
         {
-            cards[i] = cards[i].GenerateAndInit(game);
+            Cards[i] = Cards[i].GenerateAndInit(game);
         }
     }
 
     public void InitActiveData()
     {
-        for (int i = 0; i < cards.Count; i++)
+        for (int i = 0; i < Cards.Count; i++)
         {
-            cards[i].InitActiveData();
+            Cards[i].InitActiveData();
         }
     }
 
@@ -41,9 +41,9 @@ public class CardCollection
         Card card = theDeck.DrawCard(game);
         if (card != null)
         {
-            cards.Add(card);
-            card.activeData.owner = playerIndex;
-            card.xp = 0;
+            Cards.Add(card);
+            card.ActiveData.Owner = playerIndex;
+            card.Xp = 0;
         }
 
         return card;
@@ -51,10 +51,10 @@ public class CardCollection
 
     public Card FindCard(int cardId)
     {
-        for (int i = 0; i < cards.Count; i++)
+        for (int i = 0; i < Cards.Count; i++)
         {
-            Card card = cards[i];
-            if (card.instanceId == cardId)
+            Card card = Cards[i];
+            if (card.InstanceId == cardId)
             {
                 return card;
             }
@@ -65,12 +65,12 @@ public class CardCollection
 
     public Card RemoveCard(int cardId)
     {
-        for (int i = 0; i < cards.Count; i++)
+        for (int i = 0; i < Cards.Count; i++)
         {
-            Card card = cards[i];
-            if (card.instanceId == cardId)
+            Card card = Cards[i];
+            if (card.InstanceId == cardId)
             {
-                cards.RemoveAt(i);
+                Cards.RemoveAt(i);
                 return card;
             }
         }

@@ -2,13 +2,13 @@ namespace Frontline.Battle.CcgEvents;
 
 public class DiscardEffectCCGEvent : CCGEventData
 {
-    public sbyte playerIndex;
+    public sbyte PlayerIndex { get; }
 
-    public MulliganDrawCCGEventCardData[] cardsInfo;
+    public MulliganDrawCCGEventCardData[] CardsInfo { get; }
 
-    public int effectId;
+    public int EffectId { get; set; }
 
-    public int traitId;
+    public int TraitId { get; set; }
 
     public DiscardEffectCCGEvent()
     {
@@ -16,8 +16,8 @@ public class DiscardEffectCCGEvent : CCGEventData
 
     public DiscardEffectCCGEvent(sbyte owner, MulliganDrawCCGEventCardData[] data)
     {
-        playerIndex = owner;
-        cardsInfo = data;
+        PlayerIndex = owner;
+        CardsInfo = data;
     }
 
     public override CCGEventType Type()

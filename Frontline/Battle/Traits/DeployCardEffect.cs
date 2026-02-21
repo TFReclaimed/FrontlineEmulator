@@ -8,8 +8,8 @@ public class DeployCardEffect : BaseTraitEffect
 
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
-        sbyte owner = source.activeData.owner;
-        sbyte owner2 = card.activeData.owner;
+        sbyte owner = source.ActiveData.Owner;
+        sbyte owner2 = card.ActiveData.Owner;
         RegionEnum regionEnum = RegionEnum.NumRegions;
         bool titanOnly = card.GetTemplate().Type == CardType.Titan;
         if (deployLocation == TargetableArea.Frontline)
@@ -26,7 +26,7 @@ public class DeployCardEffect : BaseTraitEffect
         {
             for (int i = 0; i < secrets.Count; i++)
             {
-                secrets[i].Discard(GameState.players);
+                secrets[i].Discard(GameState.Players);
             }
 
             secrets.Clear();
@@ -35,16 +35,16 @@ public class DeployCardEffect : BaseTraitEffect
         if (card.HasPilot())
         {
             UnitCard unitCard = (UnitCard) card;
-            unitCard.embarkedPilot.Discard(GameState.players);
-            unitCard.embarkedPilot = null;
+            unitCard.EmbarkedPilot.Discard(GameState.Players);
+            unitCard.EmbarkedPilot = null;
         }
 
-        sbyte b = (sbyte) GameState.board.regions[(uint) regionEnum]
+        sbyte b = (sbyte) GameState.Board.Regions[(uint) regionEnum]
             .GetEmptyCardStackIndex(titanOnly, card.GetTemplate().IsSupportUnit());
         card.ResetCard();
         if (b >= 0)
         {
-            GameState.Deploy(owner2, card.instanceId, 0, 0, TargetableArea.CurrentRegion, regionEnum, b, 1, this);
+            GameState.Deploy(owner2, card.InstanceId, 0, 0, TargetableArea.CurrentRegion, regionEnum, b, 1, this);
         }
     }
 }

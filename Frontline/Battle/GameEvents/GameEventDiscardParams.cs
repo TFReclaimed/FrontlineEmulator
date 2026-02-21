@@ -2,7 +2,7 @@ namespace Frontline.Battle.GameEvents;
 
 public class GameEventDiscardParams : GameEventParams
 {
-    public int[] HandCardIdsToDiscard;
+    public int[] HandCardIdsToDiscard { get; }
 
     public GameEventDiscardParams()
     {
@@ -16,11 +16,11 @@ public class GameEventDiscardParams : GameEventParams
 
     public override GameEventResult ReplayEvent(CcgGame game)
     {
-        DiscardEventResult discardEventResult = (DiscardEventResult) eventResult;
+        DiscardEventResult discardEventResult = (DiscardEventResult) EventResult;
         discardEventResult = new DiscardEventResult();
         discardEventResult.CardIdsRemovedFromHand = HandCardIdsToDiscard;
 
-        if (game.DoCardDiscard(playerIndex, HandCardIdsToDiscard, true) == 1)
+        if (game.DoCardDiscard(PlayerIndex, HandCardIdsToDiscard, true) == 1)
         {
             return discardEventResult;
         }

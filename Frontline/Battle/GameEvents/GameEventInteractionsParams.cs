@@ -1,18 +1,21 @@
+using System.Text.Json.Serialization;
+
 namespace Frontline.Battle.GameEvents;
 
 public class GameEventInteractionsParams : GameEventParams
 {
     public const string InteractionTitleMarker = "INTERACTIONEVENT";
 
-    public int type;
+    public int Type { get; }
 
-    public TargetableArea location;
+    public TargetableArea Location { get; }
 
-    public int instanceID;
+    [JsonPropertyName("instanceID")]
+    public int InstanceId { get; }
 
     public GameEventInteractionsParams()
     {
-        gameEvent = GameEvent.Interactions;
+        GameEvent = GameEvent.Interactions;
     }
 
     public override GameEventResult ReplayEvent(CcgGame game)

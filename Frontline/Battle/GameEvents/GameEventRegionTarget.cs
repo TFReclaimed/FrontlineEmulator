@@ -1,18 +1,22 @@
+using System.Text.Json.Serialization;
+
 namespace Frontline.Battle.GameEvents;
 
 public class GameEventRegionTarget : GameEventCardParams
 {
-    public int targetID;
+    [JsonPropertyName("targetID")]
+    public int TargetId { get; }
 
-    public sbyte targetOwnerID;
+    [JsonPropertyName("targetOwnerID")]
+    public sbyte TargetOwnerId { get; }
 
-    public TargetableArea area = TargetableArea.AnyAreas;
+    public TargetableArea Area { get; } = TargetableArea.AnyAreas;
 
-    public RegionEnum target = RegionEnum.NumRegions;
+    public RegionEnum Target { get; } = RegionEnum.NumRegions;
 
-    public sbyte slotIndex;
+    public sbyte SlotIndex { get; }
 
-    public sbyte pushDir;
+    public sbyte PushDir { get; }
 
     public GameEventRegionTarget()
     {
@@ -22,49 +26,49 @@ public class GameEventRegionTarget : GameEventCardParams
         TargetableArea targetArea, RegionEnum targetRegion, sbyte targetSlot, sbyte dir)
         : base(gameEv, cardId, player)
     {
-        targetID = targetId;
-        targetOwnerID = ownerId;
-        area = targetArea;
-        target = targetRegion;
-        slotIndex = targetSlot;
-        pushDir = dir;
-        ccgEventsLog = null;
+        TargetId = targetId;
+        TargetOwnerId = ownerId;
+        Area = targetArea;
+        Target = targetRegion;
+        SlotIndex = targetSlot;
+        PushDir = dir;
+        CcgEventsLog = null;
     }
 
     public override GameEventResult ReplayEvent(CcgGame game)
     {
         bool flag = true;
-        if (gameEvent == GameEvent.Deploy)
+        if (GameEvent == GameEvent.Deploy)
         {
-            if (game.Deploy(playerIndex, actingCardId, targetOwnerID, targetID, area, target, slotIndex, pushDir,
+            if (game.Deploy(PlayerIndex, ActingCardId, TargetOwnerId, TargetId, Area, Target, SlotIndex, PushDir,
                     true) != 1)
             {
                 flag = false;
             }
         }
-        else if (gameEvent == GameEvent.Attack)
+        else if (GameEvent == GameEvent.Attack)
         {
-            if (game.Attack(playerIndex, actingCardId, targetOwnerID, targetID, true) != 1)
+            if (game.Attack(PlayerIndex, ActingCardId, TargetOwnerId, TargetId, true) != 1)
             {
                 flag = false;
             }
         }
-        else if (gameEvent == GameEvent.Move)
+        else if (GameEvent == GameEvent.Move)
         {
-            if (game.Move(playerIndex, actingCardId, target, slotIndex, pushDir, true) != 1)
+            if (game.Move(PlayerIndex, ActingCardId, Target, SlotIndex, PushDir, true) != 1)
             {
                 flag = false;
             }
         }
-        else if (gameEvent == GameEvent.ActivateTrait)
+        else if (GameEvent == GameEvent.ActivateTrait)
         {
-            if (game.ActivateTrait(playerIndex, actingCardId, targetOwnerID, targetID, area, target, true) != 1)
+            if (game.ActivateTrait(PlayerIndex, ActingCardId, TargetOwnerId, TargetId, Area, Target, true) != 1)
             {
                 flag = false;
             }
         }
 
-        ccgEventsLog = game.GameState.GetCCGEventLog();
+        CcgEventsLog = game.GameState.GetCCGEventLog();
         return (!flag) ? null : GameEventResult.OK_RESULT;
     }
 }

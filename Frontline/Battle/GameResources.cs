@@ -4,65 +4,65 @@ namespace Frontline.Battle;
 
 public class GameResources
 {
-    public sbyte commandAccum;
+    public sbyte CommandAccum { get; set; }
 
-    public sbyte commandUnits;
+    public sbyte CommandUnits { get; set; }
 
-    public sbyte health;
+    public sbyte Health { get; set; }
 
-    public sbyte maxHealth;
+    public sbyte MaxHealth { get; set; }
 
-    public sbyte drawDamage;
+    public sbyte DrawDamage { get; set; }
 
     public void Create(sbyte baseHealth)
     {
-        maxHealth = baseHealth;
-        health = maxHealth;
-        drawDamage = 1;
+        MaxHealth = baseHealth;
+        Health = MaxHealth;
+        DrawDamage = 1;
     }
 
     public void NewTurn(GameTemplate rules)
     {
-        commandAccum += rules.NewTurnCommand;
+        CommandAccum += rules.NewTurnCommand;
         sbyte maxCommandAccum = rules.MaxCommandAccum;
-        if (commandAccum > maxCommandAccum)
+        if (CommandAccum > maxCommandAccum)
         {
-            commandAccum = maxCommandAccum;
+            CommandAccum = maxCommandAccum;
         }
 
-        commandUnits = commandAccum;
+        CommandUnits = CommandAccum;
     }
 
     public void Deploy(sbyte cost)
     {
-        commandUnits -= cost;
+        CommandUnits -= cost;
     }
 
     public void AddCommandPoints(sbyte points, GameTemplate rules)
     {
-        commandUnits += points;
-        if (commandUnits > rules.MaxCommandAccum)
+        CommandUnits += points;
+        if (CommandUnits > rules.MaxCommandAccum)
         {
-            commandUnits = rules.MaxCommandAccum;
+            CommandUnits = rules.MaxCommandAccum;
         }
-        else if (commandUnits < 0)
+        else if (CommandUnits < 0)
         {
-            commandUnits = 0;
+            CommandUnits = 0;
         }
     }
 
     public sbyte HealDamage(sbyte heal)
     {
-        sbyte b = health;
-        if (health + heal > maxHealth)
+        sbyte b = Health;
+        if (Health + heal > MaxHealth)
         {
-            health = maxHealth;
+            Health = MaxHealth;
         }
         else
         {
-            health += heal;
+            Health += heal;
         }
 
-        return (sbyte) (health - b);
+        return (sbyte) (Health - b);
     }
 }

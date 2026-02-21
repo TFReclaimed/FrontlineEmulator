@@ -2,9 +2,9 @@ namespace Frontline.Battle;
 
 public class TraitDuration
 {
-    public TraitDurationType type = TraitDurationType.NumDurations;
+    public TraitDurationType Type { get; set; } = TraitDurationType.NumDurations;
 
-    public sbyte duration;
+    public sbyte Duration { get; set; }
 
-    public sbyte charges;
+    public sbyte Charges { get; set; }
 }

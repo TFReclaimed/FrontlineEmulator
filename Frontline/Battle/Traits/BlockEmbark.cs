@@ -4,7 +4,7 @@ public class BlockEmbark : BaseTraitEffect
 {
     public override bool CanDeploy(CardStack target, RegionEnum region)
     {
-        if (target.primaryCard != null)
+        if (target.PrimaryCard != null)
         {
             return false;
         }

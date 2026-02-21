@@ -1,18 +1,22 @@
+using System.Text.Json.Serialization;
+
 namespace Frontline.Battle.CcgEvents;
 
 public class CombatBuffsCCGEvent : CCGEventData
 {
-    public CCGEventType buffType;
+    public CCGEventType BuffType { get; }
 
-    public int attackerCardID;
+    [JsonPropertyName("attackerCardID")]
+    public int AttackerCardId { get; }
 
-    public sbyte attackCardOwner;
+    public sbyte AttackCardOwner { get; }
 
-    public int targetCardID;
+    [JsonPropertyName("targetCardID")]
+    public int TargetCardId { get; }
 
-    public sbyte targetCardOwner;
+    public sbyte TargetCardOwner { get; }
 
-    public EventLogTraitCardInfo[] buffTraits;
+    public EventLogTraitCardInfo[] BuffTraits { get; set; }
 
     public CombatBuffsCCGEvent()
     {
@@ -20,15 +24,15 @@ public class CombatBuffsCCGEvent : CCGEventData
 
     public CombatBuffsCCGEvent(CCGEventType type, int attackerID, sbyte attackerOwner, int targetID, sbyte targetOwner)
     {
-        buffType = type;
-        attackerCardID = attackerID;
-        attackCardOwner = attackerOwner;
-        targetCardID = targetID;
-        targetCardOwner = targetOwner;
+        BuffType = type;
+        AttackerCardId = attackerID;
+        AttackCardOwner = attackerOwner;
+        TargetCardId = targetID;
+        TargetCardOwner = targetOwner;
     }
 
     public override CCGEventType Type()
     {
-        return buffType;
+        return BuffType;
     }
 }

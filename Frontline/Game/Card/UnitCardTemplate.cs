@@ -26,8 +26,8 @@ public class UnitCardTemplate : EntityCardTemplate
         {
             unitCard = new UnitCard(game);
             unitCard.SetTemplate(this);
-            unitCard.templateId = CardId;
-            unitCard.rank = (sbyte) MinimumRank;
+            unitCard.TemplateId = CardId;
+            unitCard.Rank = (sbyte) MinimumRank;
         }
 
         unitCard.Init();
@@ -43,7 +43,7 @@ public class UnitCardTemplate : EntityCardTemplate
 
         if (embark)
         {
-            Battle.Card primaryCard = target.primaryCard;
+            Battle.Card primaryCard = target.PrimaryCard;
             if (Type == CardType.Titan && primaryCard.GetTemplate().Type == CardType.Pilot)
             {
                 return true;
@@ -67,14 +67,14 @@ public class UnitCardTemplate : EntityCardTemplate
 
         if (embark)
         {
-            Battle.Card primaryCard = target.primaryCard;
-            Battle.Card primaryCard2 = source.primaryCard;
+            Battle.Card primaryCard = target.PrimaryCard;
+            Battle.Card primaryCard2 = source.PrimaryCard;
             if (Type == CardType.Titan && primaryCard.GetTemplate().Type == CardType.Pilot)
             {
-                if (!source.primaryCard.HasPilot())
+                if (!source.PrimaryCard.HasPilot())
                 {
-                    RegionEnum traitActorRegion = gameState.GetTraitActorRegion(primaryCard.activeData.owner, primaryCard.instanceId);
-                    RegionEnum traitActorRegion2 = gameState.GetTraitActorRegion(primaryCard2.activeData.owner, primaryCard2.instanceId);
+                    RegionEnum traitActorRegion = gameState.GetTraitActorRegion(primaryCard.ActiveData.Owner, primaryCard.InstanceId);
+                    RegionEnum traitActorRegion2 = gameState.GetTraitActorRegion(primaryCard2.ActiveData.Owner, primaryCard2.InstanceId);
 
                     if (traitActorRegion != traitActorRegion2)
                     {
@@ -89,10 +89,10 @@ public class UnitCardTemplate : EntityCardTemplate
             }
             else if (Type == CardType.Pilot && primaryCard.GetTemplate().Type == CardType.Titan)
             {
-                if (!target.primaryCard.HasPilot())
+                if (!target.PrimaryCard.HasPilot())
                 {
-                    RegionEnum traitActorRegion3 = gameState.GetTraitActorRegion(primaryCard.activeData.owner, primaryCard.instanceId);
-                    RegionEnum traitActorRegion4 = gameState.GetTraitActorRegion(primaryCard2.activeData.owner, primaryCard2.instanceId);
+                    RegionEnum traitActorRegion3 = gameState.GetTraitActorRegion(primaryCard.ActiveData.Owner, primaryCard.InstanceId);
+                    RegionEnum traitActorRegion4 = gameState.GetTraitActorRegion(primaryCard2.ActiveData.Owner, primaryCard2.InstanceId);
 
                     if (traitActorRegion3 != traitActorRegion4)
                     {
@@ -114,7 +114,7 @@ public class UnitCardTemplate : EntityCardTemplate
 
     public override bool CanAttack(CardStack source, CardStack target)
     {
-        CardTemplate template = target.primaryCard.GetTemplate();
+        CardTemplate template = target.PrimaryCard.GetTemplate();
         return template.IsAttackable(source);
     }
 }

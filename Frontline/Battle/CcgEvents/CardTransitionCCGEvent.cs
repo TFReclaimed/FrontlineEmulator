@@ -1,32 +1,36 @@
+using System.Text.Json.Serialization;
+
 namespace Frontline.Battle.CcgEvents;
 
 public class CardTransitionCCGEvent : CCGEventData
 {
-    public CCGEventType transition;
+    public CCGEventType Transition { get; set; }
 
-    public RegionEnum targetRegion;
+    public RegionEnum TargetRegion { get; }
 
-    public int cardId;
+    public int CardId { get; }
 
-    public int targetId;
+    public int TargetId { get; set; }
 
-    public int templateId;
+    public int TemplateId { get; set; }
 
-    public int traitID;
+    [JsonPropertyName("traitID")]
+    public int TraitId { get; set; }
 
-    public int effectID;
+    [JsonPropertyName("effectID")]
+    public int EffectId { get; set; }
 
-    public sbyte rank;
+    public sbyte Rank { get; set; }
 
-    public sbyte playerOwner;
+    public sbyte PlayerOwner { get; }
 
-    public sbyte targetOwner;
+    public sbyte TargetOwner { get; set; }
 
-    public sbyte targetSlot;
+    public sbyte TargetSlot { get; }
 
-    public sbyte dir;
+    public sbyte Dir { get; }
 
-    public bool embark;
+    public bool Embark { get; set; }
 
     public CardTransitionCCGEvent()
     {
@@ -35,19 +39,19 @@ public class CardTransitionCCGEvent : CCGEventData
     public CardTransitionCCGEvent(CCGEventType transitionType, int deployedCardId, sbyte deployedOwner,
         int targetCardId, sbyte targetCardOwner, bool isEmbark, RegionEnum deployRegion, sbyte indexSlot, sbyte slotDir)
     {
-        transition = transitionType;
-        cardId = deployedCardId;
-        playerOwner = deployedOwner;
-        targetId = targetCardId;
-        targetOwner = targetCardOwner;
-        embark = isEmbark;
-        targetRegion = deployRegion;
-        targetSlot = indexSlot;
-        dir = slotDir;
+        Transition = transitionType;
+        CardId = deployedCardId;
+        PlayerOwner = deployedOwner;
+        TargetId = targetCardId;
+        TargetOwner = targetCardOwner;
+        Embark = isEmbark;
+        TargetRegion = deployRegion;
+        TargetSlot = indexSlot;
+        Dir = slotDir;
     }
 
     public override CCGEventType Type()
     {
-        return transition;
+        return Transition;
     }
 }

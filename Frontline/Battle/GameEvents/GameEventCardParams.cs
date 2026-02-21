@@ -2,7 +2,7 @@ namespace Frontline.Battle.GameEvents;
 
 public class GameEventCardParams : GameEventParams
 {
-    public int actingCardId;
+    public int ActingCardId { get; }
 
     public GameEventCardParams()
     {
@@ -11,20 +11,20 @@ public class GameEventCardParams : GameEventParams
     public GameEventCardParams(GameEvent gameEv, int cardId, sbyte player)
         : base(gameEv, player)
     {
-        actingCardId = cardId;
+        ActingCardId = cardId;
     }
 
     public override GameEventResult ReplayEvent(CcgGame game)
     {
-        if (gameEvent == GameEvent.Disembark)
+        if (GameEvent == GameEvent.Disembark)
         {
-            if (game.Disembark(playerIndex, actingCardId, true) != 1)
+            if (game.Disembark(PlayerIndex, ActingCardId, true) != 1)
             {
                 return null;
             }
         }
 
-        ccgEventsLog = game.GameState.GetCCGEventLog();
+        CcgEventsLog = game.GameState.GetCCGEventLog();
         return GameEventResult.OK_RESULT;
     }
 }

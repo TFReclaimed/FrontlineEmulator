@@ -17,8 +17,8 @@ public class CommanderCardTemplate : CardTemplate
         {
             commanderCard = new CommanderCard(game);
             commanderCard.SetTemplate(this);
-            commanderCard.templateId = CardId;
-            commanderCard.rank = (sbyte) MinimumRank;
+            commanderCard.TemplateId = CardId;
+            commanderCard.Rank = (sbyte) MinimumRank;
         }
 
         commanderCard.Init();

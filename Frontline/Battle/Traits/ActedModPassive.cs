@@ -15,7 +15,7 @@ public class ActedModPassive : BaseTraitEffect
         sbyte b = 0;
         EntityCard entityCard = (EntityCard) card;
         bool flag = entityCard.IsCardTraitsDetered();
-        if (!active.GetTraitInfo().deterable)
+        if (!active.GetTraitInfo().Deterable)
         {
             flag = false;
         }
@@ -76,7 +76,7 @@ public class ActedModPassive : BaseTraitEffect
 
     public override void Move(CardStack location, RegionEnum region, bool embark, ActiveTrait active)
     {
-        if ((!deterable || !active.detered) && (durationData.charges <= 0 || active.durationData.charges != 0) && move)
+        if ((!Deterable || !active.Detered) && (DurationData.Charges <= 0 || active.DurationData.Charges != 0) && move)
         {
             EntityCard entityCard = (EntityCard) active.GetTraitTarget();
             entityCard.ClearActed(14);
@@ -89,7 +89,7 @@ public class ActedModPassive : BaseTraitEffect
 
     public override void Attack(Card target, ActiveTrait active)
     {
-        if ((!deterable || !active.detered) && (durationData.charges <= 0 || active.durationData.charges != 0) &&
+        if ((!Deterable || !active.Detered) && (DurationData.Charges <= 0 || active.DurationData.Charges != 0) &&
             attack)
         {
             EntityCard entityCard = (EntityCard) active.GetTraitTarget();
@@ -103,7 +103,7 @@ public class ActedModPassive : BaseTraitEffect
 
     public override void ActivateAction(CardStack location, RegionEnum region, ActiveTrait active)
     {
-        if ((!deterable || !active.detered) && (durationData.charges <= 0 || active.durationData.charges != 0) &&
+        if ((!Deterable || !active.Detered) && (DurationData.Charges <= 0 || active.DurationData.Charges != 0) &&
             activate)
         {
             EntityCard entityCard = (EntityCard) active.GetTraitTarget();
@@ -117,8 +117,8 @@ public class ActedModPassive : BaseTraitEffect
 
     public override void CheckCardDeployed(Card deployed, Card source)
     {
-        if (targets.scope != 0 && targets.scope != TraitTargetScope.UnitStack &&
-            durationData.type == TraitDurationType.Permanent)
+        if (Targets.Scope != 0 && Targets.Scope != TraitTargetScope.UnitStack &&
+            DurationData.Type == TraitDurationType.Permanent)
         {
             CheckAndApplyTrait(deployed, source, true, false);
         }

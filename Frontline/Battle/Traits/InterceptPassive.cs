@@ -21,7 +21,7 @@ public class InterceptPassive : BaseTraitEffect
 
     public override bool IsIntercept(ActiveTrait active)
     {
-        if (deterable && active.detered)
+        if (Deterable && active.Detered)
         {
             return false;
         }

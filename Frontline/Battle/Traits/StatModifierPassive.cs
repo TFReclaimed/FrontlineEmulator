@@ -16,7 +16,7 @@ public class StatModifierPassive : BaseTraitEffect
 
     public override sbyte GetAttackBonus(Card target, ActiveTrait active)
     {
-        if (deterable && active.detered)
+        if (Deterable && active.Detered)
         {
             return 0;
         }
@@ -24,9 +24,9 @@ public class StatModifierPassive : BaseTraitEffect
         if (TraitTargeting.DoesMatchType(targetType, TargetTypeMod.NumMods, 0, target))
         {
             sbyte result = attack;
-            if (attack != 0 && active.dataValue != 0)
+            if (attack != 0 && active.DataValue != 0)
             {
-                result = (sbyte) active.dataValue;
+                result = (sbyte) active.DataValue;
             }
 
             return result;
@@ -37,7 +37,7 @@ public class StatModifierPassive : BaseTraitEffect
 
     public override sbyte GetBypassDefenseBonus(Card target, ActiveTrait active)
     {
-        if (deterable && active.detered)
+        if (Deterable && active.Detered)
         {
             return 0;
         }
@@ -45,9 +45,9 @@ public class StatModifierPassive : BaseTraitEffect
         if (TraitTargeting.DoesMatchType(targetType, TargetTypeMod.NumMods, 0, target))
         {
             sbyte result = bypassDefense;
-            if (bypassDefense != 0 && active.dataValue != 0)
+            if (bypassDefense != 0 && active.DataValue != 0)
             {
-                result = (sbyte) active.dataValue;
+                result = (sbyte) active.DataValue;
             }
 
             return result;
@@ -58,15 +58,15 @@ public class StatModifierPassive : BaseTraitEffect
 
     public override sbyte GetDefenseBonus(ActiveTrait active)
     {
-        if (deterable && active.detered)
+        if (Deterable && active.Detered)
         {
             return 0;
         }
 
         sbyte result = defense;
-        if (defense != 0 && active.dataValue != 0)
+        if (defense != 0 && active.DataValue != 0)
         {
-            result = (sbyte) active.dataValue;
+            result = (sbyte) active.DataValue;
         }
 
         return result;
@@ -74,15 +74,15 @@ public class StatModifierPassive : BaseTraitEffect
 
     public override sbyte GetHealthBonus(ActiveTrait active)
     {
-        if (deterable && active.detered)
+        if (Deterable && active.Detered)
         {
             return 0;
         }
 
         sbyte result = health;
-        if (health != 0 && active.dataValue != 0)
+        if (health != 0 && active.DataValue != 0)
         {
-            result = (sbyte) active.dataValue;
+            result = (sbyte) active.DataValue;
         }
 
         return result;
@@ -90,15 +90,15 @@ public class StatModifierPassive : BaseTraitEffect
 
     public override sbyte GetCommandMod(ActiveTrait active)
     {
-        if (deterable && active.detered)
+        if (Deterable && active.Detered)
         {
             return 0;
         }
 
         sbyte result = command;
-        if (command != 0 && active.dataValue != 0)
+        if (command != 0 && active.DataValue != 0)
         {
-            result = (sbyte) active.dataValue;
+            result = (sbyte) active.DataValue;
         }
 
         return result;
@@ -106,8 +106,8 @@ public class StatModifierPassive : BaseTraitEffect
 
     public override void CheckCardDeployed(Card deployed, Card source)
     {
-        if (targets.scope != 0 && targets.scope != TraitTargetScope.UnitStack &&
-            durationData.type == TraitDurationType.Permanent)
+        if (Targets.Scope != 0 && Targets.Scope != TraitTargetScope.UnitStack &&
+            DurationData.Type == TraitDurationType.Permanent)
         {
             CheckAndApplyTrait(deployed, source, true, false);
         }
@@ -116,8 +116,8 @@ public class StatModifierPassive : BaseTraitEffect
     public override void OnCardMovedEvent(Card parent, Card movedCard, CardStack location, RegionEnum region,
         RegionEnum origin)
     {
-        if (targets.scope == TraitTargetScope.Self || targets.scope == TraitTargetScope.UnitStack ||
-            durationData.type != TraitDurationType.Permanent || targets.area != TargetableArea.CurrentRegion ||
+        if (Targets.Scope == TraitTargetScope.Self || Targets.Scope == TraitTargetScope.UnitStack ||
+            DurationData.Type != TraitDurationType.Permanent || Targets.Area != TargetableArea.CurrentRegion ||
             region == origin)
         {
             return;
@@ -129,7 +129,7 @@ public class StatModifierPassive : BaseTraitEffect
             return;
         }
 
-        RegionEnum traitActorRegion = GameState.GetTraitActorRegion(parent.activeData.owner, parent.instanceId);
+        RegionEnum traitActorRegion = GameState.GetTraitActorRegion(parent.ActiveData.Owner, parent.InstanceId);
         if (traitActorRegion == region)
         {
             CheckAndApplyTrait(movedCard, parent, false, false);
@@ -138,7 +138,7 @@ public class StatModifierPassive : BaseTraitEffect
 
     public override void CardGainedStatus(Card theCard, Card source, sbyte statusType, ActiveTrait active)
     {
-        if (targets.scope != 0 && targets.scope != TraitTargetScope.UnitStack &&
+        if (Targets.Scope != 0 && Targets.Scope != TraitTargetScope.UnitStack &&
             ApplyStatus.IsDeterStatus(statusType) && active.GetTraitSource() != null &&
             theCard.EqualsTo(active.GetTraitSource()))
         {
@@ -148,8 +148,8 @@ public class StatModifierPassive : BaseTraitEffect
 
     public override void Move(CardStack location, RegionEnum region, bool embark, ActiveTrait active)
     {
-        if (targets.scope != 0 && targets.scope != TraitTargetScope.UnitStack &&
-            durationData.type == TraitDurationType.Permanent && targets.area == TargetableArea.CurrentRegion)
+        if (Targets.Scope != 0 && Targets.Scope != TraitTargetScope.UnitStack &&
+            DurationData.Type == TraitDurationType.Permanent && Targets.Area == TargetableArea.CurrentRegion)
         {
             active.Deactivate(true);
         }
@@ -157,8 +157,8 @@ public class StatModifierPassive : BaseTraitEffect
 
     public override void CardDied(Card deadCard, Card source, ActiveTrait active)
     {
-        if (targets.scope != 0 && targets.scope != TraitTargetScope.UnitStack &&
-            durationData.type == TraitDurationType.Permanent && active.GetTraitSource() != null &&
+        if (Targets.Scope != 0 && Targets.Scope != TraitTargetScope.UnitStack &&
+            DurationData.Type == TraitDurationType.Permanent && active.GetTraitSource() != null &&
             deadCard.EqualsTo(active.GetTraitSource()))
         {
             active.Deactivate(true);
@@ -168,8 +168,8 @@ public class StatModifierPassive : BaseTraitEffect
     public override void CardMoved(Card theCard, CardStack target, RegionEnum destination, RegionEnum origin,
         ActiveTrait active)
     {
-        if (targets.scope != 0 && targets.scope != TraitTargetScope.UnitStack &&
-            targets.area == TargetableArea.CurrentRegion && durationData.type == TraitDurationType.Permanent &&
+        if (Targets.Scope != 0 && Targets.Scope != TraitTargetScope.UnitStack &&
+            Targets.Area == TargetableArea.CurrentRegion && DurationData.Type == TraitDurationType.Permanent &&
             destination != origin && active.GetTraitSource() != null && theCard.EqualsTo(active.GetTraitSource()) &&
             !theCard.EqualsTo(active.GetTraitTarget()))
         {

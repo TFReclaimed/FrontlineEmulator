@@ -1,26 +1,32 @@
+using System.Text.Json.Serialization;
+
 namespace Frontline.Battle.CcgEvents;
 
 public class TraitInfoCCGEvent : CCGEventData
 {
-    public CCGEventType infoType;
+    public CCGEventType InfoType { get; }
 
-    public int traitID;
+    [JsonPropertyName("traitID")]
+    public int TraitId { get; }
 
-    public int effectID;
+    [JsonPropertyName("effectID")]
+    public int EffectId { get; }
 
-    public int targetCardID;
+    [JsonPropertyName("targetCardID")]
+    public int TargetCardId { get; }
 
-    public sbyte targetOwner;
+    public sbyte TargetOwner { get; }
 
-    public int sourceCardID;
+    [JsonPropertyName("sourceCardID")]
+    public int SourceCardId { get; }
 
-    public sbyte sourceOwner;
+    public sbyte SourceOwner { get; }
 
-    public sbyte data;
+    public sbyte Data { get; }
 
-    public RegionEnum region = RegionEnum.NumRegions;
+    public RegionEnum Region { get; } = RegionEnum.NumRegions;
 
-    public ActiveTraitCardInfo[] targets;
+    public ActiveTraitCardInfo[] Targets { get; }
 
     public TraitInfoCCGEvent()
     {
@@ -29,18 +35,18 @@ public class TraitInfoCCGEvent : CCGEventData
     public TraitInfoCCGEvent(CCGEventType type, int baseTraitID, int traitEffectID, int targetInstanceID,
         sbyte targetPlayerIdx, int sourceInstanceID, sbyte sourcePlayerIdx, sbyte info)
     {
-        infoType = type;
-        traitID = baseTraitID;
-        effectID = traitEffectID;
-        targetCardID = targetInstanceID;
-        targetOwner = targetPlayerIdx;
-        sourceCardID = sourceInstanceID;
-        sourceOwner = sourcePlayerIdx;
-        data = info;
+        InfoType = type;
+        TraitId = baseTraitID;
+        EffectId = traitEffectID;
+        TargetCardId = targetInstanceID;
+        TargetOwner = targetPlayerIdx;
+        SourceCardId = sourceInstanceID;
+        SourceOwner = sourcePlayerIdx;
+        Data = info;
     }
 
     public override CCGEventType Type()
     {
-        return infoType;
+        return InfoType;
     }
 }

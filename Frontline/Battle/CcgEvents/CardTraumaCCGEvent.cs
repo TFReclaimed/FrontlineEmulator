@@ -1,18 +1,22 @@
+using System.Text.Json.Serialization;
+
 namespace Frontline.Battle.CcgEvents;
 
 public class CardTraumaCCGEvent : CCGEventData
 {
-    public CCGEventType traumaType;
+    public CCGEventType TraumaType { get; }
 
-    public int health;
+    public int Health { get; }
 
-    public int sourceCardID;
+    [JsonPropertyName("sourceCardID")]
+    public int SourceCardId { get; }
 
-    public int targetCardID;
+    [JsonPropertyName("targetCardID")]
+    public int TargetCardId { get; }
 
-    public sbyte sourceOwner;
+    public sbyte SourceOwner { get; }
 
-    public sbyte targetOwner;
+    public sbyte TargetOwner { get; }
 
     public CardTraumaCCGEvent()
     {
@@ -21,16 +25,16 @@ public class CardTraumaCCGEvent : CCGEventData
     public CardTraumaCCGEvent(CCGEventType type, int healthDelta, int sourceId, sbyte sourceCardOwner, int targetId,
         sbyte targetCardOwner)
     {
-        traumaType = type;
-        health = healthDelta;
-        sourceCardID = sourceId;
-        targetCardID = targetId;
-        sourceOwner = sourceCardOwner;
-        targetOwner = targetCardOwner;
+        TraumaType = type;
+        Health = healthDelta;
+        SourceCardId = sourceId;
+        TargetCardId = targetId;
+        SourceOwner = sourceCardOwner;
+        TargetOwner = targetCardOwner;
     }
 
     public override CCGEventType Type()
     {
-        return traumaType;
+        return TraumaType;
     }
 }

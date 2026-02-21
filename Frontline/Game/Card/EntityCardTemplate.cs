@@ -17,8 +17,8 @@ public class EntityCardTemplate : CardTemplate
         {
             entityCard = new EntityCard(game);
             entityCard.SetTemplate(this);
-            entityCard.templateId = CardId;
-            entityCard.rank = (sbyte) MinimumRank;
+            entityCard.TemplateId = CardId;
+            entityCard.Rank = (sbyte) MinimumRank;
         }
 
         entityCard.Init();
@@ -32,7 +32,7 @@ public class EntityCardTemplate : CardTemplate
 
     public override bool CanDeploy(CardStack target, bool emptyAvailable, bool embark)
     {
-        if (target.primaryCard == null)
+        if (target.PrimaryCard == null)
         {
             return true;
         }
@@ -62,7 +62,7 @@ public class EntityCardTemplate : CardTemplate
 
     public override bool CanMove(CCG gameState, CardStack source, CardStack target, bool emptyAvailable, bool embark)
     {
-        if (target.primaryCard == null)
+        if (target.PrimaryCard == null)
         {
             return true;
         }
@@ -72,7 +72,7 @@ public class EntityCardTemplate : CardTemplate
             return true;
         }
 
-        Console.WriteLine("EntityTemplate.CanMove false - Target CardStack not Empty " + target.primaryCard.instanceId);
+        Console.WriteLine("EntityTemplate.CanMove false - Target CardStack not Empty " + target.PrimaryCard.InstanceId);
         return false;
     }
 

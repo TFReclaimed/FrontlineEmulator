@@ -7,24 +7,24 @@ public class CommandModEffect : BaseTraitEffect
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
         sbyte b = points;
-        if (active.dataValue > 0)
+        if (active.DataValue > 0)
         {
-            b = (sbyte) active.dataValue;
+            b = (sbyte) active.DataValue;
         }
 
-        GameState.players[card.activeData.owner].resources.AddCommandPoints(b, GameState.GetGameTemplate());
+        GameState.Players[card.ActiveData.Owner].Resources.AddCommandPoints(b, GameState.GetGameTemplate());
     }
 
     public override void OnNewTurnEvent(Card owner, sbyte playerIndex)
     {
-        if (!owner.IsCardTraitsDetered() && durationData.type == TraitDurationType.Permanent &&
-            owner.activeData.owner == playerIndex)
+        if (!owner.IsCardTraitsDetered() && DurationData.Type == TraitDurationType.Permanent &&
+            owner.ActiveData.Owner == playerIndex)
         {
             RegionEnum region = RegionEnum.NumRegions;
             CardStack target = GameState.FindCardStack(owner)[0];
-            if (targets.area == TargetableArea.CurrentRegion)
+            if (Targets.Area == TargetableArea.CurrentRegion)
             {
-                region = GameState.GetTraitActorRegion(playerIndex, owner.instanceId);
+                region = GameState.GetTraitActorRegion(playerIndex, owner.InstanceId);
             }
 
             Activate(owner, target, region);

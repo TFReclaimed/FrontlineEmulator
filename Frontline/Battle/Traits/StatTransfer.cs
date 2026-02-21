@@ -12,7 +12,7 @@ public class StatTransfer : BaseTraitEffect
 
     public override void CheckCardDeployed(Card deployed, Card source)
     {
-        if (targets.scope != 0 && targets.scope != TraitTargetScope.UnitStack)
+        if (Targets.Scope != 0 && Targets.Scope != TraitTargetScope.UnitStack)
         {
             CheckAndApplyTrait(deployed, source, true, false);
         }
@@ -20,7 +20,7 @@ public class StatTransfer : BaseTraitEffect
 
     public override sbyte GetAttackBonus(Card target, ActiveTrait active)
     {
-        if (deterable && active.detered)
+        if (Deterable && active.Detered)
         {
             return 0;
         }
@@ -35,7 +35,7 @@ public class StatTransfer : BaseTraitEffect
 
     public override sbyte GetBypassDefenseBonus(Card target, ActiveTrait active)
     {
-        if (deterable && active.detered)
+        if (Deterable && active.Detered)
         {
             return 0;
         }
@@ -50,7 +50,7 @@ public class StatTransfer : BaseTraitEffect
 
     public override sbyte GetDefenseBonus(ActiveTrait active)
     {
-        if (deterable && active.detered)
+        if (Deterable && active.Detered)
         {
             return 0;
         }
@@ -65,7 +65,7 @@ public class StatTransfer : BaseTraitEffect
 
     public override sbyte GetHealthBonus(ActiveTrait active)
     {
-        if (deterable && active.detered)
+        if (Deterable && active.Detered)
         {
             return 0;
         }

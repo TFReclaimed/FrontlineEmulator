@@ -35,8 +35,8 @@ public class CardTemplate
         {
             card = new Battle.Card(game);
             card.SetTemplate(this);
-            card.templateId = CardId;
-            card.rank = (sbyte) MinimumRank;
+            card.TemplateId = CardId;
+            card.Rank = (sbyte) MinimumRank;
         }
 
         card.Init();

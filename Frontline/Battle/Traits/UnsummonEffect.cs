@@ -7,13 +7,13 @@ public class UnsummonEffect : BaseTraitEffect
 {
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
-        sbyte owner = card.activeData.owner;
-        Player player = GameState.players[owner];
+        sbyte owner = card.ActiveData.Owner;
+        Player player = GameState.Players[owner];
         CardTransitionCCGEvent cardTransitionCCGEvent = null;
-        if (targets.area == TargetableArea.EnemyDiscard || targets.area == TargetableArea.FriendlyDiscard)
+        if (Targets.Area == TargetableArea.EnemyDiscard || Targets.Area == TargetableArea.FriendlyDiscard)
         {
-            CardCollection discard = player.discard;
-            discard.RemoveCard(card.instanceId);
+            CardCollection discard = player.Discard;
+            discard.RemoveCard(card.InstanceId);
         }
         else
         {
@@ -26,13 +26,13 @@ public class UnsummonEffect : BaseTraitEffect
                 return;
             }
 
-            card2 = list[0].RemoveCard(card.instanceId, owner);
+            card2 = list[0].RemoveCard(card.InstanceId, owner);
             list2 = card2.GetSecrets();
             if (list2 != null)
             {
                 for (int num = list2.Count - 1; num >= 0; num--)
                 {
-                    list2[num].Discard(GameState.players);
+                    list2[num].Discard(GameState.Players);
                     GameState.SecretDestroyed(list2[num], source);
                 }
             }
@@ -45,31 +45,31 @@ public class UnsummonEffect : BaseTraitEffect
                 {
                     for (int num2 = list2.Count - 1; num2 >= 0; num2--)
                     {
-                        list2[num2].Discard(GameState.players);
+                        list2[num2].Discard(GameState.Players);
                         GameState.SecretDestroyed(list2[num2], source);
                     }
                 }
 
                 card2.ResetCard();
-                player.hand.cards.Add(card2);
-                cardTransitionCCGEvent = new CardTransitionCCGEvent(CCGEventType.CardUnsummon, card2.instanceId,
-                    card2.activeData.owner, 0, 0, false, RegionEnum.NumRegions, 0, 0);
-                cardTransitionCCGEvent.templateId = card2.templateId;
-                cardTransitionCCGEvent.rank = card2.rank;
-                cardTransitionCCGEvent.effectID = effectTraitID;
-                cardTransitionCCGEvent.traitID = traitParentID;
+                player.Hand.Cards.Add(card2);
+                cardTransitionCCGEvent = new CardTransitionCCGEvent(CCGEventType.CardUnsummon, card2.InstanceId,
+                    card2.ActiveData.Owner, 0, 0, false, RegionEnum.NumRegions, 0, 0);
+                cardTransitionCCGEvent.TemplateId = card2.TemplateId;
+                cardTransitionCCGEvent.Rank = card2.Rank;
+                cardTransitionCCGEvent.EffectId = EffectTraitId;
+                cardTransitionCCGEvent.TraitId = TraitParentId;
                 GameState.AddCCGEventLog(cardTransitionCCGEvent);
             }
         }
 
         card.ResetCard();
-        player.hand.cards.Add(card);
-        cardTransitionCCGEvent = new CardTransitionCCGEvent(CCGEventType.CardUnsummon, card.instanceId,
-            card.activeData.owner, 0, 0, false, RegionEnum.NumRegions, 0, 0);
-        cardTransitionCCGEvent.templateId = card.templateId;
-        cardTransitionCCGEvent.rank = card.rank;
-        cardTransitionCCGEvent.effectID = effectTraitID;
-        cardTransitionCCGEvent.traitID = traitParentID;
+        player.Hand.Cards.Add(card);
+        cardTransitionCCGEvent = new CardTransitionCCGEvent(CCGEventType.CardUnsummon, card.InstanceId,
+            card.ActiveData.Owner, 0, 0, false, RegionEnum.NumRegions, 0, 0);
+        cardTransitionCCGEvent.TemplateId = card.TemplateId;
+        cardTransitionCCGEvent.Rank = card.Rank;
+        cardTransitionCCGEvent.EffectId = EffectTraitId;
+        cardTransitionCCGEvent.TraitId = TraitParentId;
         GameState.AddCCGEventLog(cardTransitionCCGEvent);
     }
 }

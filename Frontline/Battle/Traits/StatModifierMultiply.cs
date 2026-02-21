@@ -6,7 +6,7 @@ public class StatModifierMultiply : StatModifierPassive
 
     public override sbyte GetAttackBonus(Card target, ActiveTrait active)
     {
-        if (deterable && active.detered)
+        if (Deterable && active.Detered)
         {
             return 0;
         }
@@ -15,9 +15,9 @@ public class StatModifierMultiply : StatModifierPassive
         {
             int num = countInfo.CalculateCount(GameState, active);
             sbyte result = (sbyte) (attack * num);
-            if (attack != 0 && active.dataValue != 0)
+            if (attack != 0 && active.DataValue != 0)
             {
-                result = (sbyte) (active.dataValue * num);
+                result = (sbyte) (active.DataValue * num);
             }
 
             return result;
@@ -28,7 +28,7 @@ public class StatModifierMultiply : StatModifierPassive
 
     public override sbyte GetBypassDefenseBonus(Card target, ActiveTrait active)
     {
-        if (deterable && active.detered)
+        if (Deterable && active.Detered)
         {
             return 0;
         }
@@ -37,9 +37,9 @@ public class StatModifierMultiply : StatModifierPassive
         {
             int num = countInfo.CalculateCount(GameState, active);
             sbyte result = (sbyte) (bypassDefense * num);
-            if (bypassDefense != 0 && active.dataValue != 0)
+            if (bypassDefense != 0 && active.DataValue != 0)
             {
-                result = (sbyte) (active.dataValue * num);
+                result = (sbyte) (active.DataValue * num);
             }
 
             return result;
@@ -50,16 +50,16 @@ public class StatModifierMultiply : StatModifierPassive
 
     public override sbyte GetDefenseBonus(ActiveTrait active)
     {
-        if (deterable && active.detered)
+        if (Deterable && active.Detered)
         {
             return 0;
         }
 
         int num = countInfo.CalculateCount(GameState, active);
         sbyte result = (sbyte) (defense * num);
-        if (defense != 0 && active.dataValue != 0)
+        if (defense != 0 && active.DataValue != 0)
         {
-            result = (sbyte) (active.dataValue * num);
+            result = (sbyte) (active.DataValue * num);
         }
 
         return result;
@@ -67,16 +67,16 @@ public class StatModifierMultiply : StatModifierPassive
 
     public override sbyte GetHealthBonus(ActiveTrait active)
     {
-        if (deterable && active.detered)
+        if (Deterable && active.Detered)
         {
             return 0;
         }
 
         int num = countInfo.CalculateCount(GameState, active);
         sbyte result = (sbyte) (health * num);
-        if (health != 0 && active.dataValue != 0)
+        if (health != 0 && active.DataValue != 0)
         {
-            result = (sbyte) (active.dataValue * num);
+            result = (sbyte) (active.DataValue * num);
         }
 
         return result;
@@ -84,16 +84,16 @@ public class StatModifierMultiply : StatModifierPassive
 
     public override sbyte GetCommandMod(ActiveTrait active)
     {
-        if (deterable && active.detered)
+        if (Deterable && active.Detered)
         {
             return 0;
         }
 
         int num = countInfo.CalculateCount(GameState, active);
         sbyte result = (sbyte) (command * num);
-        if (command != 0 && active.dataValue != 0)
+        if (command != 0 && active.DataValue != 0)
         {
-            result = (sbyte) (active.dataValue * num);
+            result = (sbyte) (active.DataValue * num);
         }
 
         return result;

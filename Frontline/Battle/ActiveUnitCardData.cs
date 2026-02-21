@@ -2,12 +2,12 @@ namespace Frontline.Battle;
 
 public class ActiveUnitCardData : ActiveEntityCardData
 {
-    public sbyte currentDefense;
+    public sbyte CurrentDefense { get; set; }
 
     public override void Setup(Card card)
     {
         base.Setup(card);
         UnitCard unitCard = (UnitCard) card;
-        currentDefense = unitCard.GetMaxDefense();
+        CurrentDefense = unitCard.GetMaxDefense();
     }
 }

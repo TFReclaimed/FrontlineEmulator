@@ -30,14 +30,14 @@ public class GameTemplate
     {
         sbyte b = -127;
         int num = -1;
-        Player[] players = gameState.players;
+        Player[] players = gameState.Players;
         for (int i = 0; i < players.Length; i++)
         {
-            GameResources resources = players[i].resources;
-            sbyte health = resources.health;
+            GameResources resources = players[i].Resources;
+            sbyte health = resources.Health;
             if (health <= 0)
             {
-                gameState.playerTurn = -1;
+                gameState.PlayerTurn = -1;
             }
             else if (health > b)
             {
@@ -49,15 +49,15 @@ public class GameTemplate
                 num = i;
             }
         }
-        if (gameState.playerTurn == -1)
+        if (gameState.PlayerTurn == -1)
         {
-            gameState.winningPlayer = (sbyte)num;
+            gameState.WinningPlayer = (sbyte)num;
             gameState.GenerateRewards();
         }
     }
 
     public bool IsActive(sbyte playerIndex, CCG gameState)
     {
-        return gameState.players[playerIndex].resources.health > 0;
+        return gameState.Players[playerIndex].Resources.Health > 0;
     }
 }

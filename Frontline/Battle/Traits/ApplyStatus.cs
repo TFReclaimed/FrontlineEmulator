@@ -30,12 +30,12 @@ public class ApplyStatus : BaseTraitEffect
         if (IsDeterStatus(statusType))
         {
             ActiveTrait activeTrait = null;
-            for (int i = 0; i < card.activeData.activeTraits.Count; i++)
+            for (int i = 0; i < card.ActiveData.ActiveTraits.Count; i++)
             {
-                activeTrait = card.activeData.activeTraits[i];
-                if (activeTrait.GetTraitInfo().deterable)
+                activeTrait = card.ActiveData.ActiveTraits[i];
+                if (activeTrait.GetTraitInfo().Deterable)
                 {
-                    activeTrait.detered = true;
+                    activeTrait.Detered = true;
                 }
             }
         }
@@ -49,11 +49,11 @@ public class ApplyStatus : BaseTraitEffect
         if (IsDeterStatus(statusType))
         {
             ActiveTrait activeTrait = null;
-            ActiveCardData activeData = active.GetTraitTarget().activeData;
+            ActiveCardData activeData = active.GetTraitTarget().ActiveData;
             bool flag = false;
-            for (int i = 0; i < activeData.activeTraits.Count; i++)
+            for (int i = 0; i < activeData.ActiveTraits.Count; i++)
             {
-                activeTrait = activeData.activeTraits[i];
+                activeTrait = activeData.ActiveTraits[i];
                 if (activeTrait != active && (activeTrait.GetTraitInfo().IsStatusEffect(2, activeTrait) ||
                                               activeTrait.GetTraitInfo().IsStatusEffect(1, activeTrait)))
                 {
@@ -63,10 +63,10 @@ public class ApplyStatus : BaseTraitEffect
 
             if (!flag)
             {
-                for (int j = 0; j < active.GetTraitTarget().activeData.activeTraits.Count; j++)
+                for (int j = 0; j < active.GetTraitTarget().ActiveData.ActiveTraits.Count; j++)
                 {
-                    activeTrait = active.GetTraitTarget().activeData.activeTraits[j];
-                    activeTrait.detered = !activeTrait.EmbarkedCheck();
+                    activeTrait = active.GetTraitTarget().ActiveData.ActiveTraits[j];
+                    activeTrait.Detered = !activeTrait.EmbarkedCheck();
                 }
 
                 activeTrait.GetTraitTarget().OnRemovedDeter();
@@ -88,7 +88,7 @@ public class ApplyStatus : BaseTraitEffect
 
     public override bool CanMove(RegionEnum target, sbyte cardOwner, ActiveTrait active)
     {
-        if (deterable && active.detered)
+        if (Deterable && active.Detered)
         {
             return true;
         }
@@ -98,7 +98,7 @@ public class ApplyStatus : BaseTraitEffect
 
     public override bool CanAttack(CardStack target, ActiveTrait active)
     {
-        if (deterable && active.detered)
+        if (Deterable && active.Detered)
         {
             return true;
         }
@@ -108,7 +108,7 @@ public class ApplyStatus : BaseTraitEffect
 
     public override bool CanCounterAttack(CardStack target, ActiveTrait active)
     {
-        if (deterable && active.detered)
+        if (Deterable && active.Detered)
         {
             return true;
         }
@@ -118,7 +118,7 @@ public class ApplyStatus : BaseTraitEffect
 
     public override bool IsStatusEffect(sbyte effectID, ActiveTrait active)
     {
-        if (deterable && active.detered)
+        if (Deterable && active.Detered)
         {
             return false;
         }

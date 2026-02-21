@@ -1,10 +1,14 @@
+using System.Text.Json.Serialization;
+
 namespace Frontline.Battle;
 
 public class EventLogTraitCardInfo : ActiveTraitCardInfo
 {
-    public int effectID;
+    [JsonPropertyName("effectID")]
+    public int EffectId { get; set; }
 
-    public int traitID;
+    [JsonPropertyName("traidID")]
+    public int TraitId { get; set; }
 
-    public sbyte data;
+    public sbyte Data { get; set; }
 }

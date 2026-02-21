@@ -2,35 +2,35 @@ namespace Frontline.Battle;
 
 public class Deck
 {
-    public List<Card> cards;
+    public List<Card> Cards { get; set; }
 
-    public sbyte count;
+    public sbyte Count { get; set; }
 
     public virtual void Shuffle(bool skip)
     {
         if (!skip)
         {
-            for (int num = cards.Count - 1; num > 1; num--)
+            for (int num = Cards.Count - 1; num > 1; num--)
             {
                 int index = Random.Shared.Next(0, num);
-                Card value = cards[num];
-                cards[num] = cards[index];
-                cards[index] = value;
+                Card value = Cards[num];
+                Cards[num] = Cards[index];
+                Cards[index] = value;
             }
         }
     }
 
     public Card DrawCard(CCG game)
     {
-        int num = cards.Count - 1;
+        int num = Cards.Count - 1;
         if (num < 0)
         {
             return null;
         }
 
-        Card card = cards[num];
-        cards.RemoveAt(num);
-        count--;
+        Card card = Cards[num];
+        Cards.RemoveAt(num);
+        Count--;
         card = card.GenerateAndInit(game);
         card.Setup();
         card.InitActiveData();
@@ -39,9 +39,9 @@ public class Deck
 
     public void InsertCardAtIndex(Card card, int index)
     {
-        if (index >= cards.Count)
+        if (index >= Cards.Count)
         {
-            index = cards.Count - 1;
+            index = Cards.Count - 1;
         }
 
         if (index < 0)
@@ -49,17 +49,17 @@ public class Deck
             index = 0;
         }
 
-        cards.Insert(index, card);
-        count++;
+        Cards.Insert(index, card);
+        Count++;
     }
 
     public Card FindCard(int cardId)
     {
-        for (int i = 0; i < cards.Count; i++)
+        for (int i = 0; i < Cards.Count; i++)
         {
-            if (cards[i].instanceId == cardId)
+            if (Cards[i].InstanceId == cardId)
             {
-                return cards[i];
+                return Cards[i];
             }
         }
 

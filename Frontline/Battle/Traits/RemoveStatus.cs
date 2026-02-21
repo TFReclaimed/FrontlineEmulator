@@ -11,14 +11,14 @@ public class RemoveStatus : BaseTraitEffect
 
     public override void OnNewTurnEvent(Card owner, sbyte playerIndex)
     {
-        if (!owner.IsCardTraitsDetered() && durationData.type == TraitDurationType.Permanent &&
-            owner.activeData.owner == playerIndex)
+        if (!owner.IsCardTraitsDetered() && DurationData.Type == TraitDurationType.Permanent &&
+            owner.ActiveData.Owner == playerIndex)
         {
             RegionEnum region = RegionEnum.NumRegions;
             CardStack target = GameState.FindCardStack(owner)[0];
-            if (targets.area == TargetableArea.CurrentRegion)
+            if (Targets.Area == TargetableArea.CurrentRegion)
             {
-                region = GameState.GetTraitActorRegion(playerIndex, owner.instanceId);
+                region = GameState.GetTraitActorRegion(playerIndex, owner.InstanceId);
             }
 
             Activate(owner, target, region);

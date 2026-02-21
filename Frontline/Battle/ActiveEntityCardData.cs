@@ -20,15 +20,15 @@ public class ActiveEntityCardData : ActiveCardData
 
     public const sbyte ActivateAttackMask = 10;
 
-    public sbyte currentHealth;
+    public sbyte CurrentHealth { get; set; }
 
-    public sbyte acted;
+    public sbyte Acted { get; set; }
 
     public override void Setup(Card card)
     {
         base.Setup(card);
-        acted = 0;
+        Acted = 0;
         EntityCard entityCard = (EntityCard) card;
-        currentHealth = entityCard.GetMaxHealth();
+        CurrentHealth = entityCard.GetMaxHealth();
     }
 }

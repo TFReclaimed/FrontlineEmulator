@@ -4,7 +4,7 @@ public class IgnoreInterceptPassive : BaseTraitEffect
 {
     public override bool IgnoreIntercept(ActiveTrait active)
     {
-        if (deterable && active.detered)
+        if (Deterable && active.Detered)
         {
             return false;
         }

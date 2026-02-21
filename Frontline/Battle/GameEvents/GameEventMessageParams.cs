@@ -2,7 +2,7 @@ namespace Frontline.Battle.GameEvents;
 
 public class GameEventMessageParams : GameEventParams
 {
-    public sbyte messageId;
+    public sbyte MessageId { get; }
 
     public GameEventMessageParams()
     {
@@ -11,12 +11,12 @@ public class GameEventMessageParams : GameEventParams
     public GameEventMessageParams(GameEvent gameEv, sbyte player, sbyte id)
         : base(gameEv, player)
     {
-        messageId = id;
+        MessageId = id;
     }
 
     public override GameEventResult ReplayEvent(CcgGame game)
     {
-        if (game.SendMessage(playerIndex, messageId, true) != 1)
+        if (game.SendMessage(PlayerIndex, MessageId, true) != 1)
         {
             return null;
         }

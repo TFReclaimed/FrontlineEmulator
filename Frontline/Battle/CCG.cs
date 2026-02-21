@@ -10,33 +10,33 @@ public class CCG
 
     public const sbyte GAMESTART_INDICATOR = -2;
 
-    public Guid gameInstanceId;
+    public Guid GameInstanceId { get; set; }
 
-    public Player[] players;
+    public Player[] Players { get; set; }
 
-    public GameBoard board;
+    public GameBoard Board { get; set; }
 
-    public int gameTemplateId;
+    public int GameTemplateId { get; set; }
 
-    public sbyte currentRound;
+    public sbyte CurrentRound { get; set; }
 
-    public sbyte playerTurn;
+    public sbyte PlayerTurn { get; set; }
 
-    public long playerTurnStart;
+    public long PlayerTurnStart { get; set; }
 
-    public long playerDiscardStart;
+    public long PlayerDiscardStart { get; }
 
-    public sbyte localPlayer;
+    public sbyte LocalPlayer { get; }
 
-    public sbyte winningPlayer = -1;
+    public sbyte WinningPlayer { get; set; } = -1;
 
-    public bool surrenderGameOver;
+    public bool SurrenderGameOver { get; set; }
 
-    public Rewards[] rewards;
+    public Rewards[] Rewards { get; set; }
 
-    public int nextSummonInstanceId = -1;
+    public int NextSummonInstanceId { get; set; } = -1;
 
-    public VersusType gameType;
+    public VersusType GameType { get; }
 
     private GameTemplate gameRules;
 
@@ -73,11 +73,11 @@ public class CCG
 
     public int GetNextSummonInstanceId()
     {
-        int num = nextSummonInstanceId--;
+        int num = NextSummonInstanceId--;
         num = _game.GetServerIntValue(num, num);
-        if (num < nextSummonInstanceId)
+        if (num < NextSummonInstanceId)
         {
-            nextSummonInstanceId = num - 1;
+            NextSummonInstanceId = num - 1;
         }
 
         return num;
@@ -85,9 +85,9 @@ public class CCG
 
     public Player GetPlayer(sbyte playerIndex)
     {
-        if (playerIndex >= 0 && playerIndex < players.Length)
+        if (playerIndex >= 0 && playerIndex < Players.Length)
         {
-            return players[playerIndex];
+            return Players[playerIndex];
         }
 
         return null;
@@ -96,7 +96,7 @@ public class CCG
     public sbyte GetOpponentPlayerIndex(sbyte playerIndex)
     {
         sbyte b = (sbyte) (playerIndex + 1);
-        if (b >= players.Length)
+        if (b >= Players.Length)
         {
             b = 0;
         }
@@ -117,35 +117,35 @@ public class CCG
     public void Create(Guid gameInstance, int gameId, int[] playerIds, string[] playerNames,
         List<List<Card>> deckCards, List<List<Card>> supportCards, List<Card> commanders, bool[] skipShuffle)
     {
-        gameInstanceId = gameInstance;
-        gameTemplateId = gameId;
-        gameRules = RulesetParser.GetGameTemplate(gameTemplateId)!;
-        board = new GameBoard(this);
-        board.Create(gameRules);
+        GameInstanceId = gameInstance;
+        GameTemplateId = gameId;
+        gameRules = RulesetParser.GetGameTemplate(GameTemplateId)!;
+        Board = new GameBoard(this);
+        Board.Create(gameRules);
         int num = playerIds.Length;
-        players = new Player[num];
+        Players = new Player[num];
         for (int i = 0; i < num; i++)
         {
-            players[i] = new Player(this);
-            players[i].Create(playerIds[i], playerNames[i], deckCards[i], supportCards[i], commanders[i], gameRules,
+            Players[i] = new Player(this);
+            Players[i].Create(playerIds[i], playerNames[i], deckCards[i], supportCards[i], commanders[i], gameRules,
                 (sbyte) i, skipShuffle[i]);
         }
 
-        rewards = new Rewards[num];
+        Rewards = new Rewards[num];
         for (int j = 0; j < num; j++)
         {
-            rewards[j] = new Rewards();
-            players[j].ActivateCommander();
+            Rewards[j] = new Rewards();
+            Players[j].ActivateCommander();
         }
 
-        playerTurn = -2;
+        PlayerTurn = -2;
     }
 
     public Card FindTraitActor(sbyte playerIndex, int cardId)
     {
-        if (playerIndex >= 0 && playerIndex < players.Length)
+        if (playerIndex >= 0 && playerIndex < Players.Length)
         {
-            Player player = players[playerIndex];
+            Player player = Players[playerIndex];
             Card card = player.FindTraitActor(cardId);
             if (card != null)
             {
@@ -153,15 +153,15 @@ public class CCG
             }
         }
 
-        return board.FindTraitActor(cardId, playerIndex);
+        return Board.FindTraitActor(cardId, playerIndex);
     }
 
     public RegionEnum GetTraitActorRegion(sbyte playerIndex, int cardId)
     {
         RegionEnum result = RegionEnum.NumRegions;
-        if (playerIndex >= 0 && playerIndex < players.Length)
+        if (playerIndex >= 0 && playerIndex < Players.Length)
         {
-            Player player = players[playerIndex];
+            Player player = Players[playerIndex];
             Card card = player.FindTraitActor(cardId);
             if (card != null)
             {
@@ -169,7 +169,7 @@ public class CCG
             }
         }
 
-        return board.GetTraitActorRegion(cardId, playerIndex);
+        return Board.GetTraitActorRegion(cardId, playerIndex);
     }
 
     public List<ActiveTrait> GetBattleEffects()
@@ -183,7 +183,7 @@ public class CCG
         for (int i = 0; i < battleEffects.Count; i++)
         {
             activeTrait = battleEffects[i];
-            if (activeTrait.GetTraitInfo().IsIntercept(activeTrait) && activeTrait.target.owner != owner)
+            if (activeTrait.GetTraitInfo().IsIntercept(activeTrait) && activeTrait.Target.Owner != owner)
             {
                 return true;
             }
@@ -215,72 +215,72 @@ public class CCG
     public List<CardStack> FindCards(TraitTargeting info, RegionEnum region, Card source)
     {
         List<CardStack> list = new List<CardStack>();
-        if (info.area == TargetableArea.AnyAreas || info.area == TargetableArea.BattleField ||
-            info.area == TargetableArea.AnyCommander)
+        if (info.Area == TargetableArea.AnyAreas || info.Area == TargetableArea.BattleField ||
+            info.Area == TargetableArea.AnyCommander)
         {
-            sbyte owner = source.activeData.owner;
-            for (int i = 0; i < players.Length; i++)
+            sbyte owner = source.ActiveData.Owner;
+            for (int i = 0; i < Players.Length; i++)
             {
                 if ((info.CheckFriendly() && i == owner) || (info.CheckEnemy() && i != owner))
                 {
-                    Card primaryCard = players[i].commander.primaryCard;
+                    Card primaryCard = Players[i].Commander.PrimaryCard;
                     if (info.DoesMatchType(primaryCard))
                     {
-                        list.Add(players[i].commander);
+                        list.Add(Players[i].Commander);
                     }
                 }
             }
         }
-        else if (info.area == TargetableArea.FriendlyCommander)
+        else if (info.Area == TargetableArea.FriendlyCommander)
         {
-            sbyte owner2 = source.activeData.owner;
-            Card primaryCard2 = players[owner2].commander.primaryCard;
+            sbyte owner2 = source.ActiveData.Owner;
+            Card primaryCard2 = Players[owner2].Commander.PrimaryCard;
             if (info.DoesMatchType(primaryCard2))
             {
-                list.Add(players[owner2].commander);
+                list.Add(Players[owner2].Commander);
             }
         }
-        else if (info.area == TargetableArea.EnemyCommander)
+        else if (info.Area == TargetableArea.EnemyCommander)
         {
-            sbyte opponentPlayerIndex = GetOpponentPlayerIndex(source.activeData.owner);
-            Card primaryCard3 = players[opponentPlayerIndex].commander.primaryCard;
+            sbyte opponentPlayerIndex = GetOpponentPlayerIndex(source.ActiveData.Owner);
+            Card primaryCard3 = Players[opponentPlayerIndex].Commander.PrimaryCard;
             if (info.DoesMatchType(primaryCard3))
             {
-                list.Add(players[opponentPlayerIndex].commander);
+                list.Add(Players[opponentPlayerIndex].Commander);
             }
         }
 
-        if (info.area == TargetableArea.AnyAreas || info.area == TargetableArea.FriendlyDiscard ||
-            info.area == TargetableArea.EnemyDiscard)
+        if (info.Area == TargetableArea.AnyAreas || info.Area == TargetableArea.FriendlyDiscard ||
+            info.Area == TargetableArea.EnemyDiscard)
         {
-            sbyte owner3 = source.activeData.owner;
-            for (int j = 0; j < players.Length; j++)
+            sbyte owner3 = source.ActiveData.Owner;
+            for (int j = 0; j < Players.Length; j++)
             {
                 if ((!info.CheckFriendly() || j != owner3) && (!info.CheckEnemy() || j == owner3))
                 {
                     continue;
                 }
 
-                for (int k = 0; k < players[j].discard.cards.Count; k++)
+                for (int k = 0; k < Players[j].Discard.Cards.Count; k++)
                 {
-                    Card card = players[j].discard.cards[k];
+                    Card card = Players[j].Discard.Cards[k];
                     if (info.CardTargetMatch(this, card, source))
                     {
                         CardStack cardStack = new CardStack();
                         cardStack.Create();
-                        cardStack.primaryCard = players[j].discard.cards[k];
+                        cardStack.PrimaryCard = Players[j].Discard.Cards[k];
                         list.Add(cardStack);
                     }
                 }
             }
         }
 
-        if (info.area != TargetableArea.AnyCommander && info.area != TargetableArea.FriendlyCommander &&
-            info.area != TargetableArea.EnemyCommander && info.area != TargetableArea.FriendlyHand &&
-            info.area != TargetableArea.EnemyHand && info.area != TargetableArea.FriendlyDiscard &&
-            info.area != TargetableArea.EnemyDiscard)
+        if (info.Area != TargetableArea.AnyCommander && info.Area != TargetableArea.FriendlyCommander &&
+            info.Area != TargetableArea.EnemyCommander && info.Area != TargetableArea.FriendlyHand &&
+            info.Area != TargetableArea.EnemyHand && info.Area != TargetableArea.FriendlyDiscard &&
+            info.Area != TargetableArea.EnemyDiscard)
         {
-            board.FindCards(info, region, source, list);
+            Board.FindCards(info, region, source, list);
         }
 
         return list;
@@ -289,50 +289,50 @@ public class CCG
     public List<CardStack> FindCardStack(Card card)
     {
         List<CardStack> list = new List<CardStack>();
-        for (int i = 0; i < players.Length; i++)
+        for (int i = 0; i < Players.Length; i++)
         {
-            Card primaryCard = players[i].commander.primaryCard;
+            Card primaryCard = Players[i].Commander.PrimaryCard;
             if (primaryCard.EqualsTo(card))
             {
-                list.Add(players[i].commander);
+                list.Add(Players[i].Commander);
             }
         }
 
-        board.FindCardStack(card, list);
+        Board.FindCardStack(card, list);
         return list;
     }
 
     public bool CanDeploy(sbyte playerIndex, int cardId, TargetableArea area, RegionEnum target, sbyte slotIndex,
         sbyte pushDir, bool remote)
     {
-        if (playerTurn == playerIndex && (remote || localPlayer == playerIndex))
+        if (PlayerTurn == playerIndex && (remote || LocalPlayer == playerIndex))
         {
-            Player player = players[playerIndex];
+            Player player = Players[playerIndex];
             if (player.CanSubmitActions())
             {
                 Card card = player.FindCard(cardId);
                 if (card != null)
                 {
-                    sbyte commandUnits = player.resources.commandUnits;
+                    sbyte commandUnits = player.Resources.CommandUnits;
                     if (card.GetCurrentCost() <= commandUnits)
                     {
                         sbyte opponentPlayerIndex = GetOpponentPlayerIndex(playerIndex);
                         switch (area)
                         {
                             case TargetableArea.FriendlyCommander:
-                                return card.CanDeploy(players[playerIndex].commander, RegionEnum.NumRegions, false,
+                                return card.CanDeploy(Players[playerIndex].Commander, RegionEnum.NumRegions, false,
                                     false);
                             case TargetableArea.EnemyCommander:
-                                return card.CanDeploy(players[opponentPlayerIndex].commander, RegionEnum.NumRegions,
+                                return card.CanDeploy(Players[opponentPlayerIndex].Commander, RegionEnum.NumRegions,
                                     false, false);
                             case TargetableArea.AnyCommander:
-                                return card.CanDeploy(players[playerIndex].commander, RegionEnum.NumRegions, false,
-                                    false) || card.CanDeploy(players[opponentPlayerIndex].commander,
+                                return card.CanDeploy(Players[playerIndex].Commander, RegionEnum.NumRegions, false,
+                                    false) || card.CanDeploy(Players[opponentPlayerIndex].Commander,
                                     RegionEnum.NumRegions, false, false);
                             case TargetableArea.BattleField:
                                 if (target == RegionEnum.NumRegions &&
-                                    (card.CanDeploy(players[playerIndex].commander, RegionEnum.NumRegions, false,
-                                        false) || card.CanDeploy(players[opponentPlayerIndex].commander,
+                                    (card.CanDeploy(Players[playerIndex].Commander, RegionEnum.NumRegions, false,
+                                        false) || card.CanDeploy(Players[opponentPlayerIndex].Commander,
                                         RegionEnum.NumRegions, false, false)))
                                 {
                                     return true;
@@ -346,7 +346,7 @@ public class CCG
                             return card.CanDeploy(RegionEnum.NumRegions, area);
                         }
 
-                        return board.CanDeploy(card, area, target, slotIndex, pushDir);
+                        return Board.CanDeploy(card, area, target, slotIndex, pushDir);
                     }
                 }
             }
@@ -358,7 +358,7 @@ public class CCG
     public bool Deploy(sbyte playerIndex, int cardId, sbyte targetIndex, int targetId, TargetableArea area,
         RegionEnum target, sbyte slotIndex, sbyte pushDir, BaseTraitEffect traitCause)
     {
-        Player player = players[playerIndex];
+        Player player = Players[playerIndex];
         Card card = null;
         card = ((traitCause != null)
             ? player.RemoveCardForTrait(cardId, playerIndex, traitCause)
@@ -367,53 +367,53 @@ public class CCG
         {
             CardTransitionCCGEvent cardTransitionCCGEvent = new CardTransitionCCGEvent(CCGEventType.DeployUnit, cardId,
                 playerIndex, targetId, targetIndex, false, target, slotIndex, pushDir);
-            cardTransitionCCGEvent.templateId = card.templateId;
-            cardTransitionCCGEvent.rank = card.rank;
+            cardTransitionCCGEvent.TemplateId = card.TemplateId;
+            cardTransitionCCGEvent.Rank = card.Rank;
             if (traitCause != null)
             {
-                cardTransitionCCGEvent.effectID = traitCause.effectTraitID;
-                cardTransitionCCGEvent.traitID = traitCause.traitParentID;
+                cardTransitionCCGEvent.EffectId = traitCause.EffectTraitId;
+                cardTransitionCCGEvent.TraitId = traitCause.TraitParentId;
             }
 
             AddCCGEventLog(cardTransitionCCGEvent);
             if (card.GetTemplate().Type == CardType.BurnCard || card.GetTemplate().Type == CardType.Secret)
             {
-                cardTransitionCCGEvent.transition = ((card.GetTemplate().Type == CardType.BurnCard)
+                cardTransitionCCGEvent.Transition = ((card.GetTemplate().Type == CardType.BurnCard)
                     ? CCGEventType.DeployBurn
                     : CCGEventType.DeploySecret);
                 if (CheckSpecialCardDeployment(card, targetIndex, targetId, area, target, slotIndex))
                 {
-                    for (int i = 0; i < board.regions.Length; i++)
+                    for (int i = 0; i < Board.Regions.Length; i++)
                     {
-                        for (int j = 0; j < board.regions[i].slots.Length; j++)
+                        for (int j = 0; j < Board.Regions[i].Slots.Length; j++)
                         {
-                            board.regions[i].slots[j].CardDeployed(card);
+                            Board.Regions[i].Slots[j].CardDeployed(card);
                         }
                     }
 
-                    for (int k = 0; k < players.Length; k++)
+                    for (int k = 0; k < Players.Length; k++)
                     {
-                        players[k].commander.CardDeployed(card);
+                        Players[k].Commander.CardDeployed(card);
                     }
 
-                    board.CheckDiscards(players);
+                    Board.CheckDiscards(Players);
                     gameRules.CheckEndGame(this);
                     return true;
                 }
             }
 
-            CardStack cardStack = board.Deploy(card, target, slotIndex, pushDir, cardTransitionCCGEvent);
+            CardStack cardStack = Board.Deploy(card, target, slotIndex, pushDir, cardTransitionCCGEvent);
             if (cardStack == null)
             {
                 return false;
             }
 
-            for (int l = 0; l < players.Length; l++)
+            for (int l = 0; l < Players.Length; l++)
             {
-                players[l].commander.CardDeployed(card);
+                Players[l].Commander.CardDeployed(card);
             }
 
-            board.CheckDiscards(players);
+            Board.CheckDiscards(Players);
             gameRules.CheckEndGame(this);
             return true;
         }
@@ -424,59 +424,59 @@ public class CCG
     public bool CheckSpecialCardDeployment(Card deployed, sbyte targetIndex, int targetId, TargetableArea area,
         RegionEnum region, sbyte slotIndex)
     {
-        Player player = players[deployed.activeData.owner];
-        Player player2 = players[targetIndex];
+        Player player = Players[deployed.ActiveData.Owner];
+        Player player2 = Players[targetIndex];
         Card card = null;
         CardStack cardStack = null;
         switch (area)
         {
             case TargetableArea.FriendlyDiscard:
-                card = player.discard.FindCard(targetId);
+                card = player.Discard.FindCard(targetId);
                 if (card != null)
                 {
                     cardStack = new CardStack();
                     cardStack.Create();
-                    cardStack.primaryCard = card;
+                    cardStack.PrimaryCard = card;
                 }
 
                 break;
             case TargetableArea.EnemyDiscard:
-                card = player2.discard.FindCard(targetId);
+                card = player2.Discard.FindCard(targetId);
                 if (card != null)
                 {
                     cardStack = new CardStack();
                     cardStack.Create();
-                    cardStack.primaryCard = card;
+                    cardStack.PrimaryCard = card;
                 }
 
                 break;
             case TargetableArea.FriendlyHand:
-                card = player.hand.FindCard(targetId);
+                card = player.Hand.FindCard(targetId);
                 if (card != null)
                 {
                     cardStack = new CardStack();
                     cardStack.Create();
-                    cardStack.primaryCard = card;
+                    cardStack.PrimaryCard = card;
                 }
 
                 break;
             case TargetableArea.EnemyHand:
-                card = player2.hand.FindCard(targetId);
+                card = player2.Hand.FindCard(targetId);
                 if (card != null)
                 {
                     cardStack = new CardStack();
                     cardStack.Create();
-                    cardStack.primaryCard = card;
+                    cardStack.PrimaryCard = card;
                 }
 
                 break;
             case TargetableArea.FriendlyCommander:
-                cardStack = player.commander;
-                card = cardStack.primaryCard;
+                cardStack = player.Commander;
+                card = cardStack.PrimaryCard;
                 break;
             case TargetableArea.EnemyCommander:
-                cardStack = player2.commander;
-                card = cardStack.primaryCard;
+                cardStack = player2.Commander;
+                card = cardStack.PrimaryCard;
                 break;
         }
 
@@ -491,12 +491,12 @@ public class CCG
 
     public bool CanMove(sbyte playerIndex, int cardId, RegionEnum target, sbyte slotIndex, sbyte pushDir, bool remote)
     {
-        if (playerTurn == playerIndex && (remote || localPlayer == playerIndex) && pushDir >= -1 && pushDir <= 1)
+        if (PlayerTurn == playerIndex && (remote || LocalPlayer == playerIndex) && pushDir >= -1 && pushDir <= 1)
         {
-            Player player = players[playerIndex];
+            Player player = Players[playerIndex];
             if (player.CanSubmitActions())
             {
-                return board.CanMove(cardId, playerIndex, target, slotIndex, pushDir, gameRules);
+                return Board.CanMove(cardId, playerIndex, target, slotIndex, pushDir, gameRules);
             }
         }
         Console.WriteLine("CCG.CanMove false - player cannot move now");
@@ -507,7 +507,7 @@ public class CCG
         BaseTraitEffect traitCause)
     {
         bool flag = false;
-        if (pushDir == 0 && board.regions[(uint) target].slots[slotIndex].primaryCard != null)
+        if (pushDir == 0 && Board.Regions[(uint) target].Slots[slotIndex].PrimaryCard != null)
         {
             flag = true;
         }
@@ -517,15 +517,15 @@ public class CCG
         AddCCGEventLog(cardTransitionCCGEvent);
         if (traitCause != null)
         {
-            cardTransitionCCGEvent.effectID = traitCause.effectTraitID;
-            cardTransitionCCGEvent.traitID = traitCause.traitParentID;
+            cardTransitionCCGEvent.EffectId = traitCause.EffectTraitId;
+            cardTransitionCCGEvent.TraitId = traitCause.TraitParentId;
         }
 
-        if (board.Move(cardId, playerIndex, target, slotIndex, pushDir))
+        if (Board.Move(cardId, playerIndex, target, slotIndex, pushDir))
         {
             if (flag)
             {
-                Card card = board.FindTraitActor(cardId, playerIndex);
+                Card card = Board.FindTraitActor(cardId, playerIndex);
                 List<CardStack> list = FindCardStack(card);
                 UnitCard unitCard = null;
                 UnitCard unitCard2 = null;
@@ -533,23 +533,23 @@ public class CCG
                 if (list.Count > 0)
                 {
                     cardStack = list[0];
-                    if (cardStack.primaryCard.HasPilot())
+                    if (cardStack.PrimaryCard.HasPilot())
                     {
-                        unitCard2 = (UnitCard) cardStack.primaryCard;
-                        unitCard = unitCard2.embarkedPilot;
+                        unitCard2 = (UnitCard) cardStack.PrimaryCard;
+                        unitCard = unitCard2.EmbarkedPilot;
                         if (unitCard2.GetTemplate().Type == CardType.Titan &&
                             unitCard.GetTemplate().Type == CardType.Pilot)
                         {
-                            cardTransitionCCGEvent.embark = true;
+                            cardTransitionCCGEvent.Embark = true;
                             if (card.EqualsTo(unitCard))
                             {
-                                cardTransitionCCGEvent.targetId = unitCard2.instanceId;
-                                cardTransitionCCGEvent.targetOwner = unitCard2.activeData.owner;
+                                cardTransitionCCGEvent.TargetId = unitCard2.InstanceId;
+                                cardTransitionCCGEvent.TargetOwner = unitCard2.ActiveData.Owner;
                             }
                             else
                             {
-                                cardTransitionCCGEvent.targetId = unitCard.instanceId;
-                                cardTransitionCCGEvent.targetOwner = unitCard.activeData.owner;
+                                cardTransitionCCGEvent.TargetId = unitCard.InstanceId;
+                                cardTransitionCCGEvent.TargetOwner = unitCard.ActiveData.Owner;
                             }
                         }
                     }
@@ -564,12 +564,12 @@ public class CCG
 
     public bool CanDisembark(sbyte playerIndex, int cardId, bool remote)
     {
-        if (playerTurn == playerIndex && (remote || localPlayer == playerIndex))
+        if (PlayerTurn == playerIndex && (remote || LocalPlayer == playerIndex))
         {
-            Player player = players[playerIndex];
+            Player player = Players[playerIndex];
             if (player.CanSubmitActions())
             {
-                return board.CanDisembark(cardId, playerIndex);
+                return Board.CanDisembark(cardId, playerIndex);
             }
         }
 
@@ -578,23 +578,23 @@ public class CCG
 
     public bool Disembark(sbyte playerIndex, int cardId, bool eject, BaseTraitEffect traitCause)
     {
-        Card card = board.FindTraitActor(cardId, playerIndex);
+        Card card = Board.FindTraitActor(cardId, playerIndex);
         List<CardStack> list = FindCardStack(card);
-        if (list.Count <= 0 || list[0].primaryCard == null || !list[0].primaryCard.HasPilot())
+        if (list.Count <= 0 || list[0].PrimaryCard == null || !list[0].PrimaryCard.HasPilot())
         {
             return false;
         }
 
         CardStack cardStack = list[0];
-        UnitCard unitCard = (UnitCard) cardStack.primaryCard;
-        UnitCard embarkedPilot = unitCard.embarkedPilot;
+        UnitCard unitCard = (UnitCard) cardStack.PrimaryCard;
+        UnitCard embarkedPilot = unitCard.EmbarkedPilot;
         if (embarkedPilot.GetTemplate().Type != 0)
         {
             return false;
         }
 
         pilotEmbarkTrait.Deactivate(unitCard, embarkedPilot);
-        board.Disembark(cardId, playerIndex, eject, traitCause);
+        Board.Disembark(cardId, playerIndex, eject, traitCause);
         return true;
     }
 
@@ -625,7 +625,7 @@ public class CCG
             return null;
         }
 
-        return board.regions[num].FindEmptyCardStack(isTitan, reverseSearch);
+        return Board.Regions[num].FindEmptyCardStack(isTitan, reverseSearch);
     }
 
     public bool CanSummon(sbyte playerIndex, int cardTemplateId, RegionEnum currentRegion,
@@ -661,29 +661,29 @@ public class CCG
         if (cardStack != null)
         {
             Card card = cardTemplate.GenerateCard(this);
-            card.instanceId = GetNextSummonInstanceId();
-            card.activeData.owner = playerIndex;
+            card.InstanceId = GetNextSummonInstanceId();
+            card.ActiveData.Owner = playerIndex;
             card.Setup();
-            Console.WriteLine("**** CCG.Summon - Spanwed New Card * " + card.instanceId);
+            Console.WriteLine("**** CCG.Summon - Spanwed New Card * " + card.InstanceId);
             card.Deploy(cardStack, false, currentRegion, null);
-            currentRegion = GetTraitActorRegion(playerIndex, card.instanceId);
-            CardStack[] slots = board.regions[(uint) currentRegion].slots;
+            currentRegion = GetTraitActorRegion(playerIndex, card.InstanceId);
+            CardStack[] slots = Board.Regions[(uint) currentRegion].Slots;
             sbyte indexSlot = 0;
             for (int i = 0; i < slots.Length; i++)
             {
-                if (slots[i].primaryCard != null && slots[i].primaryCard.EqualsTo(card))
+                if (slots[i].PrimaryCard != null && slots[i].PrimaryCard.EqualsTo(card))
                 {
                     indexSlot = (sbyte) i;
                 }
             }
 
             CardTransitionCCGEvent cardTransitionCCGEvent = new CardTransitionCCGEvent(CCGEventType.CardSummon,
-                card.instanceId, playerIndex, 0, 0, false, currentRegion, indexSlot, 1);
+                card.InstanceId, playerIndex, 0, 0, false, currentRegion, indexSlot, 1);
             AddCCGEventLog(cardTransitionCCGEvent);
             if (traitCause != null)
             {
-                cardTransitionCCGEvent.effectID = traitCause.effectTraitID;
-                cardTransitionCCGEvent.traitID = traitCause.traitParentID;
+                cardTransitionCCGEvent.EffectId = traitCause.EffectTraitId;
+                cardTransitionCCGEvent.TraitId = traitCause.TraitParentId;
             }
 
             return true;
@@ -694,17 +694,17 @@ public class CCG
 
     public bool CanDoInitialSwap(sbyte playerIndex, int[] cardIdsToSwap)
     {
-        if (cardIdsToSwap != null && playerIndex >= 0 && playerIndex < players.Length)
+        if (cardIdsToSwap != null && playerIndex >= 0 && playerIndex < Players.Length)
         {
-            Player player = players[playerIndex];
-            if (player.surrender || player.initialCardsSwapped)
+            Player player = Players[playerIndex];
+            if (player.Surrender || player.InitialCardsSwapped)
             {
                 return false;
             }
 
-            CardCollection hand = player.hand;
+            CardCollection hand = player.Hand;
             int num = cardIdsToSwap.Length;
-            if (num <= hand.cards.Count && num <= gameRules.MulliganDiscard)
+            if (num <= hand.Cards.Count && num <= gameRules.MulliganDiscard)
             {
                 for (int i = 0; i < cardIdsToSwap.Length; i++)
                 {
@@ -723,9 +723,9 @@ public class CCG
 
     public bool DoInitialSwap(sbyte playerIndex, int[] cardIdsToSwap, int[] newDeckIndices, bool isServer)
     {
-        Player player = players[playerIndex];
-        CardCollection hand = player.hand;
-        Deck deck = player.deck;
+        Player player = Players[playerIndex];
+        CardCollection hand = player.Hand;
+        Deck deck = player.Deck;
         Card[] array = new Card[cardIdsToSwap.Length];
         for (int i = 0; i < cardIdsToSwap.Length; i++)
         {
@@ -747,7 +747,7 @@ public class CCG
             AddCCGEventLog(mulliganDrawCCGEvent);
         }
 
-        int count = deck.cards.Count;
+        int count = deck.Cards.Count;
         for (int k = 0; k < array.Length; k++)
         {
             if (isServer)
@@ -757,14 +757,14 @@ public class CCG
             }
 
             int num = newDeckIndices[k];
-            deck.count++;
+            deck.Count++;
         }
 
-        player.initialCardsSwapped = true;
+        player.InitialCardsSwapped = true;
         bool flag = true;
-        for (int l = 0; l < players.Length; l++)
+        for (int l = 0; l < Players.Length; l++)
         {
-            if (!players[l].initialCardsSwapped)
+            if (!Players[l].InitialCardsSwapped)
             {
                 flag = false;
             }
@@ -772,10 +772,10 @@ public class CCG
 
         if (flag)
         {
-            playerTurn = 0;
-            players[playerTurn].NewTurn(playerTurn, GetDrawCount());
-            board.NewTurn(playerTurn);
-            playerTurnStart = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            PlayerTurn = 0;
+            Players[PlayerTurn].NewTurn(PlayerTurn, GetDrawCount());
+            Board.NewTurn(PlayerTurn);
+            PlayerTurnStart = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         }
 
         return true;
@@ -783,15 +783,15 @@ public class CCG
 
     public bool CanDoDiscard(sbyte playerIndex, int[] cardIdsToDiscard)
     {
-        if (cardIdsToDiscard != null && playerIndex >= 0 && playerIndex < players.Length)
+        if (cardIdsToDiscard != null && playerIndex >= 0 && playerIndex < Players.Length)
         {
-            Player player = players[playerIndex];
-            if (player.surrender)
+            Player player = Players[playerIndex];
+            if (player.Surrender)
             {
                 return false;
             }
 
-            CardCollection hand = player.hand;
+            CardCollection hand = player.Hand;
             for (int i = 0; i < cardIdsToDiscard.Length; i++)
             {
                 if (hand.FindCard(cardIdsToDiscard[i]) == null)
@@ -808,11 +808,11 @@ public class CCG
 
     public bool DoCardDiscard(sbyte playerIndex, int[] cardIdsToDiscard)
     {
-        CardCollection hand = players[playerIndex].hand;
+        CardCollection hand = Players[playerIndex].Hand;
         for (int i = 0; i < cardIdsToDiscard.Length; i++)
         {
             Card card = hand.RemoveCard(cardIdsToDiscard[i]);
-            card.Discard(players);
+            card.Discard(Players);
         }
 
         return true;
@@ -828,7 +828,7 @@ public class CCG
 
         if (commandPoints != 0)
         {
-            player.resources.AddCommandPoints((sbyte) commandPoints, GetGameTemplate());
+            player.Resources.AddCommandPoints((sbyte) commandPoints, GetGameTemplate());
         }
 
         if (cardTemplateId != 0)
@@ -839,11 +839,11 @@ public class CCG
                 Card card = cardTemplate.GenerateCard(this);
                 if (card != null)
                 {
-                    card.instanceId = GetNextSummonInstanceId();
+                    card.InstanceId = GetNextSummonInstanceId();
                     card.Setup();
-                    card.activeData.owner = playerIndex;
-                    player.hand.cards.Add(card);
-                    Console.WriteLine("**** CCG.GiveCardAndCmdPts - Spanwed New Card * " + card.instanceId);
+                    card.ActiveData.Owner = playerIndex;
+                    player.Hand.Cards.Add(card);
+                    Console.WriteLine("**** CCG.GiveCardAndCmdPts - Spanwed New Card * " + card.InstanceId);
                 }
             }
         }
@@ -853,9 +853,9 @@ public class CCG
 
     public bool CanTriggerEndTurnTraits(sbyte playerIndex, bool remote)
     {
-        if (playerTurn == playerIndex && (remote || localPlayer == playerIndex))
+        if (PlayerTurn == playerIndex && (remote || LocalPlayer == playerIndex))
         {
-            Player player = players[playerIndex];
+            Player player = Players[playerIndex];
             if (!player.CanTriggerEndTurnTraits(gameRules))
             {
                 return false;
@@ -871,16 +871,16 @@ public class CCG
     {
         TurnChangeCCGEvent logData = new TurnChangeCCGEvent(CCGEventType.EndTurn, playerIndex);
         AddCCGEventLog(logData);
-        Player player = players[playerIndex];
+        Player player = Players[playerIndex];
         if (player.TriggerEndTurnTraits(gameRules, playerIndex))
         {
-            board.EndTurn(playerIndex);
-            for (int i = 0; i < players.Length; i++)
+            Board.EndTurn(playerIndex);
+            for (int i = 0; i < Players.Length; i++)
             {
-                players[i].commander.EndTurn(playerIndex);
+                Players[i].Commander.EndTurn(playerIndex);
             }
 
-            board.CheckDiscards(players);
+            Board.CheckDiscards(Players);
             return true;
         }
 
@@ -889,9 +889,9 @@ public class CCG
 
     public bool CanEndTurn(sbyte playerIndex, bool remote, int[] cardsToDiscard)
     {
-        if (playerTurn == playerIndex && (remote || localPlayer == playerIndex))
+        if (PlayerTurn == playerIndex && (remote || LocalPlayer == playerIndex))
         {
-            Player player = players[playerIndex];
+            Player player = Players[playerIndex];
             if (!player.CanEndTurn(gameRules, cardsToDiscard))
             {
                 return false;
@@ -905,14 +905,14 @@ public class CCG
 
     public bool EndTurn(sbyte playerIndex, int[] cardIdsToDiscard)
     {
-        Player player = players[playerIndex];
+        Player player = Players[playerIndex];
         if (player.EndTurn(gameRules, playerIndex))
         {
-            CardCollection hand = players[playerIndex].hand;
+            CardCollection hand = Players[playerIndex].Hand;
             for (int i = 0; i < cardIdsToDiscard.Length; i++)
             {
                 Card card = hand.RemoveCard(cardIdsToDiscard[i]);
-                card.Discard(players);
+                card.Discard(Players);
             }
 
             sbyte nextPlayerIndex = GetNextPlayerIndex(playerIndex);
@@ -925,12 +925,12 @@ public class CCG
 
     public bool CanAttack(sbyte playerIndex, int cardId, sbyte targetOwner, int targetId, bool remote)
     {
-        if (playerTurn == playerIndex && (remote || localPlayer == playerIndex))
+        if (PlayerTurn == playerIndex && (remote || LocalPlayer == playerIndex))
         {
-            Player player = players[playerIndex];
+            Player player = Players[playerIndex];
             if (player.CanSubmitActions())
             {
-                return board.CanAttack(playerIndex, cardId, targetOwner, targetId, players);
+                return Board.CanAttack(playerIndex, cardId, targetOwner, targetId, Players);
             }
         }
 
@@ -940,12 +940,12 @@ public class CCG
 
     public bool CanAttack(sbyte playerIndex, int cardId)
     {
-        if (playerTurn == playerIndex && localPlayer == playerIndex)
+        if (PlayerTurn == playerIndex && LocalPlayer == playerIndex)
         {
-            Player player = players[playerIndex];
+            Player player = Players[playerIndex];
             if (player.CanSubmitActions())
             {
-                return board.CanAttack(playerIndex, cardId);
+                return Board.CanAttack(playerIndex, cardId);
             }
         }
 
@@ -954,9 +954,9 @@ public class CCG
 
     public bool Attack(sbyte playerIndex, int cardId, sbyte ownerId, int targetId)
     {
-        if (board.Attack(playerIndex, cardId, ownerId, targetId, players))
+        if (Board.Attack(playerIndex, cardId, ownerId, targetId, Players))
         {
-            board.CheckDiscards(players);
+            Board.CheckDiscards(Players);
             gameRules.CheckEndGame(this);
             return true;
         }
@@ -967,7 +967,7 @@ public class CCG
     public bool CanActivate(sbyte playerIndex, int cardId, sbyte ownerId, int targetId, TargetableArea area,
         RegionEnum region, bool remote)
     {
-        Player player = players[playerIndex];
+        Player player = Players[playerIndex];
         if (!player.CanSubmitActions())
         {
             return false;
@@ -986,9 +986,9 @@ public class CCG
     public bool ActivateTrait(sbyte playerIndex, int cardId, sbyte ownerId, int targetId, TargetableArea area,
         RegionEnum region)
     {
-        if (board.ActivateTrait(playerIndex, cardId, ownerId, targetId, area, region, players))
+        if (Board.ActivateTrait(playerIndex, cardId, ownerId, targetId, area, region, Players))
         {
-            board.CheckDiscards(players);
+            Board.CheckDiscards(Players);
             gameRules.CheckEndGame(this);
             return true;
         }
@@ -998,106 +998,106 @@ public class CCG
 
     public void CardMoved(Card card, CardStack target, RegionEnum region, RegionEnum origin)
     {
-        board.CardMoved(card, target, region, origin);
-        for (int i = 0; i < players.Length; i++)
+        Board.CardMoved(card, target, region, origin);
+        for (int i = 0; i < Players.Length; i++)
         {
-            players[i].commander.CardMoved(card, target, region, origin);
+            Players[i].Commander.CardMoved(card, target, region, origin);
         }
     }
 
     public void CardAttacked(Card attacker, Card target)
     {
-        board.CardAttacked(attacker, target);
-        for (int i = 0; i < players.Length; i++)
+        Board.CardAttacked(attacker, target);
+        for (int i = 0; i < Players.Length; i++)
         {
-            players[i].commander.CardAttacked(attacker, target);
+            Players[i].Commander.CardAttacked(attacker, target);
         }
     }
 
     public void CardCounterAttacked(Card attacker, Card target)
     {
-        board.CardCounterAttacked(attacker, target);
-        for (int i = 0; i < players.Length; i++)
+        Board.CardCounterAttacked(attacker, target);
+        for (int i = 0; i < Players.Length; i++)
         {
-            players[i].commander.CardCounterAttacked(attacker, target);
+            Players[i].Commander.CardCounterAttacked(attacker, target);
         }
     }
 
     public void CardGainedStatus(Card theCard, Card source, sbyte statusType)
     {
-        board.CardGainedStatus(theCard, source, statusType);
-        for (int i = 0; i < players.Length; i++)
+        Board.CardGainedStatus(theCard, source, statusType);
+        for (int i = 0; i < Players.Length; i++)
         {
-            players[i].commander.CardGainedStatus(theCard, source, statusType);
+            Players[i].Commander.CardGainedStatus(theCard, source, statusType);
         }
     }
 
     public void CardDamaged(Card damangedCard, Card source)
     {
-        board.CardDamaged(damangedCard, source);
-        for (int i = 0; i < players.Length; i++)
+        Board.CardDamaged(damangedCard, source);
+        for (int i = 0; i < Players.Length; i++)
         {
-            players[i].commander.CardDamaged(damangedCard, source);
+            Players[i].Commander.CardDamaged(damangedCard, source);
         }
     }
 
     public void CardDied(Card deadCard, Card source)
     {
-        board.CardDied(deadCard, source);
-        for (int i = 0; i < players.Length; i++)
+        Board.CardDied(deadCard, source);
+        for (int i = 0; i < Players.Length; i++)
         {
-            players[i].commander.CardDied(deadCard, source);
+            Players[i].Commander.CardDied(deadCard, source);
         }
     }
 
     public void CardDrawn(Card drawnCard, bool regularDraw, bool isNewTurn)
     {
-        board.CardDrawn(drawnCard, regularDraw, isNewTurn);
-        for (int i = 0; i < players.Length; i++)
+        Board.CardDrawn(drawnCard, regularDraw, isNewTurn);
+        for (int i = 0; i < Players.Length; i++)
         {
-            players[i].commander.CardDrawn(drawnCard, regularDraw, isNewTurn);
+            Players[i].Commander.CardDrawn(drawnCard, regularDraw, isNewTurn);
         }
     }
 
     public void CardDiscardEffect(sbyte playerIndex, int numberOfCards)
     {
-        board.CardDiscardEffect(playerIndex, numberOfCards);
-        for (int i = 0; i < players.Length; i++)
+        Board.CardDiscardEffect(playerIndex, numberOfCards);
+        for (int i = 0; i < Players.Length; i++)
         {
-            players[i].commander.CardDiscardEffect(playerIndex, numberOfCards);
+            Players[i].Commander.CardDiscardEffect(playerIndex, numberOfCards);
         }
     }
 
     public void SecretTriggered(Card secret, Card source)
     {
-        board.SecretTriggered(secret, source);
-        for (int i = 0; i < players.Length; i++)
+        Board.SecretTriggered(secret, source);
+        for (int i = 0; i < Players.Length; i++)
         {
-            players[i].commander.SecretTriggered(secret, source);
+            Players[i].Commander.SecretTriggered(secret, source);
         }
     }
 
     public void SecretDestroyed(Card secret, Card source)
     {
-        board.SecretDestroyed(secret, source);
-        for (int i = 0; i < players.Length; i++)
+        Board.SecretDestroyed(secret, source);
+        for (int i = 0; i < Players.Length; i++)
         {
-            players[i].commander.SecretDestroyed(secret, source);
+            Players[i].Commander.SecretDestroyed(secret, source);
         }
     }
 
     public void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack target, RegionEnum region)
     {
-        board.TraitEffectActivating(effect, source, target, region);
-        for (int i = 0; i < players.Length; i++)
+        Board.TraitEffectActivating(effect, source, target, region);
+        for (int i = 0; i < Players.Length; i++)
         {
-            players[i].commander.TraitEffectActivating(effect, source, target, region);
+            Players[i].Commander.TraitEffectActivating(effect, source, target, region);
         }
     }
 
     public bool CanSurrender(sbyte playerIndex)
     {
-        if (playerTurn >= 0 && !players[playerIndex].surrender)
+        if (PlayerTurn >= 0 && !Players[playerIndex].Surrender)
         {
             return true;
         }
@@ -1107,13 +1107,13 @@ public class CCG
 
     public bool Surrender(sbyte playerIndex)
     {
-        Player player = players[playerIndex];
-        player.surrender = true;
-        int num = players.Length;
+        Player player = Players[playerIndex];
+        player.Surrender = true;
+        int num = Players.Length;
         int num2 = 0;
         for (int i = 0; i < num; i++)
         {
-            if (players[i].surrender)
+            if (Players[i].Surrender)
             {
                 num2++;
             }
@@ -1121,8 +1121,8 @@ public class CCG
 
         if (num2 == num - 1)
         {
-            surrenderGameOver = true;
-            if (currentRound > 3)
+            SurrenderGameOver = true;
+            if (CurrentRound > 3)
             {
                 GenerateRewards();
             }
@@ -1133,7 +1133,7 @@ public class CCG
 
     public bool CanMessage(sbyte playerIndex)
     {
-        if (playerTurn >= 0 && !players[playerIndex].surrender)
+        if (PlayerTurn >= 0 && !Players[playerIndex].Surrender)
         {
             return true;
         }
@@ -1143,12 +1143,12 @@ public class CCG
 
     public sbyte GetNextPlayerIndex(sbyte playerIndex)
     {
-        if (surrenderGameOver || players == null || gameRules == null)
+        if (SurrenderGameOver || Players == null || gameRules == null)
         {
             return -1;
         }
 
-        int num = players.Length;
+        int num = Players.Length;
         sbyte b = playerIndex;
         do
         {
@@ -1169,20 +1169,20 @@ public class CCG
 
     public void GenerateRewards()
     {
-        if (gameType != 0)
+        if (GameType != 0)
         {
             return;
         }
 
-        for (int i = 0; i < rewards.Length; i++)
+        for (int i = 0; i < Rewards.Length; i++)
         {
-            if (i == winningPlayer || (surrenderGameOver && !players[i].surrender))
+            if (i == WinningPlayer || (SurrenderGameOver && !Players[i].Surrender))
             {
-                rewards[i].Generate(true, winGameRewards);
+                Rewards[i].Generate(true, winGameRewards);
             }
             else
             {
-                rewards[i].Generate(false, loseGameRewards);
+                Rewards[i].Generate(false, loseGameRewards);
             }
         }
     }
@@ -1199,37 +1199,37 @@ public class CCG
 
     private void StartNewTurn(sbyte playerIndex)
     {
-        playerTurn = playerIndex;
+        PlayerTurn = playerIndex;
         SetCurrentRound();
-        playerTurnStart = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-        if (playerTurn >= 0)
+        PlayerTurnStart = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        if (PlayerTurn >= 0)
         {
             TurnChangeCCGEvent logData = new TurnChangeCCGEvent(CCGEventType.NewTurn, playerIndex);
             AddCCGEventLog(logData);
-            players[playerTurn].NewTurn(playerTurn, GetDrawCount());
-            board.NewTurn(playerTurn);
-            for (int i = 0; i < players.Length; i++)
+            Players[PlayerTurn].NewTurn(PlayerTurn, GetDrawCount());
+            Board.NewTurn(PlayerTurn);
+            for (int i = 0; i < Players.Length; i++)
             {
-                players[i].commander.NewTurn(playerIndex);
+                Players[i].Commander.NewTurn(playerIndex);
             }
         }
 
-        board.CheckDiscards(players);
+        Board.CheckDiscards(Players);
         gameRules.CheckEndGame(this);
     }
 
     private void SetCurrentRound()
     {
-        if (playerTurn == 0)
+        if (PlayerTurn == 0)
         {
-            currentRound++;
+            CurrentRound++;
         }
     }
 
     private sbyte GetDrawCount()
     {
-        bool flag = currentRound == 0;
-        bool flag2 = playerTurn == 0;
+        bool flag = CurrentRound == 0;
+        bool flag2 = PlayerTurn == 0;
         if (flag && flag2)
         {
             return gameRules.FirstTurnDrawFirstPlayer;

@@ -8,23 +8,23 @@ public class EjectEffect : BaseTraitEffect
     public override void CardDied(Card deadCard, Card source, ActiveTrait active)
     {
         List<CardStack> list = GameState.FindCardStack(deadCard);
-        if (list.Count <= 0 || list[0].primaryCard == null || !list[0].primaryCard.HasPilot() ||
-            (durationData.charges > 0 && active.durationData.charges == 0))
+        if (list.Count <= 0 || list[0].PrimaryCard == null || !list[0].PrimaryCard.HasPilot() ||
+            (DurationData.Charges > 0 && active.DurationData.Charges == 0))
         {
             return;
         }
 
         CardStack cardStack = list[0];
-        UnitCard unitCard = (UnitCard) cardStack.primaryCard;
-        UnitCard embarkedPilot = unitCard.embarkedPilot;
+        UnitCard unitCard = (UnitCard) cardStack.PrimaryCard;
+        UnitCard embarkedPilot = unitCard.EmbarkedPilot;
         if ((unitCard.EqualsTo(active.GetTraitTarget()) || embarkedPilot.EqualsTo(active.GetTraitTarget())) &&
             unitCard.GetTemplate().Type == CardType.Titan && embarkedPilot.GetTemplate().Type == CardType.Pilot)
         {
-            TraitInfoCCGEvent logData = new TraitInfoCCGEvent(CCGEventType.TraitEvent, traitParentID, effectTraitID,
-                active.GetTraitTarget().instanceId, active.GetTraitTarget().activeData.owner,
-                active.GetTraitSource().instanceId, active.GetTraitSource().activeData.owner, 17);
+            TraitInfoCCGEvent logData = new TraitInfoCCGEvent(CCGEventType.TraitEvent, TraitParentId, EffectTraitId,
+                active.GetTraitTarget().InstanceId, active.GetTraitTarget().ActiveData.Owner,
+                active.GetTraitSource().InstanceId, active.GetTraitSource().ActiveData.Owner, 17);
             GameState.AddCCGEventLog(logData);
-            GameState.Disembark(unitCard.activeData.owner, unitCard.instanceId, true, this);
+            GameState.Disembark(unitCard.ActiveData.Owner, unitCard.InstanceId, true, this);
             if (active.HasCharges())
             {
                 active.ExpendCharge(GameState);

@@ -8,8 +8,8 @@ public class ForceMoveEffect : BaseTraitEffect
 
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
-        sbyte owner = source.activeData.owner;
-        sbyte owner2 = card.activeData.owner;
+        sbyte owner = source.ActiveData.Owner;
+        sbyte owner2 = card.ActiveData.Owner;
         RegionEnum regionEnum = RegionEnum.NumRegions;
         bool titanOnly = card.GetTemplate().Type == CardType.Titan;
         if (moveLocation == TargetableArea.Frontline)
@@ -25,11 +25,11 @@ public class ForceMoveEffect : BaseTraitEffect
             regionEnum = (RegionEnum) (0 + (byte) GameState.GetOpponentPlayerIndex(owner));
         }
 
-        sbyte b = (sbyte) GameState.board.regions[(uint) regionEnum]
+        sbyte b = (sbyte) GameState.Board.Regions[(uint) regionEnum]
             .GetEmptyCardStackIndex(titanOnly, card.GetTemplate().IsSupportUnit());
         if (b >= 0)
         {
-            GameState.Move(owner2, card.instanceId, regionEnum, b, 1, this);
+            GameState.Move(owner2, card.InstanceId, regionEnum, b, 1, this);
         }
     }
 
@@ -41,7 +41,7 @@ public class ForceMoveEffect : BaseTraitEffect
             List<CardStack> list = GameState.FindCardStack(card);
             for (int i = 0; i < list.Count; i++)
             {
-                if (list[i].primaryCard.EqualsTo(card))
+                if (list[i].PrimaryCard.EqualsTo(card))
                 {
                     result = true;
                     break;

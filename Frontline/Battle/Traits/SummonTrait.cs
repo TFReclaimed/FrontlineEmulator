@@ -13,23 +13,23 @@ public class SummonTrait : BaseTraitEffect
 
     public override bool DoesApply(Card card, Card source, bool checkRange, bool onDeploy)
     {
-        sbyte owner = source.activeData.owner;
-        int targetID = targets.targetID;
-        RegionEnum traitActorRegion = GameState.GetTraitActorRegion(owner, source.instanceId);
-        TargetableArea area = targets.area;
+        sbyte owner = source.ActiveData.Owner;
+        int targetID = Targets.TargetId;
+        RegionEnum traitActorRegion = GameState.GetTraitActorRegion(owner, source.InstanceId);
+        TargetableArea area = Targets.Area;
         return GameState.CanSummon(owner, targetID, traitActorRegion, area);
     }
 
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
-        sbyte owner = source.activeData.owner;
-        int targetID = targets.targetID;
-        RegionEnum traitActorRegion = GameState.GetTraitActorRegion(owner, source.instanceId);
-        TargetableArea area = targets.area;
+        sbyte owner = source.ActiveData.Owner;
+        int targetID = Targets.TargetId;
+        RegionEnum traitActorRegion = GameState.GetTraitActorRegion(owner, source.InstanceId);
+        TargetableArea area = Targets.Area;
         sbyte b = count;
-        if (count > 0 && active.dataValue > 0)
+        if (count > 0 && active.DataValue > 0)
         {
-            b = (sbyte) active.dataValue;
+            b = (sbyte) active.DataValue;
         }
 
         if (b > 1)

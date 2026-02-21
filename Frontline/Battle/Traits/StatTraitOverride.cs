@@ -22,7 +22,7 @@ public class StatTraitOverride : BaseTraitEffect
 
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
-        if (active.dataValue != 0)
+        if (active.DataValue != 0)
         {
             return;
         }
@@ -69,13 +69,13 @@ public class StatTraitOverride : BaseTraitEffect
             dataValue = card2.GetCurrentCost();
         }
 
-        active.dataValue = dataValue;
+        active.DataValue = dataValue;
         GameState.CaptureTemporaryEffect(active);
         base.Apply(card, source, active);
     }
 
     public override int GetOverrideData(ActiveTrait active)
     {
-        return active.dataValue;
+        return active.DataValue;
     }
 }

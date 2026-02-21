@@ -33,12 +33,12 @@ public class NegateActivationEffect : BaseTraitEffect
 
     public override bool DoesNegateEffect(BaseTraitEffect effect, Card source, ActiveTrait active)
     {
-        if (deterable && active.detered)
+        if (Deterable && active.Detered)
         {
             return false;
         }
 
-        if (active.GetTraitSource().activeData.owner == source.activeData.owner)
+        if (active.GetTraitSource().ActiveData.Owner == source.ActiveData.Owner)
         {
             return false;
         }

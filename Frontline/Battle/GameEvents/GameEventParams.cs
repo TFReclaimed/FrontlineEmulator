@@ -13,13 +13,13 @@ namespace Frontline.Battle.GameEvents;
 [JsonDerivedType(typeof(GameEventRegionTarget), "GameEventRegionTarget")]
 public class GameEventParams
 {
-    public sbyte playerIndex = -1;
+    public sbyte PlayerIndex { get; } = -1;
 
-    public GameEvent gameEvent = GameEvent.NumEvents;
+    public GameEvent GameEvent { get; set; } = GameEvent.NumEvents;
 
-    public GameEventResult eventResult;
+    public GameEventResult EventResult { get; }
 
-    public List<CCGEventData> ccgEventsLog;
+    public List<CCGEventData> CcgEventsLog { get; set; }
 
     public GameEventParams()
     {
@@ -27,20 +27,20 @@ public class GameEventParams
 
     public GameEventParams(GameEvent gameEv, sbyte player)
     {
-        playerIndex = player;
-        gameEvent = gameEv;
+        PlayerIndex = player;
+        GameEvent = gameEv;
     }
 
     public virtual GameEventResult ReplayEvent(CcgGame game)
     {
-        if (gameEvent == GameEvent.Surrender)
+        if (GameEvent == GameEvent.Surrender)
         {
-            if (game.Surrender(playerIndex, true) != 1)
+            if (game.Surrender(PlayerIndex, true) != 1)
             {
                 return null;
             }
         }
-        else if (gameEvent == GameEvent.TriggerEndTurnTraits && game.TriggerEndTurnTraits(playerIndex, true) != 1)
+        else if (GameEvent == GameEvent.TriggerEndTurnTraits && game.TriggerEndTurnTraits(PlayerIndex, true) != 1)
         {
             return null;
         }

@@ -8,9 +8,9 @@ public class DiscardEffect : BaseTraitEffect
 
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
-        sbyte owner = card.activeData.owner;
-        Player player = GameState.players[owner];
-        int num = player.hand.cards.Count;
+        sbyte owner = card.ActiveData.Owner;
+        Player player = GameState.Players[owner];
+        int num = player.Hand.Cards.Count;
         int[] array = null;
         Card card2 = null;
         MulliganDrawCCGEventCardData[] array2 = null;
@@ -20,9 +20,9 @@ public class DiscardEffect : BaseTraitEffect
         }
 
         sbyte b = numberOfCards;
-        if (numberOfCards > 0 && active.dataValue > 0)
+        if (numberOfCards > 0 && active.DataValue > 0)
         {
-            b = (sbyte) active.dataValue;
+            b = (sbyte) active.DataValue;
         }
 
         if (b > num)
@@ -31,9 +31,9 @@ public class DiscardEffect : BaseTraitEffect
             array2 = new MulliganDrawCCGEventCardData[num];
             for (int i = 0; i < num; i++)
             {
-                card2 = player.hand.cards[i];
-                array[i] = card2.instanceId;
-                array2[i] = new MulliganDrawCCGEventCardData(card2.instanceId, card2.templateId, card2.rank);
+                card2 = player.Hand.Cards[i];
+                array[i] = card2.InstanceId;
+                array2[i] = new MulliganDrawCCGEventCardData(card2.InstanceId, card2.TemplateId, card2.Rank);
             }
         }
         else
@@ -47,8 +47,8 @@ public class DiscardEffect : BaseTraitEffect
             {
                 flag = false;
                 num3 = GameState.GetGame().GetServerIntValue(0, num);
-                card2 = player.hand.cards[num3];
-                num3 = card2.instanceId;
+                card2 = player.Hand.Cards[num3];
+                num3 = card2.InstanceId;
                 for (int j = 0; j < num2; j++)
                 {
                     if (array[j] == num3)
@@ -60,7 +60,7 @@ public class DiscardEffect : BaseTraitEffect
                 if (!flag)
                 {
                     array[num2] = num3;
-                    array2[num2] = new MulliganDrawCCGEventCardData(card2.instanceId, card2.templateId, card2.rank);
+                    array2[num2] = new MulliganDrawCCGEventCardData(card2.InstanceId, card2.TemplateId, card2.Rank);
                     num2++;
                 }
             }
@@ -69,8 +69,8 @@ public class DiscardEffect : BaseTraitEffect
         }
 
         DiscardEffectCCGEvent discardEffectCCGEvent = new DiscardEffectCCGEvent(owner, array2);
-        discardEffectCCGEvent.effectId = effectTraitID;
-        discardEffectCCGEvent.traitId = traitParentID;
+        discardEffectCCGEvent.EffectId = EffectTraitId;
+        discardEffectCCGEvent.TraitId = TraitParentId;
         GameState.AddCCGEventLog(discardEffectCCGEvent);
         GameState.DoCardDiscard(owner, array);
         GameState.CardDiscardEffect(owner, num);

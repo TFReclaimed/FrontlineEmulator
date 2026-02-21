@@ -2,7 +2,7 @@ namespace Frontline.Battle;
 
 public class ActiveTraitCardInfo
 {
-    public int instanceId;
+    public int InstanceId { get; set; }
 
-    public sbyte owner;
+    public sbyte Owner { get; set; }
 }

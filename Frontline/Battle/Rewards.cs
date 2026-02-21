@@ -4,7 +4,7 @@ namespace Frontline.Battle;
 
 public class Rewards
 {
-    public bool isWinner;
+    public bool IsWinner { get; set; }
 
     private int playerXP;
 
@@ -50,7 +50,7 @@ public class Rewards
 
     public void Generate(bool winner, List<RewardsTemplate> rewards)
     {
-        isWinner = winner;
+        IsWinner = winner;
         ClearTotals();
         for (int i = 0; i < rewards.Count; i++)
         {

@@ -6,15 +6,15 @@ namespace Frontline.Battle;
 
 public class SupportDeck : Deck
 {
-    public sbyte currentSupport;
+    public sbyte CurrentSupport { get; set; }
 
-    public Card repeater;
+    public Card Repeater { get; set; }
 
-    public Card ultimate;
+    public Card Ultimate { get; set; }
 
-    public bool canRepeat;
+    public bool CanRepeat { get; set; }
 
-    public bool noshuffle;
+    public bool Noshuffle { get; set; }
 
     private readonly CCG _gameState;
 
@@ -25,24 +25,24 @@ public class SupportDeck : Deck
 
     public void Create(List<Card> support, CCG game, sbyte playerIndex, bool skipShuffle)
     {
-        cards = support;
-        for (int i = 0; i < cards.Count; i++)
+        Cards = support;
+        for (int i = 0; i < Cards.Count; i++)
         {
-            cards[i] = cards[i].GenerateAndInit(game);
-            cards[i].activeData.owner = playerIndex;
-            cards[i].Setup();
+            Cards[i] = Cards[i].GenerateAndInit(game);
+            Cards[i].ActiveData.Owner = playerIndex;
+            Cards[i].Setup();
         }
 
-        count = (sbyte) cards.Count;
-        repeater = cards[0];
-        ultimate = cards[cards.Count - 1];
-        noshuffle = skipShuffle;
-        if (!noshuffle)
+        Count = (sbyte) Cards.Count;
+        Repeater = Cards[0];
+        Ultimate = Cards[Cards.Count - 1];
+        Noshuffle = skipShuffle;
+        if (!Noshuffle)
         {
-            Shuffle(noshuffle);
+            Shuffle(Noshuffle);
         }
 
-        currentSupport = (sbyte) cards.Count;
+        CurrentSupport = (sbyte) Cards.Count;
     }
 
     public override void Shuffle(bool skip)
@@ -51,62 +51,62 @@ public class SupportDeck : Deck
         {
             base.Shuffle(skip);
         }
-        else if (currentSupport == cards.Count - 1)
+        else if (CurrentSupport == Cards.Count - 1)
         {
-            int index = cards.Count - 1;
-            Card item = cards[index];
-            cards.RemoveAt(index);
-            cards.Insert(0, item);
+            int index = Cards.Count - 1;
+            Card item = Cards[index];
+            Cards.RemoveAt(index);
+            Cards.Insert(0, item);
         }
     }
 
     public void Init(CCG game, sbyte playerIndex)
     {
-        for (int i = 0; i < cards.Count; i++)
+        for (int i = 0; i < Cards.Count; i++)
         {
-            cards[i] = cards[i].GenerateAndInit(game);
-            cards[i].activeData.owner = playerIndex;
+            Cards[i] = Cards[i].GenerateAndInit(game);
+            Cards[i].ActiveData.Owner = playerIndex;
         }
 
-        if (repeater != null)
+        if (Repeater != null)
         {
-            repeater.Init();
+            Repeater.Init();
         }
 
-        if (ultimate != null)
+        if (Ultimate != null)
         {
-            ultimate.Init();
+            Ultimate.Init();
         }
     }
 
     public void InitActiveData()
     {
-        for (int i = 0; i < cards.Count; i++)
+        for (int i = 0; i < Cards.Count; i++)
         {
-            cards[i].InitActiveData();
+            Cards[i].InitActiveData();
         }
     }
 
     public void NewTurn(sbyte commandAccum)
     {
-        canRepeat = true;
+        CanRepeat = true;
         DrawCard(commandAccum, true);
     }
 
     public void DrawCard(sbyte commandAccum, bool isNewTurn)
     {
-        if (cards.Count <= 0)
+        if (Cards.Count <= 0)
         {
             return;
         }
 
-        if (canRepeat && repeater != null)
+        if (CanRepeat && Repeater != null)
         {
-            canRepeat = false;
+            CanRepeat = false;
             bool flag = false;
-            for (int i = 0; i < cards.Count; i++)
+            for (int i = 0; i < Cards.Count; i++)
             {
-                if (cards[i].templateId == repeater.templateId)
+                if (Cards[i].TemplateId == Repeater.TemplateId)
                 {
                     flag = true;
                     break;
@@ -115,65 +115,65 @@ public class SupportDeck : Deck
 
             if (!flag)
             {
-                CardTemplate cardTemplate = RulesetParser.GetCardTemplate(repeater.templateId, repeater.rank);
+                CardTemplate cardTemplate = RulesetParser.GetCardTemplate(Repeater.TemplateId, Repeater.Rank);
                 if (cardTemplate == null)
                 {
                     return;
                 }
 
                 Card card = cardTemplate.GenerateCard(_gameState);
-                card.instanceId = _gameState.GetNextSummonInstanceId();
-                card.activeData.owner = repeater.activeData.owner;
+                card.InstanceId = _gameState.GetNextSummonInstanceId();
+                card.ActiveData.Owner = Repeater.ActiveData.Owner;
                 card.Setup();
                 card.InitActiveData();
-                Console.WriteLine("**** SupportDeck.DrawCard - Spanwed New Card * " + card.instanceId);
-                cards.Add(card);
+                Console.WriteLine("**** SupportDeck.DrawCard - Spanwed New Card * " + card.InstanceId);
+                Cards.Add(card);
             }
         }
 
-        Shuffle(noshuffle);
-        currentSupport = (sbyte) (cards.Count - 1);
-        if (ultimate != null && ultimate.GetTemplate().Cost == commandAccum)
+        Shuffle(Noshuffle);
+        CurrentSupport = (sbyte) (Cards.Count - 1);
+        if (Ultimate != null && Ultimate.GetTemplate().Cost == commandAccum)
         {
-            for (int num = currentSupport; num >= 0; num--)
+            for (int num = CurrentSupport; num >= 0; num--)
             {
-                if (cards[num].templateId == ultimate.templateId)
+                if (Cards[num].TemplateId == Ultimate.TemplateId)
                 {
-                    Card value = cards[num];
-                    cards[num] = cards[currentSupport];
-                    cards[currentSupport] = value;
+                    Card value = Cards[num];
+                    Cards[num] = Cards[CurrentSupport];
+                    Cards[CurrentSupport] = value;
                     break;
                 }
             }
 
-            ultimate = null;
+            Ultimate = null;
         }
         else
         {
-            for (int num2 = currentSupport; num2 >= 0; num2--)
+            for (int num2 = CurrentSupport; num2 >= 0; num2--)
             {
-                if (cards[num2].GetTemplate().Cost <= commandAccum)
+                if (Cards[num2].GetTemplate().Cost <= commandAccum)
                 {
-                    Card value2 = cards[num2];
-                    cards[num2] = cards[currentSupport];
-                    cards[currentSupport] = value2;
+                    Card value2 = Cards[num2];
+                    Cards[num2] = Cards[CurrentSupport];
+                    Cards[CurrentSupport] = value2;
                     break;
                 }
             }
         }
 
-        Card card2 = cards[currentSupport];
-        CardDrawCCGEvent logData = new CardDrawCCGEvent(CCGEventType.SupportDraw, card2.instanceId,
-            card2.activeData.owner, card2.templateId, card2.rank);
+        Card card2 = Cards[CurrentSupport];
+        CardDrawCCGEvent logData = new CardDrawCCGEvent(CCGEventType.SupportDraw, card2.InstanceId,
+            card2.ActiveData.Owner, card2.TemplateId, card2.Rank);
         _gameState.AddCCGEventLog(logData);
         _gameState.CardDrawn(card2, false, isNewTurn);
     }
 
     public Card GetCurrent()
     {
-        if (currentSupport >= 0 && currentSupport < cards.Count)
+        if (CurrentSupport >= 0 && CurrentSupport < Cards.Count)
         {
-            return cards[currentSupport];
+            return Cards[CurrentSupport];
         }
 
         return null;
@@ -182,15 +182,15 @@ public class SupportDeck : Deck
     public Card DeployCard(int cardId)
     {
         Card result = null;
-        if (currentSupport < cards.Count)
+        if (CurrentSupport < Cards.Count)
         {
-            Card card = cards[currentSupport];
-            if (card.instanceId == cardId)
+            Card card = Cards[CurrentSupport];
+            if (card.InstanceId == cardId)
             {
                 result = card;
-                cards.RemoveAt(currentSupport);
-                count--;
-                currentSupport = (sbyte) cards.Count;
+                Cards.RemoveAt(CurrentSupport);
+                Count--;
+                CurrentSupport = (sbyte) Cards.Count;
             }
         }
 

@@ -5,26 +5,26 @@ namespace Frontline.Battle;
 
 public class BaseTrait
 {
-    public int[] glossaryIds;
+    public int[] GlossaryIds { get; }
 
-    public int traitId;
+    public int TraitId { get; }
 
-    public TraitType traitType = TraitType.Passive;
+    public TraitType TraitType { get; } = TraitType.Passive;
 
-    public bool embarkedInherit;
+    public bool EmbarkedInherit { get; }
 
-    public bool hidden;
+    public bool Hidden { get; }
 
-    public bool functional;
+    public bool Functional { get; }
 
-    public TraitActivationReq actRequirement;
+    public TraitActivationReq ActRequirement { get; }
 
-    public List<BaseTraitEffect> effects;
+    public List<BaseTraitEffect> Effects { get; set; }
 
     public bool ActivateOnDeploy()
     {
-        return traitType == TraitType.Deployed || traitType == TraitType.Passive || traitType == TraitType.Secret ||
-               traitType == TraitType.BurnCard || traitType == TraitType.Gear || traitType == TraitType.Basic;
+        return TraitType == TraitType.Deployed || TraitType == TraitType.Passive || TraitType == TraitType.Secret ||
+               TraitType == TraitType.BurnCard || TraitType == TraitType.Gear || TraitType == TraitType.Basic;
     }
 
     public bool CanDropAnywhere()
@@ -64,7 +64,7 @@ public class BaseTrait
             }
         }
 
-        TraitTargeting targets = primaryTargeting.targets;
+        TraitTargeting targets = primaryTargeting.Targets;
         if (targets == null)
         {
             return false;
@@ -72,10 +72,10 @@ public class BaseTrait
 
         if (!targets.HasAreaTarget())
         {
-            if ((traitType == TraitType.BurnCard || traitType == TraitType.OneShot) &&
-                (targets.area == TargetableArea.FriendlyDiscard || targets.area == TargetableArea.EnemyDiscard ||
-                 targets.area == TargetableArea.FriendlyHand || targets.area == TargetableArea.EnemyHand ||
-                 targets.area == TargetableArea.FriendlyCommander || targets.area == TargetableArea.EnemyCommander))
+            if ((TraitType == TraitType.BurnCard || TraitType == TraitType.OneShot) &&
+                (targets.Area == TargetableArea.FriendlyDiscard || targets.Area == TargetableArea.EnemyDiscard ||
+                 targets.Area == TargetableArea.FriendlyHand || targets.Area == TargetableArea.EnemyHand ||
+                 targets.Area == TargetableArea.FriendlyCommander || targets.Area == TargetableArea.EnemyCommander))
             {
                 return true;
             }
@@ -103,13 +103,13 @@ public class BaseTrait
             }
         }
 
-        TraitTargeting targets = primaryTargeting.targets;
+        TraitTargeting targets = primaryTargeting.Targets;
         if (targets == null)
         {
             return false;
         }
 
-        TargetableArea area = targets.area;
+        TargetableArea area = targets.Area;
         if (area == TargetableArea.Self)
         {
             return false;
@@ -117,13 +117,13 @@ public class BaseTrait
 
         if (!targets.HasAreaTarget())
         {
-            if (target.primaryCard == null)
+            if (target.PrimaryCard == null)
             {
                 return false;
             }
 
-            Card primaryCard = target.primaryCard;
-            sbyte owner2 = primaryCard.activeData.owner;
+            Card primaryCard = target.PrimaryCard;
+            sbyte owner2 = primaryCard.ActiveData.Owner;
             bool flag = false;
             if (targets.CheckFriendly() && owner2 == owner)
             {
@@ -170,17 +170,17 @@ public class BaseTrait
                     break;
             }
 
-            if (traitType == TraitType.BurnCard && primaryCard.HasStatusEffect(5))
+            if (TraitType == TraitType.BurnCard && primaryCard.HasStatusEffect(5))
             {
                 return false;
             }
 
-            if (traitType == TraitType.OneShot && primaryCard.HasStatusEffect(6))
+            if (TraitType == TraitType.OneShot && primaryCard.HasStatusEffect(6))
             {
                 return false;
             }
 
-            if (traitType == TraitType.Secret && primaryCard.HasStatusEffect(7))
+            if (TraitType == TraitType.Secret && primaryCard.HasStatusEffect(7))
             {
                 return false;
             }
@@ -194,14 +194,14 @@ public class BaseTrait
     public bool CanActivate(Card target, Card source, RegionEnum region, CCG game)
     {
         List<CardStack> list = game.FindCardStack(target);
-        return CanActivate(list[0], region, source.activeData.owner);
+        return CanActivate(list[0], region, source.ActiveData.Owner);
     }
 
     public bool HasActiveTargets(Card card, CardStack target, RegionEnum region, CCG game)
     {
-        for (int i = 0; i < effects.Count; i++)
+        for (int i = 0; i < Effects.Count; i++)
         {
-            if (effects[i].CheckForAppliedTargets(card, target, region).Count > 0)
+            if (Effects[i].CheckForAppliedTargets(card, target, region).Count > 0)
             {
                 return true;
             }
@@ -215,16 +215,16 @@ public class BaseTrait
         BaseTraitEffect trigger = GetTrigger(0);
         if (trigger != null)
         {
-            trigger.ActivateTrigger(card, target, GetPrimaryTargeting(0).targets);
+            trigger.ActivateTrigger(card, target, GetPrimaryTargeting(0).Targets);
         }
         else
         {
             sbyte b = 0;
-            for (int i = 0; i < effects.Count; i++)
+            for (int i = 0; i < Effects.Count; i++)
             {
-                if (effects[i].priority > b)
+                if (Effects[i].Priority > b)
                 {
-                    b = effects[i].priority;
+                    b = Effects[i].Priority;
                 }
             }
 
@@ -232,20 +232,20 @@ public class BaseTrait
             {
                 for (int j = 0; j <= b; j++)
                 {
-                    for (int k = 0; k < effects.Count; k++)
+                    for (int k = 0; k < Effects.Count; k++)
                     {
-                        if (effects[k].priority == j)
+                        if (Effects[k].Priority == j)
                         {
-                            effects[k].Activate(card, target, region);
+                            Effects[k].Activate(card, target, region);
                         }
                     }
                 }
             }
             else
             {
-                for (int l = 0; l < effects.Count; l++)
+                for (int l = 0; l < Effects.Count; l++)
                 {
-                    effects[l].Activate(card, target, region);
+                    Effects[l].Activate(card, target, region);
                 }
             }
         }
@@ -261,10 +261,10 @@ public class BaseTrait
     public virtual void Deactivate(Card card, Card source)
     {
         ActiveTrait activeTrait = null;
-        for (int num = card.activeData.activeTraits.Count - 1; num >= 0; num--)
+        for (int num = card.ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
         {
-            activeTrait = card.activeData.activeTraits[num];
-            if (activeTrait.traitSourceId == traitId)
+            activeTrait = card.ActiveData.ActiveTraits[num];
+            if (activeTrait.TraitSourceId == TraitId)
             {
                 activeTrait.Deactivate(true);
             }
@@ -279,22 +279,22 @@ public class BaseTrait
     public BaseTraitEffect GetPrimaryTargeting(sbyte priority)
     {
         BaseTraitEffect baseTraitEffect = null;
-        for (int i = 0; i < effects.Count; i++)
+        for (int i = 0; i < Effects.Count; i++)
         {
-            if (baseTraitEffect == null && effects[i].targetPrimary)
+            if (baseTraitEffect == null && Effects[i].TargetPrimary)
             {
-                baseTraitEffect = effects[i];
+                baseTraitEffect = Effects[i];
             }
 
-            if (effects[i].TargetTrait() && effects[i].priority == priority)
+            if (Effects[i].TargetTrait() && Effects[i].Priority == priority)
             {
-                return effects[i];
+                return Effects[i];
             }
         }
 
-        if (baseTraitEffect == null && effects.Count > 0)
+        if (baseTraitEffect == null && Effects.Count > 0)
         {
-            return effects[0];
+            return Effects[0];
         }
 
         return baseTraitEffect;
@@ -303,12 +303,12 @@ public class BaseTrait
     public BaseTraitEffect GetTrigger(int limit)
     {
         BaseTraitEffect baseTraitEffect = null;
-        for (int i = 0; i < effects.Count; i++)
+        for (int i = 0; i < Effects.Count; i++)
         {
-            if (effects[i].IsTrigger() && effects[i].priority >= limit &&
-                (baseTraitEffect == null || effects[i].priority < baseTraitEffect.priority))
+            if (Effects[i].IsTrigger() && Effects[i].Priority >= limit &&
+                (baseTraitEffect == null || Effects[i].Priority < baseTraitEffect.Priority))
             {
-                baseTraitEffect = effects[i];
+                baseTraitEffect = Effects[i];
             }
         }
 

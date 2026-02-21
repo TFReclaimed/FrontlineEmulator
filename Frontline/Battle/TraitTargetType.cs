@@ -1,5 +1,8 @@
+using System.Text.Json.Serialization;
+
 namespace Frontline.Battle;
 
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum TraitTargetType : byte
 {
     Pilot = 0,

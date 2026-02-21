@@ -5,29 +5,29 @@ namespace Frontline.Battle;
 
 public class Player
 {
-    public Deck deck;
+    public Deck Deck { get; set; }
 
-    public SupportDeck supportDeck;
+    public SupportDeck SupportDeck { get; set; }
 
-    public CardCollection hand;
+    public CardCollection Hand { get; set; }
 
-    public CardCollection discard;
+    public CardCollection Discard { get; set; }
 
-    public GameResources resources;
+    public GameResources Resources { get; set; }
 
-    public CardStack commander;
+    public CardStack Commander { get; set; }
 
-    public List<Card> secrets;
+    public List<Card> Secrets { get; set; }
 
-    public string name;
+    public string Name { get; set; }
 
-    public int userId;
+    public int UserId { get; set; }
 
-    public bool initialCardsSwapped;
+    public bool InitialCardsSwapped { get; set; }
 
-    public bool surrender;
+    public bool Surrender { get; set; }
 
-    public bool EndTurnTraitsTriggered;
+    public bool EndTurnTraitsTriggered { get; set; }
 
     private readonly CCG _gameState;
 
@@ -39,90 +39,90 @@ public class Player
     public void Create(int id, string profileName, List<Card> cards, List<Card> support, Card currentCommander,
         GameTemplate gameTemplate, sbyte playerIndex, bool skipShuffle)
     {
-        userId = id;
-        deck = new Deck();
-        deck.cards = cards;
-        deck.Shuffle(skipShuffle);
-        deck.count = (sbyte) cards.Count;
-        supportDeck = new SupportDeck(_gameState);
-        supportDeck.Create(support, _gameState, playerIndex, skipShuffle);
-        hand = new CardCollection();
-        hand.Create(gameTemplate.InitialDraw, deck, _gameState, playerIndex);
-        discard = new CardCollection();
-        discard.Create(0, null, _gameState, playerIndex);
-        resources = new GameResources();
-        resources.Create(gameTemplate.InitialPlayerHealth);
+        UserId = id;
+        Deck = new Deck();
+        Deck.Cards = cards;
+        Deck.Shuffle(skipShuffle);
+        Deck.Count = (sbyte) cards.Count;
+        SupportDeck = new SupportDeck(_gameState);
+        SupportDeck.Create(support, _gameState, playerIndex, skipShuffle);
+        Hand = new CardCollection();
+        Hand.Create(gameTemplate.InitialDraw, Deck, _gameState, playerIndex);
+        Discard = new CardCollection();
+        Discard.Create(0, null, _gameState, playerIndex);
+        Resources = new GameResources();
+        Resources.Create(gameTemplate.InitialPlayerHealth);
         if (currentCommander != null)
         {
             CommanderCard commanderCard = (CommanderCard) currentCommander.GenerateAndInit(_gameState);
             commanderCard.SetPlayer(this);
-            commanderCard.activeData.owner = playerIndex;
+            commanderCard.ActiveData.Owner = playerIndex;
             commanderCard.Setup();
-            commander = new CardStack();
-            commander.Create();
-            commander.primaryCard = commanderCard;
+            Commander = new CardStack();
+            Commander.Create();
+            Commander.PrimaryCard = commanderCard;
         }
 
-        secrets = new List<Card>();
-        name = profileName;
+        Secrets = new List<Card>();
+        Name = profileName;
     }
 
     public void ActivateCommander()
     {
-        CommanderCard commanderCard = (CommanderCard) commander.primaryCard;
+        CommanderCard commanderCard = (CommanderCard) Commander.PrimaryCard;
         for (int i = 0; i < commanderCard.GetNumTraits(); i++)
         {
             BaseTrait trait = commanderCard.GetTrait(i);
             if (trait.ActivateOnDeploy())
             {
-                trait.Activate(commanderCard, commander, RegionEnum.NumRegions, _gameState);
+                trait.Activate(commanderCard, Commander, RegionEnum.NumRegions, _gameState);
             }
         }
     }
 
     public void Init(sbyte playerIndex)
     {
-        supportDeck.Init(_gameState, playerIndex);
-        hand.Init(_gameState);
-        if (commander != null)
+        SupportDeck.Init(_gameState, playerIndex);
+        Hand.Init(_gameState);
+        if (Commander != null)
         {
             CommanderCard commanderCard =
-                (CommanderCard) commander.primaryCard.GenerateAndInit(_gameState);
+                (CommanderCard) Commander.PrimaryCard.GenerateAndInit(_gameState);
             commanderCard.SetPlayer(this);
-            commander.primaryCard = commanderCard;
+            Commander.PrimaryCard = commanderCard;
         }
 
-        discard.Init(_gameState);
+        Discard.Init(_gameState);
     }
 
     public void InitActiveData()
     {
-        supportDeck.InitActiveData();
-        hand.InitActiveData();
-        commander.primaryCard.InitActiveData();
+        SupportDeck.InitActiveData();
+        Hand.InitActiveData();
+        Commander.PrimaryCard.InitActiveData();
     }
 
     public Card FindTraitActor(int cardId)
     {
         Card card = null;
-        if (commander != null)
+        if (Commander != null)
         {
-            card = commander.FindTraitActor(cardId, commander.primaryCard.activeData.owner);
+            card = Commander.FindTraitActor(cardId, Commander.PrimaryCard.ActiveData.Owner);
         }
 
         if (card == null)
         {
-            card = discard.FindCard(cardId);
+            card = Discard.FindCard(cardId);
         }
 
         if (card == null)
         {
-            card = hand.FindCard(cardId);
+            card = Hand.FindCard(cardId);
         }
 
         if (card == null)
         {
-            card = deck.FindCard(cardId);
+            card = Deck.FindCard(cardId);
         }
 
         return card;
@@ -130,23 +130,23 @@ public class Player
 
     public Card FindCard(int cardId)
     {
-        Card current = supportDeck.GetCurrent();
-        if (current != null && current.instanceId == cardId)
+        Card current = SupportDeck.GetCurrent();
+        if (current != null && current.InstanceId == cardId)
         {
             return current;
         }
 
-        return hand.FindCard(cardId);
+        return Hand.FindCard(cardId);
     }
 
     public void NewTurn(sbyte playerIndex, sbyte drawCount)
     {
         EndTurnTraitsTriggered = false;
         GameTemplate gameTemplate = _gameState.GetGameTemplate();
-        resources.NewTurn(gameTemplate);
-        if (!commander.primaryCard.HasStatusEffect(1))
+        Resources.NewTurn(gameTemplate);
+        if (!Commander.PrimaryCard.HasStatusEffect(1))
         {
-            supportDeck.NewTurn(resources.commandAccum);
+            SupportDeck.NewTurn(Resources.CommandAccum);
         }
 
         DrawFromDeck(playerIndex, drawCount, true);
@@ -154,17 +154,17 @@ public class Player
 
     public Card DeployCard(int cardId)
     {
-        Card card = supportDeck.DeployCard(cardId);
+        Card card = SupportDeck.DeployCard(cardId);
         if (card != null)
         {
-            resources.Deploy(card.GetCurrentCost());
+            Resources.Deploy(card.GetCurrentCost());
             return card;
         }
 
-        Card card2 = hand.RemoveCard(cardId);
+        Card card2 = Hand.RemoveCard(cardId);
         if (card2 != null)
         {
-            resources.Deploy(card2.GetCurrentCost());
+            Resources.Deploy(card2.GetCurrentCost());
             return card2;
         }
 
@@ -174,23 +174,23 @@ public class Player
     public Card RemoveCardForTrait(int cardId, sbyte myIndex, BaseTraitEffect effect)
     {
         Card card = null;
-        if (effect.targets.area == TargetableArea.FriendlyDiscard || effect.targets.area == TargetableArea.EnemyDiscard)
+        if (effect.Targets.Area == TargetableArea.FriendlyDiscard || effect.Targets.Area == TargetableArea.EnemyDiscard)
         {
-            card = discard.RemoveCard(cardId);
+            card = Discard.RemoveCard(cardId);
             if (card != null)
             {
                 return card;
             }
         }
-        else if (effect.targets.area == TargetableArea.FriendlyHand || effect.targets.area == TargetableArea.EnemyHand)
+        else if (effect.Targets.Area == TargetableArea.FriendlyHand || effect.Targets.Area == TargetableArea.EnemyHand)
         {
-            card = supportDeck.DeployCard(cardId);
+            card = SupportDeck.DeployCard(cardId);
             if (card != null)
             {
                 return card;
             }
 
-            card = hand.RemoveCard(cardId);
+            card = Hand.RemoveCard(cardId);
             if (card != null)
             {
                 return card;
@@ -204,8 +204,8 @@ public class Player
             if (list != null && list.Count > 0)
             {
                 CardStack cardStack = list[0];
-                card = cardStack.primaryCard;
-                cardStack.primaryCard = null;
+                card = cardStack.PrimaryCard;
+                cardStack.PrimaryCard = null;
                 if (card != null)
                 {
                     List<Card> list2 = card.GetSecrets();
@@ -213,7 +213,7 @@ public class Player
                     {
                         for (int i = 0; i < list2.Count; i++)
                         {
-                            list2[i].Discard(_gameState.players);
+                            list2[i].Discard(_gameState.Players);
                         }
 
                         list2.Clear();
@@ -222,8 +222,8 @@ public class Player
                     if (card.HasPilot())
                     {
                         UnitCard unitCard = (UnitCard) card;
-                        unitCard.embarkedPilot.Discard(_gameState.players);
-                        unitCard.embarkedPilot = null;
+                        unitCard.EmbarkedPilot.Discard(_gameState.Players);
+                        unitCard.EmbarkedPilot = null;
                     }
 
                     return card;
@@ -247,7 +247,7 @@ public class Player
 
     public bool CanEndTurn(GameTemplate gameRules, int[] cardsToDiscard)
     {
-        if (surrender)
+        if (Surrender)
         {
             return false;
         }
@@ -257,7 +257,7 @@ public class Player
             return false;
         }
 
-        if (hand.cards.Count - cardsToDiscard.Length > gameRules.MaxCardsInHand)
+        if (Hand.Cards.Count - cardsToDiscard.Length > gameRules.MaxCardsInHand)
         {
             return false;
         }
@@ -272,35 +272,35 @@ public class Player
 
     public void AddToDiscard(Card card)
     {
-        discard.cards.Add(card);
+        Discard.Cards.Add(card);
     }
 
     public void TakeDamage(sbyte attack, sbyte bypass, Card source)
     {
         sbyte b = attack;
         sbyte b2 = bypass;
-        Card primaryCard = commander.primaryCard;
-        int num = resources.health;
+        Card primaryCard = Commander.PrimaryCard;
+        int num = Resources.Health;
         int num2 = b + b2;
         if (num2 <= 0)
         {
             return;
         }
 
-        resources.health = (sbyte) (num - num2);
+        Resources.Health = (sbyte) (num - num2);
         _gameState.CardDamaged(primaryCard, source);
-        CardTraumaCCGEvent logData = new CardTraumaCCGEvent(CCGEventType.CardDamage, num2, source.instanceId,
-            source.activeData.owner, primaryCard.instanceId, primaryCard.activeData.owner);
+        CardTraumaCCGEvent logData = new CardTraumaCCGEvent(CCGEventType.CardDamage, num2, source.InstanceId,
+            source.ActiveData.Owner, primaryCard.InstanceId, primaryCard.ActiveData.Owner);
         _gameState.AddCCGEventLog(logData);
-        if (resources.health > 0)
+        if (Resources.Health > 0)
         {
             return;
         }
 
         _gameState.CardDied(primaryCard, source);
         CardTraumaCCGEvent logData2 = new CardTraumaCCGEvent(CCGEventType.CardDeath,
-            primaryCard.GetCurrentHealth(false), source.instanceId, source.activeData.owner, primaryCard.instanceId,
-            primaryCard.activeData.owner);
+            primaryCard.GetCurrentHealth(false), source.InstanceId, source.ActiveData.Owner, primaryCard.InstanceId,
+            primaryCard.ActiveData.Owner);
         _gameState.AddCCGEventLog(logData2);
         if (source.GetTemplate().IsCombatUnit())
         {
@@ -309,7 +309,7 @@ public class Player
             unitCard.CheckAndUpdateXP(xpTrigger);
             if (unitCard.HasPilot())
             {
-                unitCard.embarkedPilot.CheckAndUpdateXP(xpTrigger);
+                unitCard.EmbarkedPilot.CheckAndUpdateXP(xpTrigger);
             }
         }
     }
@@ -318,17 +318,17 @@ public class Player
     {
         for (int i = 0; i < drawCount; i++)
         {
-            if (deck.count == 0)
+            if (Deck.Count == 0)
             {
-                TakeDamage(0, resources.drawDamage++, commander.primaryCard);
+                TakeDamage(0, Resources.DrawDamage++, Commander.PrimaryCard);
                 continue;
             }
 
-            Card card = hand.DrawFromDeck(deck, _gameState, playerIndex);
+            Card card = Hand.DrawFromDeck(Deck, _gameState, playerIndex);
             if (card != null)
             {
-                CardDrawCCGEvent logData = new CardDrawCCGEvent(CCGEventType.DeckDraw, card.instanceId, playerIndex,
-                    card.templateId, card.rank);
+                CardDrawCCGEvent logData = new CardDrawCCGEvent(CCGEventType.DeckDraw, card.InstanceId, playerIndex,
+                    card.TemplateId, card.Rank);
                 _gameState.AddCCGEventLog(logData);
                 _gameState.CardDrawn(card, true, isNewTurn);
             }
@@ -337,6 +337,6 @@ public class Player
 
     public bool CanSubmitActions()
     {
-        return !EndTurnTraitsTriggered && !surrender;
+        return !EndTurnTraitsTriggered && !Surrender;
     }
 }

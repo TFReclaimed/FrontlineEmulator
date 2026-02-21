@@ -21,9 +21,9 @@ public class RemoveTraitEffect : BaseTraitEffect
 
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
-        for (int num = card.activeData.activeTraits.Count - 1; num >= 0; num--)
+        for (int num = card.ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
         {
-            ActiveTrait activeTrait = card.activeData.activeTraits[num];
+            ActiveTrait activeTrait = card.ActiveData.ActiveTraits[num];
             if (DoesTraitMatch(activeTrait))
             {
                 activeTrait.Deactivate(true);
@@ -46,8 +46,8 @@ public class RemoveTraitEffect : BaseTraitEffect
                 }
                 else
                 {
-                    BaseTrait traitTemplate2 = RulesetParser.GetTraitTemplate(active.traitSourceId);
-                    if (traitTemplate2.traitType == TraitType.BurnCard)
+                    BaseTrait traitTemplate2 = RulesetParser.GetTraitTemplate(active.TraitSourceId);
+                    if (traitTemplate2.TraitType == TraitType.BurnCard)
                     {
                         return true;
                     }
@@ -65,8 +65,8 @@ public class RemoveTraitEffect : BaseTraitEffect
                 }
                 else
                 {
-                    BaseTrait traitTemplate = RulesetParser.GetTraitTemplate(active.traitSourceId);
-                    if (traitTemplate.traitType == TraitType.Secret)
+                    BaseTrait traitTemplate = RulesetParser.GetTraitTemplate(active.TraitSourceId);
+                    if (traitTemplate.TraitType == TraitType.Secret)
                     {
                         return true;
                     }
@@ -81,7 +81,7 @@ public class RemoveTraitEffect : BaseTraitEffect
 
                 break;
             case 5:
-                if (active.traitSourceId == templateID)
+                if (active.TraitSourceId == templateID)
                 {
                     return true;
                 }

@@ -2,7 +2,7 @@ namespace Frontline.Battle.GameEvents;
 
 public class InitialSwapEventResult : GameEventResult
 {
-    public int[] CardIdsRemovedFromHand;
+    public int[] CardIdsRemovedFromHand { get; set; }
 
-    public int[] DeckReplacementIndices;
+    public int[] DeckReplacementIndices { get; set; }
 }
