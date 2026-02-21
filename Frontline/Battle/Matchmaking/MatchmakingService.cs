@@ -104,6 +104,9 @@ public class MatchmakingService : IMatchmakingService
                 FinalizeMatch(ticket1, ticket2);
 
                 rankedTickets.RemoveRange(0, 2);
+
+                _matchmakingQueue.Remove(ticket1.UserId);
+                _matchmakingQueue.Remove(ticket2.UserId);
             }
         }
     }
