@@ -47,6 +47,7 @@ public class XpTriggers
 
 public class XpTrigger
 {
+    [JsonPropertyName("Trigger")]
     public string Trigger { get; set; } = string.Empty;
     public int Xp { get; set; }
 }
