@@ -140,6 +140,9 @@ public class CCG
 
         winGameRewards.Add(RulesetParser.GetRewardsTemplate(gameRules.WinRewardId)!);
         loseGameRewards.Add(RulesetParser.GetRewardsTemplate(gameRules.LossRewardId)!);
+
+        pilotEmbarkTrait = RulesetParser.GetTraitTemplate(gameRules.EmbarkedPilotTrait)!;
+        titanPilotEmbarkTrait = RulesetParser.GetTraitTemplate(gameRules.PilotTitanEmbarkedTrait)!;
     }
 
     public Card FindTraitActor(sbyte playerIndex, int cardId)
