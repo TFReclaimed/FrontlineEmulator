@@ -24,6 +24,10 @@ public class CcgGame
 
     public int CurrentEventCount { get; private set; }
 
+    public event Action<CcgGame>? OnBattleFinished;
+
+    private readonly DateTime _creationTime;
+
     public CcgGame(int player1Id, int player2Id, VersusType versusType, List<ItemEntity>[] deckEntities,
         List<ItemEntity>[] supportEntities, List<ItemEntity> commanderEntities)
     {
@@ -74,11 +78,26 @@ public class CcgGame
             Uri = null, //_urlOptions.Value.RulesetsUrl
             Version = 0
         };
+
+        _creationTime = DateTime.UtcNow;
     }
 
     public bool IsPlayerInGame(int userId)
     {
         return Player1Id == userId || Player2Id == userId;
+    }
+
+    public bool IsStale()
+    {
+        var now = DateTime.UtcNow;
+
+        if (GameState.PlayerTurnStart == 0)
+        {
+            return (now - _creationTime).TotalMinutes > 2;
+        }
+
+        var playerTurnStart = DateTimeOffset.FromUnixTimeMilliseconds(GameState.PlayerTurnStart);
+        return (now - playerTurnStart).TotalMinutes > 4;
     }
 
     public void PlayGameEvent(GameEventParams gameEventParams)
@@ -87,6 +106,16 @@ public class CcgGame
         gameEventParams.EventResult = result;
         GameEvents.Add(gameEventParams);
         GameChangeCounter++;
+    }
+
+    public void EndGame()
+    {
+        if (!GameState.IsGameOver())
+        {
+            return;
+        }
+
+        OnBattleFinished?.Invoke(this);
     }
 
     public int Deploy(sbyte playerIndex, int cardId, sbyte targetIndex, int targetId, TargetableArea area,

@@ -56,6 +56,7 @@ builder.Services.AddSingleton<IBattleService, BattleService>();
 builder.Services.AddSingleton<IMatchmakingService, MatchmakingService>();
 
 builder.Services.AddHostedService<MatchmakingWorker>();
+builder.Services.AddHostedService<BattleCleanupWorker>();
 builder.Services.AddHostedService<XmppServer>();
 
 builder.Services.AddHttpLogging(_ => { });

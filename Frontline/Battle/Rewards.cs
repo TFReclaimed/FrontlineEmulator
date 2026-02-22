@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Frontline.Game;
 
 namespace Frontline.Battle;
@@ -6,47 +7,23 @@ public class Rewards
 {
     public bool IsWinner { get; set; }
 
-    private int playerXP;
+    [JsonIgnore]
+    public int PlayerXp { get; private set; }
 
-    private int trophies;
+    [JsonIgnore]
+    public int Trophies { get; private set; }
 
-    private int credits;
+    [JsonIgnore]
+    public int Credits { get; private set; }
 
-    private int supply;
+    [JsonIgnore]
+    public int Supply { get; private set; }
 
-    private int boosters;
+    [JsonIgnore]
+    public int Boosters { get; private set; }
 
-    private int tokens;
-
-    public int GetXPTotal()
-    {
-        return playerXP;
-    }
-
-    public int GetCreditsTotal()
-    {
-        return credits;
-    }
-
-    public int GetSupplyTotal()
-    {
-        return supply;
-    }
-
-    public int GetTrophiesTotal()
-    {
-        return trophies;
-    }
-
-    public int GetTokensTotal()
-    {
-        return tokens;
-    }
-
-    public int GetBoostersTotal()
-    {
-        return boosters;
-    }
+    [JsonIgnore]
+    public int Tokens { get; private set; }
 
     public void Generate(bool winner, List<RewardsTemplate> rewards)
     {
@@ -54,22 +31,22 @@ public class Rewards
         ClearTotals();
         for (int i = 0; i < rewards.Count; i++)
         {
-            playerXP += rewards[i].PlayerXp;
-            trophies += rewards[i].Trophies;
-            credits += rewards[i].Credits;
-            supply += rewards[i].Supply;
-            boosters += rewards[i].Boosters;
-            tokens += rewards[i].Tokens;
+            PlayerXp += rewards[i].PlayerXp;
+            Trophies += rewards[i].Trophies;
+            Credits += rewards[i].Credits;
+            Supply += rewards[i].Supply;
+            Boosters += rewards[i].Boosters;
+            Tokens += rewards[i].Tokens;
         }
     }
 
     private void ClearTotals()
     {
-        playerXP = 0;
-        trophies = 0;
-        credits = 0;
-        supply = 0;
-        boosters = 0;
-        tokens = 0;
+        PlayerXp = 0;
+        Trophies = 0;
+        Credits = 0;
+        Supply = 0;
+        Boosters = 0;
+        Tokens = 0;
     }
 }

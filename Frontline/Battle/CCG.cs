@@ -148,6 +148,11 @@ public class CCG
         titanPilotEmbarkTrait.Init(this);
     }
 
+    public bool IsGameOver()
+    {
+        return SurrenderGameOver || PlayerTurn == -1;
+    }
+
     public Card FindTraitActor(sbyte playerIndex, int cardId)
     {
         if (playerIndex >= 0 && playerIndex < Players.Length)
@@ -1115,6 +1120,7 @@ public class CCG
         if (num2 == num - 1)
         {
             SurrenderGameOver = true;
+            _game.EndGame();
             if (CurrentRound > 3)
             {
                 GenerateRewards();

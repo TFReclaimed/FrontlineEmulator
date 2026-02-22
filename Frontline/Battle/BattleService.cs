@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Frontline.Data.Entities;
 using Frontline.Data.Repositories;
+using Frontline.Services;
 
 namespace Frontline.Battle;
 
@@ -9,6 +10,7 @@ public interface IBattleService
     CcgGame? GetBattle(Guid gameId);
     Task CreateBattle(int player1Id, int player2Id, VersusType versusType);
     bool IsPlayerInGame(int userId, [NotNullWhen(true)] out CcgGame? game);
+    void CleanupStaleBattles();
 }
 
 public class BattleService : IBattleService
@@ -65,6 +67,7 @@ public class BattleService : IBattleService
 
         var battle = new CcgGame(player1Id, player2Id, versusType, [player1Deck, player2Deck],
             [player1Support, player2Support], [player1Commander, player2Commander]);
+        battle.OnBattleFinished += OnBattleFinished;
 
         lock (_lock)
         {
@@ -72,12 +75,64 @@ public class BattleService : IBattleService
         }
     }
 
+    public void RemoveBattle(Guid gameId)
+    {
+        lock (_lock)
+        {
+            _battles.Remove(gameId);
+        }
+    }
+
     public bool IsPlayerInGame(int userId, [NotNullWhen(true)] out CcgGame? game)
     {
         lock (_lock)
         {
-            game = _battles.Values.FirstOrDefault(b => b.Player1Id == userId || b.Player2Id == userId);
+            CcgGame? potentialGame = null;
+            foreach (var battle in _battles.Values)
+            {
+                if (battle.Player1Id != userId && battle.Player2Id != userId)
+                {
+                    continue;
+                }
+
+                potentialGame = battle;
+
+                if (!battle.GameState.IsGameOver())
+                {
+                    break;
+                }
+            }
+
+            game = potentialGame;
             return game is not null;
+        }
+    }
+
+    public void CleanupStaleBattles()
+    {
+        lock (_lock)
+        {
+            if (_battles.Count == 0)
+            {
+                return;
+            }
+
+            var staleBattleIds = _battles.Values
+                .Where(b => b.IsStale())
+                .Select(b => b.Id)
+                .ToList();
+
+            if (staleBattleIds.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var battleId in staleBattleIds)
+            {
+                _battles.Remove(battleId);
+            }
+
+            _logger.LogInformation("Cleaned up {Count} stale battles.", staleBattleIds.Count);
         }
     }
 
@@ -105,5 +160,49 @@ public class BattleService : IBattleService
                     break;
             }
         }
+    }
+
+    private void OnBattleFinished(CcgGame battle)
+    {
+        Task.Run(() => OnBattleFinishedAsync(battle));
+    }
+
+    private async Task OnBattleFinishedAsync(CcgGame battle)
+    {
+        using var scope = _serviceScopeFactory.CreateScope();
+        var playerRepository = scope.ServiceProvider.GetRequiredService<IPlayerRepository>();
+        var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
+
+        var player1Entity = await playerRepository.GetByIdAsync(battle.Player1Id);
+        var player2Entity = await playerRepository.GetByIdAsync(battle.Player2Id);
+
+        if (player1Entity == null || player2Entity == null)
+        {
+            _logger.LogError("Player 1 or 2 not found when processing battle rewards.");
+            return;
+        }
+
+        await ProcessUserRewards(player1Entity, battle.GameState.Rewards[0], playerRepository, userService);
+        await ProcessUserRewards(player2Entity, battle.GameState.Rewards[1], playerRepository, userService);
+
+        // TODO: process CCGEventType.CardXPEarned
+
+        _logger.LogInformation("Processed battle rewards for game {GameId}.", battle.Id);
+    }
+
+    private async Task ProcessUserRewards(PlayerEntity player, Rewards rewards, IPlayerRepository playerRepository,
+        IUserService userService)
+    {
+        player.Xp += rewards.PlayerXp;
+        player.Trophies += rewards.Trophies;
+        player.Credits += rewards.Credits;
+        player.Supply += rewards.Supply;
+        player.BoosterPackCount += rewards.Boosters;
+        player.Tokens += rewards.Tokens;
+        player.MatchesPlayed++;
+        player.HighestTrophies = Math.Max(player.HighestTrophies, player.Trophies);
+
+        await playerRepository.UpdateAsync(player);
+        userService.IncrementChangeCounter(player.Id);
     }
 }

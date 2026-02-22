@@ -30,6 +30,13 @@ public class LogGameEventEndpoint : Endpoint<LogGameEventRequest>
             return;
         }
 
+        if (game.GameState.IsGameOver())
+        {
+            Logger.LogWarning("Received game event for game {GameId} which is already over.", req.GameId);
+            await Send.ResultAsync(TypedResults.BadRequest());
+            return;
+        }
+
         game.PlayGameEvent(req.Param);
         await Send.OkAsync();
     }

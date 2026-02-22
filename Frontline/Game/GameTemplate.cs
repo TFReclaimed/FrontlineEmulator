@@ -53,6 +53,7 @@ public class GameTemplate
         {
             gameState.WinningPlayer = (sbyte)num;
             gameState.GenerateRewards();
+            gameState.GetGame().EndGame();
         }
     }
 

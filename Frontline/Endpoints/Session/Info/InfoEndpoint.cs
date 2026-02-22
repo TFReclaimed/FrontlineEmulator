@@ -38,7 +38,7 @@ public class InfoEndpoint : EndpointWithoutRequest<SessionInfoResponse>
         {
             gameId = matchmaking;
         }
-        else if (_battleService.IsPlayerInGame(userId, out var battle))
+        else if (_battleService.IsPlayerInGame(userId, out var battle) && !battle.GameState.IsGameOver())
         {
             gameId = battle.Id.ToString();
         }
