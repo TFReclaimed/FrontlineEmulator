@@ -1,3 +1,4 @@
+using System.Text.Json;
 using FastEndpoints;
 using Frontline.Battle;
 using Frontline.Extensions;
@@ -29,6 +30,10 @@ public class GetGameEndpoint : Endpoint<GetGameRequest, CcgGame>
             return;
         }
 
-        await Send.OkAsync(game);
+        var rootNode = JsonSerializer.SerializeToNode(game);
+        rootNode?["GameState"]?["LocalPlayer"] = game.Player1Id == userId ? 0 : 1;
+        var json = rootNode!.ToJsonString();
+
+        await Send.StringAsync(json, 200, "application/json");
     }
 }

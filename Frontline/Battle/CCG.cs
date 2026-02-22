@@ -26,8 +26,6 @@ public class CCG
 
     public long PlayerDiscardStart { get; set; }
 
-    public sbyte LocalPlayer { get; set; }
-
     public sbyte WinningPlayer { get; set; } = -1;
 
     public bool SurrenderGameOver { get; set; }
@@ -308,7 +306,7 @@ public class CCG
     public bool CanDeploy(sbyte playerIndex, int cardId, TargetableArea area, RegionEnum target, sbyte slotIndex,
         sbyte pushDir, bool remote)
     {
-        if (PlayerTurn == playerIndex && (remote || LocalPlayer == playerIndex))
+        if (PlayerTurn == playerIndex && remote)
         {
             Player player = Players[playerIndex];
             if (player.CanSubmitActions())
@@ -494,7 +492,7 @@ public class CCG
 
     public bool CanMove(sbyte playerIndex, int cardId, RegionEnum target, sbyte slotIndex, sbyte pushDir, bool remote)
     {
-        if (PlayerTurn == playerIndex && (remote || LocalPlayer == playerIndex) && pushDir >= -1 && pushDir <= 1)
+        if (PlayerTurn == playerIndex && remote && pushDir >= -1 && pushDir <= 1)
         {
             Player player = Players[playerIndex];
             if (player.CanSubmitActions())
@@ -567,7 +565,7 @@ public class CCG
 
     public bool CanDisembark(sbyte playerIndex, int cardId, bool remote)
     {
-        if (PlayerTurn == playerIndex && (remote || LocalPlayer == playerIndex))
+        if (PlayerTurn == playerIndex && remote)
         {
             Player player = Players[playerIndex];
             if (player.CanSubmitActions())
@@ -856,7 +854,7 @@ public class CCG
 
     public bool CanTriggerEndTurnTraits(sbyte playerIndex, bool remote)
     {
-        if (PlayerTurn == playerIndex && (remote || LocalPlayer == playerIndex))
+        if (PlayerTurn == playerIndex && remote)
         {
             Player player = Players[playerIndex];
             if (!player.CanTriggerEndTurnTraits(gameRules))
@@ -892,7 +890,7 @@ public class CCG
 
     public bool CanEndTurn(sbyte playerIndex, bool remote, int[] cardsToDiscard)
     {
-        if (PlayerTurn == playerIndex && (remote || LocalPlayer == playerIndex))
+        if (PlayerTurn == playerIndex && remote)
         {
             Player player = Players[playerIndex];
             if (!player.CanEndTurn(gameRules, cardsToDiscard))
@@ -928,7 +926,7 @@ public class CCG
 
     public bool CanAttack(sbyte playerIndex, int cardId, sbyte targetOwner, int targetId, bool remote)
     {
-        if (PlayerTurn == playerIndex && (remote || LocalPlayer == playerIndex))
+        if (PlayerTurn == playerIndex && remote)
         {
             Player player = Players[playerIndex];
             if (player.CanSubmitActions())
@@ -938,20 +936,6 @@ public class CCG
         }
 
         Console.WriteLine("CCG.CanAttack false - player cannot attack now");
-        return false;
-    }
-
-    public bool CanAttack(sbyte playerIndex, int cardId)
-    {
-        if (PlayerTurn == playerIndex && LocalPlayer == playerIndex)
-        {
-            Player player = Players[playerIndex];
-            if (player.CanSubmitActions())
-            {
-                return Board.CanAttack(playerIndex, cardId);
-            }
-        }
-
         return false;
     }
 
