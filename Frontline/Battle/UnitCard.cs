@@ -1,4 +1,5 @@
 using Frontline.Battle.CcgEvents;
+using Frontline.Data.Entities;
 using Frontline.Game;
 using Frontline.Game.Card;
 
@@ -30,6 +31,11 @@ public class UnitCard : EntityCard
             EmbarkedPilot = unitCard.EmbarkedPilot;
             PilotEmbarked = unitCard.PilotEmbarked;
         }
+    }
+
+    public UnitCard(CCG game, ItemEntity itemEntity)
+        : base (game, itemEntity)
+    {
     }
 
     public override void Setup()

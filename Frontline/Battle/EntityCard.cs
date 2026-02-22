@@ -1,4 +1,5 @@
 using Frontline.Battle.CcgEvents;
+using Frontline.Data.Entities;
 using Frontline.Game.Card;
 
 namespace Frontline.Battle;
@@ -22,6 +23,11 @@ public class EntityCard : Card
         : base(game, other)
     {
         Secrets = other.GetSecrets();
+    }
+
+    public EntityCard(CCG game, ItemEntity itemEntity)
+        : base(game, itemEntity)
+    {
     }
 
     public override void Setup()

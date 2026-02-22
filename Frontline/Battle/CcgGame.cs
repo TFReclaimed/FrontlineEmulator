@@ -1,6 +1,8 @@
 using Frontline.Battle.GameEvents;
 using Frontline.Data.Entities;
 using Frontline.Endpoints.Session.Rulesets;
+using Frontline.Game;
+using Frontline.Game.Card;
 
 namespace Frontline.Battle;
 
@@ -44,7 +46,16 @@ public class CcgGame
             var playerDeckCards = new List<Card>();
             foreach (var deckEntity in deckEntities[i])
             {
-                playerDeckCards.Add(new Card(GameState, deckEntity));
+                var template = RulesetParser.GetCardTemplate(deckEntity.TemplateId)!;
+
+                if (template is UnitCardTemplate)
+                {
+                    playerDeckCards.Add(new UnitCard(GameState, deckEntity));
+                }
+                else
+                {
+                    playerDeckCards.Add(new Card(GameState, deckEntity));
+                }
             }
 
             deckCards.Add(playerDeckCards);
@@ -56,7 +67,16 @@ public class CcgGame
             var playerSupportCards = new List<Card>();
             foreach (var supportEntity in supportEntities[i])
             {
-                playerSupportCards.Add(new Card(GameState, supportEntity));
+                var template = RulesetParser.GetCardTemplate(supportEntity.TemplateId)!;
+
+                if (template is UnitCardTemplate)
+                {
+                    playerSupportCards.Add(new UnitCard(GameState, supportEntity));
+                }
+                else
+                {
+                    playerSupportCards.Add(new Card(GameState, supportEntity));
+                }
             }
 
             supportCards.Add(playerSupportCards);
