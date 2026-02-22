@@ -65,8 +65,9 @@ public class BattleService : IBattleService
             throw new Exception("Player 1 or 2 has an invalid deck.");
         }
 
-        var battle = new CcgGame(player1Id, player2Id, versusType, [player1Deck, player2Deck],
-            [player1Support, player2Support], [player1Commander, player2Commander]);
+        var battle = new CcgGame(player1Id, player2Id, player1Entity.Name, player2Entity.Name, versusType,
+            [player1Deck, player2Deck], [player1Support, player2Support],
+            [player1Commander, player2Commander]);
         battle.OnBattleFinished += OnBattleFinished;
 
         lock (_lock)

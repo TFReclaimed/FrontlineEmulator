@@ -28,8 +28,8 @@ public class CcgGame
 
     private readonly DateTime _creationTime;
 
-    public CcgGame(int player1Id, int player2Id, VersusType versusType, List<ItemEntity>[] deckEntities,
-        List<ItemEntity>[] supportEntities, List<ItemEntity> commanderEntities)
+    public CcgGame(int player1Id, int player2Id, string player1Name, string player2Name, VersusType versusType,
+        List<ItemEntity>[] deckEntities, List<ItemEntity>[] supportEntities, List<ItemEntity> commanderEntities)
     {
         Id = Guid.NewGuid();
         Player1Id = player1Id;
@@ -70,7 +70,7 @@ public class CcgGame
             commanders.Add(card);
         }
 
-        GameState.Create(Id, 1, [player1Id, player2Id], ["player one", "player two"],
+        GameState.Create(Id, 1, [player1Id, player2Id], [player1Name, player2Name],
             deckCards, supportCards, commanders, [false, false]);
 
         RulesetPath = new RulesetPathResponse
