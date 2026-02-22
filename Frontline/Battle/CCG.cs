@@ -143,6 +143,9 @@ public class CCG
 
         pilotEmbarkTrait = RulesetParser.GetTraitTemplate(gameRules.EmbarkedPilotTrait)!;
         titanPilotEmbarkTrait = RulesetParser.GetTraitTemplate(gameRules.PilotTitanEmbarkedTrait)!;
+
+        pilotEmbarkTrait.Init(this);
+        titanPilotEmbarkTrait.Init(this);
     }
 
     public Card FindTraitActor(sbyte playerIndex, int cardId)

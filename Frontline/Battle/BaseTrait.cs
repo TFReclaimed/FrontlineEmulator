@@ -21,6 +21,14 @@ public class BaseTrait
 
     public List<BaseTraitEffect> Effects { get; set; }
 
+    public void Init(CCG gameState)
+    {
+        foreach (var effect in Effects)
+        {
+            effect.Init(gameState);
+        }
+    }
+
     public bool ActivateOnDeploy()
     {
         return TraitType == TraitType.Deployed || TraitType == TraitType.Passive || TraitType == TraitType.Secret ||
