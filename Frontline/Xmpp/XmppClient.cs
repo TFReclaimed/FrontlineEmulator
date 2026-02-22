@@ -405,8 +405,13 @@ public class XmppClient
                 await SendPrivateMessage(systemJid, $":::CHALLENGE_REJECTED:::{to}");
                 return;
             }
-            
-            _logger.LogInformation("{Client} [PM #{To}] [{Subject}]: {Body}", this, to, subject, body);
+
+            // TODO: rewrite body
+            if (subject != ":::INTERACTIONEVENT")
+            {
+                _logger.LogInformation("{Client} [PM #{To}] [{Subject}]: {Body}", this, to, subject, body);
+            }
+
             OnPrivateMessageSent?.Invoke(this, to, subject, body);
         }
         else if (message.Type == MessageType.GroupChat)
