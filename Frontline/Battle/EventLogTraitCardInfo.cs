@@ -7,7 +7,7 @@ public class EventLogTraitCardInfo : ActiveTraitCardInfo
     [JsonPropertyName("effectID")]
     public int EffectId { get; set; }
 
-    [JsonPropertyName("traidID")]
+    [JsonPropertyName("traitID")]
     public int TraitId { get; set; }
 
     public sbyte Data { get; set; }
