@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using Frontline.Battle.CcgEvents;
 using Frontline.Data.Entities;
 using Frontline.Data.Repositories;
 using Frontline.Services;
@@ -172,6 +173,7 @@ public class BattleService : IBattleService
     {
         using var scope = _serviceScopeFactory.CreateScope();
         var playerRepository = scope.ServiceProvider.GetRequiredService<IPlayerRepository>();
+        var inventoryRepository = scope.ServiceProvider.GetRequiredService<IInventoryRepository>();
         var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
 
         var player1Entity = await playerRepository.GetByIdAsync(battle.Player1Id);
@@ -186,7 +188,29 @@ public class BattleService : IBattleService
         await ProcessUserRewards(player1Entity, battle.GameState.Rewards[0], playerRepository, userService);
         await ProcessUserRewards(player2Entity, battle.GameState.Rewards[1], playerRepository, userService);
 
-        // TODO: process CCGEventType.CardXPEarned
+        foreach (var ccgEvent in battle.GameState.GetCCGEventLog())
+        {
+            if (ccgEvent is not CardInfoCCGEvent cardInfoEvent)
+            {
+                continue;
+            }
+
+            if (cardInfoEvent.EventType != CCGEventType.CardXPEarned)
+            {
+                continue;
+            }
+
+            var playerId = cardInfoEvent.Owner == 0 ? battle.Player1Id : battle.Player2Id;
+
+            var itemEntity = await inventoryRepository.GetItemAsync(playerId, cardInfoEvent.InstanceId);
+            if (itemEntity == null)
+            {
+                continue;
+            }
+
+            itemEntity.Xp += cardInfoEvent.Data;
+            await inventoryRepository.UpdateAsync(itemEntity);
+        }
 
         _logger.LogInformation("Processed battle rewards for game {GameId}.", battle.Id);
     }
