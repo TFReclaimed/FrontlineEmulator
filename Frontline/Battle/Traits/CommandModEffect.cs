@@ -2,11 +2,11 @@ namespace Frontline.Battle.Traits;
 
 public class CommandModEffect : BaseTraitEffect
 {
-    public sbyte points;
+    public sbyte Points { get; set; }
 
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
-        sbyte b = points;
+        sbyte b = Points;
         if (active.DataValue > 0)
         {
             b = (sbyte) active.DataValue;

@@ -2,9 +2,9 @@ namespace Frontline.Battle.Traits;
 
 public class DamageImmunity : BaseTraitEffect
 {
-    public bool normalDamage;
+    public bool NormalDamage { get; set; }
 
-    public bool bypassDamage;
+    public bool BypassDamage { get; set; }
 
     public override bool IsDamageImmunity(bool bypass, ActiveTrait active)
     {
@@ -13,6 +13,6 @@ public class DamageImmunity : BaseTraitEffect
             return false;
         }
 
-        return (!bypass) ? normalDamage : bypassDamage;
+        return (!bypass) ? NormalDamage : BypassDamage;
     }
 }

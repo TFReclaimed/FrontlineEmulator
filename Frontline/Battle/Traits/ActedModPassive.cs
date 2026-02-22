@@ -1,14 +1,19 @@
+using System.Text.Json.Serialization;
+
 namespace Frontline.Battle.Traits;
 
 public class ActedModPassive : BaseTraitEffect
 {
-    public bool deploy;
+    public bool Deploy { get; set; }
 
-    public bool attack;
+    [JsonPropertyName("attack")]
+    public bool IsAttack { get; set; }
 
-    public bool move;
+    [JsonPropertyName("move")]
+    public bool IsMove { get; set; }
 
-    public bool activate;
+    [JsonPropertyName("activate")]
+    public bool IsActivate { get; set; }
 
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
@@ -23,24 +28,24 @@ public class ActedModPassive : BaseTraitEffect
         if (active.HasCharges() || active.HasDuration())
         {
             base.Apply(card, source, active);
-            if (deploy && !flag)
+            if (Deploy && !flag)
             {
-                if (deploy)
+                if (Deploy)
                 {
                     b = (sbyte) ((byte) b | 1);
                 }
 
-                if (attack)
+                if (IsAttack)
                 {
                     b = (sbyte) ((byte) b | 2);
                 }
 
-                if (move)
+                if (IsMove)
                 {
                     b = (sbyte) ((byte) b | 4);
                 }
 
-                if (activate)
+                if (IsActivate)
                 {
                     b = (sbyte) ((byte) b | 8);
                 }
@@ -50,22 +55,22 @@ public class ActedModPassive : BaseTraitEffect
         }
         else if (!flag)
         {
-            if (deploy)
+            if (Deploy)
             {
                 b = (sbyte) ((byte) b | 1);
             }
 
-            if (attack)
+            if (IsAttack)
             {
                 b = (sbyte) ((byte) b | 2);
             }
 
-            if (move)
+            if (IsMove)
             {
                 b = (sbyte) ((byte) b | 4);
             }
 
-            if (activate)
+            if (IsActivate)
             {
                 b = (sbyte) ((byte) b | 8);
             }
@@ -76,7 +81,7 @@ public class ActedModPassive : BaseTraitEffect
 
     public override void Move(CardStack location, RegionEnum region, bool embark, ActiveTrait active)
     {
-        if ((!Deterable || !active.Detered) && (DurationData.Charges <= 0 || active.DurationData.Charges != 0) && move)
+        if ((!Deterable || !active.Detered) && (DurationData.Charges <= 0 || active.DurationData.Charges != 0) && IsMove)
         {
             EntityCard entityCard = (EntityCard) active.GetTraitTarget();
             entityCard.ClearActed(14);
@@ -90,7 +95,7 @@ public class ActedModPassive : BaseTraitEffect
     public override void Attack(Card target, ActiveTrait active)
     {
         if ((!Deterable || !active.Detered) && (DurationData.Charges <= 0 || active.DurationData.Charges != 0) &&
-            attack)
+            IsAttack)
         {
             EntityCard entityCard = (EntityCard) active.GetTraitTarget();
             entityCard.ClearActed(14);
@@ -104,7 +109,7 @@ public class ActedModPassive : BaseTraitEffect
     public override void ActivateAction(CardStack location, RegionEnum region, ActiveTrait active)
     {
         if ((!Deterable || !active.Detered) && (DurationData.Charges <= 0 || active.DurationData.Charges != 0) &&
-            activate)
+            IsActivate)
         {
             EntityCard entityCard = (EntityCard) active.GetTraitTarget();
             entityCard.ClearActed(14);

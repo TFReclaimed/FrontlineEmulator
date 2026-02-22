@@ -4,12 +4,12 @@ namespace Frontline.Battle.Traits;
 
 public class ApplyHealMultiply : ApplyHeal
 {
-    public TraitTargeting countInfo;
+    public TraitTargeting CountInfo { get; set; }
 
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
-        int num = countInfo.CalculateCount(GameState, active);
-        sbyte b = (sbyte) (heal * num);
+        int num = CountInfo.CalculateCount(GameState, active);
+        sbyte b = (sbyte) (Heal * num);
         if (active.DataValue > 0)
         {
             b = (sbyte) (active.DataValue * num);

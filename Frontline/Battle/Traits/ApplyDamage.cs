@@ -4,9 +4,9 @@ namespace Frontline.Battle.Traits;
 
 public class ApplyDamage : BaseTraitEffect
 {
-    public sbyte damage;
+    public sbyte Damage { get; set; }
 
-    public sbyte bypassDefense;
+    public sbyte BypassDefense { get; set; }
 
     public override bool IsDamageHeal(bool damage)
     {
@@ -51,22 +51,22 @@ public class ApplyDamage : BaseTraitEffect
         }
 
         sbyte currentHealth = card.GetCurrentHealth(false);
-        sbyte attack = damage;
-        sbyte bypass = bypassDefense;
-        if (damage == -1)
+        sbyte attack = Damage;
+        sbyte bypass = BypassDefense;
+        if (Damage == -1)
         {
             attack = currentHealth;
         }
-        else if (damage > 0 && active.DataValue > 0)
+        else if (Damage > 0 && active.DataValue > 0)
         {
             attack = (sbyte) active.DataValue;
         }
 
-        if (bypassDefense == -1)
+        if (BypassDefense == -1)
         {
             bypass = currentHealth;
         }
-        else if (bypassDefense > 0 && active.DataValue > 0)
+        else if (BypassDefense > 0 && active.DataValue > 0)
         {
             bypass = (sbyte) active.DataValue;
         }

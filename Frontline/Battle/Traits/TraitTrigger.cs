@@ -6,15 +6,15 @@ namespace Frontline.Battle.Traits;
 
 public class TraitTrigger : BaseTraitEffect
 {
-    public TriggerType type;
+    public TriggerType Type { get; set; }
 
-    public TraitTargeting versusInfo;
+    public TraitTargeting VersusInfo { get; set; }
 
-    public bool delayActivation;
+    public bool DelayActivation { get; set; }
 
-    public bool allowSameRegion;
+    public bool AllowSameRegion { get; set; }
 
-    public TraitDurationType activationDelayType;
+    public TraitDurationType ActivationDelayType { get; set; }
 
     public override bool IsTrigger()
     {
@@ -234,29 +234,29 @@ public class TraitTrigger : BaseTraitEffect
     public override void NewTurn(ActiveTrait active, sbyte playerIndex)
     {
         bool flag = false;
-        if (delayActivation && active.Triggered)
+        if (DelayActivation && active.Triggered)
         {
             sbyte owner = active.GetTraitTarget().ActiveData.Owner;
-            if (activationDelayType == TraitDurationType.StartOfTurn)
+            if (ActivationDelayType == TraitDurationType.StartOfTurn)
             {
                 RunTriggerActivation(null, null, RegionEnum.NumRegions, active);
                 flag = true;
             }
-            else if (activationDelayType == TraitDurationType.StartOfMyTurn && owner == playerIndex)
+            else if (ActivationDelayType == TraitDurationType.StartOfMyTurn && owner == playerIndex)
             {
                 RunTriggerActivation(null, null, RegionEnum.NumRegions, active);
                 flag = true;
             }
-            else if (activationDelayType == TraitDurationType.StartOfEnemyTurn && owner != playerIndex)
+            else if (ActivationDelayType == TraitDurationType.StartOfEnemyTurn && owner != playerIndex)
             {
                 RunTriggerActivation(null, null, RegionEnum.NumRegions, active);
                 flag = true;
             }
         }
 
-        if (!flag && type == TriggerType.NewTurn)
+        if (!flag && Type == TriggerType.NewTurn)
         {
-            if (delayActivation)
+            if (DelayActivation)
             {
                 active.Triggered = true;
             }
@@ -270,29 +270,29 @@ public class TraitTrigger : BaseTraitEffect
     public override void EndTurn(ActiveTrait active, sbyte playerIndex)
     {
         bool flag = false;
-        if (delayActivation && active.Triggered)
+        if (DelayActivation && active.Triggered)
         {
             sbyte owner = active.GetTraitTarget().ActiveData.Owner;
-            if (activationDelayType == TraitDurationType.EndOfTurn)
+            if (ActivationDelayType == TraitDurationType.EndOfTurn)
             {
                 RunTriggerActivation(null, null, RegionEnum.NumRegions, active);
                 flag = true;
             }
-            else if (activationDelayType == TraitDurationType.EndOfMyTurn && owner == playerIndex)
+            else if (ActivationDelayType == TraitDurationType.EndOfMyTurn && owner == playerIndex)
             {
                 RunTriggerActivation(null, null, RegionEnum.NumRegions, active);
                 flag = true;
             }
-            else if (activationDelayType == TraitDurationType.EndOfEnemyTurn && owner != playerIndex)
+            else if (ActivationDelayType == TraitDurationType.EndOfEnemyTurn && owner != playerIndex)
             {
                 RunTriggerActivation(null, null, RegionEnum.NumRegions, active);
                 flag = true;
             }
         }
 
-        if (!flag && type == TriggerType.EndTurn)
+        if (!flag && Type == TriggerType.EndTurn)
         {
-            if (delayActivation)
+            if (DelayActivation)
             {
                 active.Triggered = true;
             }
@@ -305,11 +305,11 @@ public class TraitTrigger : BaseTraitEffect
 
     public override void CardDeployed(Card deployed, ActiveTrait active)
     {
-        if (type == TriggerType.Deploy && Targets.CardTargetMatch(GameState, deployed, active.GetTraitTarget()))
+        if (Type == TriggerType.Deploy && Targets.CardTargetMatch(GameState, deployed, active.GetTraitTarget()))
         {
             int num = deployed.ActiveData.Owner;
             CardStack commander = GameState.Players[num].Commander;
-            if (delayActivation)
+            if (DelayActivation)
             {
                 active.Triggered = true;
             }
@@ -323,12 +323,12 @@ public class TraitTrigger : BaseTraitEffect
     public override void CardMoved(Card theCard, CardStack target, RegionEnum destination, RegionEnum origin,
         ActiveTrait active)
     {
-        if (type == TriggerType.Move && Targets.CardTargetMatch(GameState, theCard, active.GetTraitTarget()) &&
-            versusInfo.CheckRegion(destination, active.GetTraitTarget().ActiveData.Owner) &&
-            (destination != origin || allowSameRegion))
+        if (Type == TriggerType.Move && Targets.CardTargetMatch(GameState, theCard, active.GetTraitTarget()) &&
+            VersusInfo.CheckRegion(destination, active.GetTraitTarget().ActiveData.Owner) &&
+            (destination != origin || AllowSameRegion))
         {
             Card primaryCard = target.PrimaryCard;
-            if (delayActivation)
+            if (DelayActivation)
             {
                 active.Triggered = true;
             }
@@ -341,10 +341,10 @@ public class TraitTrigger : BaseTraitEffect
 
     public override void CardAttacked(Card attacker, Card target, ActiveTrait active)
     {
-        if (type == TriggerType.Attack && Targets.CardTargetMatch(GameState, attacker, active.GetTraitTarget()) &&
-            versusInfo.CardTargetMatch(GameState, target, active.GetTraitTarget()))
+        if (Type == TriggerType.Attack && Targets.CardTargetMatch(GameState, attacker, active.GetTraitTarget()) &&
+            VersusInfo.CardTargetMatch(GameState, target, active.GetTraitTarget()))
         {
-            if (delayActivation)
+            if (DelayActivation)
             {
                 active.Triggered = true;
             }
@@ -357,10 +357,10 @@ public class TraitTrigger : BaseTraitEffect
 
     public override void CardCounterAttacked(Card attacker, Card target, ActiveTrait active)
     {
-        if (type == TriggerType.CounterAttack && Targets.CardTargetMatch(GameState, attacker, active.GetTraitTarget()) &&
-            versusInfo.CardTargetMatch(GameState, target, active.GetTraitTarget()))
+        if (Type == TriggerType.CounterAttack && Targets.CardTargetMatch(GameState, attacker, active.GetTraitTarget()) &&
+            VersusInfo.CardTargetMatch(GameState, target, active.GetTraitTarget()))
         {
-            if (delayActivation)
+            if (DelayActivation)
             {
                 active.Triggered = true;
             }
@@ -385,10 +385,10 @@ public class TraitTrigger : BaseTraitEffect
 
     public override void CardDamaged(Card damagedCard, Card source, ActiveTrait active)
     {
-        if (type == TriggerType.TakeDamage && Targets.CardTargetMatch(GameState, source, active.GetTraitTarget()) &&
-            versusInfo.CardTargetMatch(GameState, damagedCard, active.GetTraitTarget()))
+        if (Type == TriggerType.TakeDamage && Targets.CardTargetMatch(GameState, source, active.GetTraitTarget()) &&
+            VersusInfo.CardTargetMatch(GameState, damagedCard, active.GetTraitTarget()))
         {
-            if (delayActivation)
+            if (DelayActivation)
             {
                 active.Triggered = true;
             }
@@ -401,10 +401,10 @@ public class TraitTrigger : BaseTraitEffect
 
     public override void CardDied(Card deadCard, Card source, ActiveTrait active)
     {
-        if (type == TriggerType.Destroy && Targets.CardTargetMatch(GameState, source, active.GetTraitTarget()) &&
-            versusInfo.CardTargetMatch(GameState, deadCard, active.GetTraitTarget()))
+        if (Type == TriggerType.Destroy && Targets.CardTargetMatch(GameState, source, active.GetTraitTarget()) &&
+            VersusInfo.CardTargetMatch(GameState, deadCard, active.GetTraitTarget()))
         {
-            if (delayActivation)
+            if (DelayActivation)
             {
                 active.Triggered = true;
             }
@@ -417,7 +417,7 @@ public class TraitTrigger : BaseTraitEffect
 
     public override void CardDrawn(Card drawnCard, bool regularDraw, bool isNewTurn, ActiveTrait active)
     {
-        switch (type)
+        switch (Type)
         {
             default:
                 return;
@@ -451,11 +451,11 @@ public class TraitTrigger : BaseTraitEffect
                 break;
         }
 
-        if (versusInfo.CardTargetMatch(GameState, drawnCard, active.GetTraitTarget()))
+        if (VersusInfo.CardTargetMatch(GameState, drawnCard, active.GetTraitTarget()))
         {
             sbyte owner = drawnCard.ActiveData.Owner;
             Card primaryCard = GameState.Players[owner].Commander.PrimaryCard;
-            if (delayActivation)
+            if (DelayActivation)
             {
                 active.Triggered = true;
             }
@@ -477,29 +477,29 @@ public class TraitTrigger : BaseTraitEffect
     public override void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack target, RegionEnum region,
         ActiveTrait active)
     {
-        if (type != TriggerType.ActivateDamageEffect && type != TriggerType.ActivateHealEffect)
+        if (Type != TriggerType.ActivateDamageEffect && Type != TriggerType.ActivateHealEffect)
         {
             return;
         }
 
-        if (type == TriggerType.ActivateDamageEffect)
+        if (Type == TriggerType.ActivateDamageEffect)
         {
             if (!effect.IsDamageHeal(true))
             {
                 return;
             }
         }
-        else if (type == TriggerType.ActivateHealEffect && !effect.IsDamageHeal(false))
+        else if (Type == TriggerType.ActivateHealEffect && !effect.IsDamageHeal(false))
         {
             return;
         }
 
         Card primaryCard = target.PrimaryCard;
         if (Targets.CardTargetMatch(GameState, source, active.GetTraitTarget()) && (primaryCard == null ||
-                                                                         versusInfo.CardTargetMatch(GameState, primaryCard,
+                                                                         VersusInfo.CardTargetMatch(GameState, primaryCard,
                                                                              active.GetTraitTarget())))
         {
-            if (delayActivation)
+            if (DelayActivation)
             {
                 active.Triggered = true;
             }

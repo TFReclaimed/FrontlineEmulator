@@ -2,11 +2,11 @@ namespace Frontline.Battle.Traits;
 
 public class RemoveStatus : BaseTraitEffect
 {
-    public sbyte statusType;
+    public sbyte StatusType { get; set; }
 
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
-        card.RemoveStatusEffect(statusType);
+        card.RemoveStatusEffect(StatusType);
     }
 
     public override void OnNewTurnEvent(Card owner, sbyte playerIndex)

@@ -1,18 +1,21 @@
+using System.Text.Json.Serialization;
+
 namespace Frontline.Battle.Traits;
 
 public class StatModifierPassive : BaseTraitEffect
 {
-    public TraitTargetType targetType = TraitTargetType.AnyType;
+    public TraitTargetType TargetType { get; set; } = TraitTargetType.AnyType;
 
-    public sbyte attack;
+    [JsonPropertyName("attack")]
+    public sbyte IsAttack { get; set; }
 
-    public sbyte bypassDefense;
+    public sbyte BypassDefense { get; set; }
 
-    public sbyte defense;
+    public sbyte Defense { get; set; }
 
-    public sbyte health;
+    public sbyte Health { get; set; }
 
-    public sbyte command;
+    public sbyte Command { get; set; }
 
     public override sbyte GetAttackBonus(Card target, ActiveTrait active)
     {
@@ -21,10 +24,10 @@ public class StatModifierPassive : BaseTraitEffect
             return 0;
         }
 
-        if (TraitTargeting.DoesMatchType(targetType, TargetTypeMod.NumMods, 0, target))
+        if (TraitTargeting.DoesMatchType(TargetType, TargetTypeMod.NumMods, 0, target))
         {
-            sbyte result = attack;
-            if (attack != 0 && active.DataValue != 0)
+            sbyte result = IsAttack;
+            if (IsAttack != 0 && active.DataValue != 0)
             {
                 result = (sbyte) active.DataValue;
             }
@@ -42,10 +45,10 @@ public class StatModifierPassive : BaseTraitEffect
             return 0;
         }
 
-        if (TraitTargeting.DoesMatchType(targetType, TargetTypeMod.NumMods, 0, target))
+        if (TraitTargeting.DoesMatchType(TargetType, TargetTypeMod.NumMods, 0, target))
         {
-            sbyte result = bypassDefense;
-            if (bypassDefense != 0 && active.DataValue != 0)
+            sbyte result = BypassDefense;
+            if (BypassDefense != 0 && active.DataValue != 0)
             {
                 result = (sbyte) active.DataValue;
             }
@@ -63,8 +66,8 @@ public class StatModifierPassive : BaseTraitEffect
             return 0;
         }
 
-        sbyte result = defense;
-        if (defense != 0 && active.DataValue != 0)
+        sbyte result = Defense;
+        if (Defense != 0 && active.DataValue != 0)
         {
             result = (sbyte) active.DataValue;
         }
@@ -79,8 +82,8 @@ public class StatModifierPassive : BaseTraitEffect
             return 0;
         }
 
-        sbyte result = health;
-        if (health != 0 && active.DataValue != 0)
+        sbyte result = Health;
+        if (Health != 0 && active.DataValue != 0)
         {
             result = (sbyte) active.DataValue;
         }
@@ -95,8 +98,8 @@ public class StatModifierPassive : BaseTraitEffect
             return 0;
         }
 
-        sbyte result = command;
-        if (command != 0 && active.DataValue != 0)
+        sbyte result = Command;
+        if (Command != 0 && active.DataValue != 0)
         {
             result = (sbyte) active.DataValue;
         }

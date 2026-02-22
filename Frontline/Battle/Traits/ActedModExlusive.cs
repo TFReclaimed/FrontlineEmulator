@@ -1,18 +1,23 @@
+using System.Text.Json.Serialization;
+
 namespace Frontline.Battle.Traits;
 
 public class ActedModExlusive : BaseTraitEffect
 {
-    public bool deploy;
+    public bool Deploy { get; set; }
 
-    public bool attack;
+    [JsonPropertyName("attack")]
+    public bool IsAttack { get; set; }
 
-    public bool move;
+    [JsonPropertyName("move")]
+    public bool IsMove { get; set; }
 
-    public bool activate;
+    [JsonPropertyName("activate")]
+    public bool IsActivate { get; set; }
 
     public override void Move(CardStack location, RegionEnum region, bool embark, ActiveTrait active)
     {
-        if ((!Deterable || !active.Detered) && (DurationData.Charges <= 0 || active.DurationData.Charges != 0) && move)
+        if ((!Deterable || !active.Detered) && (DurationData.Charges <= 0 || active.DurationData.Charges != 0) && IsMove)
         {
             EntityCard entityCard = (EntityCard) active.GetTraitTarget();
             entityCard.ClearActed(10);
@@ -26,7 +31,7 @@ public class ActedModExlusive : BaseTraitEffect
     public override void Attack(Card target, ActiveTrait active)
     {
         if ((!Deterable || !active.Detered) && (DurationData.Charges <= 0 || active.DurationData.Charges != 0) &&
-            attack)
+            IsAttack)
         {
             EntityCard entityCard = (EntityCard) active.GetTraitTarget();
             entityCard.ClearActed(12);
@@ -40,7 +45,7 @@ public class ActedModExlusive : BaseTraitEffect
     public override void ActivateAction(CardStack location, RegionEnum region, ActiveTrait active)
     {
         if ((!Deterable || !active.Detered) && (DurationData.Charges <= 0 || active.DurationData.Charges != 0) &&
-            activate)
+            IsActivate)
         {
             EntityCard entityCard = (EntityCard) active.GetTraitTarget();
             entityCard.ClearActed(6);

@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Frontline.Game;
 using Frontline.Game.Card;
 
@@ -15,9 +16,11 @@ public class RemoveTraitEffect : BaseTraitEffect
 
     public const sbyte traitID = 5;
 
-    public sbyte traitType;
+    [JsonPropertyName("traitType")]
+    public sbyte RemoveTraitType { get; set; }
 
-    public int templateID;
+    [JsonPropertyName("templateID")]
+    public int TemplateId { get; set; }
 
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
@@ -33,7 +36,7 @@ public class RemoveTraitEffect : BaseTraitEffect
 
     private bool DoesTraitMatch(ActiveTrait active)
     {
-        switch (traitType)
+        switch (RemoveTraitType)
         {
             case 1:
                 if (active.GetTraitSource() != null)
@@ -81,7 +84,7 @@ public class RemoveTraitEffect : BaseTraitEffect
 
                 break;
             case 5:
-                if (active.TraitSourceId == templateID)
+                if (active.TraitSourceId == TemplateId)
                 {
                     return true;
                 }

@@ -2,34 +2,34 @@ namespace Frontline.Battle.Traits;
 
 public class ReactiveDamage : BaseTraitEffect
 {
-    public sbyte damage;
+    public sbyte Damage { get; set; }
 
-    public sbyte bypass;
+    public sbyte Bypass { get; set; }
 
-    public TraitTargetType attackerType = TraitTargetType.AnyType;
+    public TraitTargetType AttackerType { get; set; } = TraitTargetType.AnyType;
 
     public override void CardAttacked(Card attacker, Card target, ActiveTrait active)
     {
         if (target.EqualsTo(active.GetTraitTarget()) && (!Deterable || !active.Detered) &&
             (DurationData.Charges <= 0 || active.DurationData.Charges != 0) &&
-            TraitTargeting.DoesMatchType(attackerType, TargetTypeMod.NumMods, 0, attacker))
+            TraitTargeting.DoesMatchType(AttackerType, TargetTypeMod.NumMods, 0, attacker))
         {
-            sbyte attack = damage;
-            sbyte b = bypass;
-            if (damage == -1)
+            sbyte attack = Damage;
+            sbyte b = Bypass;
+            if (Damage == -1)
             {
                 attack = attacker.GetCurrentHealth(false);
             }
-            else if (damage > 0 && active.DataValue > 0)
+            else if (Damage > 0 && active.DataValue > 0)
             {
                 attack = (sbyte) active.DataValue;
             }
 
-            if (bypass == -1)
+            if (Bypass == -1)
             {
                 b = attacker.GetCurrentHealth(false);
             }
-            else if (bypass > 0 && active.DataValue > 0)
+            else if (Bypass > 0 && active.DataValue > 0)
             {
                 b = (sbyte) active.DataValue;
             }

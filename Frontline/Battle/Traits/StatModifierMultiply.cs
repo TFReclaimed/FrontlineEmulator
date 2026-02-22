@@ -2,7 +2,7 @@ namespace Frontline.Battle.Traits;
 
 public class StatModifierMultiply : StatModifierPassive
 {
-    public TraitTargeting countInfo;
+    public TraitTargeting CountInfo { get; set; }
 
     public override sbyte GetAttackBonus(Card target, ActiveTrait active)
     {
@@ -11,11 +11,11 @@ public class StatModifierMultiply : StatModifierPassive
             return 0;
         }
 
-        if (TraitTargeting.DoesMatchType(targetType, TargetTypeMod.NumMods, 0, target))
+        if (TraitTargeting.DoesMatchType(TargetType, TargetTypeMod.NumMods, 0, target))
         {
-            int num = countInfo.CalculateCount(GameState, active);
-            sbyte result = (sbyte) (attack * num);
-            if (attack != 0 && active.DataValue != 0)
+            int num = CountInfo.CalculateCount(GameState, active);
+            sbyte result = (sbyte) (IsAttack * num);
+            if (IsAttack != 0 && active.DataValue != 0)
             {
                 result = (sbyte) (active.DataValue * num);
             }
@@ -33,11 +33,11 @@ public class StatModifierMultiply : StatModifierPassive
             return 0;
         }
 
-        if (TraitTargeting.DoesMatchType(targetType, TargetTypeMod.NumMods, 0, target))
+        if (TraitTargeting.DoesMatchType(TargetType, TargetTypeMod.NumMods, 0, target))
         {
-            int num = countInfo.CalculateCount(GameState, active);
-            sbyte result = (sbyte) (bypassDefense * num);
-            if (bypassDefense != 0 && active.DataValue != 0)
+            int num = CountInfo.CalculateCount(GameState, active);
+            sbyte result = (sbyte) (BypassDefense * num);
+            if (BypassDefense != 0 && active.DataValue != 0)
             {
                 result = (sbyte) (active.DataValue * num);
             }
@@ -55,9 +55,9 @@ public class StatModifierMultiply : StatModifierPassive
             return 0;
         }
 
-        int num = countInfo.CalculateCount(GameState, active);
-        sbyte result = (sbyte) (defense * num);
-        if (defense != 0 && active.DataValue != 0)
+        int num = CountInfo.CalculateCount(GameState, active);
+        sbyte result = (sbyte) (Defense * num);
+        if (Defense != 0 && active.DataValue != 0)
         {
             result = (sbyte) (active.DataValue * num);
         }
@@ -72,9 +72,9 @@ public class StatModifierMultiply : StatModifierPassive
             return 0;
         }
 
-        int num = countInfo.CalculateCount(GameState, active);
-        sbyte result = (sbyte) (health * num);
-        if (health != 0 && active.DataValue != 0)
+        int num = CountInfo.CalculateCount(GameState, active);
+        sbyte result = (sbyte) (Health * num);
+        if (Health != 0 && active.DataValue != 0)
         {
             result = (sbyte) (active.DataValue * num);
         }
@@ -89,9 +89,9 @@ public class StatModifierMultiply : StatModifierPassive
             return 0;
         }
 
-        int num = countInfo.CalculateCount(GameState, active);
-        sbyte result = (sbyte) (command * num);
-        if (command != 0 && active.DataValue != 0)
+        int num = CountInfo.CalculateCount(GameState, active);
+        sbyte result = (sbyte) (Command * num);
+        if (Command != 0 && active.DataValue != 0)
         {
             result = (sbyte) (active.DataValue * num);
         }

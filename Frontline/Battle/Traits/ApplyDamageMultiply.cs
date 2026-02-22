@@ -4,7 +4,7 @@ namespace Frontline.Battle.Traits;
 
 public class ApplyDamageMultiply : ApplyDamage
 {
-    public TraitTargeting countInfo;
+    public TraitTargeting CountInfo { get; set; }
 
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
@@ -43,24 +43,24 @@ public class ApplyDamageMultiply : ApplyDamage
             }
         }
 
-        int num2 = countInfo.CalculateCount(GameState, active);
+        int num2 = CountInfo.CalculateCount(GameState, active);
         sbyte currentHealth = card.GetCurrentHealth(false);
-        sbyte attack = (sbyte) (damage * num2);
-        sbyte bypass = (sbyte) (bypassDefense * num2);
-        if (damage == -1)
+        sbyte attack = (sbyte) (Damage * num2);
+        sbyte bypass = (sbyte) (BypassDefense * num2);
+        if (Damage == -1)
         {
             attack = currentHealth;
         }
-        else if (damage > 0 && active.DataValue > 0)
+        else if (Damage > 0 && active.DataValue > 0)
         {
             attack = (sbyte) (active.DataValue * num2);
         }
 
-        if (bypassDefense == -1)
+        if (BypassDefense == -1)
         {
             bypass = currentHealth;
         }
-        else if (bypassDefense > 0 && active.DataValue > 0)
+        else if (BypassDefense > 0 && active.DataValue > 0)
         {
             bypass = (sbyte) (active.DataValue * num2);
         }

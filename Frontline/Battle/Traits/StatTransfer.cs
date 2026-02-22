@@ -1,14 +1,17 @@
+using System.Text.Json.Serialization;
+
 namespace Frontline.Battle.Traits;
 
 public class StatTransfer : BaseTraitEffect
 {
-    public bool attack;
+    [JsonPropertyName("attack")]
+    public bool IsAttack { get; set; }
 
-    public bool bypassDefense;
+    public bool BypassDefense { get; set; }
 
-    public bool defense;
+    public bool Defense { get; set; }
 
-    public bool health;
+    public bool Health { get; set; }
 
     public override void CheckCardDeployed(Card deployed, Card source)
     {
@@ -25,7 +28,7 @@ public class StatTransfer : BaseTraitEffect
             return 0;
         }
 
-        if (attack)
+        if (IsAttack)
         {
             return active.GetTraitSource().GetCurrentAttack(target, false);
         }
@@ -40,7 +43,7 @@ public class StatTransfer : BaseTraitEffect
             return 0;
         }
 
-        if (bypassDefense)
+        if (BypassDefense)
         {
             return active.GetTraitSource().GetCurrentBypassDefense(target, false);
         }
@@ -55,7 +58,7 @@ public class StatTransfer : BaseTraitEffect
             return 0;
         }
 
-        if (defense)
+        if (Defense)
         {
             return active.GetTraitSource().GetCurrentDefense(false);
         }
@@ -70,7 +73,7 @@ public class StatTransfer : BaseTraitEffect
             return 0;
         }
 
-        if (health)
+        if (Health)
         {
             return active.GetTraitSource().GetCurrentHealth(false);
         }

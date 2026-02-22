@@ -18,7 +18,7 @@ public class ApplyStatus : BaseTraitEffect
 
     public const sbyte operative = 8;
 
-    public sbyte statusType;
+    public sbyte StatusType { get; set; }
 
     public static bool IsDeterStatus(sbyte status)
     {
@@ -27,7 +27,7 @@ public class ApplyStatus : BaseTraitEffect
 
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
-        if (IsDeterStatus(statusType))
+        if (IsDeterStatus(StatusType))
         {
             ActiveTrait activeTrait = null;
             for (int i = 0; i < card.ActiveData.ActiveTraits.Count; i++)
@@ -41,12 +41,12 @@ public class ApplyStatus : BaseTraitEffect
         }
 
         base.Apply(card, source, active);
-        GameState.CardGainedStatus(card, source, statusType);
+        GameState.CardGainedStatus(card, source, StatusType);
     }
 
     public override void Deactivate(ActiveTrait active)
     {
-        if (IsDeterStatus(statusType))
+        if (IsDeterStatus(StatusType))
         {
             ActiveTrait activeTrait = null;
             ActiveCardData activeData = active.GetTraitTarget().ActiveData;
@@ -78,7 +78,7 @@ public class ApplyStatus : BaseTraitEffect
 
     public override bool CanDeploy(CardStack target, RegionEnum region)
     {
-        if (statusType == 3 && region == RegionEnum.Control)
+        if (StatusType == 3 && region == RegionEnum.Control)
         {
             return false;
         }
@@ -93,7 +93,7 @@ public class ApplyStatus : BaseTraitEffect
             return true;
         }
 
-        return (statusType != 3 || target != RegionEnum.Control) && statusType != 1 && statusType != 4;
+        return (StatusType != 3 || target != RegionEnum.Control) && StatusType != 1 && StatusType != 4;
     }
 
     public override bool CanAttack(CardStack target, ActiveTrait active)
@@ -103,7 +103,7 @@ public class ApplyStatus : BaseTraitEffect
             return true;
         }
 
-        return statusType != 1;
+        return StatusType != 1;
     }
 
     public override bool CanCounterAttack(CardStack target, ActiveTrait active)
@@ -113,7 +113,7 @@ public class ApplyStatus : BaseTraitEffect
             return true;
         }
 
-        return statusType != 1;
+        return StatusType != 1;
     }
 
     public override bool IsStatusEffect(sbyte effectID, ActiveTrait active)
@@ -123,6 +123,6 @@ public class ApplyStatus : BaseTraitEffect
             return false;
         }
 
-        return effectID == statusType;
+        return effectID == StatusType;
     }
 }

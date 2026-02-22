@@ -4,7 +4,7 @@ namespace Frontline.Battle.Traits;
 
 public class DeployCardEffect : BaseTraitEffect
 {
-    public TargetableArea deployLocation = TargetableArea.AnyAreas;
+    public TargetableArea DeployLocation { get; set; } = TargetableArea.AnyAreas;
 
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
@@ -12,11 +12,11 @@ public class DeployCardEffect : BaseTraitEffect
         sbyte owner2 = card.ActiveData.Owner;
         RegionEnum regionEnum = RegionEnum.NumRegions;
         bool titanOnly = card.GetTemplate().Type == CardType.Titan;
-        if (deployLocation == TargetableArea.Frontline)
+        if (DeployLocation == TargetableArea.Frontline)
         {
             regionEnum = RegionEnum.Control;
         }
-        else if (deployLocation == TargetableArea.FriendlyPerimeter)
+        else if (DeployLocation == TargetableArea.FriendlyPerimeter)
         {
             regionEnum = (RegionEnum) (0 + (byte) owner);
         }

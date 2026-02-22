@@ -12,7 +12,7 @@ public class NegateActivationEffect : BaseTraitEffect
 
     public const sbyte hacks = 4;
 
-    public sbyte effectType;
+    public sbyte EffectType { get; set; }
 
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
@@ -43,7 +43,7 @@ public class NegateActivationEffect : BaseTraitEffect
             return false;
         }
 
-        switch (effectType)
+        switch (EffectType)
         {
             case 1:
                 if (effect.IsDamageHeal(true))

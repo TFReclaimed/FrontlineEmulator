@@ -4,7 +4,7 @@ namespace Frontline.Battle.Traits;
 
 public class ApplyHeal : BaseTraitEffect
 {
-    public sbyte heal;
+    public sbyte Heal { get; set; }
 
     public override bool IsDamageHeal(bool damage)
     {
@@ -13,7 +13,7 @@ public class ApplyHeal : BaseTraitEffect
 
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
-        sbyte b = heal;
+        sbyte b = Heal;
         if (active.DataValue > 0)
         {
             b = (sbyte) active.DataValue;

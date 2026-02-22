@@ -20,7 +20,7 @@ public class CombatManipulationPassive : BaseTraitEffect
 
     public const sbyte DamageConvertNormal = 9;
 
-    public sbyte effectType;
+    public sbyte EffectType { get; set; }
 
     public override bool IsCombatManipulationPassive(sbyte effectID, ActiveTrait active)
     {
@@ -34,7 +34,7 @@ public class CombatManipulationPassive : BaseTraitEffect
             return false;
         }
 
-        return effectType == effectID;
+        return EffectType == effectID;
     }
 
     public override void CheckCardDeployed(Card deployed, Card source)
@@ -62,6 +62,6 @@ public class CombatManipulationPassive : BaseTraitEffect
             return true;
         }
 
-        return effectType != 7;
+        return EffectType != 7;
     }
 }

@@ -2,7 +2,7 @@ namespace Frontline.Battle.Traits;
 
 public class SummonTrait : BaseTraitEffect
 {
-    public sbyte count;
+    public sbyte Count { get; set; }
 
     public override void Activate(Card card, CardStack target, RegionEnum region)
     {
@@ -26,8 +26,8 @@ public class SummonTrait : BaseTraitEffect
         int targetID = Targets.TargetId;
         RegionEnum traitActorRegion = GameState.GetTraitActorRegion(owner, source.InstanceId);
         TargetableArea area = Targets.Area;
-        sbyte b = count;
-        if (count > 0 && active.DataValue > 0)
+        sbyte b = Count;
+        if (Count > 0 && active.DataValue > 0)
         {
             b = (sbyte) active.DataValue;
         }

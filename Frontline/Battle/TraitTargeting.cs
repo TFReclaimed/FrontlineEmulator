@@ -13,7 +13,7 @@ public class TraitTargeting
 
     public TargetableArea Area { get; set; } = TargetableArea.AnyAreas;
 
-    [JsonPropertyName("targetId")]
+    [JsonPropertyName("targetID")]
     public int TargetId { get; set; }
 
     public bool CheckFriendly()

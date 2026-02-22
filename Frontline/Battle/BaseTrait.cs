@@ -38,7 +38,7 @@ public class BaseTrait
         if (primaryTargeting.TargetTrait())
         {
             TargetEffect targetEffect = (TargetEffect) primaryTargeting;
-            if (targetEffect.dropAnywhere)
+            if (targetEffect.DropAnywhere)
             {
                 return true;
             }
@@ -58,7 +58,7 @@ public class BaseTrait
         if (primaryTargeting.TargetTrait())
         {
             TargetEffect targetEffect = (TargetEffect) primaryTargeting;
-            if (targetEffect.dropAnywhere)
+            if (targetEffect.DropAnywhere)
             {
                 return true;
             }
@@ -97,7 +97,7 @@ public class BaseTrait
         if (primaryTargeting.TargetTrait())
         {
             TargetEffect targetEffect = (TargetEffect) primaryTargeting;
-            if (targetEffect.dropAnywhere)
+            if (targetEffect.DropAnywhere)
             {
                 return true;
             }

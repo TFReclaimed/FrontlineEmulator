@@ -4,7 +4,7 @@ namespace Frontline.Battle.Traits;
 
 public class DiscardEffect : BaseTraitEffect
 {
-    public sbyte numberOfCards = 1;
+    public sbyte NumberOfCards { get; set; } = 1;
 
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
@@ -19,8 +19,8 @@ public class DiscardEffect : BaseTraitEffect
             return;
         }
 
-        sbyte b = numberOfCards;
-        if (numberOfCards > 0 && active.DataValue > 0)
+        sbyte b = NumberOfCards;
+        if (NumberOfCards > 0 && active.DataValue > 0)
         {
             b = (sbyte) active.DataValue;
         }

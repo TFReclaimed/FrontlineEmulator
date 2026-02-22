@@ -2,20 +2,20 @@ namespace Frontline.Battle.Traits;
 
 public class DrawCardEffect : BaseTraitEffect
 {
-    public sbyte numberOfCards = 1;
+    public sbyte NumberOfCards { get; set; } = 1;
 
-    public bool regularDraw = true;
+    public bool RegularDraw { get; set; } = true;
 
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
         Player player = GameState.Players[source.ActiveData.Owner];
-        sbyte drawCount = numberOfCards;
-        if (numberOfCards > 0 && active.DataValue > 0)
+        sbyte drawCount = NumberOfCards;
+        if (NumberOfCards > 0 && active.DataValue > 0)
         {
             drawCount = (sbyte) active.DataValue;
         }
 
-        if (regularDraw)
+        if (RegularDraw)
         {
             player.DrawFromDeck(source.ActiveData.Owner, drawCount, false);
         }

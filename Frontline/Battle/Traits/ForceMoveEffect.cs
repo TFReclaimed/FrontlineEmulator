@@ -4,7 +4,7 @@ namespace Frontline.Battle.Traits;
 
 public class ForceMoveEffect : BaseTraitEffect
 {
-    public TargetableArea moveLocation = TargetableArea.AnyAreas;
+    public TargetableArea MoveLocation { get; set; } = TargetableArea.AnyAreas;
 
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
@@ -12,15 +12,15 @@ public class ForceMoveEffect : BaseTraitEffect
         sbyte owner2 = card.ActiveData.Owner;
         RegionEnum regionEnum = RegionEnum.NumRegions;
         bool titanOnly = card.GetTemplate().Type == CardType.Titan;
-        if (moveLocation == TargetableArea.Frontline)
+        if (MoveLocation == TargetableArea.Frontline)
         {
             regionEnum = RegionEnum.Control;
         }
-        else if (moveLocation == TargetableArea.FriendlyPerimeter)
+        else if (MoveLocation == TargetableArea.FriendlyPerimeter)
         {
             regionEnum = (RegionEnum) (0 + (byte) owner);
         }
-        else if (moveLocation == TargetableArea.EnemyPerimeter)
+        else if (MoveLocation == TargetableArea.EnemyPerimeter)
         {
             regionEnum = (RegionEnum) (0 + (byte) GameState.GetOpponentPlayerIndex(owner));
         }

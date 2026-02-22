@@ -2,7 +2,7 @@ namespace Frontline.Battle.Traits;
 
 public class TargetEffect : BaseTraitEffect
 {
-    public bool dropAnywhere;
+    public bool DropAnywhere { get; set; }
 
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
