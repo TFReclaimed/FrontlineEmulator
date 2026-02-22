@@ -143,12 +143,20 @@ public class MatchmakingService : IMatchmakingService
 
     private async Task FinalizeMatch(MatchmakingTicket ticket1, MatchmakingTicket ticket2)
     {
-        await _battleService.CreateBattle(ticket1.UserId, ticket2.UserId, ticket1.VersusType);
+        try
+        {
+            await _battleService.CreateBattle(ticket1.UserId, ticket2.UserId, ticket1.VersusType);
 
-        _userService.IncrementChangeCounter(ticket1.UserId);
-        _userService.IncrementChangeCounter(ticket2.UserId);
+            _userService.IncrementChangeCounter(ticket1.UserId);
+            _userService.IncrementChangeCounter(ticket2.UserId);
 
-        _logger.LogInformation("Matched users {UserId1} and {UserId2} for {GameType}.",
-            ticket1.UserId, ticket2.UserId, ticket1.VersusType);
+            _logger.LogInformation("Matched users {UserId1} and {UserId2} for {GameType}.",
+                ticket1.UserId, ticket2.UserId, ticket1.VersusType);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error finalizing match between users {UserId1} and {UserId2}.",
+                ticket1.UserId, ticket2.UserId);
+        }
     }
 }
