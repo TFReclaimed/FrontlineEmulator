@@ -3,6 +3,7 @@ using Frontline.Battle.CcgEvents;
 
 namespace Frontline.Battle.GameEvents;
 
+[JsonDerivedType(typeof(GameEventParams), "GameEventParams")]
 [JsonDerivedType(typeof(GameEventCardParams), "GameEventCardParams")]
 [JsonDerivedType(typeof(GameEventCheat_GiveCardAndCmdPts), "GameEventCheat_GiveCardAndCmdPts")]
 [JsonDerivedType(typeof(GameEventDiscardParams), "GameEventDiscardParams")]
