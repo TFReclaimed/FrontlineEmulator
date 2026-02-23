@@ -9,10 +9,64 @@ public class UnitCardTemplate : EntityCardTemplate
     public sbyte Attack { get; set; }
     public sbyte Defense { get; set; }
 
+    private FusionUpgradeSequence? _upgradeSequence;
+
+    [JsonConstructor]
+    public UnitCardTemplate()
+    {
+    }
+
+    public UnitCardTemplate(UnitCardTemplate template)
+    {
+        Traits = template.Traits;
+        CardId = template.CardId;
+        Rarity = template.Rarity;
+        Type = template.Type;
+        IsHard = template.IsHard;
+        Cost = template.Cost;
+        MinimumRank = template.MinimumRank;
+        Health = template.Health;
+        Attack = template.Attack;
+        Defense = template.Defense;
+        UnitType = template.UnitType;
+    }
+
+    public void SetUpgradeSequence(FusionUpgradeSequence upgradeSequence)
+    {
+        _upgradeSequence = upgradeSequence;
+    }
+
     public override CardTemplate GetRankedTemplate(sbyte rank)
     {
-        // TODO
-        return base.GetRankedTemplate(rank);
+        if (_upgradeSequence == null)
+        {
+            return this;
+        }
+
+        rank = (sbyte) CalculateMinimumRank((byte) rank);
+        var unitTemplate = new UnitCardTemplate(this);
+
+        foreach (var upgrade in _upgradeSequence.Upgrades.Values)
+        {
+            if (upgrade.Rank > rank)
+            {
+                break;
+            }
+
+            unitTemplate.Attack += (sbyte) upgrade.Attack;
+            unitTemplate.Health += (sbyte) upgrade.Health;
+            unitTemplate.Defense += (sbyte) upgrade.Armor;
+
+            if (upgrade.TraitId != 0)
+            {
+                unitTemplate.Traits.Add(upgrade.TraitId);
+            }
+
+            unitTemplate.Cost += (sbyte) upgrade.Command;
+            unitTemplate.MinimumRank = (byte) upgrade.Rank;
+        }
+
+        return unitTemplate;
     }
 
     public override Battle.Card GenerateCard(CCG game, Battle.Card? source = null)
@@ -116,6 +170,16 @@ public class UnitCardTemplate : EntityCardTemplate
     {
         CardTemplate template = target.PrimaryCard.GetTemplate();
         return template.IsAttackable(source);
+    }
+
+    private byte CalculateMinimumRank(byte requestedRank)
+    {
+        if (MinimumRank > requestedRank)
+        {
+            requestedRank = MinimumRank;
+        }
+
+        return requestedRank;
     }
 }
 

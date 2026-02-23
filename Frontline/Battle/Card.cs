@@ -127,7 +127,7 @@ public class Card : Item
 
     protected void AddTraitsFromTemplate()
     {
-        int[] traits = template.Traits;
+        int[] traits = template.Traits.ToArray();
         int num = traits.Length;
         cardTraits = new BaseTrait[num];
         for (int i = 0; i < num; i++)

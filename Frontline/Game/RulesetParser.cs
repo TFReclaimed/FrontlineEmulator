@@ -21,16 +21,22 @@ public static class RulesetParser
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
-        
+
         Ruleset = JsonSerializer.Deserialize<Ruleset>(RulesetJson, options);
-        
+
+        MarkCommandDeckCards();
+        AssignFusionUpgradeSequences();
+    }
+
+    private static void MarkCommandDeckCards()
+    {
         foreach (var cardTemplate in Ruleset!.CardsRuleset.Cards.Values)
         {
             if (cardTemplate.Type != CardType.Commander)
             {
                 continue;
             }
-            
+
             var commanderCard = (CommanderCardTemplate) cardTemplate;
             foreach (var supportId in commanderCard.SupportIds)
             {
@@ -38,7 +44,20 @@ public static class RulesetParser
             }
         }
     }
-    
+
+    private static void AssignFusionUpgradeSequences()
+    {
+        foreach (var (key, upgradeSequence) in Ruleset!.FusionUpgrades.Sequence)
+        {
+            var templateId = int.Parse(key);
+            var cardTemplate = GetCardTemplate(templateId);
+            if (cardTemplate is UnitCardTemplate unitTemplate && unitTemplate.IsCombatUnit())
+            {
+                unitTemplate.SetUpgradeSequence(upgradeSequence);
+            }
+        }
+    }
+
     public static CardTemplate? GetCardTemplate(int templateId)
     {
         return Ruleset?.CardsRuleset.Cards.GetValueOrDefault(templateId.ToString());

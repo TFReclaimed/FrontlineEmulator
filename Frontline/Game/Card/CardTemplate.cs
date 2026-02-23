@@ -10,7 +10,7 @@ namespace Frontline.Game.Card;
 [JsonDerivedType(typeof(ResourceCardTemplate), "ResourceCardTemplate")]
 public class CardTemplate
 {
-    public int[] Traits { get; set; } = [];
+    public List<int> Traits { get; set; } = [];
     public int CardId { get; set; }
     public CardRarity Rarity { get; set; }
     public CardType Type { get; set; }

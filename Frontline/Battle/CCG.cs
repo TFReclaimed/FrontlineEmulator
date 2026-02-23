@@ -146,6 +146,20 @@ public class CCG
 
         pilotEmbarkTrait.Init(this);
         titanPilotEmbarkTrait.Init(this);
+
+        for (var i = 0; i < Players.Length; i++)
+        {
+            Players[i].Init((sbyte) i);
+        }
+
+        Board.Init(gameRules, this);
+
+        for (var j = 0; j < Players.Length; j++)
+        {
+            Players[j].InitActiveData();
+        }
+
+        Board.InitActiveData();
     }
 
     public bool IsGameOver()

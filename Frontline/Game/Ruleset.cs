@@ -10,6 +10,7 @@ public class Ruleset
     public required GamesRuleset GamesRuleset { get; set; }
     public required CardXpRanks PilotXpRanksRuleset { get; set; }
     public required CardXpRanks TitanXpRanksRuleset { get; set; }
+    public required FusionUpgrades FusionUpgrades { get; set; }
     public required XpTriggers XpTriggers { get; set; }
 }
 
@@ -38,6 +39,16 @@ public class CardXpEntry
     public int Rank { get; set; }
     [JsonPropertyName("XPRequired")]
     public int XpRequired { get; set; }
+}
+
+public class FusionUpgrades
+{
+    public required Dictionary<string, FusionUpgradeSequence> Sequence { get; set; }
+}
+
+public class FusionUpgradeSequence
+{
+    public required Dictionary<string, FusionUpgradeEntry> Upgrades { get; set; }
 }
 
 public class XpTriggers
