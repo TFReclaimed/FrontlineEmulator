@@ -55,18 +55,18 @@ Use AssetRipper to extract these files from the Unity project.
     - ✅ Edit dropship
     - ✅ Set active dropship
     - ✅ Custom dropships
-- 🚧 Battles
+- ✅ Battles
   - ✅ Matchmaking
     - ✅ Create game request
     - ✅ Cancel game request
-  - ⛔ Mulligan
-  - ⛔ Deploy
-  - ⛔ Move
-  - ⛔ Attack
-  - ⛔ End turn
-  - ⛔ Surrender
-  - ⛔ Emote
-  - ⛔ Match results
+  - ✅ Mulligan
+  - ✅ Deploy
+  - ✅ Move
+  - ✅ Attack
+  - ✅ End turn
+  - ✅ Surrender
+  - ✅ Emote
+  - ✅ Match results
 - 🚧 Missions
   - ✅ Get mission list
   - 🚧 Start mission
