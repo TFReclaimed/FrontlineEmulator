@@ -289,7 +289,7 @@ public class Player
 
         Resources.Health = (sbyte) (num - num2);
         _gameState.CardDamaged(primaryCard, source);
-        CardTraumaCCGEvent logData = new CardTraumaCCGEvent(CcgEventType.CardDamage, num2, source.InstanceId,
+        CardTraumaCcgEvent logData = new CardTraumaCcgEvent(CcgEventType.CardDamage, num2, source.InstanceId,
             source.ActiveData.Owner, primaryCard.InstanceId, primaryCard.ActiveData.Owner);
         _gameState.AddCCGEventLog(logData);
         if (Resources.Health > 0)
@@ -298,7 +298,7 @@ public class Player
         }
 
         _gameState.CardDied(primaryCard, source);
-        CardTraumaCCGEvent logData2 = new CardTraumaCCGEvent(CcgEventType.CardDeath,
+        CardTraumaCcgEvent logData2 = new CardTraumaCcgEvent(CcgEventType.CardDeath,
             primaryCard.GetCurrentHealth(false), source.InstanceId, source.ActiveData.Owner, primaryCard.InstanceId,
             primaryCard.ActiveData.Owner);
         _gameState.AddCCGEventLog(logData2);
@@ -327,7 +327,7 @@ public class Player
             Card card = Hand.DrawFromDeck(Deck, _gameState, playerIndex);
             if (card != null)
             {
-                CardDrawCCGEvent logData = new CardDrawCCGEvent(CcgEventType.DeckDraw, card.InstanceId, playerIndex,
+                CardDrawCcgEvent logData = new CardDrawCcgEvent(CcgEventType.DeckDraw, card.InstanceId, playerIndex,
                     card.TemplateId, card.Rank);
                 _gameState.AddCCGEventLog(logData);
                 _gameState.CardDrawn(card, true, isNewTurn);

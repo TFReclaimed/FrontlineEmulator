@@ -163,7 +163,7 @@ public class SupportDeck : Deck
         }
 
         Card card2 = Cards[CurrentSupport];
-        CardDrawCCGEvent logData = new CardDrawCCGEvent(CcgEventType.SupportDraw, card2.InstanceId,
+        CardDrawCcgEvent logData = new CardDrawCcgEvent(CcgEventType.SupportDraw, card2.InstanceId,
             card2.ActiveData.Owner, card2.TemplateId, card2.Rank);
         _gameState.AddCCGEventLog(logData);
         _gameState.CardDrawn(card2, false, isNewTurn);

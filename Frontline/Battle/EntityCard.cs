@@ -116,7 +116,7 @@ public class EntityCard : Card
         return UnitType.None;
     }
 
-    public override bool Deploy(CardStack stack, bool embark, Region target, CardTransitionCCGEvent deployEvent)
+    public override bool Deploy(CardStack stack, bool embark, Region target, CardTransitionCcgEvent deployEvent)
     {
         if (stack.PrimaryCard == null)
         {
@@ -309,7 +309,7 @@ public class EntityCard : Card
         {
             SetCurrentHealth((sbyte) (currentHealth - b3));
             GameState.CardDamaged(this, source);
-            CardTraumaCCGEvent logData = new CardTraumaCCGEvent(CcgEventType.CardDamage, b3, source.InstanceId,
+            CardTraumaCcgEvent logData = new CardTraumaCcgEvent(CcgEventType.CardDamage, b3, source.InstanceId,
                 source.ActiveData.Owner, InstanceId, ActiveData.Owner);
             GameState.AddCCGEventLog(logData);
             if (myDeathCard == null && CanDiscard())
@@ -351,7 +351,7 @@ public class EntityCard : Card
         }
 
         GameState.CardDied(this, myDeathCard);
-        CardTraumaCCGEvent logData = new CardTraumaCCGEvent(CcgEventType.CardDeath, GetCurrentHealth(false),
+        CardTraumaCcgEvent logData = new CardTraumaCcgEvent(CcgEventType.CardDeath, GetCurrentHealth(false),
             myDeathCard.InstanceId, myDeathCard.ActiveData.Owner, InstanceId, ActiveData.Owner);
         GameState.AddCCGEventLog(logData);
         if (myDeathCard.GetTemplate().IsCombatUnit())
@@ -382,7 +382,7 @@ public class EntityCard : Card
         }
 
         GameState.CardDied(embarkedPilot, myDeathCard);
-        logData = new CardTraumaCCGEvent(CcgEventType.CardDeath, GetCurrentHealth(false), myDeathCard.InstanceId,
+        logData = new CardTraumaCcgEvent(CcgEventType.CardDeath, GetCurrentHealth(false), myDeathCard.InstanceId,
             myDeathCard.ActiveData.Owner, embarkedPilot.InstanceId, embarkedPilot.ActiveData.Owner);
         GameState.AddCCGEventLog(logData);
         if (myDeathCard.GetTemplate().IsCombatUnit())
@@ -462,8 +462,8 @@ public class EntityCard : Card
         if (combatLog && list.Count > 0)
         {
             int count = list.Count;
-            CombatBuffsCCGEvent combatBuffsCCGEvent =
-                new CombatBuffsCCGEvent(CcgEventType.CombatBuffsAttack, InstanceId, ActiveData.Owner, 0, 0);
+            CombatBuffsCcgEvent combatBuffsCCGEvent =
+                new CombatBuffsCcgEvent(CcgEventType.CombatBuffsAttack, InstanceId, ActiveData.Owner, 0, 0);
             combatBuffsCCGEvent.BuffTraits = new EventLogTraitCardInfo[count];
             for (int j = 0; j < count; j++)
             {

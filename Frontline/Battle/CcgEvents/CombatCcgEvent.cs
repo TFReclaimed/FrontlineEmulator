@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace Frontline.Battle.CcgEvents;
 
-public class CombatCCGEvent : CCGEventData
+public class CombatCcgEvent : CcgEventData
 {
     public CcgEventType CombatType { get; set; }
 
@@ -22,24 +22,15 @@ public class CombatCCGEvent : CCGEventData
 
     public sbyte Result { get; set; }
 
-    public CombatCCGEvent()
-    {
-    }
-
-    public CombatCCGEvent(CcgEventType type, int attackerID, sbyte attackOwner, int targetID, sbyte targetOwner,
+    public CombatCcgEvent(CcgEventType type, int attackerId, sbyte attackOwner, int targetId, sbyte targetOwner,
         sbyte attack, sbyte bypass)
     {
         CombatType = type;
-        AttackerCardId = attackerID;
-        TargetCardId = targetID;
+        AttackerCardId = attackerId;
+        TargetCardId = targetId;
         AttackCardOwner = attackOwner;
         TargetCardOwner = targetOwner;
         AttackTotal = attack;
         BypassTotal = bypass;
-    }
-
-    public override CcgEventType Type()
-    {
-        return CombatType;
     }
 }

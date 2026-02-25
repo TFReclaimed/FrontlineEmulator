@@ -258,7 +258,7 @@ public class ActiveTrait
             DurationData.Charges--;
         }
 
-        TraitInfoCCGEvent logData = new TraitInfoCCGEvent(CcgEventType.TraitExpendCharge, trait.TraitParentId,
+        TraitInfoCcgEvent logData = new TraitInfoCcgEvent(CcgEventType.TraitExpendCharge, trait.TraitParentId,
             trait.EffectTraitId, traitTarget.InstanceId, traitTarget.ActiveData.Owner, traitSource.InstanceId,
             traitSource.ActiveData.Owner, DurationData.Charges);
         gameState.AddCCGEventLog(logData);

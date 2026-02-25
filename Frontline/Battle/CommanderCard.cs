@@ -167,8 +167,8 @@ public class CommanderCard : Card
         if (combatLog && list.Count > 0)
         {
             int count = list.Count;
-            CombatBuffsCCGEvent combatBuffsCCGEvent =
-                new CombatBuffsCCGEvent(CcgEventType.CombatBuffsAttack, InstanceId, ActiveData.Owner, 0, 0);
+            CombatBuffsCcgEvent combatBuffsCCGEvent =
+                new CombatBuffsCcgEvent(CcgEventType.CombatBuffsAttack, InstanceId, ActiveData.Owner, 0, 0);
             combatBuffsCCGEvent.BuffTraits = new EventLogTraitCardInfo[count];
             for (int j = 0; j < count; j++)
             {
@@ -217,8 +217,8 @@ public class CommanderCard : Card
         if (combatLog && list.Count > 0)
         {
             int count = list.Count;
-            CombatBuffsCCGEvent combatBuffsCCGEvent =
-                new CombatBuffsCCGEvent(CcgEventType.CombatBuffsAttack, InstanceId, ActiveData.Owner, 0, 0);
+            CombatBuffsCcgEvent combatBuffsCCGEvent =
+                new CombatBuffsCcgEvent(CcgEventType.CombatBuffsAttack, InstanceId, ActiveData.Owner, 0, 0);
             combatBuffsCCGEvent.BuffTraits = new EventLogTraitCardInfo[count];
             for (int j = 0; j < count; j++)
             {

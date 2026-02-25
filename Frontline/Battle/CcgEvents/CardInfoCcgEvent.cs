@@ -1,6 +1,6 @@
 namespace Frontline.Battle.CcgEvents;
 
-public class CardInfoCCGEvent : CCGEventData
+public class CardInfoCcgEvent : CcgEventData
 {
     public CcgEventType EventType { get; set; }
 
@@ -12,21 +12,12 @@ public class CardInfoCCGEvent : CCGEventData
 
     public string Info { get; set; }
 
-    public CardInfoCCGEvent()
-    {
-    }
-
-    public CardInfoCCGEvent(CcgEventType type, int cardID, sbyte cardOwner, int value, string eventInfo)
+    public CardInfoCcgEvent(CcgEventType type, int cardId, sbyte cardOwner, int value, string eventInfo)
     {
         EventType = type;
-        InstanceId = cardID;
+        InstanceId = cardId;
         Owner = cardOwner;
         Data = value;
         Info = eventInfo;
-    }
-
-    public override CcgEventType Type()
-    {
-        return EventType;
     }
 }

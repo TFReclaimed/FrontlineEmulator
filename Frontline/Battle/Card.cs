@@ -285,7 +285,7 @@ public class Card : Item
         ActiveData.DeactivateTrait(traitId, this, source);
     }
 
-    public virtual bool Deploy(CardStack stack, bool embark, Region target, CardTransitionCCGEvent deployEvent)
+    public virtual bool Deploy(CardStack stack, bool embark, Region target, CardTransitionCcgEvent deployEvent)
     {
         if (deployEvent != null && stack.PrimaryCard != null)
         {

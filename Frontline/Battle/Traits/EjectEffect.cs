@@ -20,7 +20,7 @@ public class EjectEffect : BaseTraitEffect
         if ((unitCard.EqualsTo(active.GetTraitTarget()) || embarkedPilot.EqualsTo(active.GetTraitTarget())) &&
             unitCard.GetTemplate().Type == CardType.Titan && embarkedPilot.GetTemplate().Type == CardType.Pilot)
         {
-            TraitInfoCCGEvent logData = new TraitInfoCCGEvent(CcgEventType.TraitEvent, TraitParentId, EffectTraitId,
+            TraitInfoCcgEvent logData = new TraitInfoCcgEvent(CcgEventType.TraitEvent, TraitParentId, EffectTraitId,
                 active.GetTraitTarget().InstanceId, active.GetTraitTarget().ActiveData.Owner,
                 active.GetTraitSource().InstanceId, active.GetTraitSource().ActiveData.Owner, 17);
             GameState.AddCCGEventLog(logData);

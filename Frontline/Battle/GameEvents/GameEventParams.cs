@@ -21,7 +21,7 @@ public class GameEventParams
 
     public GameEventResult EventResult { get; set; }
 
-    public List<CCGEventData> CcgEventsLog { get; set; }
+    public List<CcgEventData> CcgEventsLog { get; set; }
 
     public virtual GameEventResult ReplayEvent(CcgGame game)
     {

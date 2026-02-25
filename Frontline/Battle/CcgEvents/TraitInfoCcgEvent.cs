@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace Frontline.Battle.CcgEvents;
 
-public class TraitInfoCCGEvent : CCGEventData
+public class TraitInfoCcgEvent : CcgEventData
 {
     public CcgEventType InfoType { get; set; }
 
@@ -28,25 +28,16 @@ public class TraitInfoCCGEvent : CCGEventData
 
     public ActiveTraitCardInfo[] Targets { get; set; }
 
-    public TraitInfoCCGEvent()
-    {
-    }
-
-    public TraitInfoCCGEvent(CcgEventType type, int baseTraitID, int traitEffectID, int targetInstanceID,
-        sbyte targetPlayerIdx, int sourceInstanceID, sbyte sourcePlayerIdx, sbyte info)
+    public TraitInfoCcgEvent(CcgEventType type, int baseTraitId, int traitEffectId, int targetInstanceId,
+        sbyte targetPlayerIdx, int sourceInstanceId, sbyte sourcePlayerIdx, sbyte info)
     {
         InfoType = type;
-        TraitId = baseTraitID;
-        EffectId = traitEffectID;
-        TargetCardId = targetInstanceID;
+        TraitId = baseTraitId;
+        EffectId = traitEffectId;
+        TargetCardId = targetInstanceId;
         TargetOwner = targetPlayerIdx;
-        SourceCardId = sourceInstanceID;
+        SourceCardId = sourceInstanceId;
         SourceOwner = sourcePlayerIdx;
         Data = info;
-    }
-
-    public override CcgEventType Type()
-    {
-        return InfoType;
     }
 }

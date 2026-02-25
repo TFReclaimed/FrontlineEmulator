@@ -22,7 +22,7 @@ public class ApplyHealMultiply : ApplyHeal
 
         if (b > 0)
         {
-            CardTraumaCCGEvent logData = new CardTraumaCCGEvent(CcgEventType.CardHeal, b, source.InstanceId,
+            CardTraumaCcgEvent logData = new CardTraumaCcgEvent(CcgEventType.CardHeal, b, source.InstanceId,
                 source.ActiveData.Owner, card.InstanceId, card.ActiveData.Owner);
             GameState.AddCCGEventLog(logData);
         }

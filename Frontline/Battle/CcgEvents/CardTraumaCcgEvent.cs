@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace Frontline.Battle.CcgEvents;
 
-public class CardTraumaCCGEvent : CCGEventData
+public class CardTraumaCcgEvent : CcgEventData
 {
     public CcgEventType TraumaType { get; set; }
 
@@ -18,11 +18,7 @@ public class CardTraumaCCGEvent : CCGEventData
 
     public sbyte TargetOwner { get; set; }
 
-    public CardTraumaCCGEvent()
-    {
-    }
-
-    public CardTraumaCCGEvent(CcgEventType type, int healthDelta, int sourceId, sbyte sourceCardOwner, int targetId,
+    public CardTraumaCcgEvent(CcgEventType type, int healthDelta, int sourceId, sbyte sourceCardOwner, int targetId,
         sbyte targetCardOwner)
     {
         TraumaType = type;
@@ -31,10 +27,5 @@ public class CardTraumaCCGEvent : CCGEventData
         TargetCardId = targetId;
         SourceOwner = sourceCardOwner;
         TargetOwner = targetCardOwner;
-    }
-
-    public override CcgEventType Type()
-    {
-        return TraumaType;
     }
 }

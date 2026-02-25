@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace Frontline.Battle.CcgEvents;
 
-public class CombatBuffsCCGEvent : CCGEventData
+public class CombatBuffsCcgEvent : CcgEventData
 {
     public CcgEventType BuffType { get; set; }
 
@@ -18,21 +18,12 @@ public class CombatBuffsCCGEvent : CCGEventData
 
     public EventLogTraitCardInfo[] BuffTraits { get; set; }
 
-    public CombatBuffsCCGEvent()
-    {
-    }
-
-    public CombatBuffsCCGEvent(CcgEventType type, int attackerID, sbyte attackerOwner, int targetID, sbyte targetOwner)
+    public CombatBuffsCcgEvent(CcgEventType type, int attackerId, sbyte attackerOwner, int targetId, sbyte targetOwner)
     {
         BuffType = type;
-        AttackerCardId = attackerID;
+        AttackerCardId = attackerId;
         AttackCardOwner = attackerOwner;
-        TargetCardId = targetID;
+        TargetCardId = targetId;
         TargetCardOwner = targetOwner;
-    }
-
-    public override CcgEventType Type()
-    {
-        return BuffType;
     }
 }

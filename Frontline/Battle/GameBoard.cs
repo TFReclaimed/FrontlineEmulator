@@ -133,7 +133,7 @@ public class GameBoard
     }
 
     public CardStack Deploy(Card card, Region target, sbyte slotIndex, sbyte pushDir,
-        CardTransitionCCGEvent deployEvent)
+        CardTransitionCcgEvent deployEvent)
     {
         CardStack cardStack = Regions[(uint) target].Deploy(card, slotIndex, pushDir, target, deployEvent);
         if (cardStack != null)

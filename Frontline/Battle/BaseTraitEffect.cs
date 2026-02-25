@@ -75,7 +75,7 @@ public class BaseTraitEffect
 
         List<Card> list = new List<Card>();
         Card card2 = null;
-        TraitActivateCCGEvent traitActivateCCGEvent = new TraitActivateCCGEvent();
+        TraitActivateCcgEvent traitActivateCCGEvent = new TraitActivateCcgEvent();
         traitActivateCCGEvent.CardId = card.InstanceId;
         traitActivateCCGEvent.Owner = card.ActiveData.Owner;
         traitActivateCCGEvent.TraitId = TraitParentId;
@@ -688,7 +688,7 @@ public class BaseTraitEffect
     {
         Card traitSource = active.GetTraitSource();
         Card traitTarget = active.GetTraitTarget();
-        TraitActivateCCGEvent traitActivateCCGEvent = new TraitActivateCCGEvent();
+        TraitActivateCcgEvent traitActivateCCGEvent = new TraitActivateCcgEvent();
         traitActivateCCGEvent.CardId = ((traitSource != null) ? traitSource.InstanceId : 0);
         traitActivateCCGEvent.Owner = (sbyte) ((traitSource != null) ? traitSource.ActiveData.Owner : 0);
         traitActivateCCGEvent.TraitId = TraitParentId;

@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace Frontline.Battle.CcgEvents;
 
-public class CardTransitionCCGEvent : CCGEventData
+public class CardTransitionCcgEvent : CcgEventData
 {
     public CcgEventType Transition { get; set; }
 
@@ -32,11 +32,7 @@ public class CardTransitionCCGEvent : CCGEventData
 
     public bool Embark { get; set; }
 
-    public CardTransitionCCGEvent()
-    {
-    }
-
-    public CardTransitionCCGEvent(CcgEventType transitionType, int deployedCardId, sbyte deployedOwner,
+    public CardTransitionCcgEvent(CcgEventType transitionType, int deployedCardId, sbyte deployedOwner,
         int targetCardId, sbyte targetCardOwner, bool isEmbark, Region deployRegion, sbyte indexSlot, sbyte slotDir)
     {
         Transition = transitionType;
@@ -48,10 +44,5 @@ public class CardTransitionCCGEvent : CCGEventData
         TargetRegion = deployRegion;
         TargetSlot = indexSlot;
         Dir = slotDir;
-    }
-
-    public override CcgEventType Type()
-    {
-        return Transition;
     }
 }

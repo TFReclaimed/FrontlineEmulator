@@ -35,7 +35,7 @@ public class TraitTrigger : BaseTraitEffect
         {
             Card traitSource = active.GetTraitSource();
             Card traitTarget = active.GetTraitTarget();
-            TraitInfoCCGEvent logData = new TraitInfoCCGEvent(CcgEventType.SecretTriggered, TraitParentId,
+            TraitInfoCcgEvent logData = new TraitInfoCcgEvent(CcgEventType.SecretTriggered, TraitParentId,
                 EffectTraitId, traitTarget.InstanceId, traitTarget.ActiveData.Owner, traitSource.InstanceId,
                 traitSource.ActiveData.Owner, 0);
             GameState.AddCCGEventLog(logData);

@@ -177,7 +177,7 @@ public class GameRegion
         return false;
     }
 
-    public CardStack Deploy(Card card, sbyte slotIndex, sbyte pushDir, Region target, CardTransitionCCGEvent deployEvent)
+    public CardStack Deploy(Card card, sbyte slotIndex, sbyte pushDir, Region target, CardTransitionCcgEvent deployEvent)
     {
         bool flag = card.Deploy(Slots[slotIndex], pushDir == 0, target, deployEvent);
         if (!flag)
@@ -243,7 +243,7 @@ public class GameRegion
             cardStack = Slots[b];
         }
 
-        CardTransitionCCGEvent cardTransitionCCGEvent = new CardTransitionCCGEvent(CcgEventType.Disembark,
+        CardTransitionCcgEvent cardTransitionCCGEvent = new CardTransitionCcgEvent(CcgEventType.Disembark,
             embarkedPilot.InstanceId, embarkedPilot.ActiveData.Owner, unitCard.InstanceId, unitCard.ActiveData.Owner,
             doesEject, RegionLocation, b, b2);
         _gameState.AddCCGEventLog(cardTransitionCCGEvent);

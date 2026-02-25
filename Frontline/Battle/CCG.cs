@@ -52,7 +52,7 @@ public class CCG
 
     private BaseTrait titanPilotEmbarkTrait;
 
-    private List<CCGEventData> ccgEventsLog = new List<CCGEventData>();
+    private List<CcgEventData> ccgEventsLog = new List<CcgEventData>();
 
     public CCG(CcgGame game)
     {
@@ -377,7 +377,7 @@ public class CCG
             : player.DeployCard(cardId));
         if (card != null)
         {
-            CardTransitionCCGEvent cardTransitionCCGEvent = new CardTransitionCCGEvent(CcgEventType.DeployUnit, cardId,
+            CardTransitionCcgEvent cardTransitionCCGEvent = new CardTransitionCcgEvent(CcgEventType.DeployUnit, cardId,
                 playerIndex, targetId, targetIndex, false, target, slotIndex, pushDir);
             cardTransitionCCGEvent.TemplateId = card.TemplateId;
             cardTransitionCCGEvent.Rank = card.Rank;
@@ -524,7 +524,7 @@ public class CCG
             flag = true;
         }
 
-        CardTransitionCCGEvent cardTransitionCCGEvent = new CardTransitionCCGEvent(CcgEventType.Move, cardId,
+        CardTransitionCcgEvent cardTransitionCCGEvent = new CardTransitionCcgEvent(CcgEventType.Move, cardId,
             playerIndex, 0, 0, false, target, slotIndex, pushDir);
         AddCCGEventLog(cardTransitionCCGEvent);
         if (traitCause != null)
@@ -689,7 +689,7 @@ public class CCG
                 }
             }
 
-            CardTransitionCCGEvent cardTransitionCCGEvent = new CardTransitionCCGEvent(CcgEventType.CardSummon,
+            CardTransitionCcgEvent cardTransitionCCGEvent = new CardTransitionCcgEvent(CcgEventType.CardSummon,
                 card.InstanceId, playerIndex, 0, 0, false, currentRegion, indexSlot, 1);
             AddCCGEventLog(cardTransitionCCGEvent);
             if (traitCause != null)
@@ -746,7 +746,7 @@ public class CCG
 
         if (cardIdsToSwap.Length > 0)
         {
-            MulliganDrawCCGEvent mulliganDrawCCGEvent = new MulliganDrawCCGEvent(playerIndex);
+            MulliganDrawCcgEvent mulliganDrawCCGEvent = new MulliganDrawCcgEvent(playerIndex);
             for (int j = 0; j < cardIdsToSwap.Length; j++)
             {
                 Card card = hand.DrawFromDeck(deck, this, playerIndex);
@@ -881,7 +881,7 @@ public class CCG
 
     public bool TriggerEndTurnTraits(sbyte playerIndex)
     {
-        TurnChangeCCGEvent logData = new TurnChangeCCGEvent(CcgEventType.EndTurn, playerIndex);
+        TurnChangeCcgEvent logData = new TurnChangeCcgEvent(CcgEventType.EndTurn, playerIndex);
         AddCCGEventLog(logData);
         Player player = Players[playerIndex];
         if (player.TriggerEndTurnTraits(gameRules, playerIndex))
@@ -1186,12 +1186,12 @@ public class CCG
         }
     }
 
-    public void AddCCGEventLog(CCGEventData logData)
+    public void AddCCGEventLog(CcgEventData logData)
     {
         ccgEventsLog.Add(logData);
     }
 
-    public List<CCGEventData> GetCCGEventLog()
+    public List<CcgEventData> GetCCGEventLog()
     {
         return ccgEventsLog;
     }
@@ -1203,7 +1203,7 @@ public class CCG
         PlayerTurnStart = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         if (PlayerTurn >= 0)
         {
-            TurnChangeCCGEvent logData = new TurnChangeCCGEvent(CcgEventType.NewTurn, playerIndex);
+            TurnChangeCcgEvent logData = new TurnChangeCcgEvent(CcgEventType.NewTurn, playerIndex);
             AddCCGEventLog(logData);
             Players[PlayerTurn].NewTurn(PlayerTurn, GetDrawCount());
             Board.NewTurn(PlayerTurn);

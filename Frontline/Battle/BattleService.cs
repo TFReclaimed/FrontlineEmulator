@@ -190,7 +190,7 @@ public class BattleService : IBattleService
 
         foreach (var ccgEvent in battle.GameState.GetCCGEventLog())
         {
-            if (ccgEvent is not CardInfoCCGEvent cardInfoEvent)
+            if (ccgEvent is not CardInfoCcgEvent cardInfoEvent)
             {
                 continue;
             }
