@@ -39,11 +39,11 @@ public class TraitTargeting
                Scope == TraitTargetScope.RandomFriendly || Scope == TraitTargetScope.AllFriendlyNotSelf;
     }
 
-    public bool CheckRegion(RegionEnum checkRegion, sbyte owner)
+    public bool CheckRegion(Region checkRegion, sbyte owner)
     {
-        if (checkRegion != RegionEnum.NumRegions)
+        if (checkRegion != Region.NumRegions)
         {
-            RegionEnum regionEnum = (RegionEnum) (0 + (byte) owner);
+            Region region = (Region) (0 + (byte) owner);
             switch (Area)
             {
                 case TargetableArea.AnyAreas:
@@ -52,7 +52,7 @@ public class TraitTargeting
                     return true;
                 case TargetableArea.BattleField:
                     return true;
-                case TargetableArea.BattleFieldNC:
+                case TargetableArea.BattleFieldNc:
                     return true;
                 case TargetableArea.FriendlyHand:
                     return true;
@@ -63,35 +63,35 @@ public class TraitTargeting
                 case TargetableArea.EnemyDiscard:
                     return true;
                 case TargetableArea.Frontline:
-                    if (checkRegion == RegionEnum.Control)
+                    if (checkRegion == Region.Control)
                     {
                         return true;
                     }
 
                     break;
                 case TargetableArea.FriendlyPerimeter:
-                    if (checkRegion == regionEnum)
+                    if (checkRegion == region)
                     {
                         return true;
                     }
 
                     break;
                 case TargetableArea.EnemyPerimeter:
-                    if (checkRegion != RegionEnum.Control && checkRegion != regionEnum)
+                    if (checkRegion != Region.Control && checkRegion != region)
                     {
                         return true;
                     }
 
                     break;
                 case TargetableArea.FriendlyRegions:
-                    if (checkRegion == regionEnum || checkRegion == RegionEnum.Control)
+                    if (checkRegion == region || checkRegion == Region.Control)
                     {
                         return true;
                     }
 
                     break;
                 case TargetableArea.EnemyRegions:
-                    if (checkRegion == RegionEnum.Control || checkRegion != regionEnum)
+                    if (checkRegion == Region.Control || checkRegion != region)
                     {
                         return true;
                     }
@@ -157,7 +157,7 @@ public class TraitTargeting
                 break;
         }
 
-        RegionEnum traitActorRegion = gameState.GetTraitActorRegion(card.ActiveData.Owner, card.InstanceId);
+        Region traitActorRegion = gameState.GetTraitActorRegion(card.ActiveData.Owner, card.InstanceId);
         if (Area == TargetableArea.CurrentRegion)
         {
             if (traitActorRegion != gameState.GetTraitActorRegion(source.ActiveData.Owner, source.InstanceId))
@@ -165,7 +165,7 @@ public class TraitTargeting
                 return false;
             }
         }
-        else if (Area == TargetableArea.BattleFieldNC)
+        else if (Area == TargetableArea.BattleFieldNc)
         {
             if (card.GetTemplate().Type == CardType.Commander)
             {
@@ -370,7 +370,7 @@ public class TraitTargeting
                 }
 
                 break;
-            case TraitTargetType.CardID:
+            case TraitTargetType.CardId:
                 if (card.GetTemplate().CardId != targetID)
                 {
                     return false;
@@ -436,14 +436,14 @@ public class TraitTargeting
                 }
 
                 return false;
-            case TargetTypeMod.IsDetered:
+            case TargetTypeMod.IsDeterred:
                 if (card.HasStatusEffect(2))
                 {
                     return true;
                 }
 
                 return false;
-            case TargetTypeMod.IsImmobalized:
+            case TargetTypeMod.IsImmobilized:
                 if (card.HasStatusEffect(4))
                 {
                     return true;
@@ -479,7 +479,7 @@ public class TraitTargeting
     public int CalculateCount(CCG gameState, ActiveTrait active)
     {
         int num = 0;
-        RegionEnum region = RegionEnum.NumRegions;
+        Region region = Region.NumRegions;
         if (Area == TargetableArea.CurrentRegion)
         {
             region = gameState.GetTraitActorRegion(active.GetTraitTarget().ActiveData.Owner,

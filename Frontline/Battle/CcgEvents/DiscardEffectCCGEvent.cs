@@ -20,8 +20,8 @@ public class DiscardEffectCCGEvent : CCGEventData
         CardsInfo = data;
     }
 
-    public override CCGEventType Type()
+    public override CcgEventType Type()
     {
-        return CCGEventType.CardDiscard;
+        return CcgEventType.CardDiscard;
     }
 }

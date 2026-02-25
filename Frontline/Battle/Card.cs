@@ -285,7 +285,7 @@ public class Card : Item
         ActiveData.DeactivateTrait(traitId, this, source);
     }
 
-    public virtual bool Deploy(CardStack stack, bool embark, RegionEnum target, CardTransitionCCGEvent deployEvent)
+    public virtual bool Deploy(CardStack stack, bool embark, Region target, CardTransitionCCGEvent deployEvent)
     {
         if (deployEvent != null && stack.PrimaryCard != null)
         {
@@ -327,7 +327,7 @@ public class Card : Item
     {
         BaseTrait baseTrait = null;
         BaseTraitEffect baseTraitEffect = null;
-        RegionEnum traitActorRegion = GameState.GetTraitActorRegion(ActiveData.Owner, InstanceId);
+        Region traitActorRegion = GameState.GetTraitActorRegion(ActiveData.Owner, InstanceId);
         for (int i = 0; i < cardTraits.Length; i++)
         {
             baseTrait = cardTraits[i];
@@ -343,7 +343,7 @@ public class Card : Item
         }
     }
 
-    protected bool CanOverrideDeploy(RegionEnum target)
+    protected bool CanOverrideDeploy(Region target)
     {
         BaseTrait baseTrait = null;
         for (int i = 0; i < cardTraits.Length; i++)
@@ -361,7 +361,7 @@ public class Card : Item
         return false;
     }
 
-    public bool CanDeploy(RegionEnum target, TargetableArea area)
+    public bool CanDeploy(Region target, TargetableArea area)
     {
         CardTemplate cardTemplate = GetTemplate();
         bool flag = cardTemplate.CanDeploy(target, ActiveData.Owner);
@@ -408,7 +408,7 @@ public class Card : Item
         return false;
     }
 
-    public virtual bool CanDeploy(CardStack target, RegionEnum region, bool emptyAvailable, bool embark)
+    public virtual bool CanDeploy(CardStack target, Region region, bool emptyAvailable, bool embark)
     {
         CardTemplate cardTemplate = GetTemplate();
         bool flag = cardTemplate.CanDeploy(region, ActiveData.Owner);
@@ -475,12 +475,12 @@ public class Card : Item
         return false;
     }
 
-    public virtual bool CanActivate(Card target, RegionEnum region)
+    public virtual bool CanActivate(Card target, Region region)
     {
         return false;
     }
 
-    public bool CanMove(RegionEnum target)
+    public bool CanMove(Region target)
     {
         for (int i = 0; i < ActiveData.ActiveTraits.Count; i++)
         {
@@ -532,13 +532,13 @@ public class Card : Item
         return false;
     }
 
-    public virtual bool Move(CardStack target, RegionEnum region, RegionEnum origin, bool embark)
+    public virtual bool Move(CardStack target, Region region, Region origin, bool embark)
     {
         GameState.CardMoved(this, target, region, origin);
         return true;
     }
 
-    public void MovedCardTraitsEvent(Card moved, CardStack target, RegionEnum region, RegionEnum origin)
+    public void MovedCardTraitsEvent(Card moved, CardStack target, Region region, Region origin)
     {
         BaseTraitEffect baseTraitEffect = null;
         for (int i = 0; i < cardTraits.Length; i++)
@@ -571,7 +571,7 @@ public class Card : Item
         return GetTemplate().CanDisembark(source);
     }
 
-    public virtual bool Disembark(CardStack location, RegionEnum region)
+    public virtual bool Disembark(CardStack location, Region region)
     {
         return false;
     }
@@ -596,7 +596,7 @@ public class Card : Item
         return false;
     }
 
-    public bool CanAttack(RegionEnum target)
+    public bool CanAttack(Region target)
     {
         return false;
     }
@@ -774,7 +774,7 @@ public class Card : Item
         }
     }
 
-    public virtual void CardMoved(Card card, CardStack target, RegionEnum region, RegionEnum origin)
+    public virtual void CardMoved(Card card, CardStack target, Region region, Region origin)
     {
         for (int num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
         {
@@ -896,7 +896,7 @@ public class Card : Item
         }
     }
 
-    public virtual void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack target, RegionEnum region)
+    public virtual void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack target, Region region)
     {
         for (int num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
         {

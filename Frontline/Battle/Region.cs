@@ -3,10 +3,10 @@ using System.Text.Json.Serialization;
 namespace Frontline.Battle;
 
 [JsonConverter(typeof(JsonStringEnumConverter))]
-public enum RegionEnum : byte
+public enum Region
 {
-    Player0 = 0,
-    Player1 = 1,
-    Control = 2,
-    NumRegions = 3
+    Player0,
+    Player1,
+    Control,
+    NumRegions
 }

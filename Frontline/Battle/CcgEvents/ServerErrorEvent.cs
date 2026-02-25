@@ -13,8 +13,8 @@ public class ServerErrorEvent : CCGEventData
         ErrorMsg = error;
     }
 
-    public override CCGEventType Type()
+    public override CcgEventType Type()
     {
-        return CCGEventType.ServerError;
+        return CcgEventType.ServerError;
     }
 }

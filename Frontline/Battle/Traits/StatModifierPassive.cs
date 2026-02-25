@@ -116,8 +116,8 @@ public class StatModifierPassive : BaseTraitEffect
         }
     }
 
-    public override void OnCardMovedEvent(Card parent, Card movedCard, CardStack location, RegionEnum region,
-        RegionEnum origin)
+    public override void OnCardMovedEvent(Card parent, Card movedCard, CardStack location, Region region,
+        Region origin)
     {
         if (Targets.Scope == TraitTargetScope.Self || Targets.Scope == TraitTargetScope.UnitStack ||
             DurationData.Type != TraitDurationType.Permanent || Targets.Area != TargetableArea.CurrentRegion ||
@@ -132,7 +132,7 @@ public class StatModifierPassive : BaseTraitEffect
             return;
         }
 
-        RegionEnum traitActorRegion = GameState.GetTraitActorRegion(parent.ActiveData.Owner, parent.InstanceId);
+        Region traitActorRegion = GameState.GetTraitActorRegion(parent.ActiveData.Owner, parent.InstanceId);
         if (traitActorRegion == region)
         {
             CheckAndApplyTrait(movedCard, parent, false, false);
@@ -149,7 +149,7 @@ public class StatModifierPassive : BaseTraitEffect
         }
     }
 
-    public override void Move(CardStack location, RegionEnum region, bool embark, ActiveTrait active)
+    public override void Move(CardStack location, Region region, bool embark, ActiveTrait active)
     {
         if (Targets.Scope != 0 && Targets.Scope != TraitTargetScope.UnitStack &&
             DurationData.Type == TraitDurationType.Permanent && Targets.Area == TargetableArea.CurrentRegion)
@@ -168,7 +168,7 @@ public class StatModifierPassive : BaseTraitEffect
         }
     }
 
-    public override void CardMoved(Card theCard, CardStack target, RegionEnum destination, RegionEnum origin,
+    public override void CardMoved(Card theCard, CardStack target, Region destination, Region origin,
         ActiveTrait active)
     {
         if (Targets.Scope != 0 && Targets.Scope != TraitTargetScope.UnitStack &&

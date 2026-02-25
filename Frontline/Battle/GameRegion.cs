@@ -8,7 +8,7 @@ public class GameRegion
 {
     public CardStack[] Slots { get; set; }
 
-    public RegionEnum RegionLocation { get; set; } = RegionEnum.NumRegions;
+    public Region RegionLocation { get; set; } = Region.NumRegions;
 
     private readonly CCG _gameState;
 
@@ -21,19 +21,19 @@ public class GameRegion
         _gameState = gameState;
     }
 
-    public void Create(GameTemplate rules, RegionEnum region)
+    public void Create(GameTemplate rules, Region region)
     {
         int num = 0;
         RegionLocation = region;
         switch (region)
         {
-            case RegionEnum.Player0:
+            case Region.Player0:
                 num = rules.FirstPlayerRegionSize;
                 break;
-            case RegionEnum.Player1:
+            case Region.Player1:
                 num = rules.OtherPlayerRegionSize;
                 break;
-            case RegionEnum.Control:
+            case Region.Control:
                 num = rules.ControlRegionSize;
                 slotIndependent = rules.ControlRegionSlotIndependent;
                 titanSlots = rules.ControlRegionTitanSlots;
@@ -100,7 +100,7 @@ public class GameRegion
             area == TargetableArea.EnemyPerimeter || area == TargetableArea.EnemyRegions ||
             area == TargetableArea.EnemyDiscard || area == TargetableArea.EnemyHand ||
             area == TargetableArea.Frontline || area == TargetableArea.AnyRegion ||
-            area == TargetableArea.BattleField || area == TargetableArea.BattleFieldNC ||
+            area == TargetableArea.BattleField || area == TargetableArea.BattleFieldNc ||
             area == TargetableArea.AnyAreas)
         {
             if (card.CanDeploy(RegionLocation, area))
@@ -177,7 +177,7 @@ public class GameRegion
         return false;
     }
 
-    public CardStack Deploy(Card card, sbyte slotIndex, sbyte pushDir, RegionEnum target, CardTransitionCCGEvent deployEvent)
+    public CardStack Deploy(Card card, sbyte slotIndex, sbyte pushDir, Region target, CardTransitionCCGEvent deployEvent)
     {
         bool flag = card.Deploy(Slots[slotIndex], pushDir == 0, target, deployEvent);
         if (!flag)
@@ -243,7 +243,7 @@ public class GameRegion
             cardStack = Slots[b];
         }
 
-        CardTransitionCCGEvent cardTransitionCCGEvent = new CardTransitionCCGEvent(CCGEventType.Disembark,
+        CardTransitionCCGEvent cardTransitionCCGEvent = new CardTransitionCCGEvent(CcgEventType.Disembark,
             embarkedPilot.InstanceId, embarkedPilot.ActiveData.Owner, unitCard.InstanceId, unitCard.ActiveData.Owner,
             doesEject, RegionLocation, b, b2);
         _gameState.AddCCGEventLog(cardTransitionCCGEvent);
@@ -314,7 +314,7 @@ public class GameRegion
         return false;
     }
 
-    public void Move(Card current, sbyte slotIndex, sbyte pushDir, RegionEnum origin)
+    public void Move(Card current, sbyte slotIndex, sbyte pushDir, Region origin)
     {
         if (!current.Move(Slots[slotIndex], RegionLocation, origin, pushDir == 0))
         {

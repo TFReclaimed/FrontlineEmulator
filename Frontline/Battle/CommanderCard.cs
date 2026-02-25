@@ -168,7 +168,7 @@ public class CommanderCard : Card
         {
             int count = list.Count;
             CombatBuffsCCGEvent combatBuffsCCGEvent =
-                new CombatBuffsCCGEvent(CCGEventType.CombatBuffsAttack, InstanceId, ActiveData.Owner, 0, 0);
+                new CombatBuffsCCGEvent(CcgEventType.CombatBuffsAttack, InstanceId, ActiveData.Owner, 0, 0);
             combatBuffsCCGEvent.BuffTraits = new EventLogTraitCardInfo[count];
             for (int j = 0; j < count; j++)
             {
@@ -218,7 +218,7 @@ public class CommanderCard : Card
         {
             int count = list.Count;
             CombatBuffsCCGEvent combatBuffsCCGEvent =
-                new CombatBuffsCCGEvent(CCGEventType.CombatBuffsAttack, InstanceId, ActiveData.Owner, 0, 0);
+                new CombatBuffsCCGEvent(CcgEventType.CombatBuffsAttack, InstanceId, ActiveData.Owner, 0, 0);
             combatBuffsCCGEvent.BuffTraits = new EventLogTraitCardInfo[count];
             for (int j = 0; j < count; j++)
             {
@@ -346,7 +346,7 @@ public class CommanderCard : Card
         }
     }
 
-    public override void CardMoved(Card card, CardStack target, RegionEnum region, RegionEnum origin)
+    public override void CardMoved(Card card, CardStack target, Region region, Region origin)
     {
         base.CardMoved(card, target, region, origin);
         for (int num = Secrets.Count - 1; num >= 0; num--)
@@ -436,7 +436,7 @@ public class CommanderCard : Card
         }
     }
 
-    public override void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack target, RegionEnum region)
+    public override void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack target, Region region)
     {
         base.TraitEffectActivating(effect, source, target, region);
         for (int num = Secrets.Count - 1; num >= 0; num--)

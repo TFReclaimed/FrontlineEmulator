@@ -196,7 +196,7 @@ public class ActiveTrait
         }
     }
 
-    public void CardMoved(Card card, CardStack target, RegionEnum region, RegionEnum origin)
+    public void CardMoved(Card card, CardStack target, Region region, Region origin)
     {
         trait.CardMoved(card, target, region, origin, this);
     }
@@ -246,7 +246,7 @@ public class ActiveTrait
         trait.SecretDestroyed(secret, source, this);
     }
 
-    public void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack target, RegionEnum region)
+    public void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack target, Region region)
     {
         trait.TraitEffectActivating(effect, source, target, region, this);
     }
@@ -258,7 +258,7 @@ public class ActiveTrait
             DurationData.Charges--;
         }
 
-        TraitInfoCCGEvent logData = new TraitInfoCCGEvent(CCGEventType.TraitExpendCharge, trait.TraitParentId,
+        TraitInfoCCGEvent logData = new TraitInfoCCGEvent(CcgEventType.TraitExpendCharge, trait.TraitParentId,
             trait.EffectTraitId, traitTarget.InstanceId, traitTarget.ActiveData.Owner, traitSource.InstanceId,
             traitSource.ActiveData.Owner, DurationData.Charges);
         gameState.AddCCGEventLog(logData);

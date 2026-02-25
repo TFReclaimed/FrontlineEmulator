@@ -2,9 +2,9 @@ namespace Frontline.Battle.Traits;
 
 public class WarpFallEffect : BaseTraitEffect
 {
-    public override bool CanDeployOverride(RegionEnum region)
+    public override bool CanDeployOverride(Region region)
     {
-        if (region == RegionEnum.Control)
+        if (region == Region.Control)
         {
             return true;
         }

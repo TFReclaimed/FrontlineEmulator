@@ -10,26 +10,26 @@ public class ForceMoveEffect : BaseTraitEffect
     {
         sbyte owner = source.ActiveData.Owner;
         sbyte owner2 = card.ActiveData.Owner;
-        RegionEnum regionEnum = RegionEnum.NumRegions;
+        Region region = Region.NumRegions;
         bool titanOnly = card.GetTemplate().Type == CardType.Titan;
         if (MoveLocation == TargetableArea.Frontline)
         {
-            regionEnum = RegionEnum.Control;
+            region = Region.Control;
         }
         else if (MoveLocation == TargetableArea.FriendlyPerimeter)
         {
-            regionEnum = (RegionEnum) (0 + (byte) owner);
+            region = (Region) (0 + (byte) owner);
         }
         else if (MoveLocation == TargetableArea.EnemyPerimeter)
         {
-            regionEnum = (RegionEnum) (0 + (byte) GameState.GetOpponentPlayerIndex(owner));
+            region = (Region) (0 + (byte) GameState.GetOpponentPlayerIndex(owner));
         }
 
-        sbyte b = (sbyte) GameState.Board.Regions[(uint) regionEnum]
+        sbyte b = (sbyte) GameState.Board.Regions[(uint) region]
             .GetEmptyCardStackIndex(titanOnly, card.GetTemplate().IsSupportUnit());
         if (b >= 0)
         {
-            GameState.Move(owner2, card.InstanceId, regionEnum, b, 1, this);
+            GameState.Move(owner2, card.InstanceId, region, b, 1, this);
         }
     }
 

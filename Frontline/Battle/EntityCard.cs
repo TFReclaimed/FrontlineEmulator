@@ -116,7 +116,7 @@ public class EntityCard : Card
         return UnitType.None;
     }
 
-    public override bool Deploy(CardStack stack, bool embark, RegionEnum target, CardTransitionCCGEvent deployEvent)
+    public override bool Deploy(CardStack stack, bool embark, Region target, CardTransitionCCGEvent deployEvent)
     {
         if (stack.PrimaryCard == null)
         {
@@ -143,7 +143,7 @@ public class EntityCard : Card
         return false;
     }
 
-    public override bool Move(CardStack target, RegionEnum region, RegionEnum origin, bool embark)
+    public override bool Move(CardStack target, Region region, Region origin, bool embark)
     {
         if (target.PrimaryCard != null)
         {
@@ -180,7 +180,7 @@ public class EntityCard : Card
         return (((byte) activeEntityCardData.Acted & 0xE) ^ 0xE) != 0;
     }
 
-    public override bool CanActivate(Card target, RegionEnum region)
+    public override bool CanActivate(Card target, Region region)
     {
         if (HasActed(8))
         {
@@ -261,7 +261,7 @@ public class EntityCard : Card
         }
     }
 
-    public void ActivateTrait(CardStack target, RegionEnum region, CCG game)
+    public void ActivateTrait(CardStack target, Region region, CCG game)
     {
         ActiveTrait activeTrait = null;
         for (int i = 0; i < cardTraits.Length; i++)
@@ -309,7 +309,7 @@ public class EntityCard : Card
         {
             SetCurrentHealth((sbyte) (currentHealth - b3));
             GameState.CardDamaged(this, source);
-            CardTraumaCCGEvent logData = new CardTraumaCCGEvent(CCGEventType.CardDamage, b3, source.InstanceId,
+            CardTraumaCCGEvent logData = new CardTraumaCCGEvent(CcgEventType.CardDamage, b3, source.InstanceId,
                 source.ActiveData.Owner, InstanceId, ActiveData.Owner);
             GameState.AddCCGEventLog(logData);
             if (myDeathCard == null && CanDiscard())
@@ -332,7 +332,7 @@ public class EntityCard : Card
         }
 
         isDead = true;
-        RegionEnum traitActorRegion = GameState.GetTraitActorRegion(ActiveData.Owner, InstanceId);
+        Region traitActorRegion = GameState.GetTraitActorRegion(ActiveData.Owner, InstanceId);
         List<CardStack> list = GameState.FindCardStack(this);
         CardStack cardStack = null;
         if (list == null || list.Count == 0)
@@ -351,7 +351,7 @@ public class EntityCard : Card
         }
 
         GameState.CardDied(this, myDeathCard);
-        CardTraumaCCGEvent logData = new CardTraumaCCGEvent(CCGEventType.CardDeath, GetCurrentHealth(false),
+        CardTraumaCCGEvent logData = new CardTraumaCCGEvent(CcgEventType.CardDeath, GetCurrentHealth(false),
             myDeathCard.InstanceId, myDeathCard.ActiveData.Owner, InstanceId, ActiveData.Owner);
         GameState.AddCCGEventLog(logData);
         if (myDeathCard.GetTemplate().IsCombatUnit())
@@ -382,7 +382,7 @@ public class EntityCard : Card
         }
 
         GameState.CardDied(embarkedPilot, myDeathCard);
-        logData = new CardTraumaCCGEvent(CCGEventType.CardDeath, GetCurrentHealth(false), myDeathCard.InstanceId,
+        logData = new CardTraumaCCGEvent(CcgEventType.CardDeath, GetCurrentHealth(false), myDeathCard.InstanceId,
             myDeathCard.ActiveData.Owner, embarkedPilot.InstanceId, embarkedPilot.ActiveData.Owner);
         GameState.AddCCGEventLog(logData);
         if (myDeathCard.GetTemplate().IsCombatUnit())
@@ -463,7 +463,7 @@ public class EntityCard : Card
         {
             int count = list.Count;
             CombatBuffsCCGEvent combatBuffsCCGEvent =
-                new CombatBuffsCCGEvent(CCGEventType.CombatBuffsAttack, InstanceId, ActiveData.Owner, 0, 0);
+                new CombatBuffsCCGEvent(CcgEventType.CombatBuffsAttack, InstanceId, ActiveData.Owner, 0, 0);
             combatBuffsCCGEvent.BuffTraits = new EventLogTraitCardInfo[count];
             for (int j = 0; j < count; j++)
             {
@@ -609,7 +609,7 @@ public class EntityCard : Card
         }
     }
 
-    public override void CardMoved(Card card, CardStack target, RegionEnum region, RegionEnum origin)
+    public override void CardMoved(Card card, CardStack target, Region region, Region origin)
     {
         base.CardMoved(card, target, region, origin);
         if (Secrets != null)
@@ -729,7 +729,7 @@ public class EntityCard : Card
         }
     }
 
-    public override void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack target, RegionEnum region)
+    public override void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack target, Region region)
     {
         base.TraitEffectActivating(effect, source, target, region);
         if (Secrets != null)

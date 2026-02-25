@@ -139,11 +139,11 @@ public class CcgGame
     }
 
     public int Deploy(sbyte playerIndex, int cardId, sbyte targetIndex, int targetId, TargetableArea area,
-        RegionEnum target, sbyte slotIndex, sbyte pushDir, bool remote)
+        Region target, sbyte slotIndex, sbyte pushDir, bool remote)
     {
         bool flag = area != TargetableArea.AnyAreas;
         bool flag2 = area == TargetableArea.CurrentRegion;
-        bool flag3 = target != RegionEnum.NumRegions && slotIndex != -1;
+        bool flag3 = target != Region.NumRegions && slotIndex != -1;
         bool flag4 = GameState.CanDeploy(playerIndex, cardId, area, target, slotIndex, pushDir, remote);
         Console.WriteLine("GAME DEPLOY - {0} {1} {2} {3} {4} {5} {6}", playerIndex, cardId, targetIndex, targetId, area,
             target, slotIndex);
@@ -172,10 +172,10 @@ public class CcgGame
         return 0;
     }
 
-    public int Move(sbyte playerIndex, int cardId, RegionEnum target, sbyte slotIndex, sbyte pushDir, bool remote)
+    public int Move(sbyte playerIndex, int cardId, Region target, sbyte slotIndex, sbyte pushDir, bool remote)
     {
         Console.WriteLine("GAME MOVE - {0} {1} {2} {3}", playerIndex, cardId, target, slotIndex);
-        if (target != RegionEnum.NumRegions && slotIndex != -1 &&
+        if (target != Region.NumRegions && slotIndex != -1 &&
             GameState.CanMove(playerIndex, cardId, target, slotIndex, pushDir, remote))
         {
             GameEventRegionTarget gameEventRegionTarget = new GameEventRegionTarget(GameEvent.Move, cardId, playerIndex,
@@ -204,7 +204,7 @@ public class CcgGame
         if (GameState.CanAttack(playerIndex, cardId, ownerId, targetId, remote))
         {
             GameEventRegionTarget gameEventRegionTarget = new GameEventRegionTarget(GameEvent.Attack, cardId,
-                playerIndex, targetId, ownerId, TargetableArea.AnyAreas, RegionEnum.NumRegions, -1, 0);
+                playerIndex, targetId, ownerId, TargetableArea.AnyAreas, Region.NumRegions, -1, 0);
             if (remote)
             {
                 GameState.GetCCGEventLog().Clear();
@@ -224,7 +224,7 @@ public class CcgGame
     }
 
     public int ActivateTrait(sbyte playerIndex, int cardId, sbyte ownerId, int targetId, TargetableArea area,
-        RegionEnum region, bool remote)
+        Region region, bool remote)
     {
         if (GameState.CanActivate(playerIndex, cardId, ownerId, targetId, area, region, remote))
         {

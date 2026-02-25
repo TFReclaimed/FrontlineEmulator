@@ -4,7 +4,7 @@ namespace Frontline.Battle.CcgEvents;
 
 public class TraitInfoCCGEvent : CCGEventData
 {
-    public CCGEventType InfoType { get; set; }
+    public CcgEventType InfoType { get; set; }
 
     [JsonPropertyName("traitID")]
     public int TraitId { get; set; }
@@ -24,7 +24,7 @@ public class TraitInfoCCGEvent : CCGEventData
 
     public sbyte Data { get; set; }
 
-    public RegionEnum Region { get; set; } = RegionEnum.NumRegions;
+    public Region Region { get; set; } = Region.NumRegions;
 
     public ActiveTraitCardInfo[] Targets { get; set; }
 
@@ -32,7 +32,7 @@ public class TraitInfoCCGEvent : CCGEventData
     {
     }
 
-    public TraitInfoCCGEvent(CCGEventType type, int baseTraitID, int traitEffectID, int targetInstanceID,
+    public TraitInfoCCGEvent(CcgEventType type, int baseTraitID, int traitEffectID, int targetInstanceID,
         sbyte targetPlayerIdx, int sourceInstanceID, sbyte sourcePlayerIdx, sbyte info)
     {
         InfoType = type;
@@ -45,7 +45,7 @@ public class TraitInfoCCGEvent : CCGEventData
         Data = info;
     }
 
-    public override CCGEventType Type()
+    public override CcgEventType Type()
     {
         return InfoType;
     }

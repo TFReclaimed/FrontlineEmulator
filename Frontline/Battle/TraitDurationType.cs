@@ -3,15 +3,15 @@ using System.Text.Json.Serialization;
 namespace Frontline.Battle;
 
 [JsonConverter(typeof(JsonStringEnumConverter))]
-public enum TraitDurationType : byte
+public enum TraitDurationType
 {
-    Instant = 0,
-    Permanent = 1,
-    EndOfTurn = 2,
-    EndOfMyTurn = 3,
-    EndOfEnemyTurn = 4,
-    StartOfTurn = 5,
-    StartOfMyTurn = 6,
-    StartOfEnemyTurn = 7,
-    NumDurations = 8
+    Instant,
+    Permanent,
+    EndOfTurn,
+    EndOfMyTurn,
+    EndOfEnemyTurn,
+    StartOfTurn,
+    StartOfMyTurn,
+    StartOfEnemyTurn,
+    NumDurations
 }

@@ -4,9 +4,9 @@ namespace Frontline.Battle.CcgEvents;
 
 public class CardTransitionCCGEvent : CCGEventData
 {
-    public CCGEventType Transition { get; set; }
+    public CcgEventType Transition { get; set; }
 
-    public RegionEnum TargetRegion { get; set; }
+    public Region TargetRegion { get; set; }
 
     public int CardId { get; set; }
 
@@ -36,8 +36,8 @@ public class CardTransitionCCGEvent : CCGEventData
     {
     }
 
-    public CardTransitionCCGEvent(CCGEventType transitionType, int deployedCardId, sbyte deployedOwner,
-        int targetCardId, sbyte targetCardOwner, bool isEmbark, RegionEnum deployRegion, sbyte indexSlot, sbyte slotDir)
+    public CardTransitionCCGEvent(CcgEventType transitionType, int deployedCardId, sbyte deployedOwner,
+        int targetCardId, sbyte targetCardOwner, bool isEmbark, Region deployRegion, sbyte indexSlot, sbyte slotDir)
     {
         Transition = transitionType;
         CardId = deployedCardId;
@@ -50,7 +50,7 @@ public class CardTransitionCCGEvent : CCGEventData
         Dir = slotDir;
     }
 
-    public override CCGEventType Type()
+    public override CcgEventType Type()
     {
         return Transition;
     }

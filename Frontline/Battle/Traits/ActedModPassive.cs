@@ -79,7 +79,7 @@ public class ActedModPassive : BaseTraitEffect
         }
     }
 
-    public override void Move(CardStack location, RegionEnum region, bool embark, ActiveTrait active)
+    public override void Move(CardStack location, Region region, bool embark, ActiveTrait active)
     {
         if ((!Deterable || !active.Detered) && (DurationData.Charges <= 0 || active.DurationData.Charges != 0) && IsMove)
         {
@@ -106,7 +106,7 @@ public class ActedModPassive : BaseTraitEffect
         }
     }
 
-    public override void ActivateAction(CardStack location, RegionEnum region, ActiveTrait active)
+    public override void ActivateAction(CardStack location, Region region, ActiveTrait active)
     {
         if ((!Deterable || !active.Detered) && (DurationData.Charges <= 0 || active.DurationData.Charges != 0) &&
             IsActivate)

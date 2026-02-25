@@ -12,7 +12,7 @@ public class GameEventRegionTarget : GameEventCardParams
 
     public TargetableArea Area { get; set; } = TargetableArea.AnyAreas;
 
-    public RegionEnum Target { get; set; } = RegionEnum.NumRegions;
+    public Region Target { get; set; } = Region.NumRegions;
 
     public sbyte SlotIndex { get; set; }
 
@@ -23,7 +23,7 @@ public class GameEventRegionTarget : GameEventCardParams
     }
 
     public GameEventRegionTarget(GameEvent gameEv, int cardId, sbyte player, int targetId, sbyte ownerId,
-        TargetableArea targetArea, RegionEnum targetRegion, sbyte targetSlot, sbyte dir)
+        TargetableArea targetArea, Region targetRegion, sbyte targetSlot, sbyte dir)
         : base(gameEv, cardId, player)
     {
         TargetId = targetId;

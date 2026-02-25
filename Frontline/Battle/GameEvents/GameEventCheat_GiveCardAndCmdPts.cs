@@ -13,7 +13,7 @@ internal class GameEventCheat_GiveCardAndCmdPts : GameEventParams
     }
 
     public GameEventCheat_GiveCardAndCmdPts(int _cardTemplateId, int _rank, int _commandPoints, sbyte player)
-        : base(GameEvent.Cheat_GiveCardAndCmdPts, player)
+        : base(GameEvent.CheatGiveCardAndCmdPts, player)
     {
         CardTemplateId = _cardTemplateId;
         CommandPoints = _commandPoints;

@@ -4,7 +4,7 @@ namespace Frontline.Battle.CcgEvents;
 
 public class CombatBuffsCCGEvent : CCGEventData
 {
-    public CCGEventType BuffType { get; set; }
+    public CcgEventType BuffType { get; set; }
 
     [JsonPropertyName("attackerCardID")]
     public int AttackerCardId { get; set; }
@@ -22,7 +22,7 @@ public class CombatBuffsCCGEvent : CCGEventData
     {
     }
 
-    public CombatBuffsCCGEvent(CCGEventType type, int attackerID, sbyte attackerOwner, int targetID, sbyte targetOwner)
+    public CombatBuffsCCGEvent(CcgEventType type, int attackerID, sbyte attackerOwner, int targetID, sbyte targetOwner)
     {
         BuffType = type;
         AttackerCardId = attackerID;
@@ -31,7 +31,7 @@ public class CombatBuffsCCGEvent : CCGEventData
         TargetCardOwner = targetOwner;
     }
 
-    public override CCGEventType Type()
+    public override CcgEventType Type()
     {
         return BuffType;
     }

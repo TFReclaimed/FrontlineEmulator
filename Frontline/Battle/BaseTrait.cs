@@ -55,7 +55,7 @@ public class BaseTrait
         return false;
     }
 
-    public virtual bool CanActivate(RegionEnum region, sbyte owner)
+    public virtual bool CanActivate(Region region, sbyte owner)
     {
         BaseTraitEffect primaryTargeting = GetPrimaryTargeting(0);
         if (primaryTargeting == null)
@@ -94,7 +94,7 @@ public class BaseTrait
         return targets.CheckRegion(region, owner);
     }
 
-    public virtual bool CanActivate(CardStack target, RegionEnum region, sbyte owner)
+    public virtual bool CanActivate(CardStack target, Region region, sbyte owner)
     {
         BaseTraitEffect primaryTargeting = GetPrimaryTargeting(0);
         if (primaryTargeting == null)
@@ -169,7 +169,7 @@ public class BaseTrait
                     }
 
                     break;
-                case TargetableArea.BattleFieldNC:
+                case TargetableArea.BattleFieldNc:
                     if (primaryCard.GetTemplate().Type == CardType.Commander)
                     {
                         return false;
@@ -199,13 +199,13 @@ public class BaseTrait
         return targets.CheckRegion(region, owner);
     }
 
-    public bool CanActivate(Card target, Card source, RegionEnum region, CCG game)
+    public bool CanActivate(Card target, Card source, Region region, CCG game)
     {
         List<CardStack> list = game.FindCardStack(target);
         return CanActivate(list[0], region, source.ActiveData.Owner);
     }
 
-    public bool HasActiveTargets(Card card, CardStack target, RegionEnum region, CCG game)
+    public bool HasActiveTargets(Card card, CardStack target, Region region, CCG game)
     {
         for (int i = 0; i < Effects.Count; i++)
         {
@@ -218,7 +218,7 @@ public class BaseTrait
         return false;
     }
 
-    public void Activate(Card card, CardStack target, RegionEnum region, CCG game)
+    public void Activate(Card card, CardStack target, Region region, CCG game)
     {
         BaseTraitEffect trigger = GetTrigger(0);
         if (trigger != null)

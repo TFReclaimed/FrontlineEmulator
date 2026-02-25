@@ -66,7 +66,7 @@ public class BaseTraitEffect
         GameState = gameState;
     }
 
-    public virtual void Activate(Card card, CardStack target, RegionEnum region)
+    public virtual void Activate(Card card, CardStack target, Region region)
     {
         if (IsTrigger())
         {
@@ -259,7 +259,7 @@ public class BaseTraitEffect
         }
         else if (triggerTarget.HasAreaTarget())
         {
-            List<CardStack> list2 = GameState.FindCards(triggerTarget, RegionEnum.NumRegions, card);
+            List<CardStack> list2 = GameState.FindCards(triggerTarget, Region.NumRegions, card);
             for (int j = 0; j < list2.Count; j++)
             {
                 Card primaryCard4 = list2[j].PrimaryCard;
@@ -283,9 +283,9 @@ public class BaseTraitEffect
         }
     }
 
-    public void CheckGlobalApply(Card card, RegionEnum region, bool ignoreSelf, List<Card> appliedTo = null)
+    public void CheckGlobalApply(Card card, Region region, bool ignoreSelf, List<Card> appliedTo = null)
     {
-        RegionEnum region2 = RegionEnum.NumRegions;
+        Region region2 = Region.NumRegions;
         if (Targets.Area == TargetableArea.CurrentRegion)
         {
             region2 = region;
@@ -417,7 +417,7 @@ public class BaseTraitEffect
         return false;
     }
 
-    public List<Card> CheckForAppliedTargets(Card card, CardStack target, RegionEnum region)
+    public List<Card> CheckForAppliedTargets(Card card, CardStack target, Region region)
     {
         List<Card> list = new List<Card>();
         List<Card> list2 = null;
@@ -535,7 +535,7 @@ public class BaseTraitEffect
         }
         else
         {
-            RegionEnum region2 = RegionEnum.NumRegions;
+            Region region2 = Region.NumRegions;
             if (Targets.Area == TargetableArea.CurrentRegion)
             {
                 region2 = region;
@@ -625,8 +625,8 @@ public class BaseTraitEffect
             }
             else if (Targets.Area == TargetableArea.CurrentRegion)
             {
-                RegionEnum traitActorRegion = GameState.GetTraitActorRegion(card.ActiveData.Owner, card.InstanceId);
-                RegionEnum traitActorRegion2 = GameState.GetTraitActorRegion(source.ActiveData.Owner, source.InstanceId);
+                Region traitActorRegion = GameState.GetTraitActorRegion(card.ActiveData.Owner, card.InstanceId);
+                Region traitActorRegion2 = GameState.GetTraitActorRegion(source.ActiveData.Owner, source.InstanceId);
                 if (traitActorRegion != traitActorRegion2)
                 {
                     return false;
@@ -634,7 +634,7 @@ public class BaseTraitEffect
             }
             else
             {
-                RegionEnum traitActorRegion3 = GameState.GetTraitActorRegion(card.ActiveData.Owner, card.InstanceId);
+                Region traitActorRegion3 = GameState.GetTraitActorRegion(card.ActiveData.Owner, card.InstanceId);
                 if (!Targets.CheckRegion(traitActorRegion3, source.ActiveData.Owner))
                 {
                     return false;
@@ -779,17 +779,17 @@ public class BaseTraitEffect
         return true;
     }
 
-    public virtual bool CanDeploy(CardStack target, RegionEnum region)
+    public virtual bool CanDeploy(CardStack target, Region region)
     {
         return true;
     }
 
-    public virtual bool CanDeployOverride(RegionEnum region)
+    public virtual bool CanDeployOverride(Region region)
     {
         return false;
     }
 
-    public virtual bool CanMove(RegionEnum target, sbyte cardOwner, ActiveTrait active)
+    public virtual bool CanMove(Region target, sbyte cardOwner, ActiveTrait active)
     {
         return true;
     }
@@ -804,7 +804,7 @@ public class BaseTraitEffect
         return true;
     }
 
-    public virtual void Move(CardStack location, RegionEnum region, bool embark, ActiveTrait active)
+    public virtual void Move(CardStack location, Region region, bool embark, ActiveTrait active)
     {
     }
 
@@ -812,7 +812,7 @@ public class BaseTraitEffect
     {
     }
 
-    public virtual void ActivateAction(CardStack location, RegionEnum region, ActiveTrait active)
+    public virtual void ActivateAction(CardStack location, Region region, ActiveTrait active)
     {
     }
 
@@ -885,8 +885,8 @@ public class BaseTraitEffect
     {
     }
 
-    public virtual void OnCardMovedEvent(Card parent, Card movedCard, CardStack location, RegionEnum region,
-        RegionEnum origin)
+    public virtual void OnCardMovedEvent(Card parent, Card movedCard, CardStack location, Region region,
+        Region origin)
     {
     }
 
@@ -907,7 +907,7 @@ public class BaseTraitEffect
     {
     }
 
-    public virtual void CardMoved(Card theCard, CardStack target, RegionEnum destination, RegionEnum origin,
+    public virtual void CardMoved(Card theCard, CardStack target, Region destination, Region origin,
         ActiveTrait active)
     {
     }
@@ -956,7 +956,7 @@ public class BaseTraitEffect
     {
     }
 
-    public virtual void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack target, RegionEnum region,
+    public virtual void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack target, Region region,
         ActiveTrait active)
     {
     }

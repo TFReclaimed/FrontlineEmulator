@@ -25,7 +25,7 @@ public class EntityCardTemplate : CardTemplate
         return entityCard;
     }
 
-    public override bool CanDeploy(RegionEnum target, sbyte cardOwner)
+    public override bool CanDeploy(Region target, sbyte cardOwner)
     {
         return (uint) target == (byte) (0 + (byte) cardOwner);
     }
@@ -45,14 +45,14 @@ public class EntityCardTemplate : CardTemplate
         return false;
     }
 
-    public override bool CanMove(RegionEnum target, sbyte cardOwner)
+    public override bool CanMove(Region target, sbyte cardOwner)
     {
         if ((uint) target == (byte) (0 + (byte) cardOwner))
         {
             return true;
         }
 
-        if (target == RegionEnum.Control)
+        if (target == Region.Control)
         {
             return Type == CardType.Pilot || Type == CardType.Titan;
         }

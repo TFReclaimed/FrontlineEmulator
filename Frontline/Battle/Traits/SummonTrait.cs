@@ -4,7 +4,7 @@ public class SummonTrait : BaseTraitEffect
 {
     public sbyte Count { get; set; }
 
-    public override void Activate(Card card, CardStack target, RegionEnum region)
+    public override void Activate(Card card, CardStack target, Region region)
     {
         bool checkRange = false;
         bool onDeploy = true;
@@ -15,7 +15,7 @@ public class SummonTrait : BaseTraitEffect
     {
         sbyte owner = source.ActiveData.Owner;
         int targetID = Targets.TargetId;
-        RegionEnum traitActorRegion = GameState.GetTraitActorRegion(owner, source.InstanceId);
+        Region traitActorRegion = GameState.GetTraitActorRegion(owner, source.InstanceId);
         TargetableArea area = Targets.Area;
         return GameState.CanSummon(owner, targetID, traitActorRegion, area);
     }
@@ -24,7 +24,7 @@ public class SummonTrait : BaseTraitEffect
     {
         sbyte owner = source.ActiveData.Owner;
         int targetID = Targets.TargetId;
-        RegionEnum traitActorRegion = GameState.GetTraitActorRegion(owner, source.InstanceId);
+        Region traitActorRegion = GameState.GetTraitActorRegion(owner, source.InstanceId);
         TargetableArea area = Targets.Area;
         sbyte b = Count;
         if (Count > 0 && active.DataValue > 0)

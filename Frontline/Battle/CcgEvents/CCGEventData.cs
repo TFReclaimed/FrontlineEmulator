@@ -18,9 +18,9 @@ namespace Frontline.Battle.CcgEvents;
 [JsonDerivedType(typeof(TurnChangeCCGEvent), "TurnChangeCCGEvent")]
 public class CCGEventData
 {
-    public virtual CCGEventType Type()
+    public virtual CcgEventType Type()
     {
-        return CCGEventType.NumTypes;
+        return CcgEventType.NumTypes;
     }
 
     public virtual CCGEventData Sanitize(sbyte playerIndex)

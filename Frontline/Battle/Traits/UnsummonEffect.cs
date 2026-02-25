@@ -52,8 +52,8 @@ public class UnsummonEffect : BaseTraitEffect
 
                 card2.ResetCard();
                 player.Hand.Cards.Add(card2);
-                cardTransitionCCGEvent = new CardTransitionCCGEvent(CCGEventType.CardUnsummon, card2.InstanceId,
-                    card2.ActiveData.Owner, 0, 0, false, RegionEnum.NumRegions, 0, 0);
+                cardTransitionCCGEvent = new CardTransitionCCGEvent(CcgEventType.CardUnsummon, card2.InstanceId,
+                    card2.ActiveData.Owner, 0, 0, false, Region.NumRegions, 0, 0);
                 cardTransitionCCGEvent.TemplateId = card2.TemplateId;
                 cardTransitionCCGEvent.Rank = card2.Rank;
                 cardTransitionCCGEvent.EffectId = EffectTraitId;
@@ -64,8 +64,8 @@ public class UnsummonEffect : BaseTraitEffect
 
         card.ResetCard();
         player.Hand.Cards.Add(card);
-        cardTransitionCCGEvent = new CardTransitionCCGEvent(CCGEventType.CardUnsummon, card.InstanceId,
-            card.ActiveData.Owner, 0, 0, false, RegionEnum.NumRegions, 0, 0);
+        cardTransitionCCGEvent = new CardTransitionCCGEvent(CcgEventType.CardUnsummon, card.InstanceId,
+            card.ActiveData.Owner, 0, 0, false, Region.NumRegions, 0, 0);
         cardTransitionCCGEvent.TemplateId = card.TemplateId;
         cardTransitionCCGEvent.Rank = card.Rank;
         cardTransitionCCGEvent.EffectId = EffectTraitId;

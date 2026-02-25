@@ -168,9 +168,9 @@ public class CCG
         return Board.FindTraitActor(cardId, playerIndex);
     }
 
-    public RegionEnum GetTraitActorRegion(sbyte playerIndex, int cardId)
+    public Region GetTraitActorRegion(sbyte playerIndex, int cardId)
     {
-        RegionEnum result = RegionEnum.NumRegions;
+        Region result = Region.NumRegions;
         if (playerIndex >= 0 && playerIndex < Players.Length)
         {
             Player player = Players[playerIndex];
@@ -224,7 +224,7 @@ public class CCG
         return temporaryEffects;
     }
 
-    public List<CardStack> FindCards(TraitTargeting info, RegionEnum region, Card source)
+    public List<CardStack> FindCards(TraitTargeting info, Region region, Card source)
     {
         List<CardStack> list = new List<CardStack>();
         if (info.Area == TargetableArea.AnyAreas || info.Area == TargetableArea.BattleField ||
@@ -314,7 +314,7 @@ public class CCG
         return list;
     }
 
-    public bool CanDeploy(sbyte playerIndex, int cardId, TargetableArea area, RegionEnum target, sbyte slotIndex,
+    public bool CanDeploy(sbyte playerIndex, int cardId, TargetableArea area, Region target, sbyte slotIndex,
         sbyte pushDir, bool remote)
     {
         if (PlayerTurn == playerIndex && remote)
@@ -332,20 +332,20 @@ public class CCG
                         switch (area)
                         {
                             case TargetableArea.FriendlyCommander:
-                                return card.CanDeploy(Players[playerIndex].Commander, RegionEnum.NumRegions, false,
+                                return card.CanDeploy(Players[playerIndex].Commander, Region.NumRegions, false,
                                     false);
                             case TargetableArea.EnemyCommander:
-                                return card.CanDeploy(Players[opponentPlayerIndex].Commander, RegionEnum.NumRegions,
+                                return card.CanDeploy(Players[opponentPlayerIndex].Commander, Region.NumRegions,
                                     false, false);
                             case TargetableArea.AnyCommander:
-                                return card.CanDeploy(Players[playerIndex].Commander, RegionEnum.NumRegions, false,
+                                return card.CanDeploy(Players[playerIndex].Commander, Region.NumRegions, false,
                                     false) || card.CanDeploy(Players[opponentPlayerIndex].Commander,
-                                    RegionEnum.NumRegions, false, false);
+                                    Region.NumRegions, false, false);
                             case TargetableArea.BattleField:
-                                if (target == RegionEnum.NumRegions &&
-                                    (card.CanDeploy(Players[playerIndex].Commander, RegionEnum.NumRegions, false,
+                                if (target == Region.NumRegions &&
+                                    (card.CanDeploy(Players[playerIndex].Commander, Region.NumRegions, false,
                                         false) || card.CanDeploy(Players[opponentPlayerIndex].Commander,
-                                        RegionEnum.NumRegions, false, false)))
+                                        Region.NumRegions, false, false)))
                                 {
                                     return true;
                                 }
@@ -355,7 +355,7 @@ public class CCG
 
                         if (area == TargetableArea.FriendlyDiscard || area == TargetableArea.EnemyDiscard)
                         {
-                            return card.CanDeploy(RegionEnum.NumRegions, area);
+                            return card.CanDeploy(Region.NumRegions, area);
                         }
 
                         return Board.CanDeploy(card, area, target, slotIndex, pushDir);
@@ -368,7 +368,7 @@ public class CCG
     }
 
     public bool Deploy(sbyte playerIndex, int cardId, sbyte targetIndex, int targetId, TargetableArea area,
-        RegionEnum target, sbyte slotIndex, sbyte pushDir, BaseTraitEffect traitCause)
+        Region target, sbyte slotIndex, sbyte pushDir, BaseTraitEffect traitCause)
     {
         Player player = Players[playerIndex];
         Card card = null;
@@ -377,7 +377,7 @@ public class CCG
             : player.DeployCard(cardId));
         if (card != null)
         {
-            CardTransitionCCGEvent cardTransitionCCGEvent = new CardTransitionCCGEvent(CCGEventType.DeployUnit, cardId,
+            CardTransitionCCGEvent cardTransitionCCGEvent = new CardTransitionCCGEvent(CcgEventType.DeployUnit, cardId,
                 playerIndex, targetId, targetIndex, false, target, slotIndex, pushDir);
             cardTransitionCCGEvent.TemplateId = card.TemplateId;
             cardTransitionCCGEvent.Rank = card.Rank;
@@ -391,8 +391,8 @@ public class CCG
             if (card.GetTemplate().Type == CardType.BurnCard || card.GetTemplate().Type == CardType.Secret)
             {
                 cardTransitionCCGEvent.Transition = ((card.GetTemplate().Type == CardType.BurnCard)
-                    ? CCGEventType.DeployBurn
-                    : CCGEventType.DeploySecret);
+                    ? CcgEventType.DeployBurn
+                    : CcgEventType.DeploySecret);
                 if (CheckSpecialCardDeployment(card, targetIndex, targetId, area, target, slotIndex))
                 {
                     for (int i = 0; i < Board.Regions.Length; i++)
@@ -434,7 +434,7 @@ public class CCG
     }
 
     public bool CheckSpecialCardDeployment(Card deployed, sbyte targetIndex, int targetId, TargetableArea area,
-        RegionEnum region, sbyte slotIndex)
+        Region region, sbyte slotIndex)
     {
         Player player = Players[deployed.ActiveData.Owner];
         Player player2 = Players[targetIndex];
@@ -501,7 +501,7 @@ public class CCG
         return false;
     }
 
-    public bool CanMove(sbyte playerIndex, int cardId, RegionEnum target, sbyte slotIndex, sbyte pushDir, bool remote)
+    public bool CanMove(sbyte playerIndex, int cardId, Region target, sbyte slotIndex, sbyte pushDir, bool remote)
     {
         if (PlayerTurn == playerIndex && remote && pushDir >= -1 && pushDir <= 1)
         {
@@ -515,7 +515,7 @@ public class CCG
         return false;
     }
 
-    public bool Move(sbyte playerIndex, int cardId, RegionEnum target, sbyte slotIndex, sbyte pushDir,
+    public bool Move(sbyte playerIndex, int cardId, Region target, sbyte slotIndex, sbyte pushDir,
         BaseTraitEffect traitCause)
     {
         bool flag = false;
@@ -524,7 +524,7 @@ public class CCG
             flag = true;
         }
 
-        CardTransitionCCGEvent cardTransitionCCGEvent = new CardTransitionCCGEvent(CCGEventType.Move, cardId,
+        CardTransitionCCGEvent cardTransitionCCGEvent = new CardTransitionCCGEvent(CcgEventType.Move, cardId,
             playerIndex, 0, 0, false, target, slotIndex, pushDir);
         AddCCGEventLog(cardTransitionCCGEvent);
         if (traitCause != null)
@@ -611,7 +611,7 @@ public class CCG
     }
 
     private CardStack FindCardStackForSummon(sbyte playerIndex, bool isTitan, bool reverseSearch,
-        RegionEnum currentRegion, TargetableArea targetableArea)
+        Region currentRegion, TargetableArea targetableArea)
     {
         int num = -1;
         switch (targetableArea)
@@ -640,7 +640,7 @@ public class CCG
         return Board.Regions[num].FindEmptyCardStack(isTitan, reverseSearch);
     }
 
-    public bool CanSummon(sbyte playerIndex, int cardTemplateId, RegionEnum currentRegion,
+    public bool CanSummon(sbyte playerIndex, int cardTemplateId, Region currentRegion,
         TargetableArea targetableArea)
     {
         CardTemplate cardTemplate = RulesetParser.GetCardTemplate(cardTemplateId, 0);
@@ -657,7 +657,7 @@ public class CCG
         return false;
     }
 
-    public bool Summon(sbyte playerIndex, int cardTemplateId, RegionEnum currentRegion, TargetableArea targetableArea,
+    public bool Summon(sbyte playerIndex, int cardTemplateId, Region currentRegion, TargetableArea targetableArea,
         BaseTraitEffect traitCause)
     {
         CardTemplate cardTemplate = RulesetParser.GetCardTemplate(cardTemplateId, 0);
@@ -689,7 +689,7 @@ public class CCG
                 }
             }
 
-            CardTransitionCCGEvent cardTransitionCCGEvent = new CardTransitionCCGEvent(CCGEventType.CardSummon,
+            CardTransitionCCGEvent cardTransitionCCGEvent = new CardTransitionCCGEvent(CcgEventType.CardSummon,
                 card.InstanceId, playerIndex, 0, 0, false, currentRegion, indexSlot, 1);
             AddCCGEventLog(cardTransitionCCGEvent);
             if (traitCause != null)
@@ -881,7 +881,7 @@ public class CCG
 
     public bool TriggerEndTurnTraits(sbyte playerIndex)
     {
-        TurnChangeCCGEvent logData = new TurnChangeCCGEvent(CCGEventType.EndTurn, playerIndex);
+        TurnChangeCCGEvent logData = new TurnChangeCCGEvent(CcgEventType.EndTurn, playerIndex);
         AddCCGEventLog(logData);
         Player player = Players[playerIndex];
         if (player.TriggerEndTurnTraits(gameRules, playerIndex))
@@ -963,7 +963,7 @@ public class CCG
     }
 
     public bool CanActivate(sbyte playerIndex, int cardId, sbyte ownerId, int targetId, TargetableArea area,
-        RegionEnum region, bool remote)
+        Region region, bool remote)
     {
         Player player = Players[playerIndex];
         if (!player.CanSubmitActions())
@@ -982,7 +982,7 @@ public class CCG
     }
 
     public bool ActivateTrait(sbyte playerIndex, int cardId, sbyte ownerId, int targetId, TargetableArea area,
-        RegionEnum region)
+        Region region)
     {
         if (Board.ActivateTrait(playerIndex, cardId, ownerId, targetId, area, region, Players))
         {
@@ -994,7 +994,7 @@ public class CCG
         return false;
     }
 
-    public void CardMoved(Card card, CardStack target, RegionEnum region, RegionEnum origin)
+    public void CardMoved(Card card, CardStack target, Region region, Region origin)
     {
         Board.CardMoved(card, target, region, origin);
         for (int i = 0; i < Players.Length; i++)
@@ -1084,7 +1084,7 @@ public class CCG
         }
     }
 
-    public void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack target, RegionEnum region)
+    public void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack target, Region region)
     {
         Board.TraitEffectActivating(effect, source, target, region);
         for (int i = 0; i < Players.Length; i++)
@@ -1203,7 +1203,7 @@ public class CCG
         PlayerTurnStart = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         if (PlayerTurn >= 0)
         {
-            TurnChangeCCGEvent logData = new TurnChangeCCGEvent(CCGEventType.NewTurn, playerIndex);
+            TurnChangeCCGEvent logData = new TurnChangeCCGEvent(CcgEventType.NewTurn, playerIndex);
             AddCCGEventLog(logData);
             Players[PlayerTurn].NewTurn(PlayerTurn, GetDrawCount());
             Board.NewTurn(PlayerTurn);

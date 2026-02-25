@@ -10,15 +10,15 @@ public class DeployCardEffect : BaseTraitEffect
     {
         sbyte owner = source.ActiveData.Owner;
         sbyte owner2 = card.ActiveData.Owner;
-        RegionEnum regionEnum = RegionEnum.NumRegions;
+        Region region = Region.NumRegions;
         bool titanOnly = card.GetTemplate().Type == CardType.Titan;
         if (DeployLocation == TargetableArea.Frontline)
         {
-            regionEnum = RegionEnum.Control;
+            region = Region.Control;
         }
         else if (DeployLocation == TargetableArea.FriendlyPerimeter)
         {
-            regionEnum = (RegionEnum) (0 + (byte) owner);
+            region = (Region) (0 + (byte) owner);
         }
 
         List<Card> secrets = card.GetSecrets();
@@ -39,12 +39,12 @@ public class DeployCardEffect : BaseTraitEffect
             unitCard.EmbarkedPilot = null;
         }
 
-        sbyte b = (sbyte) GameState.Board.Regions[(uint) regionEnum]
+        sbyte b = (sbyte) GameState.Board.Regions[(uint) region]
             .GetEmptyCardStackIndex(titanOnly, card.GetTemplate().IsSupportUnit());
         card.ResetCard();
         if (b >= 0)
         {
-            GameState.Deploy(owner2, card.InstanceId, 0, 0, TargetableArea.CurrentRegion, regionEnum, b, 1, this);
+            GameState.Deploy(owner2, card.InstanceId, 0, 0, TargetableArea.CurrentRegion, region, b, 1, this);
         }
     }
 }

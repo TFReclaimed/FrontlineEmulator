@@ -82,7 +82,7 @@ public class ApplyDamage : BaseTraitEffect
         if (!owner.IsCardTraitsDetered() && DurationData.Type == TraitDurationType.Permanent &&
             owner.ActiveData.Owner == playerIndex)
         {
-            RegionEnum region = RegionEnum.NumRegions;
+            Region region = Region.NumRegions;
             CardStack target = GameState.FindCardStack(owner)[0];
             if (Targets.Area == TargetableArea.CurrentRegion)
             {

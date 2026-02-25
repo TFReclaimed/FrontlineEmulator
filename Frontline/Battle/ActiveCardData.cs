@@ -81,7 +81,7 @@ public class ActiveCardData
         }
     }
 
-    public void MoveTraits(CardStack location, RegionEnum region, bool embark)
+    public void MoveTraits(CardStack location, Region region, bool embark)
     {
         for (int num = ActiveTraits.Count - 1; num >= 0; num--)
         {

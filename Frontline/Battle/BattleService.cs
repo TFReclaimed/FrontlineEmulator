@@ -195,7 +195,7 @@ public class BattleService : IBattleService
                 continue;
             }
 
-            if (cardInfoEvent.EventType != CCGEventType.CardXPEarned)
+            if (cardInfoEvent.EventType != CcgEventType.CardXpEarned)
             {
                 continue;
             }

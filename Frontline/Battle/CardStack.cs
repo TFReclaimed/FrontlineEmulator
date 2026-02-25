@@ -218,7 +218,7 @@ public class CardStack
         }
     }
 
-    public void CardMoved(Card card, CardStack target, RegionEnum region, RegionEnum origin)
+    public void CardMoved(Card card, CardStack target, Region region, Region origin)
     {
         if (PrimaryCard != null)
         {
@@ -348,7 +348,7 @@ public class CardStack
         }
     }
 
-    public void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack target, RegionEnum region)
+    public void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack target, Region region)
     {
         if (PrimaryCard != null)
         {

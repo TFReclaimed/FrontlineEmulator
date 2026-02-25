@@ -76,9 +76,9 @@ public class ApplyStatus : BaseTraitEffect
         base.Deactivate(active);
     }
 
-    public override bool CanDeploy(CardStack target, RegionEnum region)
+    public override bool CanDeploy(CardStack target, Region region)
     {
-        if (StatusType == 3 && region == RegionEnum.Control)
+        if (StatusType == 3 && region == Region.Control)
         {
             return false;
         }
@@ -86,14 +86,14 @@ public class ApplyStatus : BaseTraitEffect
         return true;
     }
 
-    public override bool CanMove(RegionEnum target, sbyte cardOwner, ActiveTrait active)
+    public override bool CanMove(Region target, sbyte cardOwner, ActiveTrait active)
     {
         if (Deterable && active.Detered)
         {
             return true;
         }
 
-        return (StatusType != 3 || target != RegionEnum.Control) && StatusType != 1 && StatusType != 4;
+        return (StatusType != 3 || target != Region.Control) && StatusType != 1 && StatusType != 4;
     }
 
     public override bool CanAttack(CardStack target, ActiveTrait active)

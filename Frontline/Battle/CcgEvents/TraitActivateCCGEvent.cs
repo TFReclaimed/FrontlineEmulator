@@ -17,7 +17,7 @@ public class TraitActivateCCGEvent : CCGEventData
 
     public bool Deactivate { get; set; }
 
-    public RegionEnum Region { get; set; } = RegionEnum.NumRegions;
+    public Region Region { get; set; } = Region.NumRegions;
 
     public ActiveTraitCardInfo[] Targets { get; set; }
 
@@ -35,8 +35,8 @@ public class TraitActivateCCGEvent : CCGEventData
         Deactivate = deactivateTrait;
     }
 
-    public override CCGEventType Type()
+    public override CcgEventType Type()
     {
-        return CCGEventType.TraitActivation;
+        return CcgEventType.TraitActivation;
     }
 }

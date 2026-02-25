@@ -25,7 +25,7 @@ public class CommanderCardTemplate : CardTemplate
         return commanderCard;
     }
 
-    public override bool CanDeploy(RegionEnum target, sbyte cardOwner)
+    public override bool CanDeploy(Region target, sbyte cardOwner)
     {
         return false;
     }

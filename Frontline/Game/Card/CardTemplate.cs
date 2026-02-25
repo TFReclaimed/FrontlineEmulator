@@ -83,7 +83,7 @@ public class CardTemplate
         return receivedXp;
     }
 
-    public virtual bool CanDeploy(RegionEnum target, sbyte cardOwner)
+    public virtual bool CanDeploy(Region target, sbyte cardOwner)
     {
         return true;
     }
@@ -93,7 +93,7 @@ public class CardTemplate
         return true;
     }
 
-    public virtual bool CanMove(RegionEnum target, sbyte cardOwner)
+    public virtual bool CanMove(Region target, sbyte cardOwner)
     {
         return false;
     }

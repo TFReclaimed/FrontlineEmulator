@@ -2,7 +2,7 @@ namespace Frontline.Battle.CcgEvents;
 
 public class TurnChangeCCGEvent : CCGEventData
 {
-    public CCGEventType ChangeType { get; set; } = CCGEventType.NewTurn;
+    public CcgEventType ChangeType { get; set; } = CcgEventType.NewTurn;
 
     public sbyte PlayerIndex { get; set; }
 
@@ -10,13 +10,13 @@ public class TurnChangeCCGEvent : CCGEventData
     {
     }
 
-    public TurnChangeCCGEvent(CCGEventType type, sbyte index)
+    public TurnChangeCCGEvent(CcgEventType type, sbyte index)
     {
         ChangeType = type;
         PlayerIndex = index;
     }
 
-    public override CCGEventType Type()
+    public override CcgEventType Type()
     {
         return ChangeType;
     }

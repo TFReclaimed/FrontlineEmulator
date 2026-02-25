@@ -127,8 +127,8 @@ public class UnitCardTemplate : EntityCardTemplate
             {
                 if (!source.PrimaryCard.HasPilot())
                 {
-                    RegionEnum traitActorRegion = gameState.GetTraitActorRegion(primaryCard.ActiveData.Owner, primaryCard.InstanceId);
-                    RegionEnum traitActorRegion2 = gameState.GetTraitActorRegion(primaryCard2.ActiveData.Owner, primaryCard2.InstanceId);
+                    Region traitActorRegion = gameState.GetTraitActorRegion(primaryCard.ActiveData.Owner, primaryCard.InstanceId);
+                    Region traitActorRegion2 = gameState.GetTraitActorRegion(primaryCard2.ActiveData.Owner, primaryCard2.InstanceId);
 
                     if (traitActorRegion != traitActorRegion2)
                     {
@@ -145,8 +145,8 @@ public class UnitCardTemplate : EntityCardTemplate
             {
                 if (!target.PrimaryCard.HasPilot())
                 {
-                    RegionEnum traitActorRegion3 = gameState.GetTraitActorRegion(primaryCard.ActiveData.Owner, primaryCard.InstanceId);
-                    RegionEnum traitActorRegion4 = gameState.GetTraitActorRegion(primaryCard2.ActiveData.Owner, primaryCard2.InstanceId);
+                    Region traitActorRegion3 = gameState.GetTraitActorRegion(primaryCard.ActiveData.Owner, primaryCard.InstanceId);
+                    Region traitActorRegion4 = gameState.GetTraitActorRegion(primaryCard2.ActiveData.Owner, primaryCard2.InstanceId);
 
                     if (traitActorRegion3 != traitActorRegion4)
                     {

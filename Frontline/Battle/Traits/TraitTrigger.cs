@@ -21,7 +21,7 @@ public class TraitTrigger : BaseTraitEffect
         return true;
     }
 
-    public void RunTriggerActivation(Card source, Card target, RegionEnum destination, ActiveTrait active)
+    public void RunTriggerActivation(Card source, Card target, Region destination, ActiveTrait active)
     {
         BaseTrait traitTemplate = RulesetParser.GetTraitTemplate(TraitParentId);
         sbyte b = 0;
@@ -35,7 +35,7 @@ public class TraitTrigger : BaseTraitEffect
         {
             Card traitSource = active.GetTraitSource();
             Card traitTarget = active.GetTraitTarget();
-            TraitInfoCCGEvent logData = new TraitInfoCCGEvent(CCGEventType.SecretTriggered, TraitParentId,
+            TraitInfoCCGEvent logData = new TraitInfoCCGEvent(CcgEventType.SecretTriggered, TraitParentId,
                 EffectTraitId, traitTarget.InstanceId, traitTarget.ActiveData.Owner, traitSource.InstanceId,
                 traitSource.ActiveData.Owner, 0);
             GameState.AddCCGEventLog(logData);
@@ -126,7 +126,7 @@ public class TraitTrigger : BaseTraitEffect
     }
 
     private void ActivateParentEffect(BaseTrait parent, BaseTraitEffect trait, Card source, Card target,
-        RegionEnum destination, ActiveTrait active, bool secondaryTrigger)
+        Region destination, ActiveTrait active, bool secondaryTrigger)
     {
         CardStack target2 = null;
         CardStack cardStack = null;
@@ -175,7 +175,7 @@ public class TraitTrigger : BaseTraitEffect
                 return;
             }
 
-            RegionEnum traitActorRegion =
+            Region traitActorRegion =
                 GameState.GetTraitActorRegion(traitTarget.ActiveData.Owner, traitTarget.InstanceId);
             list = GameState.FindCardStack(traitTarget);
             if (list != null && list.Count > 0)
@@ -239,17 +239,17 @@ public class TraitTrigger : BaseTraitEffect
             sbyte owner = active.GetTraitTarget().ActiveData.Owner;
             if (ActivationDelayType == TraitDurationType.StartOfTurn)
             {
-                RunTriggerActivation(null, null, RegionEnum.NumRegions, active);
+                RunTriggerActivation(null, null, Region.NumRegions, active);
                 flag = true;
             }
             else if (ActivationDelayType == TraitDurationType.StartOfMyTurn && owner == playerIndex)
             {
-                RunTriggerActivation(null, null, RegionEnum.NumRegions, active);
+                RunTriggerActivation(null, null, Region.NumRegions, active);
                 flag = true;
             }
             else if (ActivationDelayType == TraitDurationType.StartOfEnemyTurn && owner != playerIndex)
             {
-                RunTriggerActivation(null, null, RegionEnum.NumRegions, active);
+                RunTriggerActivation(null, null, Region.NumRegions, active);
                 flag = true;
             }
         }
@@ -262,7 +262,7 @@ public class TraitTrigger : BaseTraitEffect
             }
             else
             {
-                RunTriggerActivation(null, null, RegionEnum.NumRegions, active);
+                RunTriggerActivation(null, null, Region.NumRegions, active);
             }
         }
     }
@@ -275,17 +275,17 @@ public class TraitTrigger : BaseTraitEffect
             sbyte owner = active.GetTraitTarget().ActiveData.Owner;
             if (ActivationDelayType == TraitDurationType.EndOfTurn)
             {
-                RunTriggerActivation(null, null, RegionEnum.NumRegions, active);
+                RunTriggerActivation(null, null, Region.NumRegions, active);
                 flag = true;
             }
             else if (ActivationDelayType == TraitDurationType.EndOfMyTurn && owner == playerIndex)
             {
-                RunTriggerActivation(null, null, RegionEnum.NumRegions, active);
+                RunTriggerActivation(null, null, Region.NumRegions, active);
                 flag = true;
             }
             else if (ActivationDelayType == TraitDurationType.EndOfEnemyTurn && owner != playerIndex)
             {
-                RunTriggerActivation(null, null, RegionEnum.NumRegions, active);
+                RunTriggerActivation(null, null, Region.NumRegions, active);
                 flag = true;
             }
         }
@@ -298,7 +298,7 @@ public class TraitTrigger : BaseTraitEffect
             }
             else
             {
-                RunTriggerActivation(null, null, RegionEnum.NumRegions, active);
+                RunTriggerActivation(null, null, Region.NumRegions, active);
             }
         }
     }
@@ -315,12 +315,12 @@ public class TraitTrigger : BaseTraitEffect
             }
             else
             {
-                RunTriggerActivation(commander.PrimaryCard, deployed, RegionEnum.NumRegions, active);
+                RunTriggerActivation(commander.PrimaryCard, deployed, Region.NumRegions, active);
             }
         }
     }
 
-    public override void CardMoved(Card theCard, CardStack target, RegionEnum destination, RegionEnum origin,
+    public override void CardMoved(Card theCard, CardStack target, Region destination, Region origin,
         ActiveTrait active)
     {
         if (Type == TriggerType.Move && Targets.CardTargetMatch(GameState, theCard, active.GetTraitTarget()) &&
@@ -350,7 +350,7 @@ public class TraitTrigger : BaseTraitEffect
             }
             else
             {
-                RunTriggerActivation(attacker, target, RegionEnum.NumRegions, active);
+                RunTriggerActivation(attacker, target, Region.NumRegions, active);
             }
         }
     }
@@ -366,7 +366,7 @@ public class TraitTrigger : BaseTraitEffect
             }
             else
             {
-                RunTriggerActivation(attacker, target, RegionEnum.NumRegions, active);
+                RunTriggerActivation(attacker, target, Region.NumRegions, active);
             }
         }
     }
@@ -394,7 +394,7 @@ public class TraitTrigger : BaseTraitEffect
             }
             else
             {
-                RunTriggerActivation(source, damagedCard, RegionEnum.NumRegions, active);
+                RunTriggerActivation(source, damagedCard, Region.NumRegions, active);
             }
         }
     }
@@ -410,7 +410,7 @@ public class TraitTrigger : BaseTraitEffect
             }
             else
             {
-                RunTriggerActivation(source, deadCard, RegionEnum.NumRegions, active);
+                RunTriggerActivation(source, deadCard, Region.NumRegions, active);
             }
         }
     }
@@ -461,7 +461,7 @@ public class TraitTrigger : BaseTraitEffect
             }
             else
             {
-                RunTriggerActivation(primaryCard, drawnCard, RegionEnum.NumRegions, active);
+                RunTriggerActivation(primaryCard, drawnCard, Region.NumRegions, active);
             }
         }
     }
@@ -474,7 +474,7 @@ public class TraitTrigger : BaseTraitEffect
     {
     }
 
-    public override void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack target, RegionEnum region,
+    public override void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack target, Region region,
         ActiveTrait active)
     {
         if (Type != TriggerType.ActivateDamageEffect && Type != TriggerType.ActivateHealEffect)
@@ -505,7 +505,7 @@ public class TraitTrigger : BaseTraitEffect
             }
             else
             {
-                RunTriggerActivation(source, primaryCard, RegionEnum.NumRegions, active);
+                RunTriggerActivation(source, primaryCard, Region.NumRegions, active);
             }
         }
     }

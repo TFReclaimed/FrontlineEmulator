@@ -4,7 +4,7 @@ namespace Frontline.Battle.CcgEvents;
 
 public class CombatCCGEvent : CCGEventData
 {
-    public CCGEventType CombatType { get; set; }
+    public CcgEventType CombatType { get; set; }
 
     [JsonPropertyName("attackerCardID")]
     public int AttackerCardId { get; set; }
@@ -26,7 +26,7 @@ public class CombatCCGEvent : CCGEventData
     {
     }
 
-    public CombatCCGEvent(CCGEventType type, int attackerID, sbyte attackOwner, int targetID, sbyte targetOwner,
+    public CombatCCGEvent(CcgEventType type, int attackerID, sbyte attackOwner, int targetID, sbyte targetOwner,
         sbyte attack, sbyte bypass)
     {
         CombatType = type;
@@ -38,7 +38,7 @@ public class CombatCCGEvent : CCGEventData
         BypassTotal = bypass;
     }
 
-    public override CCGEventType Type()
+    public override CcgEventType Type()
     {
         return CombatType;
     }

@@ -147,7 +147,7 @@ public class UnitCard : EntityCard
             int count = list.Count;
             int targetID = ((target != null) ? target.InstanceId : (-1));
             sbyte targetOwner = (sbyte) ((target != null) ? target.ActiveData.Owner : (-1));
-            CombatBuffsCCGEvent combatBuffsCCGEvent = new CombatBuffsCCGEvent(CCGEventType.CombatBuffsAttack,
+            CombatBuffsCCGEvent combatBuffsCCGEvent = new CombatBuffsCCGEvent(CcgEventType.CombatBuffsAttack,
                 InstanceId, ActiveData.Owner, targetID, targetOwner);
             combatBuffsCCGEvent.BuffTraits = new EventLogTraitCardInfo[count];
             for (int j = 0; j < count; j++)
@@ -204,7 +204,7 @@ public class UnitCard : EntityCard
             int count = list.Count;
             int targetID = ((target != null) ? target.InstanceId : (-1));
             sbyte targetOwner = (sbyte) ((target != null) ? target.ActiveData.Owner : (-1));
-            CombatBuffsCCGEvent combatBuffsCCGEvent = new CombatBuffsCCGEvent(CCGEventType.CombatBuffsAttack,
+            CombatBuffsCCGEvent combatBuffsCCGEvent = new CombatBuffsCCGEvent(CcgEventType.CombatBuffsAttack,
                 InstanceId, ActiveData.Owner, targetID, targetOwner);
             combatBuffsCCGEvent.BuffTraits = new EventLogTraitCardInfo[count];
             for (int j = 0; j < count; j++)
@@ -256,7 +256,7 @@ public class UnitCard : EntityCard
         {
             int count = list.Count;
             CombatBuffsCCGEvent combatBuffsCCGEvent =
-                new CombatBuffsCCGEvent(CCGEventType.CombatBuffsAttack, InstanceId, ActiveData.Owner, 0, 0);
+                new CombatBuffsCCGEvent(CcgEventType.CombatBuffsAttack, InstanceId, ActiveData.Owner, 0, 0);
             combatBuffsCCGEvent.BuffTraits = new EventLogTraitCardInfo[count];
             for (int j = 0; j < count; j++)
             {
@@ -354,7 +354,7 @@ public class UnitCard : EntityCard
         }
     }
 
-    public override bool CanDeploy(CardStack target, RegionEnum region, bool emptyAvailable, bool embark)
+    public override bool CanDeploy(CardStack target, Region region, bool emptyAvailable, bool embark)
     {
         CardTemplate cardTemplate = GetTemplate();
         bool flag = cardTemplate.CanDeploy(region, ActiveData.Owner);
@@ -433,7 +433,7 @@ public class UnitCard : EntityCard
         return true;
     }
 
-    public override bool Deploy(CardStack stack, bool embark, RegionEnum target, CardTransitionCCGEvent deployEvent)
+    public override bool Deploy(CardStack stack, bool embark, Region target, CardTransitionCCGEvent deployEvent)
     {
         if (base.Deploy(stack, embark, target, deployEvent))
         {
@@ -518,7 +518,7 @@ public class UnitCard : EntityCard
         return false;
     }
 
-    public override bool Move(CardStack target, RegionEnum region, RegionEnum origin, bool embark)
+    public override bool Move(CardStack target, Region region, Region origin, bool embark)
     {
         if (base.Move(target, region, origin, embark))
         {
@@ -570,7 +570,7 @@ public class UnitCard : EntityCard
         return false;
     }
 
-    public override bool Disembark(CardStack location, RegionEnum region)
+    public override bool Disembark(CardStack location, Region region)
     {
         SetActed(14);
         EmbarkedPilot = null;
@@ -628,12 +628,12 @@ public class UnitCard : EntityCard
         int targetID = ((target != null) ? target.InstanceId : (-1));
         sbyte targetOwner = (sbyte) ((target != null) ? target.ActiveData.Owner : (-1));
         CombatCCGEvent combatCCGEvent = null;
-        CombatCCGEvent combatCCGEvent2 = new CombatCCGEvent(CCGEventType.CombatStart, InstanceId, ActiveData.Owner,
+        CombatCCGEvent combatCCGEvent2 = new CombatCCGEvent(CcgEventType.CombatStart, InstanceId, ActiveData.Owner,
             targetID, targetOwner, 0, 0);
         GameState.AddCCGEventLog(combatCCGEvent2);
         if (target != null)
         {
-            RegionEnum traitActorRegion = GameState.GetTraitActorRegion(target.ActiveData.Owner, target.InstanceId);
+            Region traitActorRegion = GameState.GetTraitActorRegion(target.ActiveData.Owner, target.InstanceId);
             ActiveTrait activeTrait = null;
             List<CardStack> list = GameState.FindCardStack(target);
             CardStack cardStack = null;
@@ -657,13 +657,13 @@ public class UnitCard : EntityCard
             {
                 SetActed(14);
                 ActiveData.AttackTraits(target);
-                combatCCGEvent = new CombatCCGEvent(CCGEventType.CombatEnd, InstanceId, ActiveData.Owner, targetID,
+                combatCCGEvent = new CombatCCGEvent(CcgEventType.CombatEnd, InstanceId, ActiveData.Owner, targetID,
                     targetOwner, 0, 0);
                 GameState.AddCCGEventLog(combatCCGEvent);
                 return;
             }
 
-            CombatCCGEvent combatCCGEvent3 = new CombatCCGEvent(CCGEventType.CombatAttack, InstanceId, ActiveData.Owner,
+            CombatCCGEvent combatCCGEvent3 = new CombatCCGEvent(CcgEventType.CombatAttack, InstanceId, ActiveData.Owner,
                 target.InstanceId, target.ActiveData.Owner, b, bypass);
             combatCCGEvent3.Result = 0;
             GameState.AddCCGEventLog(combatCCGEvent3);
@@ -712,7 +712,7 @@ public class UnitCard : EntityCard
 
             if (list2.Count > 0)
             {
-                CombatBuffsCCGEvent combatBuffsCCGEvent = new CombatBuffsCCGEvent(CCGEventType.CombatBuffsConversion,
+                CombatBuffsCCGEvent combatBuffsCCGEvent = new CombatBuffsCCGEvent(CcgEventType.CombatBuffsConversion,
                     InstanceId, ActiveData.Owner, targetID, targetOwner);
                 combatBuffsCCGEvent.BuffTraits = new EventLogTraitCardInfo[list2.Count];
                 for (int j = 0; j < list2.Count; j++)
@@ -729,7 +729,7 @@ public class UnitCard : EntityCard
             {
                 SetActed(14);
                 ActiveData.AttackTraits(target);
-                combatCCGEvent = new CombatCCGEvent(CCGEventType.CombatEnd, InstanceId, ActiveData.Owner, targetID,
+                combatCCGEvent = new CombatCCGEvent(CcgEventType.CombatEnd, InstanceId, ActiveData.Owner, targetID,
                     targetOwner, 0, 0);
                 GameState.AddCCGEventLog(combatCCGEvent);
                 return;
@@ -747,7 +747,7 @@ public class UnitCard : EntityCard
         }
 
         base.Attack(source, target);
-        combatCCGEvent = new CombatCCGEvent(CCGEventType.CombatEnd, InstanceId, ActiveData.Owner, targetID, targetOwner,
+        combatCCGEvent = new CombatCCGEvent(CcgEventType.CombatEnd, InstanceId, ActiveData.Owner, targetID, targetOwner,
             0, 0);
         GameState.AddCCGEventLog(combatCCGEvent);
         CheckForDeathEvent();
@@ -787,7 +787,7 @@ public class UnitCard : EntityCard
         ActiveTrait activeTrait = null;
         sbyte b = 0;
         sbyte bypass = 0;
-        CombatCCGEvent combatCCGEvent = new CombatCCGEvent(CCGEventType.CombatCounter, InstanceId, ActiveData.Owner,
+        CombatCCGEvent combatCCGEvent = new CombatCCGEvent(CcgEventType.CombatCounter, InstanceId, ActiveData.Owner,
             target.InstanceId, target.ActiveData.Owner, b, bypass);
         combatCCGEvent.Result = 0;
         GameState.AddCCGEventLog(combatCCGEvent);
@@ -838,7 +838,7 @@ public class UnitCard : EntityCard
         {
             int targetID = ((target != null) ? target.InstanceId : (-1));
             sbyte targetOwner = (sbyte) ((target != null) ? target.ActiveData.Owner : (-1));
-            CombatBuffsCCGEvent combatBuffsCCGEvent = new CombatBuffsCCGEvent(CCGEventType.CombatBuffsConversion,
+            CombatBuffsCCGEvent combatBuffsCCGEvent = new CombatBuffsCCGEvent(CcgEventType.CombatBuffsConversion,
                 InstanceId, ActiveData.Owner, targetID, targetOwner);
             combatBuffsCCGEvent.BuffTraits = new EventLogTraitCardInfo[list.Count];
             for (int i = 0; i < list.Count; i++)
@@ -1030,7 +1030,7 @@ public class UnitCard : EntityCard
         }
     }
 
-    public override void CardMoved(Card card, CardStack target, RegionEnum region, RegionEnum origin)
+    public override void CardMoved(Card card, CardStack target, Region region, Region origin)
     {
         base.CardMoved(card, target, region, origin);
         if (HasPilot())
@@ -1120,7 +1120,7 @@ public class UnitCard : EntityCard
         }
     }
 
-    public override void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack target, RegionEnum region)
+    public override void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack target, Region region)
     {
         base.TraitEffectActivating(effect, source, target, region);
         if (HasPilot())
@@ -1135,7 +1135,7 @@ public class UnitCard : EntityCard
         if (trigger > 0)
         {
             Xp += trigger;
-            CardInfoCCGEvent logData = new CardInfoCCGEvent(CCGEventType.CardXPEarned, InstanceId, ActiveData.Owner,
+            CardInfoCCGEvent logData = new CardInfoCCGEvent(CcgEventType.CardXpEarned, InstanceId, ActiveData.Owner,
                 trigger, xpTrigger);
             GameState.AddCCGEventLog(logData);
         }

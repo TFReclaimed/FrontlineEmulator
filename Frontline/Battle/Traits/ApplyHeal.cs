@@ -26,7 +26,7 @@ public class ApplyHeal : BaseTraitEffect
 
         if (b > 0)
         {
-            CardTraumaCCGEvent logData = new CardTraumaCCGEvent(CCGEventType.CardHeal, b, source.InstanceId,
+            CardTraumaCCGEvent logData = new CardTraumaCCGEvent(CcgEventType.CardHeal, b, source.InstanceId,
                 source.ActiveData.Owner, card.InstanceId, card.ActiveData.Owner);
             GameState.AddCCGEventLog(logData);
         }
@@ -37,7 +37,7 @@ public class ApplyHeal : BaseTraitEffect
         if (!owner.IsCardTraitsDetered() && DurationData.Type == TraitDurationType.Permanent &&
             owner.ActiveData.Owner == playerIndex)
         {
-            RegionEnum region = RegionEnum.NumRegions;
+            Region region = Region.NumRegions;
             CardStack target = GameState.FindCardStack(owner)[0];
             if (Targets.Area == TargetableArea.CurrentRegion)
             {

@@ -4,7 +4,7 @@ namespace Frontline.Battle.CcgEvents;
 
 public class CardTraumaCCGEvent : CCGEventData
 {
-    public CCGEventType TraumaType { get; set; }
+    public CcgEventType TraumaType { get; set; }
 
     public int Health { get; set; }
 
@@ -22,7 +22,7 @@ public class CardTraumaCCGEvent : CCGEventData
     {
     }
 
-    public CardTraumaCCGEvent(CCGEventType type, int healthDelta, int sourceId, sbyte sourceCardOwner, int targetId,
+    public CardTraumaCCGEvent(CcgEventType type, int healthDelta, int sourceId, sbyte sourceCardOwner, int targetId,
         sbyte targetCardOwner)
     {
         TraumaType = type;
@@ -33,7 +33,7 @@ public class CardTraumaCCGEvent : CCGEventData
         TargetOwner = targetCardOwner;
     }
 
-    public override CCGEventType Type()
+    public override CcgEventType Type()
     {
         return TraumaType;
     }
