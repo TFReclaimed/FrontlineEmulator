@@ -4,7 +4,7 @@ using Frontline.Battle.Traits;
 
 namespace Frontline.Battle;
 
-[JsonDerivedType(typeof(ActedModExlusive), "ActedModExlusive")]
+[JsonDerivedType(typeof(ActedModExclusive), "ActedModExlusive")]
 [JsonDerivedType(typeof(ActedModPassive), "ActedModPassive")]
 [JsonDerivedType(typeof(ApplyDamage), "ApplyDamage")]
 [JsonDerivedType(typeof(ApplyDamageMultiply), "ApplyDamageMultiply")]

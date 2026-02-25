@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace Frontline.Battle.Traits;
 
-public class ActedModExlusive : BaseTraitEffect
+public class ActedModExclusive : BaseTraitEffect
 {
     public bool Deploy { get; set; }
 
