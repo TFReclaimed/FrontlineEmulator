@@ -1,6 +1,9 @@
 using System.Net.Sockets;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Frontline.Auth;
+using Frontline.Battle.GameEvents;
 using Frontline.Options;
 using Microsoft.Extensions.Options;
 using XmppDotNet;
@@ -32,6 +35,12 @@ public class XmppClient
     private readonly IOptions<ChatOptions> _chatOptions;
 
     private readonly StreamParser _streamParser;
+
+    private static readonly JsonSerializerOptions InteractionEventJsonOptions = new()
+    {
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        PropertyNameCaseInsensitive = true
+    };
 
     private SessionState _sessionState;
 
@@ -406,7 +415,19 @@ public class XmppClient
                 return;
             }
 
-            // TODO: rewrite body
+            // We reserialize the body as fastJSON is vulnerable to RCE
+            if (subject == ":::INTERACTIONEVENT")
+            {
+                var interactionEvent = JsonSerializer.Deserialize<GameEventInteractionsParams>(body, InteractionEventJsonOptions);
+                if (interactionEvent is null)
+                {
+                    _logger.LogWarning("{Client} Failed to deserialize interaction event.", this);
+                    return;
+                }
+
+                body = JsonSerializer.Serialize(interactionEvent, InteractionEventJsonOptions);
+            }
+
             if (subject != ":::INTERACTIONEVENT")
             {
                 _logger.LogInformation("{Client} [PM #{To}] [{Subject}]: {Body}", this, to, subject, body);

@@ -5,8 +5,6 @@ namespace Frontline.Battle.GameEvents;
 
 public class GameEventInteractionsParams : GameEventParams
 {
-    public const string InteractionTitleMarker = "INTERACTIONEVENT";
-
     public int Type { get; set; }
 
     public TargetableArea Location { get; set; }
