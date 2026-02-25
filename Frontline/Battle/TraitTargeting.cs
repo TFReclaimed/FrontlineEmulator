@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Frontline.Battle.Traits;
 using Frontline.Game.Card;
 
 namespace Frontline.Battle;
@@ -403,7 +404,7 @@ public class TraitTargeting
                 for (var num2 = card.ActiveData.ActiveTraits.Count - 1; num2 >= 0; num2--)
                 {
                     var activeTrait2 = card.ActiveData.ActiveTraits[num2];
-                    if (activeTrait2.GetTraitInfo().IsCombatManipulationPassive(1, activeTrait2))
+                    if (activeTrait2.GetTraitInfo().IsCombatManipulationPassive(CombatManipulationPassive.Stealth, activeTrait2))
                     {
                         return true;
                     }

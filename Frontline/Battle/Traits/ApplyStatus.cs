@@ -2,37 +2,28 @@ namespace Frontline.Battle.Traits;
 
 public class ApplyStatus : BaseTraitEffect
 {
-    public const sbyte stun = 1;
+    public const sbyte Stun = 1;
 
-    public const sbyte deter = 2;
+    public const sbyte Deter = 2;
 
-    public const sbyte defender = 3;
+    public const sbyte Defender = 3;
 
-    public const sbyte immobilize = 4;
-
-    public const sbyte cannotTargetBurn = 5;
-
-    public const sbyte cannotTargetTrait = 6;
-
-    public const sbyte cannotTargetSecret = 7;
-
-    public const sbyte operative = 8;
+    public const sbyte Immobilize = 4;
 
     public sbyte StatusType { get; set; }
 
     public static bool IsDeterStatus(sbyte status)
     {
-        return status == 2 || status == 1;
+        return status is Deter or Stun;
     }
 
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
         if (IsDeterStatus(StatusType))
         {
-            ActiveTrait activeTrait = null;
             for (var i = 0; i < card.ActiveData.ActiveTraits.Count; i++)
             {
-                activeTrait = card.ActiveData.ActiveTraits[i];
+                var activeTrait = card.ActiveData.ActiveTraits[i];
                 if (activeTrait.GetTraitInfo().Deterable)
                 {
                     activeTrait.Detered = true;
@@ -78,7 +69,7 @@ public class ApplyStatus : BaseTraitEffect
 
     public override bool CanDeploy(CardStack target, Region region)
     {
-        if (StatusType == 3 && region == Region.Control)
+        if (StatusType == Defender && region == Region.Control)
         {
             return false;
         }
@@ -93,7 +84,7 @@ public class ApplyStatus : BaseTraitEffect
             return true;
         }
 
-        return (StatusType != 3 || target != Region.Control) && StatusType != 1 && StatusType != 4;
+        return (StatusType != Defender || target != Region.Control) && StatusType != Stun && StatusType != Immobilize;
     }
 
     public override bool CanAttack(CardStack target, ActiveTrait active)
@@ -103,7 +94,7 @@ public class ApplyStatus : BaseTraitEffect
             return true;
         }
 
-        return StatusType != 1;
+        return StatusType != Stun;
     }
 
     public override bool CanCounterAttack(CardStack target, ActiveTrait active)
@@ -113,16 +104,16 @@ public class ApplyStatus : BaseTraitEffect
             return true;
         }
 
-        return StatusType != 1;
+        return StatusType != Stun;
     }
 
-    public override bool IsStatusEffect(sbyte effectID, ActiveTrait active)
+    public override bool IsStatusEffect(sbyte effectId, ActiveTrait active)
     {
         if (Deterable && active.Detered)
         {
             return false;
         }
 
-        return effectID == StatusType;
+        return effectId == StatusType;
     }
 }

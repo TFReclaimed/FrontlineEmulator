@@ -4,13 +4,11 @@ namespace Frontline.Battle.Traits;
 
 public class NegateActivationEffect : BaseTraitEffect
 {
-    public const sbyte damage = 1;
+    public const sbyte Damage = 1;
 
-    public const sbyte heals = 2;
+    public const sbyte Heals = 2;
 
-    public const sbyte secret = 3;
-
-    public const sbyte hacks = 4;
+    public const sbyte Secret = 3;
 
     public sbyte EffectType { get; set; }
 
@@ -45,21 +43,21 @@ public class NegateActivationEffect : BaseTraitEffect
 
         switch (EffectType)
         {
-            case 1:
+            case Damage:
                 if (effect.IsDamageHeal(true))
                 {
                     return true;
                 }
 
                 break;
-            case 2:
+            case Heals:
                 if (effect.IsDamageHeal(false))
                 {
                     return true;
                 }
 
                 break;
-            case 3:
+            case Secret:
                 if (source.GetTemplate().Type == CardType.Secret)
                 {
                     return true;

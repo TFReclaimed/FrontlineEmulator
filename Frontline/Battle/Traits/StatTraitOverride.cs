@@ -4,11 +4,11 @@ namespace Frontline.Battle.Traits;
 
 public class StatTraitOverride : BaseTraitEffect
 {
-    public const sbyte fromTarget = 0;
+    public const sbyte FromTarget = 0;
 
-    public const sbyte fromSource = 1;
+    public const sbyte FromSource = 1;
 
-    public const sbyte fromTraitTarget = 2;
+    public const sbyte FromTraitTarget = 2;
 
     [JsonPropertyName("attack")]
     public bool IsAttack { get; set; }
@@ -32,17 +32,16 @@ public class StatTraitOverride : BaseTraitEffect
 
         var dataValue = 0;
         var card2 = card;
-        if (StatSource == 1)
+        if (StatSource == FromSource)
         {
             card2 = source;
         }
-        else if (StatSource == 2)
+        else if (StatSource == FromTraitTarget)
         {
             var count = GameState.GetTemporaryEffects().Count;
-            ActiveTrait activeTrait = null;
             for (var i = 0; i < count; i++)
             {
-                activeTrait = GameState.GetTemporaryEffects()[i];
+                var activeTrait = GameState.GetTemporaryEffects()[i];
                 if (activeTrait.GetTraitInfo().TargetTrait() && activeTrait.GetTraitSource().EqualsTo(source))
                 {
                     card2 = activeTrait.GetTraitTarget();

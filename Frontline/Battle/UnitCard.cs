@@ -1,4 +1,5 @@
 using Frontline.Battle.CcgEvents;
+using Frontline.Battle.Traits;
 using Frontline.Data.Entities;
 using Frontline.Game;
 using Frontline.Game.Card;
@@ -676,7 +677,7 @@ public class UnitCard : EntityCard
             for (var num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
             {
                 activeTrait = ActiveData.ActiveTraits[num];
-                if (activeTrait.GetTraitInfo().IsCombatManipulationPassive(8, activeTrait))
+                if (activeTrait.GetTraitInfo().IsCombatManipulationPassive(CombatManipulationPassive.DamageConvertAp, activeTrait))
                 {
                     bypass += b;
                     b = 0;
@@ -692,7 +693,7 @@ public class UnitCard : EntityCard
                         activeTrait.ExpendCharge(GameState);
                     }
                 }
-                else if (activeTrait.GetTraitInfo().IsCombatManipulationPassive(9, activeTrait))
+                else if (activeTrait.GetTraitInfo().IsCombatManipulationPassive(CombatManipulationPassive.DamageConvertNormal, activeTrait))
                 {
                     b += bypass;
                     bypass = 0;
@@ -800,7 +801,7 @@ public class UnitCard : EntityCard
         for (var num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
         {
             activeTrait = ActiveData.ActiveTraits[num];
-            if (activeTrait.GetTraitInfo().IsCombatManipulationPassive(8, activeTrait))
+            if (activeTrait.GetTraitInfo().IsCombatManipulationPassive(CombatManipulationPassive.DamageConvertAp, activeTrait))
             {
                 bypass += b;
                 b = 0;
@@ -816,7 +817,7 @@ public class UnitCard : EntityCard
                     activeTrait.ExpendCharge(GameState);
                 }
             }
-            else if (activeTrait.GetTraitInfo().IsCombatManipulationPassive(9, activeTrait))
+            else if (activeTrait.GetTraitInfo().IsCombatManipulationPassive(CombatManipulationPassive.DamageConvertNormal, activeTrait))
             {
                 b += bypass;
                 bypass = 0;
@@ -923,7 +924,7 @@ public class UnitCard : EntityCard
         for (var num = source.ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
         {
             activeTrait = source.ActiveData.ActiveTraits[num];
-            if (activeTrait.GetTraitInfo().IsCombatManipulationPassive(2, activeTrait))
+            if (activeTrait.GetTraitInfo().IsCombatManipulationPassive(CombatManipulationPassive.IgnoreStealth, activeTrait))
             {
                 flag = true;
                 if (activeTrait.HasCharges())
@@ -938,7 +939,7 @@ public class UnitCard : EntityCard
         for (var num2 = target.ActiveData.ActiveTraits.Count - 1; num2 >= 0; num2--)
         {
             activeTrait = target.ActiveData.ActiveTraits[num2];
-            if (!flag && activeTrait.GetTraitInfo().IsCombatManipulationPassive(1, activeTrait))
+            if (!flag && activeTrait.GetTraitInfo().IsCombatManipulationPassive(CombatManipulationPassive.Stealth, activeTrait))
             {
                 if (activeTrait.HasCharges())
                 {
@@ -948,7 +949,7 @@ public class UnitCard : EntityCard
                 return 1;
             }
 
-            if (activeTrait.GetTraitInfo().IsCombatManipulationPassive(3, activeTrait))
+            if (activeTrait.GetTraitInfo().IsCombatManipulationPassive(CombatManipulationPassive.Dodge, activeTrait))
             {
                 if (activeTrait.HasCharges())
                 {
@@ -958,7 +959,7 @@ public class UnitCard : EntityCard
                 return 3;
             }
 
-            if (activeTrait.GetTraitInfo().IsCombatManipulationPassive(6, activeTrait))
+            if (activeTrait.GetTraitInfo().IsCombatManipulationPassive(CombatManipulationPassive.Block, activeTrait))
             {
                 if (activeTrait.HasCharges())
                 {
@@ -1157,7 +1158,7 @@ public class UnitCard : EntityCard
         for (var num = source.ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
         {
             activeTrait = source.ActiveData.ActiveTraits[num];
-            if (activeTrait.GetTraitInfo().IsCombatManipulationPassive(5, activeTrait))
+            if (activeTrait.GetTraitInfo().IsCombatManipulationPassive(CombatManipulationPassive.IgnoreSniper, activeTrait))
             {
                 flag = true;
                 if (activeTrait.HasCharges())
@@ -1172,7 +1173,7 @@ public class UnitCard : EntityCard
         for (var i = 0; i < target.ActiveData.ActiveTraits.Count; i++)
         {
             activeTrait = target.ActiveData.ActiveTraits[i];
-            if (!flag && activeTrait.GetTraitInfo().IsCombatManipulationPassive(4, activeTrait))
+            if (!flag && activeTrait.GetTraitInfo().IsCombatManipulationPassive(CombatManipulationPassive.Sniper, activeTrait))
             {
                 if (activeTrait.HasCharges())
                 {
@@ -1182,7 +1183,7 @@ public class UnitCard : EntityCard
                 return 4;
             }
 
-            if (activeTrait.GetTraitInfo().IsCombatManipulationPassive(6, activeTrait))
+            if (activeTrait.GetTraitInfo().IsCombatManipulationPassive(CombatManipulationPassive.Block, activeTrait))
             {
                 if (activeTrait.HasCharges())
                 {
@@ -1192,7 +1193,7 @@ public class UnitCard : EntityCard
                 return 6;
             }
 
-            if (activeTrait.GetTraitInfo().IsCombatManipulationPassive(3, activeTrait))
+            if (activeTrait.GetTraitInfo().IsCombatManipulationPassive(CombatManipulationPassive.Dodge, activeTrait))
             {
                 if (activeTrait.HasCharges())
                 {

@@ -6,15 +6,15 @@ namespace Frontline.Battle.Traits;
 
 public class RemoveTraitEffect : BaseTraitEffect
 {
-    public const sbyte burnCard = 1;
+    public const sbyte BurnCard = 1;
 
-    public const sbyte secret = 2;
+    public const sbyte Secret = 2;
 
-    public const sbyte activated = 3;
+    public const sbyte Activated = 3;
 
-    public const sbyte stealth = 4;
+    public const sbyte Stealth = 4;
 
-    public const sbyte traitID = 5;
+    public const sbyte TraitId = 5;
 
     [JsonPropertyName("traitType")]
     public sbyte RemoveTraitType { get; set; }
@@ -38,7 +38,7 @@ public class RemoveTraitEffect : BaseTraitEffect
     {
         switch (RemoveTraitType)
         {
-            case 1:
+            case BurnCard:
                 if (active.GetTraitSource() != null)
                 {
                     var traitSource2 = active.GetTraitSource();
@@ -57,7 +57,7 @@ public class RemoveTraitEffect : BaseTraitEffect
                 }
 
                 break;
-            case 2:
+            case Secret:
                 if (active.GetTraitSource() != null)
                 {
                     var traitSource = active.GetTraitSource();
@@ -76,14 +76,14 @@ public class RemoveTraitEffect : BaseTraitEffect
                 }
 
                 break;
-            case 4:
-                if (active.GetTraitInfo().IsCombatManipulationPassive(1, active))
+            case Stealth:
+                if (active.GetTraitInfo().IsCombatManipulationPassive(CombatManipulationPassive.Stealth, active))
                 {
                     return true;
                 }
 
                 break;
-            case 5:
+            case TraitId:
                 if (active.TraitSourceId == TemplateId)
                 {
                     return true;

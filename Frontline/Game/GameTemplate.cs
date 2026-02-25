@@ -37,7 +37,7 @@ public class GameTemplate
             sbyte health = resources.Health;
             if (health <= 0)
             {
-                gameState.PlayerTurn = -1;
+                gameState.PlayerTurn = CCG.GameOverIndicator;
             }
             else if (health > b)
             {
@@ -49,7 +49,7 @@ public class GameTemplate
                 num = i;
             }
         }
-        if (gameState.PlayerTurn == -1)
+        if (gameState.PlayerTurn == CCG.GameOverIndicator)
         {
             gameState.WinningPlayer = (sbyte)num;
             gameState.GenerateRewards();

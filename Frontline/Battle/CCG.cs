@@ -6,9 +6,9 @@ namespace Frontline.Battle;
 
 public class CCG
 {
-    public const sbyte GAMEOVER_INDICATOR = -1;
+    public const sbyte GameOverIndicator = -1;
 
-    public const sbyte GAMESTART_INDICATOR = -2;
+    public const sbyte GameStartIndicator = -2;
 
     public Guid GameInstanceId { get; set; }
 
@@ -136,7 +136,7 @@ public class CCG
             Players[j].ActivateCommander();
         }
 
-        PlayerTurn = -2;
+        PlayerTurn = GameStartIndicator;
 
         winGameRewards.Add(RulesetParser.GetRewardsTemplate(gameRules.WinRewardId)!);
         loseGameRewards.Add(RulesetParser.GetRewardsTemplate(gameRules.LossRewardId)!);
@@ -150,7 +150,7 @@ public class CCG
 
     public bool IsGameOver()
     {
-        return SurrenderGameOver || PlayerTurn == -1;
+        return SurrenderGameOver || PlayerTurn == GameOverIndicator;
     }
 
     public Card FindTraitActor(sbyte playerIndex, int cardId)
@@ -1145,7 +1145,7 @@ public class CCG
     {
         if (SurrenderGameOver || Players == null || gameRules == null)
         {
-            return -1;
+            return GameOverIndicator;
         }
 
         var num = Players.Length;
@@ -1164,7 +1164,7 @@ public class CCG
             return b;
         }
 
-        return -1;
+        return GameOverIndicator;
     }
 
     public void GenerateRewards()
