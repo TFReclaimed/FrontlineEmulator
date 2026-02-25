@@ -7,20 +7,20 @@ public class UnsummonEffect : BaseTraitEffect
 {
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
-        sbyte owner = card.ActiveData.Owner;
-        Player player = GameState.Players[owner];
+        var owner = card.ActiveData.Owner;
+        var player = GameState.Players[owner];
         CardTransitionCcgEvent cardTransitionCCGEvent = null;
         if (Targets.Area == TargetableArea.EnemyDiscard || Targets.Area == TargetableArea.FriendlyDiscard)
         {
-            CardCollection discard = player.Discard;
+            var discard = player.Discard;
             discard.RemoveCard(card.InstanceId);
         }
         else
         {
-            List<CardStack> list = GameState.FindCardStack(card);
+            var list = GameState.FindCardStack(card);
             List<Card> list2 = null;
             Card card2 = null;
-            bool flag = card.GetTemplate().Type == CardType.Titan;
+            var flag = card.GetTemplate().Type == CardType.Titan;
             if (list == null || list.Count == 0)
             {
                 return;
@@ -30,7 +30,7 @@ public class UnsummonEffect : BaseTraitEffect
             list2 = card2.GetSecrets();
             if (list2 != null)
             {
-                for (int num = list2.Count - 1; num >= 0; num--)
+                for (var num = list2.Count - 1; num >= 0; num--)
                 {
                     list2[num].Discard(GameState.Players);
                     GameState.SecretDestroyed(list2[num], source);
@@ -43,7 +43,7 @@ public class UnsummonEffect : BaseTraitEffect
                 list2 = card2.GetSecrets();
                 if (list2 != null)
                 {
-                    for (int num2 = list2.Count - 1; num2 >= 0; num2--)
+                    for (var num2 = list2.Count - 1; num2 >= 0; num2--)
                     {
                         list2[num2].Discard(GameState.Players);
                         GameState.SecretDestroyed(list2[num2], source);

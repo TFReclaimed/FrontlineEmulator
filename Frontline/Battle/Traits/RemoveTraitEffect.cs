@@ -24,9 +24,9 @@ public class RemoveTraitEffect : BaseTraitEffect
 
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
-        for (int num = card.ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
+        for (var num = card.ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
         {
-            ActiveTrait activeTrait = card.ActiveData.ActiveTraits[num];
+            var activeTrait = card.ActiveData.ActiveTraits[num];
             if (DoesTraitMatch(activeTrait))
             {
                 activeTrait.Deactivate(true);
@@ -41,7 +41,7 @@ public class RemoveTraitEffect : BaseTraitEffect
             case 1:
                 if (active.GetTraitSource() != null)
                 {
-                    Card traitSource2 = active.GetTraitSource();
+                    var traitSource2 = active.GetTraitSource();
                     if (traitSource2.GetTemplate().Type == CardType.BurnCard)
                     {
                         return true;
@@ -49,7 +49,7 @@ public class RemoveTraitEffect : BaseTraitEffect
                 }
                 else
                 {
-                    BaseTrait traitTemplate2 = RulesetParser.GetTraitTemplate(active.TraitSourceId);
+                    var traitTemplate2 = RulesetParser.GetTraitTemplate(active.TraitSourceId);
                     if (traitTemplate2.TraitType == TraitType.BurnCard)
                     {
                         return true;
@@ -60,7 +60,7 @@ public class RemoveTraitEffect : BaseTraitEffect
             case 2:
                 if (active.GetTraitSource() != null)
                 {
-                    Card traitSource = active.GetTraitSource();
+                    var traitSource = active.GetTraitSource();
                     if (traitSource.GetTemplate().Type == CardType.Secret)
                     {
                         return true;
@@ -68,7 +68,7 @@ public class RemoveTraitEffect : BaseTraitEffect
                 }
                 else
                 {
-                    BaseTrait traitTemplate = RulesetParser.GetTraitTemplate(active.TraitSourceId);
+                    var traitTemplate = RulesetParser.GetTraitTemplate(active.TraitSourceId);
                     if (traitTemplate.TraitType == TraitType.Secret)
                     {
                         return true;

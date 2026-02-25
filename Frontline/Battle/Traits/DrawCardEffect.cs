@@ -8,8 +8,8 @@ public class DrawCardEffect : BaseTraitEffect
 
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
-        Player player = GameState.Players[source.ActiveData.Owner];
-        sbyte drawCount = NumberOfCards;
+        var player = GameState.Players[source.ActiveData.Owner];
+        var drawCount = NumberOfCards;
         if (NumberOfCards > 0 && active.DataValue > 0)
         {
             drawCount = (sbyte) active.DataValue;

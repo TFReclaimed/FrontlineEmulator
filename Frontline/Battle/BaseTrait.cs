@@ -37,7 +37,7 @@ public class BaseTrait
 
     public bool CanDropAnywhere()
     {
-        BaseTraitEffect primaryTargeting = GetPrimaryTargeting(0);
+        var primaryTargeting = GetPrimaryTargeting(0);
         if (primaryTargeting == null)
         {
             return false;
@@ -45,7 +45,7 @@ public class BaseTrait
 
         if (primaryTargeting.TargetTrait())
         {
-            TargetEffect targetEffect = (TargetEffect) primaryTargeting;
+            var targetEffect = (TargetEffect) primaryTargeting;
             if (targetEffect.DropAnywhere)
             {
                 return true;
@@ -57,7 +57,7 @@ public class BaseTrait
 
     public virtual bool CanActivate(Region region, sbyte owner)
     {
-        BaseTraitEffect primaryTargeting = GetPrimaryTargeting(0);
+        var primaryTargeting = GetPrimaryTargeting(0);
         if (primaryTargeting == null)
         {
             return false;
@@ -65,14 +65,14 @@ public class BaseTrait
 
         if (primaryTargeting.TargetTrait())
         {
-            TargetEffect targetEffect = (TargetEffect) primaryTargeting;
+            var targetEffect = (TargetEffect) primaryTargeting;
             if (targetEffect.DropAnywhere)
             {
                 return true;
             }
         }
 
-        TraitTargeting targets = primaryTargeting.Targets;
+        var targets = primaryTargeting.Targets;
         if (targets == null)
         {
             return false;
@@ -96,7 +96,7 @@ public class BaseTrait
 
     public virtual bool CanActivate(CardStack target, Region region, sbyte owner)
     {
-        BaseTraitEffect primaryTargeting = GetPrimaryTargeting(0);
+        var primaryTargeting = GetPrimaryTargeting(0);
         if (primaryTargeting == null)
         {
             return false;
@@ -104,20 +104,20 @@ public class BaseTrait
 
         if (primaryTargeting.TargetTrait())
         {
-            TargetEffect targetEffect = (TargetEffect) primaryTargeting;
+            var targetEffect = (TargetEffect) primaryTargeting;
             if (targetEffect.DropAnywhere)
             {
                 return true;
             }
         }
 
-        TraitTargeting targets = primaryTargeting.Targets;
+        var targets = primaryTargeting.Targets;
         if (targets == null)
         {
             return false;
         }
 
-        TargetableArea area = targets.Area;
+        var area = targets.Area;
         if (area == TargetableArea.Self)
         {
             return false;
@@ -130,9 +130,9 @@ public class BaseTrait
                 return false;
             }
 
-            Card primaryCard = target.PrimaryCard;
-            sbyte owner2 = primaryCard.ActiveData.Owner;
-            bool flag = false;
+            var primaryCard = target.PrimaryCard;
+            var owner2 = primaryCard.ActiveData.Owner;
+            var flag = false;
             if (targets.CheckFriendly() && owner2 == owner)
             {
                 flag = true;
@@ -201,13 +201,13 @@ public class BaseTrait
 
     public bool CanActivate(Card target, Card source, Region region, CCG game)
     {
-        List<CardStack> list = game.FindCardStack(target);
+        var list = game.FindCardStack(target);
         return CanActivate(list[0], region, source.ActiveData.Owner);
     }
 
     public bool HasActiveTargets(Card card, CardStack target, Region region, CCG game)
     {
-        for (int i = 0; i < Effects.Count; i++)
+        for (var i = 0; i < Effects.Count; i++)
         {
             if (Effects[i].CheckForAppliedTargets(card, target, region).Count > 0)
             {
@@ -220,7 +220,7 @@ public class BaseTrait
 
     public void Activate(Card card, CardStack target, Region region, CCG game)
     {
-        BaseTraitEffect trigger = GetTrigger(0);
+        var trigger = GetTrigger(0);
         if (trigger != null)
         {
             trigger.ActivateTrigger(card, target, GetPrimaryTargeting(0).Targets);
@@ -228,7 +228,7 @@ public class BaseTrait
         else
         {
             sbyte b = 0;
-            for (int i = 0; i < Effects.Count; i++)
+            for (var i = 0; i < Effects.Count; i++)
             {
                 if (Effects[i].Priority > b)
                 {
@@ -238,9 +238,9 @@ public class BaseTrait
 
             if (b > 0)
             {
-                for (int j = 0; j <= b; j++)
+                for (var j = 0; j <= b; j++)
                 {
-                    for (int k = 0; k < Effects.Count; k++)
+                    for (var k = 0; k < Effects.Count; k++)
                     {
                         if (Effects[k].Priority == j)
                         {
@@ -251,7 +251,7 @@ public class BaseTrait
             }
             else
             {
-                for (int l = 0; l < Effects.Count; l++)
+                for (var l = 0; l < Effects.Count; l++)
                 {
                     Effects[l].Activate(card, target, region);
                 }
@@ -269,7 +269,7 @@ public class BaseTrait
     public virtual void Deactivate(Card card, Card source)
     {
         ActiveTrait activeTrait = null;
-        for (int num = card.ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
+        for (var num = card.ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
         {
             activeTrait = card.ActiveData.ActiveTraits[num];
             if (activeTrait.TraitSourceId == TraitId)
@@ -287,7 +287,7 @@ public class BaseTrait
     public BaseTraitEffect GetPrimaryTargeting(sbyte priority)
     {
         BaseTraitEffect baseTraitEffect = null;
-        for (int i = 0; i < Effects.Count; i++)
+        for (var i = 0; i < Effects.Count; i++)
         {
             if (baseTraitEffect == null && Effects[i].TargetPrimary)
             {
@@ -311,7 +311,7 @@ public class BaseTrait
     public BaseTraitEffect GetTrigger(int limit)
     {
         BaseTraitEffect baseTraitEffect = null;
-        for (int i = 0; i < Effects.Count; i++)
+        for (var i = 0; i < Effects.Count; i++)
         {
             if (Effects[i].IsTrigger() && Effects[i].Priority >= limit &&
                 (baseTraitEffect == null || Effects[i].Priority < baseTraitEffect.Priority))

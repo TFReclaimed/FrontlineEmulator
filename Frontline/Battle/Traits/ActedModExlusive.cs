@@ -17,9 +17,10 @@ public class ActedModExlusive : BaseTraitEffect
 
     public override void Move(CardStack location, Region region, bool embark, ActiveTrait active)
     {
-        if ((!Deterable || !active.Detered) && (DurationData.Charges <= 0 || active.DurationData.Charges != 0) && IsMove)
+        if ((!Deterable || !active.Detered) && (DurationData.Charges <= 0 || active.DurationData.Charges != 0) &&
+            IsMove)
         {
-            EntityCard entityCard = (EntityCard) active.GetTraitTarget();
+            var entityCard = (EntityCard) active.GetTraitTarget();
             entityCard.ClearActed(10);
             if (active.HasCharges())
             {
@@ -33,7 +34,7 @@ public class ActedModExlusive : BaseTraitEffect
         if ((!Deterable || !active.Detered) && (DurationData.Charges <= 0 || active.DurationData.Charges != 0) &&
             IsAttack)
         {
-            EntityCard entityCard = (EntityCard) active.GetTraitTarget();
+            var entityCard = (EntityCard) active.GetTraitTarget();
             entityCard.ClearActed(12);
             if (active.HasCharges())
             {
@@ -47,7 +48,7 @@ public class ActedModExlusive : BaseTraitEffect
         if ((!Deterable || !active.Detered) && (DurationData.Charges <= 0 || active.DurationData.Charges != 0) &&
             IsActivate)
         {
-            EntityCard entityCard = (EntityCard) active.GetTraitTarget();
+            var entityCard = (EntityCard) active.GetTraitTarget();
             entityCard.ClearActed(6);
             if (active.HasCharges())
             {

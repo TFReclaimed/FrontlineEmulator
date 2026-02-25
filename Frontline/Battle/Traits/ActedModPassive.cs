@@ -18,8 +18,8 @@ public class ActedModPassive : BaseTraitEffect
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
         sbyte b = 0;
-        EntityCard entityCard = (EntityCard) card;
-        bool flag = entityCard.IsCardTraitsDetered();
+        var entityCard = (EntityCard) card;
+        var flag = entityCard.IsCardTraitsDetered();
         if (!active.GetTraitInfo().Deterable)
         {
             flag = false;
@@ -81,9 +81,10 @@ public class ActedModPassive : BaseTraitEffect
 
     public override void Move(CardStack location, Region region, bool embark, ActiveTrait active)
     {
-        if ((!Deterable || !active.Detered) && (DurationData.Charges <= 0 || active.DurationData.Charges != 0) && IsMove)
+        if ((!Deterable || !active.Detered) && (DurationData.Charges <= 0 || active.DurationData.Charges != 0) &&
+            IsMove)
         {
-            EntityCard entityCard = (EntityCard) active.GetTraitTarget();
+            var entityCard = (EntityCard) active.GetTraitTarget();
             entityCard.ClearActed(14);
             if (active.HasCharges())
             {
@@ -97,7 +98,7 @@ public class ActedModPassive : BaseTraitEffect
         if ((!Deterable || !active.Detered) && (DurationData.Charges <= 0 || active.DurationData.Charges != 0) &&
             IsAttack)
         {
-            EntityCard entityCard = (EntityCard) active.GetTraitTarget();
+            var entityCard = (EntityCard) active.GetTraitTarget();
             entityCard.ClearActed(14);
             if (active.HasCharges())
             {
@@ -111,7 +112,7 @@ public class ActedModPassive : BaseTraitEffect
         if ((!Deterable || !active.Detered) && (DurationData.Charges <= 0 || active.DurationData.Charges != 0) &&
             IsActivate)
         {
-            EntityCard entityCard = (EntityCard) active.GetTraitTarget();
+            var entityCard = (EntityCard) active.GetTraitTarget();
             entityCard.ClearActed(14);
             if (active.HasCharges())
             {

@@ -10,10 +10,10 @@ public class Deck
     {
         if (!skip)
         {
-            for (int num = Cards.Count - 1; num > 1; num--)
+            for (var num = Cards.Count - 1; num > 1; num--)
             {
-                int index = Random.Shared.Next(0, num);
-                Card value = Cards[num];
+                var index = Random.Shared.Next(0, num);
+                var value = Cards[num];
                 Cards[num] = Cards[index];
                 Cards[index] = value;
             }
@@ -22,13 +22,13 @@ public class Deck
 
     public Card DrawCard(CCG game)
     {
-        int num = Cards.Count - 1;
+        var num = Cards.Count - 1;
         if (num < 0)
         {
             return null;
         }
 
-        Card card = Cards[num];
+        var card = Cards[num];
         Cards.RemoveAt(num);
         Count--;
         card = card.GenerateAndInit(game);
@@ -55,7 +55,7 @@ public class Deck
 
     public Card FindCard(int cardId)
     {
-        for (int i = 0; i < Cards.Count; i++)
+        for (var i = 0; i < Cards.Count; i++)
         {
             if (Cards[i].InstanceId == cardId)
             {

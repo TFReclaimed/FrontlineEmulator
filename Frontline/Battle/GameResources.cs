@@ -24,7 +24,7 @@ public class GameResources
     public void NewTurn(GameTemplate rules)
     {
         CommandAccum += rules.NewTurnCommand;
-        sbyte maxCommandAccum = rules.MaxCommandAccum;
+        var maxCommandAccum = rules.MaxCommandAccum;
         if (CommandAccum > maxCommandAccum)
         {
             CommandAccum = maxCommandAccum;
@@ -53,7 +53,7 @@ public class GameResources
 
     public sbyte HealDamage(sbyte heal)
     {
-        sbyte b = Health;
+        var b = Health;
         if (Health + heal > MaxHealth)
         {
             Health = MaxHealth;

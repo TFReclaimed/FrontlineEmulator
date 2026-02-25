@@ -48,7 +48,7 @@ public class Card : Item
             return this;
         }
 
-        CardTemplate cardTemplate = RulesetParser.GetCardTemplate(TemplateId, Rank);
+        var cardTemplate = RulesetParser.GetCardTemplate(TemplateId, Rank);
         if (cardTemplate == null)
         {
             Console.WriteLine("Invalid card (id {0:D} in player inventory for current ruleset (instance id {1:D})",
@@ -56,7 +56,7 @@ public class Card : Item
             return this;
         }
 
-        Card card = cardTemplate.GenerateCard(game, this);
+        var card = cardTemplate.GenerateCard(game, this);
         if (ActiveData != null)
         {
             card.ActiveData.Owner = ActiveData.Owner;
@@ -127,10 +127,10 @@ public class Card : Item
 
     protected void AddTraitsFromTemplate()
     {
-        int[] traits = template.Traits.ToArray();
-        int num = traits.Length;
+        var traits = template.Traits.ToArray();
+        var num = traits.Length;
         cardTraits = new BaseTrait[num];
-        for (int i = 0; i < num; i++)
+        for (var i = 0; i < num; i++)
         {
             cardTraits[i] = RulesetParser.GetTraitTemplate(traits[i]);
             if (cardTraits[i] == null)
@@ -149,7 +149,7 @@ public class Card : Item
 
     public void ResetCard()
     {
-        sbyte owner = ActiveData.Owner;
+        var owner = ActiveData.Owner;
         Setup();
         ActiveData = null;
         CreateActiveData();
@@ -186,9 +186,9 @@ public class Card : Item
 
     public sbyte GetCurrentCost()
     {
-        sbyte b = currentCost;
+        var b = currentCost;
         ActiveTrait activeTrait = null;
-        for (int i = 0; i < ActiveData.ActiveTraits.Count; i++)
+        for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
         {
             activeTrait = ActiveData.ActiveTraits[i];
             if (activeTrait != null)
@@ -212,7 +212,7 @@ public class Card : Item
 
     public BaseTrait GetActivationTrait()
     {
-        for (int i = 0; i < cardTraits.Length; i++)
+        for (var i = 0; i < cardTraits.Length; i++)
         {
             if (cardTraits[i].TraitType == TraitType.OneShot && !ActiveData.TraitActivated[i])
             {
@@ -225,7 +225,7 @@ public class Card : Item
 
     public virtual bool CanDeployAnywhere()
     {
-        for (int i = 0; i < cardTraits.Length; i++)
+        for (var i = 0; i < cardTraits.Length; i++)
         {
             if (cardTraits[i].CanDropAnywhere())
             {
@@ -238,9 +238,9 @@ public class Card : Item
 
     public bool HasTrait(int traitId)
     {
-        for (int i = 0; i < cardTraits.Length; i++)
+        for (var i = 0; i < cardTraits.Length; i++)
         {
-            BaseTrait baseTrait = cardTraits[i];
+            var baseTrait = cardTraits[i];
             if (baseTrait != null && baseTrait.TraitId == traitId)
             {
                 return true;
@@ -253,7 +253,7 @@ public class Card : Item
     public virtual bool HasActiveTraitEffect(int effectId)
     {
         ActiveTrait activeTrait = null;
-        for (int i = 0; i < ActiveData.ActiveTraits.Count; i++)
+        for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
         {
             activeTrait = ActiveData.ActiveTraits[i];
             if (activeTrait.TraitEffectId == effectId && !activeTrait.Detered)
@@ -268,7 +268,7 @@ public class Card : Item
     public virtual bool HasActiveSourceTrait(int traitId)
     {
         ActiveTrait activeTrait = null;
-        for (int i = 0; i < ActiveData.ActiveTraits.Count; i++)
+        for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
         {
             activeTrait = ActiveData.ActiveTraits[i];
             if (activeTrait.TraitSourceId == traitId && !activeTrait.Detered)
@@ -305,9 +305,9 @@ public class Card : Item
             }
         }
 
-        for (int i = 0; i < cardTraits.Length; i++)
+        for (var i = 0; i < cardTraits.Length; i++)
         {
-            BaseTrait baseTrait = cardTraits[i];
+            var baseTrait = cardTraits[i];
             if (baseTrait != null && baseTrait.ActivateOnDeploy())
             {
                 ActiveData.TraitActivated[i] = true;
@@ -327,11 +327,11 @@ public class Card : Item
     {
         BaseTrait baseTrait = null;
         BaseTraitEffect baseTraitEffect = null;
-        Region traitActorRegion = GameState.GetTraitActorRegion(ActiveData.Owner, InstanceId);
-        for (int i = 0; i < cardTraits.Length; i++)
+        var traitActorRegion = GameState.GetTraitActorRegion(ActiveData.Owner, InstanceId);
+        for (var i = 0; i < cardTraits.Length; i++)
         {
             baseTrait = cardTraits[i];
-            for (int j = 0; j < baseTrait.Effects.Count; j++)
+            for (var j = 0; j < baseTrait.Effects.Count; j++)
             {
                 baseTraitEffect = baseTrait.Effects[j];
                 if (baseTraitEffect.Deterable && baseTraitEffect.DurationData.Type == TraitDurationType.Permanent &&
@@ -346,10 +346,10 @@ public class Card : Item
     protected bool CanOverrideDeploy(Region target)
     {
         BaseTrait baseTrait = null;
-        for (int i = 0; i < cardTraits.Length; i++)
+        for (var i = 0; i < cardTraits.Length; i++)
         {
             baseTrait = cardTraits[i];
-            for (int j = 0; j < baseTrait.Effects.Count; j++)
+            for (var j = 0; j < baseTrait.Effects.Count; j++)
             {
                 if (baseTrait.Effects[j].CanDeployOverride(target))
                 {
@@ -363,8 +363,8 @@ public class Card : Item
 
     public bool CanDeploy(Region target, TargetableArea area)
     {
-        CardTemplate cardTemplate = GetTemplate();
-        bool flag = cardTemplate.CanDeploy(target, ActiveData.Owner);
+        var cardTemplate = GetTemplate();
+        var flag = cardTemplate.CanDeploy(target, ActiveData.Owner);
         if (!flag)
         {
             flag = CanOverrideDeploy(target);
@@ -374,9 +374,9 @@ public class Card : Item
         {
             if (cardTemplate.Type == CardType.BurnCard || cardTemplate.Type == CardType.Secret)
             {
-                for (int i = 0; i < cardTraits.Length; i++)
+                for (var i = 0; i < cardTraits.Length; i++)
                 {
-                    BaseTrait baseTrait = cardTraits[i];
+                    var baseTrait = cardTraits[i];
                     if (baseTrait != null && !baseTrait.CanActivate(target, ActiveData.Owner))
                     {
                         return false;
@@ -385,9 +385,9 @@ public class Card : Item
 
                 if (cardTemplate.Type == CardType.BurnCard)
                 {
-                    for (int j = 0; j < cardTraits.Length; j++)
+                    for (var j = 0; j < cardTraits.Length; j++)
                     {
-                        BaseTrait baseTrait2 = cardTraits[j];
+                        var baseTrait2 = cardTraits[j];
                         if (baseTrait2.HasActiveTargets(this, null, target, GameState))
                         {
                             return true;
@@ -410,8 +410,8 @@ public class Card : Item
 
     public virtual bool CanDeploy(CardStack target, Region region, bool emptyAvailable, bool embark)
     {
-        CardTemplate cardTemplate = GetTemplate();
-        bool flag = cardTemplate.CanDeploy(region, ActiveData.Owner);
+        var cardTemplate = GetTemplate();
+        var flag = cardTemplate.CanDeploy(region, ActiveData.Owner);
         if (!flag)
         {
             flag = CanOverrideDeploy(region);
@@ -438,9 +438,9 @@ public class Card : Item
                         Console.WriteLine("Card.CanDeploy false - Can't add secrets to this card");
                     }
 
-                    for (int i = 0; i < cardTraits.Length; i++)
+                    for (var i = 0; i < cardTraits.Length; i++)
                     {
-                        BaseTrait baseTrait = cardTraits[i];
+                        var baseTrait = cardTraits[i];
                         if (baseTrait == null || !baseTrait.CanActivate(target, region, ActiveData.Owner))
                         {
                             Console.WriteLine("Card.CanDeploy false - Trait activation not supported");
@@ -450,9 +450,9 @@ public class Card : Item
 
                     if (cardTemplate.Type == CardType.BurnCard)
                     {
-                        for (int j = 0; j < cardTraits.Length; j++)
+                        for (var j = 0; j < cardTraits.Length; j++)
                         {
-                            BaseTrait baseTrait2 = cardTraits[j];
+                            var baseTrait2 = cardTraits[j];
                             if (baseTrait2.HasActiveTargets(this, target, region, GameState))
                             {
                                 return true;
@@ -482,9 +482,9 @@ public class Card : Item
 
     public bool CanMove(Region target)
     {
-        for (int i = 0; i < ActiveData.ActiveTraits.Count; i++)
+        for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
         {
-            ActiveTrait activeTrait = ActiveData.ActiveTraits[i];
+            var activeTrait = ActiveData.ActiveTraits[i];
             if (!activeTrait.GetTraitInfo().CanMove(target, ActiveData.Owner, activeTrait))
             {
                 Console.WriteLine("Card.CanMove false - Move prevented by trait " + activeTrait.TraitEffectId);
@@ -494,10 +494,10 @@ public class Card : Item
 
         if (HasPilot())
         {
-            EntityCard embarkedPilot = GetEmbarkedPilot();
-            for (int j = 0; j < embarkedPilot.ActiveData.ActiveTraits.Count; j++)
+            var embarkedPilot = GetEmbarkedPilot();
+            for (var j = 0; j < embarkedPilot.ActiveData.ActiveTraits.Count; j++)
             {
-                ActiveTrait activeTrait2 = embarkedPilot.ActiveData.ActiveTraits[j];
+                var activeTrait2 = embarkedPilot.ActiveData.ActiveTraits[j];
                 if (!activeTrait2.GetTraitInfo().CanMove(target, embarkedPilot.ActiveData.Owner, activeTrait2))
                 {
                     Console.WriteLine("Card.CanMove false - Move prevented by trait " + activeTrait2.TraitEffectId);
@@ -541,9 +541,9 @@ public class Card : Item
     public void MovedCardTraitsEvent(Card moved, CardStack target, Region region, Region origin)
     {
         BaseTraitEffect baseTraitEffect = null;
-        for (int i = 0; i < cardTraits.Length; i++)
+        for (var i = 0; i < cardTraits.Length; i++)
         {
-            for (int j = 0; j < cardTraits[i].Effects.Count; j++)
+            for (var j = 0; j < cardTraits[i].Effects.Count; j++)
             {
                 baseTraitEffect = cardTraits[i].Effects[j];
                 baseTraitEffect.OnCardMovedEvent(this, moved, target, region, origin);
@@ -618,7 +618,7 @@ public class Card : Item
     public bool HasIntercept()
     {
         ActiveTrait activeTrait = null;
-        for (int i = 0; i < ActiveData.ActiveTraits.Count; i++)
+        for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
         {
             activeTrait = ActiveData.ActiveTraits[i];
             if (activeTrait.GetTraitInfo().IsIntercept(activeTrait))
@@ -639,7 +639,7 @@ public class Card : Item
     public bool IgnoresIntercept()
     {
         ActiveTrait activeTrait = null;
-        for (int i = 0; i < ActiveData.ActiveTraits.Count; i++)
+        for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
         {
             activeTrait = ActiveData.ActiveTraits[i];
             if (activeTrait.GetTraitInfo().IgnoreIntercept(activeTrait))
@@ -710,11 +710,11 @@ public class Card : Item
     public virtual void CardDeployed(Card deployed)
     {
         BaseTraitEffect baseTraitEffect = null;
-        for (int i = 0; i < cardTraits.Length; i++)
+        for (var i = 0; i < cardTraits.Length; i++)
         {
             if (cardTraits[i] != null)
             {
-                for (int j = 0; j < cardTraits[i].Effects.Count; j++)
+                for (var j = 0; j < cardTraits[i].Effects.Count; j++)
                 {
                     baseTraitEffect = cardTraits[i].Effects[j];
                     baseTraitEffect.CheckCardDeployed(deployed, this);
@@ -722,9 +722,9 @@ public class Card : Item
             }
         }
 
-        for (int num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
+        for (var num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
         {
-            ActiveTrait activeTrait = ActiveData.ActiveTraits[num];
+            var activeTrait = ActiveData.ActiveTraits[num];
             activeTrait.GetTraitInfo().CardDeployed(deployed, activeTrait);
             if (num > ActiveData.ActiveTraits.Count)
             {
@@ -735,7 +735,7 @@ public class Card : Item
 
     public virtual void NewTurn(sbyte playerIndex)
     {
-        for (int num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
+        for (var num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
         {
             ActiveData.ActiveTraits[num].NewTurn(this, playerIndex);
             if (num > ActiveData.ActiveTraits.Count)
@@ -744,17 +744,17 @@ public class Card : Item
             }
         }
 
-        for (int i = 0; i < cardTraits.Length; i++)
+        for (var i = 0; i < cardTraits.Length; i++)
         {
             if (cardTraits[i] == null)
             {
                 continue;
             }
 
-            List<BaseTraitEffect> effects = cardTraits[i].Effects;
+            var effects = cardTraits[i].Effects;
             if (effects != null)
             {
-                for (int j = 0; j < effects.Count; j++)
+                for (var j = 0; j < effects.Count; j++)
                 {
                     effects[j].OnNewTurnEvent(this, playerIndex);
                 }
@@ -764,7 +764,7 @@ public class Card : Item
 
     public virtual void EndTurn(sbyte playerIndex)
     {
-        for (int num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
+        for (var num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
         {
             ActiveData.ActiveTraits[num].EndTurn(this, playerIndex);
             if (num > ActiveData.ActiveTraits.Count)
@@ -776,7 +776,7 @@ public class Card : Item
 
     public virtual void CardMoved(Card card, CardStack target, Region region, Region origin)
     {
-        for (int num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
+        for (var num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
         {
             ActiveData.ActiveTraits[num].CardMoved(card, target, region, origin);
             if (num > ActiveData.ActiveTraits.Count)
@@ -790,7 +790,7 @@ public class Card : Item
 
     public virtual void CardAttacked(Card attacker, Card target)
     {
-        for (int num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
+        for (var num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
         {
             ActiveData.ActiveTraits[num].CardAttacked(attacker, target);
             if (num > ActiveData.ActiveTraits.Count)
@@ -802,7 +802,7 @@ public class Card : Item
 
     public virtual void CardCounterAttacked(Card attacker, Card target)
     {
-        for (int num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
+        for (var num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
         {
             ActiveData.ActiveTraits[num].CardCounterAttacked(attacker, target);
             if (num > ActiveData.ActiveTraits.Count)
@@ -814,7 +814,7 @@ public class Card : Item
 
     public virtual void CardGainedStatus(Card theCard, Card source, sbyte statusType)
     {
-        for (int num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
+        for (var num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
         {
             ActiveData.ActiveTraits[num].CardGainedStatus(theCard, source, statusType);
             if (num > ActiveData.ActiveTraits.Count)
@@ -826,7 +826,7 @@ public class Card : Item
 
     public virtual void CardDamaged(Card damagedCard, Card source)
     {
-        for (int num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
+        for (var num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
         {
             ActiveData.ActiveTraits[num].CardDamaged(damagedCard, source);
             if (num > ActiveData.ActiveTraits.Count)
@@ -838,7 +838,7 @@ public class Card : Item
 
     public virtual void CardDied(Card deadCard, Card source)
     {
-        for (int num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
+        for (var num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
         {
             ActiveData.ActiveTraits[num].CardDied(deadCard, source);
             if (num > ActiveData.ActiveTraits.Count)
@@ -850,7 +850,7 @@ public class Card : Item
 
     public virtual void CardDrawn(Card drawnCard, bool regularDraw, bool isNewTurn)
     {
-        for (int num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
+        for (var num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
         {
             ActiveData.ActiveTraits[num].CardDrawn(drawnCard, regularDraw, isNewTurn);
             if (num > ActiveData.ActiveTraits.Count)
@@ -862,7 +862,7 @@ public class Card : Item
 
     public virtual void CardDiscardEffect(sbyte playerIndex, int numberOfCards)
     {
-        for (int num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
+        for (var num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
         {
             ActiveData.ActiveTraits[num].CardDiscardEffect(playerIndex, numberOfCards);
             if (num > ActiveData.ActiveTraits.Count)
@@ -874,7 +874,7 @@ public class Card : Item
 
     public virtual void SecretTriggered(Card secret, Card source)
     {
-        for (int num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
+        for (var num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
         {
             ActiveData.ActiveTraits[num].SecretTriggered(secret, source);
             if (num > ActiveData.ActiveTraits.Count)
@@ -886,7 +886,7 @@ public class Card : Item
 
     public virtual void SecretDestroyed(Card secret, Card source)
     {
-        for (int num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
+        for (var num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
         {
             ActiveData.ActiveTraits[num].SecretDestroyed(secret, source);
             if (num > ActiveData.ActiveTraits.Count)
@@ -898,7 +898,7 @@ public class Card : Item
 
     public virtual void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack target, Region region)
     {
-        for (int num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
+        for (var num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
         {
             ActiveData.ActiveTraits[num].TraitEffectActivating(effect, source, target, region);
             if (num > ActiveData.ActiveTraits.Count)
@@ -964,9 +964,9 @@ public class Card : Item
 
     public virtual bool HasStatusEffect(sbyte effectID)
     {
-        for (int num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
+        for (var num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
         {
-            ActiveTrait activeTrait = ActiveData.ActiveTraits[num];
+            var activeTrait = ActiveData.ActiveTraits[num];
             if (activeTrait.GetTraitInfo().IsStatusEffect(effectID, activeTrait))
             {
                 return true;
@@ -978,9 +978,9 @@ public class Card : Item
 
     public bool IsCardTraitsDetered()
     {
-        for (int num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
+        for (var num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
         {
-            ActiveTrait activeTrait = ActiveData.ActiveTraits[num];
+            var activeTrait = ActiveData.ActiveTraits[num];
             if (activeTrait == null || activeTrait.GetTraitInfo() == null)
             {
                 Console.WriteLine(string.Concat("Card ", InstanceId, " has missing trait data on Active Trait index ",
@@ -998,10 +998,10 @@ public class Card : Item
 
     public virtual void RemoveStatusEffect(sbyte effectID)
     {
-        for (int num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
+        for (var num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
         {
-            ActiveTrait activeTrait = ActiveData.ActiveTraits[num];
-            bool detered = activeTrait.Detered;
+            var activeTrait = ActiveData.ActiveTraits[num];
+            var detered = activeTrait.Detered;
             activeTrait.Detered = false;
             if (activeTrait.GetTraitInfo().IsStatusEffect(effectID, activeTrait))
             {

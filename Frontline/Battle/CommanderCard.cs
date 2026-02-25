@@ -22,7 +22,7 @@ public class CommanderCard : Card
     {
         if (other is CommanderCard)
         {
-            CommanderCard commanderCard = (CommanderCard) other;
+            var commanderCard = (CommanderCard) other;
             Secrets = commanderCard.Secrets;
             Defense = commanderCard.Defense;
         }
@@ -36,7 +36,7 @@ public class CommanderCard : Card
     public override void Setup()
     {
         base.Setup();
-        CommanderCardTemplate commanderTemplate = (CommanderCardTemplate) GetTemplate();
+        var commanderTemplate = (CommanderCardTemplate) GetTemplate();
         Secrets = new List<Card>();
         Defense = 0;
     }
@@ -59,7 +59,7 @@ public class CommanderCard : Card
             return;
         }
 
-        for (int i = 0; i < Secrets.Count; i++)
+        for (var i = 0; i < Secrets.Count; i++)
         {
             Secrets[i].InitActiveData();
         }
@@ -69,7 +69,7 @@ public class CommanderCard : Card
     {
         if (Secrets != null)
         {
-            for (int num = Secrets.Count - 1; num >= 0; num--)
+            for (var num = Secrets.Count - 1; num >= 0; num--)
             {
                 Secrets[num] = Secrets[num].GenerateAndInit(GameState);
             }
@@ -80,13 +80,13 @@ public class CommanderCard : Card
 
     public override Card FindTraitActor(int cardId, sbyte ownerId)
     {
-        Card card = base.FindTraitActor(cardId, ownerId);
+        var card = base.FindTraitActor(cardId, ownerId);
         if (card != null)
         {
             return card;
         }
 
-        for (int i = 0; i < Secrets.Count; i++)
+        for (var i = 0; i < Secrets.Count; i++)
         {
             card = Secrets[i];
             if (card.InstanceId == cardId && card.ActiveData.Owner == ownerId)
@@ -110,7 +110,7 @@ public class CommanderCard : Card
             return true;
         }
 
-        for (int i = 0; i < Secrets.Count; i++)
+        for (var i = 0; i < Secrets.Count; i++)
         {
             if (Secrets[i].DoesMatchTargetingInfo(info, source))
             {
@@ -133,7 +133,7 @@ public class CommanderCard : Card
             return 0;
         }
 
-        sbyte b = parent.Resources.Health;
+        var b = parent.Resources.Health;
         sbyte b2 = 0;
         ActiveTrait activeTrait = null;
         EventLogTraitCardInfo eventLogTraitCardInfo = null;
@@ -143,7 +143,7 @@ public class CommanderCard : Card
             list = new List<EventLogTraitCardInfo>();
         }
 
-        for (int i = 0; i < ActiveData.ActiveTraits.Count; i++)
+        for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
         {
             activeTrait = ActiveData.ActiveTraits[i];
             b2 = activeTrait.GetTraitInfo().GetHealthBonus(activeTrait);
@@ -166,11 +166,11 @@ public class CommanderCard : Card
 
         if (combatLog && list.Count > 0)
         {
-            int count = list.Count;
-            CombatBuffsCcgEvent combatBuffsCCGEvent =
+            var count = list.Count;
+            var combatBuffsCCGEvent =
                 new CombatBuffsCcgEvent(CcgEventType.CombatBuffsAttack, InstanceId, ActiveData.Owner, 0, 0);
             combatBuffsCCGEvent.BuffTraits = new EventLogTraitCardInfo[count];
-            for (int j = 0; j < count; j++)
+            for (var j = 0; j < count; j++)
             {
                 combatBuffsCCGEvent.BuffTraits[j] = list[j];
             }
@@ -183,7 +183,7 @@ public class CommanderCard : Card
 
     public override sbyte GetCurrentDefense(bool combatLog)
     {
-        sbyte b = Defense;
+        var b = Defense;
         sbyte b2 = 0;
         ActiveTrait activeTrait = null;
         EventLogTraitCardInfo eventLogTraitCardInfo = null;
@@ -193,7 +193,7 @@ public class CommanderCard : Card
             list = new List<EventLogTraitCardInfo>();
         }
 
-        for (int i = 0; i < ActiveData.ActiveTraits.Count; i++)
+        for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
         {
             activeTrait = ActiveData.ActiveTraits[i];
             b2 = activeTrait.GetTraitInfo().GetDefenseBonus(activeTrait);
@@ -216,11 +216,11 @@ public class CommanderCard : Card
 
         if (combatLog && list.Count > 0)
         {
-            int count = list.Count;
-            CombatBuffsCcgEvent combatBuffsCCGEvent =
+            var count = list.Count;
+            var combatBuffsCCGEvent =
                 new CombatBuffsCcgEvent(CcgEventType.CombatBuffsAttack, InstanceId, ActiveData.Owner, 0, 0);
             combatBuffsCCGEvent.BuffTraits = new EventLogTraitCardInfo[count];
-            for (int j = 0; j < count; j++)
+            for (var j = 0; j < count; j++)
             {
                 combatBuffsCCGEvent.BuffTraits[j] = list[j];
             }
@@ -233,10 +233,10 @@ public class CommanderCard : Card
 
     public override void TakeDamage(sbyte attack, sbyte bypass, Card source, bool checkDeath)
     {
-        sbyte b = attack;
-        sbyte bypass2 = bypass;
+        var b = attack;
+        var bypass2 = bypass;
         ActiveTrait activeTrait = null;
-        for (int i = 0; i < ActiveData.ActiveTraits.Count; i++)
+        for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
         {
             activeTrait = ActiveData.ActiveTraits[i];
             if (activeTrait.GetTraitInfo().IsDamageImmunity(false, activeTrait))
@@ -250,13 +250,13 @@ public class CommanderCard : Card
             }
         }
 
-        sbyte b2 = GetCurrentDefense(false);
+        var b2 = GetCurrentDefense(false);
         if (b2 < 0)
         {
             b2 = 0;
         }
 
-        sbyte b3 = ((b < b2) ? b : b2);
+        var b3 = b < b2 ? b : b2;
         Defense -= b3;
         b -= b3;
         parent.TakeDamage(b, bypass2, source);
@@ -271,7 +271,7 @@ public class CommanderCard : Card
     {
         sbyte b = 0;
         ActiveTrait activeTrait = null;
-        for (int i = 0; i < ActiveData.ActiveTraits.Count; i++)
+        for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
         {
             activeTrait = ActiveData.ActiveTraits[i];
             b += activeTrait.GetTraitInfo().GetDefenseBonus(activeTrait);
@@ -302,10 +302,10 @@ public class CommanderCard : Card
             return 0;
         }
 
-        sbyte b = parent.Resources.MaxHealth;
+        var b = parent.Resources.MaxHealth;
         sbyte b2 = 0;
         ActiveTrait activeTrait = null;
-        for (int i = 0; i < ActiveData.ActiveTraits.Count; i++)
+        for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
         {
             activeTrait = ActiveData.ActiveTraits[i];
             b2 = activeTrait.GetTraitInfo().GetHealthBonus(activeTrait);
@@ -321,7 +321,7 @@ public class CommanderCard : Card
     public override void CardDeployed(Card deployed)
     {
         base.CardDeployed(deployed);
-        for (int num = Secrets.Count - 1; num >= 0; num--)
+        for (var num = Secrets.Count - 1; num >= 0; num--)
         {
             Secrets[num].CardDeployed(deployed);
         }
@@ -330,7 +330,7 @@ public class CommanderCard : Card
     public override void NewTurn(sbyte playerIndex)
     {
         base.NewTurn(playerIndex);
-        for (int num = Secrets.Count - 1; num >= 0; num--)
+        for (var num = Secrets.Count - 1; num >= 0; num--)
         {
             Secrets[num].NewTurn(playerIndex);
         }
@@ -340,7 +340,7 @@ public class CommanderCard : Card
     {
         base.EndTurn(playerIndex);
         Defense = 0;
-        for (int num = Secrets.Count - 1; num >= 0; num--)
+        for (var num = Secrets.Count - 1; num >= 0; num--)
         {
             Secrets[num].EndTurn(playerIndex);
         }
@@ -349,7 +349,7 @@ public class CommanderCard : Card
     public override void CardMoved(Card card, CardStack target, Region region, Region origin)
     {
         base.CardMoved(card, target, region, origin);
-        for (int num = Secrets.Count - 1; num >= 0; num--)
+        for (var num = Secrets.Count - 1; num >= 0; num--)
         {
             Secrets[num].CardMoved(card, target, region, origin);
         }
@@ -358,7 +358,7 @@ public class CommanderCard : Card
     public override void CardAttacked(Card attacker, Card target)
     {
         base.CardAttacked(attacker, target);
-        for (int num = Secrets.Count - 1; num >= 0; num--)
+        for (var num = Secrets.Count - 1; num >= 0; num--)
         {
             Secrets[num].CardAttacked(attacker, target);
         }
@@ -367,7 +367,7 @@ public class CommanderCard : Card
     public override void CardCounterAttacked(Card attacker, Card target)
     {
         base.CardCounterAttacked(attacker, target);
-        for (int num = Secrets.Count - 1; num >= 0; num--)
+        for (var num = Secrets.Count - 1; num >= 0; num--)
         {
             Secrets[num].CardCounterAttacked(attacker, target);
         }
@@ -376,7 +376,7 @@ public class CommanderCard : Card
     public override void CardGainedStatus(Card theCard, Card source, sbyte statusType)
     {
         base.CardGainedStatus(theCard, source, statusType);
-        for (int num = Secrets.Count - 1; num >= 0; num--)
+        for (var num = Secrets.Count - 1; num >= 0; num--)
         {
             Secrets[num].CardGainedStatus(theCard, source, statusType);
         }
@@ -385,7 +385,7 @@ public class CommanderCard : Card
     public override void CardDamaged(Card damagedCard, Card source)
     {
         base.CardDamaged(damagedCard, source);
-        for (int num = Secrets.Count - 1; num >= 0; num--)
+        for (var num = Secrets.Count - 1; num >= 0; num--)
         {
             Secrets[num].CardDamaged(damagedCard, source);
         }
@@ -394,7 +394,7 @@ public class CommanderCard : Card
     public override void CardDied(Card deadCard, Card source)
     {
         base.CardDied(deadCard, source);
-        for (int num = Secrets.Count - 1; num >= 0; num--)
+        for (var num = Secrets.Count - 1; num >= 0; num--)
         {
             Secrets[num].CardDied(deadCard, source);
         }
@@ -403,7 +403,7 @@ public class CommanderCard : Card
     public override void CardDrawn(Card drawnCard, bool regularDraw, bool isNewTurn)
     {
         base.CardDrawn(drawnCard, regularDraw, isNewTurn);
-        for (int num = Secrets.Count - 1; num >= 0; num--)
+        for (var num = Secrets.Count - 1; num >= 0; num--)
         {
             Secrets[num].CardDrawn(drawnCard, regularDraw, isNewTurn);
         }
@@ -412,7 +412,7 @@ public class CommanderCard : Card
     public override void CardDiscardEffect(sbyte playerIndex, int numberOfCards)
     {
         base.CardDiscardEffect(playerIndex, numberOfCards);
-        for (int num = Secrets.Count - 1; num >= 0; num--)
+        for (var num = Secrets.Count - 1; num >= 0; num--)
         {
             Secrets[num].CardDiscardEffect(playerIndex, numberOfCards);
         }
@@ -421,7 +421,7 @@ public class CommanderCard : Card
     public override void SecretTriggered(Card secret, Card source)
     {
         base.SecretTriggered(secret, source);
-        for (int num = Secrets.Count - 1; num >= 0; num--)
+        for (var num = Secrets.Count - 1; num >= 0; num--)
         {
             Secrets[num].SecretTriggered(secret, source);
         }
@@ -430,7 +430,7 @@ public class CommanderCard : Card
     public override void SecretDestroyed(Card secret, Card source)
     {
         base.SecretDestroyed(secret, source);
-        for (int num = Secrets.Count - 1; num >= 0; num--)
+        for (var num = Secrets.Count - 1; num >= 0; num--)
         {
             Secrets[num].SecretDestroyed(secret, source);
         }
@@ -439,7 +439,7 @@ public class CommanderCard : Card
     public override void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack target, Region region)
     {
         base.TraitEffectActivating(effect, source, target, region);
-        for (int num = Secrets.Count - 1; num >= 0; num--)
+        for (var num = Secrets.Count - 1; num >= 0; num--)
         {
             Secrets[num].TraitEffectActivating(effect, source, target, region);
         }

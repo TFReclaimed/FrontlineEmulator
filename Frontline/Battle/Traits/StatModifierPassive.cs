@@ -26,7 +26,7 @@ public class StatModifierPassive : BaseTraitEffect
 
         if (TraitTargeting.DoesMatchType(TargetType, TargetTypeMod.NumMods, 0, target))
         {
-            sbyte result = IsAttack;
+            var result = IsAttack;
             if (IsAttack != 0 && active.DataValue != 0)
             {
                 result = (sbyte) active.DataValue;
@@ -47,7 +47,7 @@ public class StatModifierPassive : BaseTraitEffect
 
         if (TraitTargeting.DoesMatchType(TargetType, TargetTypeMod.NumMods, 0, target))
         {
-            sbyte result = BypassDefense;
+            var result = BypassDefense;
             if (BypassDefense != 0 && active.DataValue != 0)
             {
                 result = (sbyte) active.DataValue;
@@ -66,7 +66,7 @@ public class StatModifierPassive : BaseTraitEffect
             return 0;
         }
 
-        sbyte result = Defense;
+        var result = Defense;
         if (Defense != 0 && active.DataValue != 0)
         {
             result = (sbyte) active.DataValue;
@@ -82,7 +82,7 @@ public class StatModifierPassive : BaseTraitEffect
             return 0;
         }
 
-        sbyte result = Health;
+        var result = Health;
         if (Health != 0 && active.DataValue != 0)
         {
             result = (sbyte) active.DataValue;
@@ -98,7 +98,7 @@ public class StatModifierPassive : BaseTraitEffect
             return 0;
         }
 
-        sbyte result = Command;
+        var result = Command;
         if (Command != 0 && active.DataValue != 0)
         {
             result = (sbyte) active.DataValue;
@@ -132,7 +132,7 @@ public class StatModifierPassive : BaseTraitEffect
             return;
         }
 
-        Region traitActorRegion = GameState.GetTraitActorRegion(parent.ActiveData.Owner, parent.InstanceId);
+        var traitActorRegion = GameState.GetTraitActorRegion(parent.ActiveData.Owner, parent.InstanceId);
         if (traitActorRegion == region)
         {
             CheckAndApplyTrait(movedCard, parent, false, false);

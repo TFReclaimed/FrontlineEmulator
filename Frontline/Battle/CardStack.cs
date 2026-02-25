@@ -51,7 +51,7 @@ public class CardStack
             return null;
         }
 
-        Card card = PrimaryCard.FindTraitActor(cardId, ownerId);
+        var card = PrimaryCard.FindTraitActor(cardId, ownerId);
         if (card != null)
         {
             return card;
@@ -105,7 +105,7 @@ public class CardStack
 
     public Card RemoveCard(int cardId, sbyte ownerId)
     {
-        Card card = FindTraitActor(cardId, ownerId);
+        var card = FindTraitActor(cardId, ownerId);
         if (card != null)
         {
             RemoveCard(card);
@@ -127,10 +127,10 @@ public class CardStack
                 return card2;
             }
 
-            List<Card> secrets = PrimaryCard.GetSecrets();
+            var secrets = PrimaryCard.GetSecrets();
             if (secrets != null)
             {
-                for (int i = 0; i < secrets.Count; i++)
+                for (var i = 0; i < secrets.Count; i++)
                 {
                     if (secrets[i].EqualsTo(card))
                     {
@@ -146,7 +146,7 @@ public class CardStack
                 card2 = PrimaryCard.GetEmbarkedPilot();
                 if (card2.EqualsTo(card))
                 {
-                    UnitCard unitCard = (UnitCard) PrimaryCard;
+                    var unitCard = (UnitCard) PrimaryCard;
                     unitCard.EmbarkedPilot = null;
                     return card2;
                 }
@@ -162,10 +162,10 @@ public class CardStack
                 return card2;
             }
 
-            List<Card> secrets2 = ejectedCard.GetSecrets();
+            var secrets2 = ejectedCard.GetSecrets();
             if (secrets2 != null)
             {
-                for (int j = 0; j < secrets2.Count; j++)
+                for (var j = 0; j < secrets2.Count; j++)
                 {
                     if (secrets2[j].EqualsTo(card))
                     {
@@ -383,7 +383,7 @@ public class CardStack
     {
         if (PrimaryCard != null && PrimaryCard.HasPilot())
         {
-            UnitCard unitCard = (UnitCard) PrimaryCard;
+            var unitCard = (UnitCard) PrimaryCard;
             if (unitCard.EmbarkedPilot.EqualsTo(card))
             {
                 unitCard.EmbarkedPilot.PilotEmbarked = false;

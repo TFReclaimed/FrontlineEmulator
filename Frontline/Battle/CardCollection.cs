@@ -9,7 +9,7 @@ public class CardCollection
         if (drawCount > 0)
         {
             Cards = new List<Card>(drawCount);
-            for (int i = 0; i < drawCount; i++)
+            for (var i = 0; i < drawCount; i++)
             {
                 DrawFromDeck(theDeck, game, playerIndex);
             }
@@ -22,7 +22,7 @@ public class CardCollection
 
     public void Init(CCG game)
     {
-        for (int i = 0; i < Cards.Count; i++)
+        for (var i = 0; i < Cards.Count; i++)
         {
             Cards[i] = Cards[i].GenerateAndInit(game);
         }
@@ -30,7 +30,7 @@ public class CardCollection
 
     public void InitActiveData()
     {
-        for (int i = 0; i < Cards.Count; i++)
+        for (var i = 0; i < Cards.Count; i++)
         {
             Cards[i].InitActiveData();
         }
@@ -38,7 +38,7 @@ public class CardCollection
 
     public Card DrawFromDeck(Deck theDeck, CCG game, sbyte playerIndex)
     {
-        Card card = theDeck.DrawCard(game);
+        var card = theDeck.DrawCard(game);
         if (card != null)
         {
             Cards.Add(card);
@@ -51,9 +51,9 @@ public class CardCollection
 
     public Card FindCard(int cardId)
     {
-        for (int i = 0; i < Cards.Count; i++)
+        for (var i = 0; i < Cards.Count; i++)
         {
-            Card card = Cards[i];
+            var card = Cards[i];
             if (card.InstanceId == cardId)
             {
                 return card;
@@ -65,9 +65,9 @@ public class CardCollection
 
     public Card RemoveCard(int cardId)
     {
-        for (int i = 0; i < Cards.Count; i++)
+        for (var i = 0; i < Cards.Count; i++)
         {
-            Card card = Cards[i];
+            var card = Cards[i];
             if (card.InstanceId == cardId)
             {
                 Cards.RemoveAt(i);

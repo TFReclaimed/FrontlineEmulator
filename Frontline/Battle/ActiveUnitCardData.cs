@@ -7,7 +7,7 @@ public class ActiveUnitCardData : ActiveEntityCardData
     public override void Setup(Card card)
     {
         base.Setup(card);
-        UnitCard unitCard = (UnitCard) card;
+        var unitCard = (UnitCard) card;
         CurrentDefense = unitCard.GetMaxDefense();
     }
 }

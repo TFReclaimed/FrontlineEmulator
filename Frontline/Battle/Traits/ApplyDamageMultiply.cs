@@ -11,9 +11,9 @@ public class ApplyDamageMultiply : ApplyDamage
         if (card.GetTemplate().Type == CardType.Secret)
         {
             GameState.SecretDestroyed(card, source);
-            List<CardStack> list = GameState.FindCardStack(card);
+            var list = GameState.FindCardStack(card);
             List<Card> list2 = null;
-            for (int i = 0; i < list.Count; i++)
+            for (var i = 0; i < list.Count; i++)
             {
                 list2 = list[i].PrimaryCard.GetSecrets();
                 if (list2 == null)
@@ -21,7 +21,7 @@ public class ApplyDamageMultiply : ApplyDamage
                     continue;
                 }
 
-                for (int num = list2.Count - 1; num >= 0; num--)
+                for (var num = list2.Count - 1; num >= 0; num--)
                 {
                     if (list2[num].EqualsTo(card))
                     {
@@ -36,17 +36,17 @@ public class ApplyDamageMultiply : ApplyDamage
 
         if (card.GetTemplate().Type == CardType.Pilot)
         {
-            UnitCard unitCard = (UnitCard) card;
+            var unitCard = (UnitCard) card;
             if (unitCard != null && unitCard.IsEmbarked())
             {
                 return;
             }
         }
 
-        int num2 = CountInfo.CalculateCount(GameState, active);
-        sbyte currentHealth = card.GetCurrentHealth(false);
-        sbyte attack = (sbyte) (Damage * num2);
-        sbyte bypass = (sbyte) (BypassDefense * num2);
+        var num2 = CountInfo.CalculateCount(GameState, active);
+        var currentHealth = card.GetCurrentHealth(false);
+        var attack = (sbyte) (Damage * num2);
+        var bypass = (sbyte) (BypassDefense * num2);
         if (Damage == -1)
         {
             attack = currentHealth;

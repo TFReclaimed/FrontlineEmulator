@@ -14,8 +14,8 @@ public class ReactiveDamage : BaseTraitEffect
             (DurationData.Charges <= 0 || active.DurationData.Charges != 0) &&
             TraitTargeting.DoesMatchType(AttackerType, TargetTypeMod.NumMods, 0, attacker))
         {
-            sbyte attack = Damage;
-            sbyte b = Bypass;
+            var attack = Damage;
+            var b = Bypass;
             if (Damage == -1)
             {
                 attack = attacker.GetCurrentHealth(false);

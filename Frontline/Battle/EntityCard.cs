@@ -33,7 +33,7 @@ public class EntityCard : Card
     public override void Setup()
     {
         base.Setup();
-        EntityCardTemplate entityTemplate = (EntityCardTemplate) GetTemplate();
+        var entityTemplate = (EntityCardTemplate) GetTemplate();
         maxHealth = entityTemplate.Health;
         Secrets = new List<Card>();
         myDeathCard = null;
@@ -49,7 +49,7 @@ public class EntityCard : Card
     {
         if (Secrets != null)
         {
-            for (int num = Secrets.Count - 1; num >= 0; num--)
+            for (var num = Secrets.Count - 1; num >= 0; num--)
             {
                 Secrets[num] = Secrets[num].GenerateAndInit(GameState);
             }
@@ -65,7 +65,7 @@ public class EntityCard : Card
 
     public override Card FindTraitActor(int cardId, sbyte ownerId)
     {
-        Card card = base.FindTraitActor(cardId, ownerId);
+        var card = base.FindTraitActor(cardId, ownerId);
         if (card != null)
         {
             return card;
@@ -76,7 +76,7 @@ public class EntityCard : Card
             return card;
         }
 
-        for (int i = 0; i < Secrets.Count; i++)
+        for (var i = 0; i < Secrets.Count; i++)
         {
             card = Secrets[i];
             if (card.InstanceId == cardId && card.ActiveData.Owner == ownerId)
@@ -100,7 +100,7 @@ public class EntityCard : Card
             return true;
         }
 
-        for (int i = 0; i < Secrets.Count; i++)
+        for (var i = 0; i < Secrets.Count; i++)
         {
             if (Secrets[i].DoesMatchTargetingInfo(info, source))
             {
@@ -122,9 +122,9 @@ public class EntityCard : Card
         {
             SetActed(15);
             stack.PrimaryCard = this;
-            for (int i = 0; i < cardTraits.Length; i++)
+            for (var i = 0; i < cardTraits.Length; i++)
             {
-                BaseTrait baseTrait = cardTraits[i];
+                var baseTrait = cardTraits[i];
                 if (baseTrait != null && baseTrait.ActivateOnDeploy())
                 {
                     baseTrait.Activate(this, stack, target, GameState);
@@ -164,19 +164,19 @@ public class EntityCard : Card
 
     public override bool HasActed()
     {
-        ActiveEntityCardData activeEntityCardData = (ActiveEntityCardData) ActiveData;
+        var activeEntityCardData = (ActiveEntityCardData) ActiveData;
         return activeEntityCardData.Acted != 0;
     }
 
     public override bool HasActed(sbyte actions)
     {
-        ActiveEntityCardData activeEntityCardData = (ActiveEntityCardData) ActiveData;
+        var activeEntityCardData = (ActiveEntityCardData) ActiveData;
         return ((byte) activeEntityCardData.Acted & (byte) actions) != 0;
     }
 
     public override bool HasAnyActionsAvailable()
     {
-        ActiveEntityCardData activeEntityCardData = (ActiveEntityCardData) ActiveData;
+        var activeEntityCardData = (ActiveEntityCardData) ActiveData;
         return (((byte) activeEntityCardData.Acted & 0xE) ^ 0xE) != 0;
     }
 
@@ -187,13 +187,13 @@ public class EntityCard : Card
             return false;
         }
 
-        BaseTrait activationTrait = GetActivationTrait();
+        var activationTrait = GetActivationTrait();
         if (activationTrait == null)
         {
             return false;
         }
 
-        BaseTraitEffect primaryTargeting = activationTrait.GetPrimaryTargeting(0);
+        var primaryTargeting = activationTrait.GetPrimaryTargeting(0);
         if (primaryTargeting.Targets.HasAreaTarget())
         {
             return activationTrait.CanActivate(region, ActiveData.Owner);
@@ -226,8 +226,8 @@ public class EntityCard : Card
             return true;
         }
 
-        bool flag = false;
-        bool flag2 = GameState.HasInterceptBattleEffect(ActiveData.Owner);
+        var flag = false;
+        var flag2 = GameState.HasInterceptBattleEffect(ActiveData.Owner);
         if (flag2)
         {
             flag = target.PrimaryCard.HasIntercept();
@@ -250,10 +250,10 @@ public class EntityCard : Card
 
         SetActed(14);
         ActiveData.AttackTraits(target);
-        List<CardStack> list = GameState.FindCardStack(target);
+        var list = GameState.FindCardStack(target);
         if (list.Count > 0)
         {
-            CardStack source2 = list[0];
+            var source2 = list[0];
             if (target.CanCounterAttack(source2, source, true))
             {
                 target.CounterAttack(source2, this);
@@ -264,13 +264,13 @@ public class EntityCard : Card
     public void ActivateTrait(CardStack target, Region region, CCG game)
     {
         ActiveTrait activeTrait = null;
-        for (int i = 0; i < cardTraits.Length; i++)
+        for (var i = 0; i < cardTraits.Length; i++)
         {
             if (cardTraits[i].TraitType == TraitType.OneShot && !ActiveData.TraitActivated[i])
             {
                 SetActed(14);
                 ActiveData.TraitActivated[i] = true;
-                for (int num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
+                for (var num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
                 {
                     activeTrait = ActiveData.ActiveTraits[num];
                     activeTrait.GetTraitInfo().ActivateAction(target, region, activeTrait);
@@ -284,13 +284,13 @@ public class EntityCard : Card
 
     public override void TakeDamage(sbyte attack, sbyte bypass, Card source, bool checkDeath)
     {
-        ActiveEntityCardData activeEntityCardData = (ActiveEntityCardData) ActiveData;
-        sbyte currentHealth = activeEntityCardData.CurrentHealth;
-        sbyte b = attack;
-        sbyte b2 = bypass;
+        var activeEntityCardData = (ActiveEntityCardData) ActiveData;
+        var currentHealth = activeEntityCardData.CurrentHealth;
+        var b = attack;
+        var b2 = bypass;
         sbyte b3 = 0;
         ActiveTrait activeTrait = null;
-        for (int i = 0; i < ActiveData.ActiveTraits.Count; i++)
+        for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
         {
             activeTrait = ActiveData.ActiveTraits[i];
             if (activeTrait.GetTraitInfo().IsDamageImmunity(false, activeTrait))
@@ -309,7 +309,7 @@ public class EntityCard : Card
         {
             SetCurrentHealth((sbyte) (currentHealth - b3));
             GameState.CardDamaged(this, source);
-            CardTraumaCcgEvent logData = new CardTraumaCcgEvent(CcgEventType.CardDamage, b3, source.InstanceId,
+            var logData = new CardTraumaCcgEvent(CcgEventType.CardDamage, b3, source.InstanceId,
                 source.ActiveData.Owner, InstanceId, ActiveData.Owner);
             GameState.AddCCGEventLog(logData);
             if (myDeathCard == null && CanDiscard())
@@ -332,8 +332,8 @@ public class EntityCard : Card
         }
 
         isDead = true;
-        Region traitActorRegion = GameState.GetTraitActorRegion(ActiveData.Owner, InstanceId);
-        List<CardStack> list = GameState.FindCardStack(this);
+        var traitActorRegion = GameState.GetTraitActorRegion(ActiveData.Owner, InstanceId);
+        var list = GameState.FindCardStack(this);
         CardStack cardStack = null;
         if (list == null || list.Count == 0)
         {
@@ -341,7 +341,7 @@ public class EntityCard : Card
         }
 
         cardStack = list[0];
-        for (int i = 0; i < cardTraits.Length; i++)
+        for (var i = 0; i < cardTraits.Length; i++)
         {
             if (cardTraits[i].TraitType == TraitType.LastStand && !ActiveData.TraitActivated[i])
             {
@@ -351,13 +351,13 @@ public class EntityCard : Card
         }
 
         GameState.CardDied(this, myDeathCard);
-        CardTraumaCcgEvent logData = new CardTraumaCcgEvent(CcgEventType.CardDeath, GetCurrentHealth(false),
+        var logData = new CardTraumaCcgEvent(CcgEventType.CardDeath, GetCurrentHealth(false),
             myDeathCard.InstanceId, myDeathCard.ActiveData.Owner, InstanceId, ActiveData.Owner);
         GameState.AddCCGEventLog(logData);
         if (myDeathCard.GetTemplate().IsCombatUnit())
         {
-            UnitCard unitCard = (UnitCard) myDeathCard;
-            string xpTrigger = "Destroy_" + template.Type;
+            var unitCard = (UnitCard) myDeathCard;
+            var xpTrigger = "Destroy_" + template.Type;
             unitCard.CheckAndUpdateXP(xpTrigger);
             if (unitCard.HasPilot())
             {
@@ -370,8 +370,8 @@ public class EntityCard : Card
             return;
         }
 
-        EntityCard embarkedPilot = GetEmbarkedPilot();
-        for (int j = 0; j < embarkedPilot.cardTraits.Length; j++)
+        var embarkedPilot = GetEmbarkedPilot();
+        for (var j = 0; j < embarkedPilot.cardTraits.Length; j++)
         {
             if (embarkedPilot.cardTraits[j].TraitType == TraitType.LastStand &&
                 !embarkedPilot.ActiveData.TraitActivated[j])
@@ -387,8 +387,8 @@ public class EntityCard : Card
         GameState.AddCCGEventLog(logData);
         if (myDeathCard.GetTemplate().IsCombatUnit())
         {
-            UnitCard unitCard2 = (UnitCard) myDeathCard;
-            string xpTrigger2 = "Destroy_Pilot";
+            var unitCard2 = (UnitCard) myDeathCard;
+            var xpTrigger2 = "Destroy_Pilot";
             unitCard2.CheckAndUpdateXP(xpTrigger2);
             if (unitCard2.HasPilot())
             {
@@ -412,10 +412,10 @@ public class EntityCard : Card
 
     public override sbyte HealDamage(CardStack stack, sbyte heal)
     {
-        ActiveEntityCardData activeEntityCardData = (ActiveEntityCardData) ActiveData;
-        sbyte currentHealth = activeEntityCardData.CurrentHealth;
-        sbyte b = currentHealth;
-        currentHealth = ((currentHealth + heal <= maxHealth) ? ((sbyte) (currentHealth + heal)) : maxHealth);
+        var activeEntityCardData = (ActiveEntityCardData) ActiveData;
+        var currentHealth = activeEntityCardData.CurrentHealth;
+        var b = currentHealth;
+        currentHealth = currentHealth + heal <= maxHealth ? (sbyte) (currentHealth + heal) : maxHealth;
         SetCurrentHealth(currentHealth);
         return (sbyte) (currentHealth - b);
     }
@@ -427,8 +427,8 @@ public class EntityCard : Card
 
     public override sbyte GetCurrentHealth(bool combatLog)
     {
-        ActiveEntityCardData activeEntityCardData = (ActiveEntityCardData) ActiveData;
-        sbyte b = activeEntityCardData.CurrentHealth;
+        var activeEntityCardData = (ActiveEntityCardData) ActiveData;
+        var b = activeEntityCardData.CurrentHealth;
         sbyte b2 = 0;
         ActiveTrait activeTrait = null;
         EventLogTraitCardInfo eventLogTraitCardInfo = null;
@@ -438,7 +438,7 @@ public class EntityCard : Card
             list = new List<EventLogTraitCardInfo>();
         }
 
-        for (int i = 0; i < ActiveData.ActiveTraits.Count; i++)
+        for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
         {
             activeTrait = ActiveData.ActiveTraits[i];
             b2 = activeTrait.GetTraitInfo().GetHealthBonus(activeTrait);
@@ -461,11 +461,11 @@ public class EntityCard : Card
 
         if (combatLog && list.Count > 0)
         {
-            int count = list.Count;
-            CombatBuffsCcgEvent combatBuffsCCGEvent =
+            var count = list.Count;
+            var combatBuffsCCGEvent =
                 new CombatBuffsCcgEvent(CcgEventType.CombatBuffsAttack, InstanceId, ActiveData.Owner, 0, 0);
             combatBuffsCCGEvent.BuffTraits = new EventLogTraitCardInfo[count];
-            for (int j = 0; j < count; j++)
+            for (var j = 0; j < count; j++)
             {
                 combatBuffsCCGEvent.BuffTraits[j] = list[j];
             }
@@ -478,7 +478,7 @@ public class EntityCard : Card
 
     public void SetCurrentHealth(sbyte health)
     {
-        ActiveEntityCardData activeEntityCardData = (ActiveEntityCardData) ActiveData;
+        var activeEntityCardData = (ActiveEntityCardData) ActiveData;
         activeEntityCardData.CurrentHealth = health;
     }
 
@@ -494,10 +494,10 @@ public class EntityCard : Card
 
     public override sbyte GetMaxModHealth()
     {
-        sbyte b = maxHealth;
+        var b = maxHealth;
         sbyte b2 = 0;
         ActiveTrait activeTrait = null;
-        for (int i = 0; i < ActiveData.ActiveTraits.Count; i++)
+        for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
         {
             activeTrait = ActiveData.ActiveTraits[i];
             b2 = activeTrait.GetTraitInfo().GetHealthBonus(activeTrait);
@@ -526,7 +526,7 @@ public class EntityCard : Card
             base.InitActiveData();
         }
 
-        EntityCardTemplate entityTemplate = (EntityCardTemplate) GetTemplate();
+        var entityTemplate = (EntityCardTemplate) GetTemplate();
         maxHealth = entityTemplate.Health;
         myDeathCard = null;
         isDead = false;
@@ -536,7 +536,7 @@ public class EntityCard : Card
             return;
         }
 
-        for (int i = 0; i < Secrets.Count; i++)
+        for (var i = 0; i < Secrets.Count; i++)
         {
             Secrets[i].InitActiveData();
         }
@@ -544,19 +544,19 @@ public class EntityCard : Card
 
     protected void SetActed(sbyte action)
     {
-        ActiveEntityCardData activeEntityCardData = (ActiveEntityCardData) ActiveData;
+        var activeEntityCardData = (ActiveEntityCardData) ActiveData;
         activeEntityCardData.Acted = (sbyte) ((byte) activeEntityCardData.Acted | (byte) action);
     }
 
     private void ClearActed()
     {
-        ActiveEntityCardData activeEntityCardData = (ActiveEntityCardData) ActiveData;
+        var activeEntityCardData = (ActiveEntityCardData) ActiveData;
         activeEntityCardData.Acted = 0;
     }
 
     public void ClearActed(sbyte action)
     {
-        ActiveEntityCardData activeEntityCardData = (ActiveEntityCardData) ActiveData;
+        var activeEntityCardData = (ActiveEntityCardData) ActiveData;
         activeEntityCardData.Acted = (sbyte) ((byte) activeEntityCardData.Acted & ~(byte) action);
     }
 
@@ -565,7 +565,7 @@ public class EntityCard : Card
         base.CardDeployed(deployed);
         if (Secrets != null)
         {
-            for (int num = Secrets.Count - 1; num >= 0; num--)
+            for (var num = Secrets.Count - 1; num >= 0; num--)
             {
                 Secrets[num].CardDeployed(deployed);
             }
@@ -581,7 +581,7 @@ public class EntityCard : Card
             return;
         }
 
-        for (int num = Secrets.Count - 1; num >= 0; num--)
+        for (var num = Secrets.Count - 1; num >= 0; num--)
         {
             Secrets[num].NewTurn(playerIndex);
         }
@@ -602,7 +602,7 @@ public class EntityCard : Card
         base.EndTurn(playerIndex);
         if (Secrets != null)
         {
-            for (int num = Secrets.Count - 1; num >= 0; num--)
+            for (var num = Secrets.Count - 1; num >= 0; num--)
             {
                 Secrets[num].EndTurn(playerIndex);
             }
@@ -614,7 +614,7 @@ public class EntityCard : Card
         base.CardMoved(card, target, region, origin);
         if (Secrets != null)
         {
-            for (int num = Secrets.Count - 1; num >= 0; num--)
+            for (var num = Secrets.Count - 1; num >= 0; num--)
             {
                 Secrets[num].CardMoved(card, target, region, origin);
             }
@@ -626,7 +626,7 @@ public class EntityCard : Card
         base.CardAttacked(attacker, target);
         if (Secrets != null)
         {
-            for (int num = Secrets.Count - 1; num >= 0; num--)
+            for (var num = Secrets.Count - 1; num >= 0; num--)
             {
                 Secrets[num].CardAttacked(attacker, target);
             }
@@ -638,7 +638,7 @@ public class EntityCard : Card
         base.CardCounterAttacked(attacker, target);
         if (Secrets != null)
         {
-            for (int num = Secrets.Count - 1; num >= 0; num--)
+            for (var num = Secrets.Count - 1; num >= 0; num--)
             {
                 Secrets[num].CardCounterAttacked(attacker, target);
             }
@@ -650,7 +650,7 @@ public class EntityCard : Card
         base.CardGainedStatus(theCard, source, statusType);
         if (Secrets != null)
         {
-            for (int num = Secrets.Count - 1; num >= 0; num--)
+            for (var num = Secrets.Count - 1; num >= 0; num--)
             {
                 Secrets[num].CardGainedStatus(theCard, source, statusType);
             }
@@ -662,7 +662,7 @@ public class EntityCard : Card
         base.CardDamaged(damagedCard, source);
         if (Secrets != null)
         {
-            for (int num = Secrets.Count - 1; num >= 0; num--)
+            for (var num = Secrets.Count - 1; num >= 0; num--)
             {
                 Secrets[num].CardDamaged(damagedCard, source);
             }
@@ -674,7 +674,7 @@ public class EntityCard : Card
         base.CardDied(deadCard, source);
         if (Secrets != null)
         {
-            for (int num = Secrets.Count - 1; num >= 0; num--)
+            for (var num = Secrets.Count - 1; num >= 0; num--)
             {
                 Secrets[num].CardDied(deadCard, source);
             }
@@ -686,7 +686,7 @@ public class EntityCard : Card
         base.CardDrawn(drawnCard, regularDraw, isNewTurn);
         if (Secrets != null)
         {
-            for (int num = Secrets.Count - 1; num >= 0; num--)
+            for (var num = Secrets.Count - 1; num >= 0; num--)
             {
                 Secrets[num].CardDrawn(drawnCard, regularDraw, isNewTurn);
             }
@@ -698,7 +698,7 @@ public class EntityCard : Card
         base.CardDiscardEffect(playerIndex, numberOfCards);
         if (Secrets != null)
         {
-            for (int num = Secrets.Count - 1; num >= 0; num--)
+            for (var num = Secrets.Count - 1; num >= 0; num--)
             {
                 Secrets[num].CardDiscardEffect(playerIndex, numberOfCards);
             }
@@ -710,7 +710,7 @@ public class EntityCard : Card
         base.SecretTriggered(secret, source);
         if (Secrets != null)
         {
-            for (int num = Secrets.Count - 1; num >= 0; num--)
+            for (var num = Secrets.Count - 1; num >= 0; num--)
             {
                 Secrets[num].SecretTriggered(secret, source);
             }
@@ -722,7 +722,7 @@ public class EntityCard : Card
         base.SecretDestroyed(secret, source);
         if (Secrets != null)
         {
-            for (int num = Secrets.Count - 1; num >= 0; num--)
+            for (var num = Secrets.Count - 1; num >= 0; num--)
             {
                 Secrets[num].SecretDestroyed(secret, source);
             }
@@ -734,7 +734,7 @@ public class EntityCard : Card
         base.TraitEffectActivating(effect, source, target, region);
         if (Secrets != null)
         {
-            for (int num = Secrets.Count - 1; num >= 0; num--)
+            for (var num = Secrets.Count - 1; num >= 0; num--)
             {
                 Secrets[num].TraitEffectActivating(effect, source, target, region);
             }
@@ -746,7 +746,7 @@ public class EntityCard : Card
         base.Discard(players);
         if (Secrets != null)
         {
-            for (int num = Secrets.Count - 1; num >= 0; num--)
+            for (var num = Secrets.Count - 1; num >= 0; num--)
             {
                 Secrets[num].Discard(players);
             }

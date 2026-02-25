@@ -19,9 +19,9 @@ public class GameBoard
 
     public void Create(GameTemplate rules)
     {
-        int num = 3;
+        var num = 3;
         Regions = new GameRegion[num];
-        for (int i = 0; i < num; i++)
+        for (var i = 0; i < num; i++)
         {
             Regions[i] = new GameRegion(_gameState);
             Regions[i].Create(rules, (Region) i);
@@ -30,9 +30,9 @@ public class GameBoard
 
     public void Init(GameTemplate rules, CCG game)
     {
-        for (int i = 0; i < Regions.Length; i++)
+        for (var i = 0; i < Regions.Length; i++)
         {
-            bool independentSlots = true;
+            var independentSlots = true;
             short[] slotsForTitans = null;
             if (i == 2)
             {
@@ -46,7 +46,7 @@ public class GameBoard
 
     public void InitActiveData()
     {
-        for (int i = 0; i < Regions.Length; i++)
+        for (var i = 0; i < Regions.Length; i++)
         {
             Regions[i].InitActiveData();
         }
@@ -54,7 +54,7 @@ public class GameBoard
 
     public void NewTurn(sbyte playerTurn)
     {
-        for (int i = 0; i < Regions.Length; i++)
+        for (var i = 0; i < Regions.Length; i++)
         {
             Regions[i].NewTurn(playerTurn);
         }
@@ -62,7 +62,7 @@ public class GameBoard
 
     public bool CanDeploy(Card card, TargetableArea area, Region target, sbyte slotIndex, sbyte pushDir)
     {
-        Region region = (Region) card.ActiveData.Owner;
+        var region = (Region) card.ActiveData.Owner;
         switch (area)
         {
             case TargetableArea.FriendlyPerimeter:
@@ -121,7 +121,7 @@ public class GameBoard
                 break;
         }
 
-        for (int i = 0; i < 3; i++)
+        for (var i = 0; i < 3; i++)
         {
             if (Regions[i].CanDeploy(card, area, slotIndex, pushDir))
             {
@@ -135,12 +135,12 @@ public class GameBoard
     public CardStack Deploy(Card card, Region target, sbyte slotIndex, sbyte pushDir,
         CardTransitionCcgEvent deployEvent)
     {
-        CardStack cardStack = Regions[(uint) target].Deploy(card, slotIndex, pushDir, target, deployEvent);
+        var cardStack = Regions[(uint) target].Deploy(card, slotIndex, pushDir, target, deployEvent);
         if (cardStack != null)
         {
-            for (int i = 0; i < Regions.Length; i++)
+            for (var i = 0; i < Regions.Length; i++)
             {
-                for (int j = 0; j < Regions[i].Slots.Length; j++)
+                for (var j = 0; j < Regions[i].Slots.Length; j++)
                 {
                     Regions[i].Slots[j].CardDeployed(card);
                 }
@@ -153,14 +153,14 @@ public class GameBoard
     public bool CanMove(int cardId, sbyte ownerId, Region target, sbyte slotIndex, sbyte pushDir,
         GameTemplate gameRules)
     {
-        CardStack cardStack = FindCard(cardId, ownerId);
+        var cardStack = FindCard(cardId, ownerId);
         if (cardStack == null)
         {
             Console.WriteLine("GameBoard.CanMove false - cannot find card " + cardId);
             return false;
         }
 
-        Card primaryCard = cardStack.PrimaryCard;
+        var primaryCard = cardStack.PrimaryCard;
         if (primaryCard.HasActed(4))
         {
             Console.WriteLine("GameBoard.CanMove false - card Move flag is set");
@@ -169,7 +169,7 @@ public class GameBoard
 
         if (target == Region.NumRegions)
         {
-            for (int i = 0; i < 3; i++)
+            for (var i = 0; i < 3; i++)
             {
                 if (((int) sourceRegion != i || sourceRegion == Region.Control || pushDir == 0) &&
                     primaryCard.CanMove((Region) i) && Regions[i].CanMove(cardStack, slotIndex, pushDir))
@@ -192,8 +192,8 @@ public class GameBoard
 
     public bool Move(int cardId, sbyte ownerId, Region target, sbyte slotIndex, sbyte pushDir)
     {
-        Region traitActorRegion = _gameState.GetTraitActorRegion(ownerId, cardId);
-        Card card = RemoveCard(cardId, ownerId);
+        var traitActorRegion = _gameState.GetTraitActorRegion(ownerId, cardId);
+        var card = RemoveCard(cardId, ownerId);
         if (card != null)
         {
             Regions[(uint) target].Move(card, slotIndex, pushDir, traitActorRegion);
@@ -206,19 +206,19 @@ public class GameBoard
 
     public bool CanDisembark(int cardId, sbyte ownerId)
     {
-        CardStack cardStack = FindCard(cardId, ownerId);
+        var cardStack = FindCard(cardId, ownerId);
         if (cardStack == null || cardStack.PrimaryCard == null || !cardStack.PrimaryCard.HasPilot())
         {
             return false;
         }
 
-        UnitCard unitCard = (UnitCard) cardStack.PrimaryCard;
+        var unitCard = (UnitCard) cardStack.PrimaryCard;
         if (unitCard.HasActed(15) || unitCard.GetTemplate().Type != CardType.Titan)
         {
             return false;
         }
 
-        UnitCard embarkedPilot = unitCard.EmbarkedPilot;
+        var embarkedPilot = unitCard.EmbarkedPilot;
         if (!embarkedPilot.CanDisembark(cardStack) || embarkedPilot.HasActed(4))
         {
             return false;
@@ -241,7 +241,7 @@ public class GameBoard
 
     public void EndTurn(sbyte playerIndex)
     {
-        for (int i = 0; i < 3; i++)
+        for (var i = 0; i < 3; i++)
         {
             Regions[i].EndTurn(playerIndex);
         }
@@ -249,21 +249,21 @@ public class GameBoard
 
     public bool CanAttack(sbyte playerIndex, int cardId, sbyte targetOwner, int targetId, Player[] players)
     {
-        CardStack cardStack = FindCard(cardId, playerIndex);
+        var cardStack = FindCard(cardId, playerIndex);
         if (cardStack == null)
         {
             Console.WriteLine("GameBoard.CanAttack false - cannot find card - " + cardId);
             return false;
         }
 
-        Card primaryCard = cardStack.PrimaryCard;
+        var primaryCard = cardStack.PrimaryCard;
         if (primaryCard.HasActed(2))
         {
             Console.WriteLine("GameBoard.CanAttack false - card attack flad set");
             return false;
         }
 
-        Player player = players[targetOwner];
+        var player = players[targetOwner];
         if (player.Resources.Health > 0 && targetId == player.Commander.PrimaryCard.InstanceId)
         {
             if (sourceRegion == Region.Control || primaryCard.HasStatusEffect(8))
@@ -274,7 +274,7 @@ public class GameBoard
             return false;
         }
 
-        CardStack cardStack2 = FindCard(targetId, targetOwner);
+        var cardStack2 = FindCard(targetId, targetOwner);
         if (cardStack2 != null)
         {
             return primaryCard.CanAttack(cardStack, cardStack2);
@@ -286,19 +286,19 @@ public class GameBoard
 
     public bool CanAttack(sbyte playerIndex, int cardId)
     {
-        CardStack cardStack = FindCard(cardId, playerIndex);
+        var cardStack = FindCard(cardId, playerIndex);
         if (cardStack == null)
         {
             return false;
         }
 
-        Card primaryCard = cardStack.PrimaryCard;
+        var primaryCard = cardStack.PrimaryCard;
         if (primaryCard.HasActed(2))
         {
             return false;
         }
 
-        for (int i = 0; i < 3; i++)
+        for (var i = 0; i < 3; i++)
         {
             if (primaryCard.CanAttack((Region) i) || Regions[i].CanAttack(cardStack, -1))
             {
@@ -311,19 +311,19 @@ public class GameBoard
 
     public bool Attack(sbyte playerIndex, int cardId, sbyte targetOwner, int targetId, Player[] players)
     {
-        CardStack cardStack = FindCard(cardId, playerIndex);
+        var cardStack = FindCard(cardId, playerIndex);
         if (cardStack == null)
         {
             Console.WriteLine("ATTACK FAILED - GameBoard.Attack count not find CardStack for ID" + cardId);
             return false;
         }
 
-        Card primaryCard = cardStack.PrimaryCard;
+        var primaryCard = cardStack.PrimaryCard;
         CardStack cardStack2 = null;
-        Player player = players[targetOwner];
-        cardStack2 = ((targetId != player.Commander.PrimaryCard.InstanceId)
+        var player = players[targetOwner];
+        cardStack2 = targetId != player.Commander.PrimaryCard.InstanceId
             ? FindCard(targetId, targetOwner)
-            : player.Commander);
+            : player.Commander;
         if (cardStack2 == null)
         {
             Console.WriteLine("ATTACK FAILED - GameBoard.Attack count not find Target CardStack for ID" + targetId);
@@ -337,23 +337,23 @@ public class GameBoard
     public bool ActivateTrait(sbyte playerIndex, int cardId, sbyte targetOwner, int targetId, TargetableArea area,
         Region region, Player[] players)
     {
-        CardStack cardStack = FindCard(cardId, playerIndex);
+        var cardStack = FindCard(cardId, playerIndex);
         if (cardStack == null)
         {
             return false;
         }
 
-        EntityCard entityCard = (EntityCard) cardStack.PrimaryCard;
+        var entityCard = (EntityCard) cardStack.PrimaryCard;
         if (area == TargetableArea.UnitStack)
         {
-            Player player = players[targetOwner];
+            var player = players[targetOwner];
             if (targetId == player.Commander.PrimaryCard.InstanceId)
             {
                 entityCard.ActivateTrait(player.Commander, region, _gameState);
                 return true;
             }
 
-            CardStack cardStack2 = FindCard(targetId, targetOwner);
+            var cardStack2 = FindCard(targetId, targetOwner);
             if (cardStack2 == null)
             {
                 return false;
@@ -372,9 +372,9 @@ public class GameBoard
     public Card FindTraitActor(int cardId, sbyte ownerId)
     {
         sourceRegion = Region.NumRegions;
-        for (int i = 0; i < 3; i++)
+        for (var i = 0; i < 3; i++)
         {
-            Card card = Regions[i].FindTraitActor(cardId, ownerId);
+            var card = Regions[i].FindTraitActor(cardId, ownerId);
             if (card != null)
             {
                 sourceRegion = (Region) i;
@@ -388,9 +388,9 @@ public class GameBoard
     public Region GetTraitActorRegion(int cardId, sbyte ownerId)
     {
         sourceRegion = Region.NumRegions;
-        for (int i = 0; i < 3; i++)
+        for (var i = 0; i < 3; i++)
         {
-            Card card = Regions[i].FindTraitActor(cardId, ownerId);
+            var card = Regions[i].FindTraitActor(cardId, ownerId);
             if (card != null)
             {
                 sourceRegion = (Region) i;
@@ -409,7 +409,7 @@ public class GameBoard
             return;
         }
 
-        for (int i = 0; i < Regions.Length; i++)
+        for (var i = 0; i < Regions.Length; i++)
         {
             if (info.CheckRegion((Region) i, source.ActiveData.Owner))
             {
@@ -420,7 +420,7 @@ public class GameBoard
 
     public void FindCardStack(Card card, List<CardStack> found)
     {
-        for (int i = 0; i < Regions.Length && !Regions[i].FindCardStack(card, found); i++)
+        for (var i = 0; i < Regions.Length && !Regions[i].FindCardStack(card, found); i++)
         {
         }
     }
@@ -431,7 +431,7 @@ public class GameBoard
         do
         {
             flag = false;
-            for (int i = 0; i < 3; i++)
+            for (var i = 0; i < 3; i++)
             {
                 if (Regions[i].CheckDiscards(players))
                 {
@@ -444,10 +444,10 @@ public class GameBoard
     public void CardMoved(Card card, CardStack target, Region destination, Region origin)
     {
         GameRegion gameRegion = null;
-        for (int i = 0; i < 3; i++)
+        for (var i = 0; i < 3; i++)
         {
             gameRegion = Regions[i];
-            for (int j = 0; j < gameRegion.Slots.Length; j++)
+            for (var j = 0; j < gameRegion.Slots.Length; j++)
             {
                 gameRegion.Slots[j].CardMoved(card, target, destination, origin);
             }
@@ -457,10 +457,10 @@ public class GameBoard
     public void CardAttacked(Card attacker, Card target)
     {
         GameRegion gameRegion = null;
-        for (int i = 0; i < 3; i++)
+        for (var i = 0; i < 3; i++)
         {
             gameRegion = Regions[i];
-            for (int j = 0; j < gameRegion.Slots.Length; j++)
+            for (var j = 0; j < gameRegion.Slots.Length; j++)
             {
                 gameRegion.Slots[j].CardAttacked(attacker, target);
             }
@@ -470,10 +470,10 @@ public class GameBoard
     public void CardCounterAttacked(Card attacker, Card target)
     {
         GameRegion gameRegion = null;
-        for (int i = 0; i < 3; i++)
+        for (var i = 0; i < 3; i++)
         {
             gameRegion = Regions[i];
-            for (int j = 0; j < gameRegion.Slots.Length; j++)
+            for (var j = 0; j < gameRegion.Slots.Length; j++)
             {
                 gameRegion.Slots[j].CardCounterAttacked(attacker, target);
             }
@@ -483,10 +483,10 @@ public class GameBoard
     public void CardGainedStatus(Card theCard, Card source, sbyte statusType)
     {
         GameRegion gameRegion = null;
-        for (int i = 0; i < 3; i++)
+        for (var i = 0; i < 3; i++)
         {
             gameRegion = Regions[i];
-            for (int j = 0; j < gameRegion.Slots.Length; j++)
+            for (var j = 0; j < gameRegion.Slots.Length; j++)
             {
                 gameRegion.Slots[j].CardGainedStatus(theCard, source, statusType);
             }
@@ -496,10 +496,10 @@ public class GameBoard
     public void CardDamaged(Card damagedCard, Card source)
     {
         GameRegion gameRegion = null;
-        for (int i = 0; i < 3; i++)
+        for (var i = 0; i < 3; i++)
         {
             gameRegion = Regions[i];
-            for (int j = 0; j < gameRegion.Slots.Length; j++)
+            for (var j = 0; j < gameRegion.Slots.Length; j++)
             {
                 gameRegion.Slots[j].CardDamaged(damagedCard, source);
             }
@@ -509,10 +509,10 @@ public class GameBoard
     public void CardDied(Card deadCard, Card source)
     {
         GameRegion gameRegion = null;
-        for (int i = 0; i < 3; i++)
+        for (var i = 0; i < 3; i++)
         {
             gameRegion = Regions[i];
-            for (int j = 0; j < gameRegion.Slots.Length; j++)
+            for (var j = 0; j < gameRegion.Slots.Length; j++)
             {
                 gameRegion.Slots[j].CardDied(deadCard, source);
             }
@@ -522,10 +522,10 @@ public class GameBoard
     public void CardDrawn(Card drawnCard, bool regularDraw, bool isNewTurn)
     {
         GameRegion gameRegion = null;
-        for (int i = 0; i < 3; i++)
+        for (var i = 0; i < 3; i++)
         {
             gameRegion = Regions[i];
-            for (int j = 0; j < gameRegion.Slots.Length; j++)
+            for (var j = 0; j < gameRegion.Slots.Length; j++)
             {
                 gameRegion.Slots[j].CardDrawn(drawnCard, regularDraw, isNewTurn);
             }
@@ -535,10 +535,10 @@ public class GameBoard
     public void CardDiscardEffect(sbyte playerIndex, int numberOfCards)
     {
         GameRegion gameRegion = null;
-        for (int i = 0; i < 3; i++)
+        for (var i = 0; i < 3; i++)
         {
             gameRegion = Regions[i];
-            for (int j = 0; j < gameRegion.Slots.Length; j++)
+            for (var j = 0; j < gameRegion.Slots.Length; j++)
             {
                 gameRegion.Slots[j].CardDiscardEffect(playerIndex, numberOfCards);
             }
@@ -548,10 +548,10 @@ public class GameBoard
     public void SecretTriggered(Card secret, Card source)
     {
         GameRegion gameRegion = null;
-        for (int i = 0; i < 3; i++)
+        for (var i = 0; i < 3; i++)
         {
             gameRegion = Regions[i];
-            for (int j = 0; j < gameRegion.Slots.Length; j++)
+            for (var j = 0; j < gameRegion.Slots.Length; j++)
             {
                 gameRegion.Slots[j].SecretTriggered(secret, source);
             }
@@ -561,10 +561,10 @@ public class GameBoard
     public void SecretDestroyed(Card secret, Card source)
     {
         GameRegion gameRegion = null;
-        for (int i = 0; i < 3; i++)
+        for (var i = 0; i < 3; i++)
         {
             gameRegion = Regions[i];
-            for (int j = 0; j < gameRegion.Slots.Length; j++)
+            for (var j = 0; j < gameRegion.Slots.Length; j++)
             {
                 gameRegion.Slots[j].SecretDestroyed(secret, source);
             }
@@ -574,10 +574,10 @@ public class GameBoard
     public void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack target, Region region)
     {
         GameRegion gameRegion = null;
-        for (int i = 0; i < 3; i++)
+        for (var i = 0; i < 3; i++)
         {
             gameRegion = Regions[i];
-            for (int j = 0; j < gameRegion.Slots.Length; j++)
+            for (var j = 0; j < gameRegion.Slots.Length; j++)
             {
                 gameRegion.Slots[j].TraitEffectActivating(effect, source, target, region);
             }
@@ -587,9 +587,9 @@ public class GameBoard
     private CardStack FindCard(int cardId, sbyte ownerId)
     {
         sourceRegion = Region.NumRegions;
-        for (int i = 0; i < 3; i++)
+        for (var i = 0; i < 3; i++)
         {
-            CardStack cardStack = Regions[i].FindCard(cardId, ownerId);
+            var cardStack = Regions[i].FindCard(cardId, ownerId);
             if (cardStack != null)
             {
                 sourceRegion = (Region) i;
@@ -602,9 +602,9 @@ public class GameBoard
 
     private Card RemoveCard(int cardId, sbyte ownerId)
     {
-        for (int i = 0; i < 3; i++)
+        for (var i = 0; i < 3; i++)
         {
-            Card card = Regions[i].RemoveCard(cardId, ownerId);
+            var card = Regions[i].RemoveCard(cardId, ownerId);
             if (card != null)
             {
                 return card;
@@ -616,7 +616,7 @@ public class GameBoard
 
     private sbyte RegionToPlayerIndex(Region region, Player[] players)
     {
-        sbyte b = (sbyte) region;
+        var b = (sbyte) region;
         if (b >= 0 && b < players.Length)
         {
             return b;

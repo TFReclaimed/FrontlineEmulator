@@ -61,7 +61,7 @@ public class ActiveTrait
 
     public void Init(CCG game, Card owner)
     {
-        List<BaseTraitEffect> traitEffectsList = RulesetParser.GetTraitEffectsList(TraitSourceId);
+        var traitEffectsList = RulesetParser.GetTraitEffectsList(TraitSourceId);
         if (traitEffectsList == null)
         {
             Console.WriteLine(" INVALID TRAIT! No Trait effects found for trait #" + TraitSourceId);
@@ -69,7 +69,7 @@ public class ActiveTrait
             return;
         }
 
-        for (int i = 0; i < traitEffectsList.Count; i++)
+        for (var i = 0; i < traitEffectsList.Count; i++)
         {
             if (traitEffectsList[i].EffectTraitId == TraitEffectId)
             {
@@ -88,8 +88,8 @@ public class ActiveTrait
             trait = new BaseTraitEffect();
         }
 
-        sbyte owner2 = owner.ActiveData.Owner;
-        int instanceId = owner.InstanceId;
+        var owner2 = owner.ActiveData.Owner;
+        var instanceId = owner.InstanceId;
         if (Source.InstanceId == instanceId && Source.Owner == owner2)
         {
             traitSource = owner;
@@ -134,7 +134,7 @@ public class ActiveTrait
             return;
         }
 
-        sbyte owner2 = traitSource.ActiveData.Owner;
+        var owner2 = traitSource.ActiveData.Owner;
         if (DurationData.Type == TraitDurationType.StartOfTurn)
         {
             DurationData.Duration--;
@@ -169,7 +169,7 @@ public class ActiveTrait
             return;
         }
 
-        sbyte owner2 = traitSource.ActiveData.Owner;
+        var owner2 = traitSource.ActiveData.Owner;
         if (DurationData.Type == TraitDurationType.EndOfTurn)
         {
             DurationData.Duration--;
@@ -258,7 +258,7 @@ public class ActiveTrait
             DurationData.Charges--;
         }
 
-        TraitInfoCcgEvent logData = new TraitInfoCcgEvent(CcgEventType.TraitExpendCharge, trait.TraitParentId,
+        var logData = new TraitInfoCcgEvent(CcgEventType.TraitExpendCharge, trait.TraitParentId,
             trait.EffectTraitId, traitTarget.InstanceId, traitTarget.ActiveData.Owner, traitSource.InstanceId,
             traitSource.ActiveData.Owner, DurationData.Charges);
         gameState.AddCCGEventLog(logData);
@@ -292,7 +292,7 @@ public class ActiveTrait
     {
         if (traitTarget.GetTemplate().Type == CardType.Pilot)
         {
-            UnitCard unitCard = (UnitCard) traitTarget;
+            var unitCard = (UnitCard) traitTarget;
             if (unitCard.IsEmbarked())
             {
                 return trait.EmbarkedInherit;

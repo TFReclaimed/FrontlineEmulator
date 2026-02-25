@@ -25,9 +25,9 @@ public class ActiveCardData
         }
         else
         {
-            for (int num = ActiveTraits.Count - 1; num >= 0; num--)
+            for (var num = ActiveTraits.Count - 1; num >= 0; num--)
             {
-                ActiveTrait activeTrait = ActiveTraits[num];
+                var activeTrait = ActiveTraits[num];
                 activeTrait.Init(game, ownerCard);
             }
         }
@@ -36,7 +36,7 @@ public class ActiveCardData
         {
             Console.WriteLine("Active Data Init for card " + ownerCard.InstanceId + " - traitActivated is invalid!");
             TraitActivated = new bool[ownerCard.GetNumTraits()];
-            for (int i = 0; i < TraitActivated.Length; i++)
+            for (var i = 0; i < TraitActivated.Length; i++)
             {
                 TraitActivated[i] = false;
             }
@@ -50,7 +50,7 @@ public class ActiveCardData
             TraitActivated = new bool[card.GetNumTraits()];
         }
 
-        for (int i = 0; i < TraitActivated.Length; i++)
+        for (var i = 0; i < TraitActivated.Length; i++)
         {
             TraitActivated[i] = false;
         }
@@ -58,12 +58,12 @@ public class ActiveCardData
 
     public void DeactivateTrait(int traitId, Card card, Card source)
     {
-        for (int num = ActiveTraits.Count - 1; num >= 0; num--)
+        for (var num = ActiveTraits.Count - 1; num >= 0; num--)
         {
-            ActiveTrait activeTrait = ActiveTraits[num];
+            var activeTrait = ActiveTraits[num];
             if (activeTrait.TraitEffectId == traitId)
             {
-                ActiveTraitCardInfo source2 = activeTrait.Source;
+                var source2 = activeTrait.Source;
                 if (source2.InstanceId == source.InstanceId && source2.Owner == source.ActiveData.Owner)
                 {
                     activeTrait.Deactivate(true);
@@ -74,45 +74,45 @@ public class ActiveCardData
 
     public void DeactivateTraits()
     {
-        for (int num = ActiveTraits.Count - 1; num >= 0; num--)
+        for (var num = ActiveTraits.Count - 1; num >= 0; num--)
         {
-            ActiveTrait activeTrait = ActiveTraits[num];
+            var activeTrait = ActiveTraits[num];
             activeTrait.Deactivate(true);
         }
     }
 
     public void MoveTraits(CardStack location, Region region, bool embark)
     {
-        for (int num = ActiveTraits.Count - 1; num >= 0; num--)
+        for (var num = ActiveTraits.Count - 1; num >= 0; num--)
         {
-            ActiveTrait activeTrait = ActiveTraits[num];
+            var activeTrait = ActiveTraits[num];
             activeTrait.GetTraitInfo().Move(location, region, embark, activeTrait);
         }
     }
 
     public void AttackTraits(Card target)
     {
-        for (int num = ActiveTraits.Count - 1; num >= 0; num--)
+        for (var num = ActiveTraits.Count - 1; num >= 0; num--)
         {
-            ActiveTrait activeTrait = ActiveTraits[num];
+            var activeTrait = ActiveTraits[num];
             activeTrait.GetTraitInfo().Attack(target, activeTrait);
         }
     }
 
     public void EmbarkTraits()
     {
-        for (int num = ActiveTraits.Count - 1; num >= 0; num--)
+        for (var num = ActiveTraits.Count - 1; num >= 0; num--)
         {
-            ActiveTrait activeTrait = ActiveTraits[num];
+            var activeTrait = ActiveTraits[num];
             activeTrait.Embark();
         }
     }
 
     public void DisembarkTraits(bool hasDeter)
     {
-        for (int num = ActiveTraits.Count - 1; num >= 0; num--)
+        for (var num = ActiveTraits.Count - 1; num >= 0; num--)
         {
-            ActiveTrait activeTrait = ActiveTraits[num];
+            var activeTrait = ActiveTraits[num];
             activeTrait.Disembark(hasDeter);
         }
     }

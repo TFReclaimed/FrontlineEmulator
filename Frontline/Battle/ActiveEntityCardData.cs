@@ -28,7 +28,7 @@ public class ActiveEntityCardData : ActiveCardData
     {
         base.Setup(card);
         Acted = 0;
-        EntityCard entityCard = (EntityCard) card;
+        var entityCard = (EntityCard) card;
         CurrentHealth = entityCard.GetMaxHealth();
     }
 }

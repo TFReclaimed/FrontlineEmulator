@@ -54,7 +54,7 @@ public class Player
         Resources.Create(gameTemplate.InitialPlayerHealth);
         if (currentCommander != null)
         {
-            CommanderCard commanderCard = (CommanderCard) currentCommander.GenerateAndInit(_gameState);
+            var commanderCard = (CommanderCard) currentCommander.GenerateAndInit(_gameState);
             commanderCard.SetPlayer(this);
             commanderCard.ActiveData.Owner = playerIndex;
             commanderCard.Setup();
@@ -69,10 +69,10 @@ public class Player
 
     public void ActivateCommander()
     {
-        CommanderCard commanderCard = (CommanderCard) Commander.PrimaryCard;
-        for (int i = 0; i < commanderCard.GetNumTraits(); i++)
+        var commanderCard = (CommanderCard) Commander.PrimaryCard;
+        for (var i = 0; i < commanderCard.GetNumTraits(); i++)
         {
-            BaseTrait trait = commanderCard.GetTrait(i);
+            var trait = commanderCard.GetTrait(i);
             if (trait.ActivateOnDeploy())
             {
                 trait.Activate(commanderCard, Commander, Region.NumRegions, _gameState);
@@ -86,7 +86,7 @@ public class Player
         Hand.Init(_gameState);
         if (Commander != null)
         {
-            CommanderCard commanderCard =
+            var commanderCard =
                 (CommanderCard) Commander.PrimaryCard.GenerateAndInit(_gameState);
             commanderCard.SetPlayer(this);
             Commander.PrimaryCard = commanderCard;
@@ -130,7 +130,7 @@ public class Player
 
     public Card FindCard(int cardId)
     {
-        Card current = SupportDeck.GetCurrent();
+        var current = SupportDeck.GetCurrent();
         if (current != null && current.InstanceId == cardId)
         {
             return current;
@@ -142,7 +142,7 @@ public class Player
     public void NewTurn(sbyte playerIndex, sbyte drawCount)
     {
         EndTurnTraitsTriggered = false;
-        GameTemplate gameTemplate = _gameState.GetGameTemplate();
+        var gameTemplate = _gameState.GetGameTemplate();
         Resources.NewTurn(gameTemplate);
         if (!Commander.PrimaryCard.HasStatusEffect(1))
         {
@@ -154,14 +154,14 @@ public class Player
 
     public Card DeployCard(int cardId)
     {
-        Card card = SupportDeck.DeployCard(cardId);
+        var card = SupportDeck.DeployCard(cardId);
         if (card != null)
         {
             Resources.Deploy(card.GetCurrentCost());
             return card;
         }
 
-        Card card2 = Hand.RemoveCard(cardId);
+        var card2 = Hand.RemoveCard(cardId);
         if (card2 != null)
         {
             Resources.Deploy(card2.GetCurrentCost());
@@ -199,19 +199,19 @@ public class Player
         else
         {
             card = _gameState.FindTraitActor(myIndex, cardId);
-            List<CardStack> list = _gameState.FindCardStack(card);
+            var list = _gameState.FindCardStack(card);
             card = null;
             if (list != null && list.Count > 0)
             {
-                CardStack cardStack = list[0];
+                var cardStack = list[0];
                 card = cardStack.PrimaryCard;
                 cardStack.PrimaryCard = null;
                 if (card != null)
                 {
-                    List<Card> list2 = card.GetSecrets();
+                    var list2 = card.GetSecrets();
                     if (list2 != null && list2.Count > 0)
                     {
-                        for (int i = 0; i < list2.Count; i++)
+                        for (var i = 0; i < list2.Count; i++)
                         {
                             list2[i].Discard(_gameState.Players);
                         }
@@ -221,7 +221,7 @@ public class Player
 
                     if (card.HasPilot())
                     {
-                        UnitCard unitCard = (UnitCard) card;
+                        var unitCard = (UnitCard) card;
                         unitCard.EmbarkedPilot.Discard(_gameState.Players);
                         unitCard.EmbarkedPilot = null;
                     }
@@ -277,11 +277,11 @@ public class Player
 
     public void TakeDamage(sbyte attack, sbyte bypass, Card source)
     {
-        sbyte b = attack;
-        sbyte b2 = bypass;
-        Card primaryCard = Commander.PrimaryCard;
+        var b = attack;
+        var b2 = bypass;
+        var primaryCard = Commander.PrimaryCard;
         int num = Resources.Health;
-        int num2 = b + b2;
+        var num2 = b + b2;
         if (num2 <= 0)
         {
             return;
@@ -289,7 +289,7 @@ public class Player
 
         Resources.Health = (sbyte) (num - num2);
         _gameState.CardDamaged(primaryCard, source);
-        CardTraumaCcgEvent logData = new CardTraumaCcgEvent(CcgEventType.CardDamage, num2, source.InstanceId,
+        var logData = new CardTraumaCcgEvent(CcgEventType.CardDamage, num2, source.InstanceId,
             source.ActiveData.Owner, primaryCard.InstanceId, primaryCard.ActiveData.Owner);
         _gameState.AddCCGEventLog(logData);
         if (Resources.Health > 0)
@@ -298,14 +298,14 @@ public class Player
         }
 
         _gameState.CardDied(primaryCard, source);
-        CardTraumaCcgEvent logData2 = new CardTraumaCcgEvent(CcgEventType.CardDeath,
+        var logData2 = new CardTraumaCcgEvent(CcgEventType.CardDeath,
             primaryCard.GetCurrentHealth(false), source.InstanceId, source.ActiveData.Owner, primaryCard.InstanceId,
             primaryCard.ActiveData.Owner);
         _gameState.AddCCGEventLog(logData2);
         if (source.GetTemplate().IsCombatUnit())
         {
-            UnitCard unitCard = (UnitCard) source;
-            string xpTrigger = "Destroy_Commander";
+            var unitCard = (UnitCard) source;
+            var xpTrigger = "Destroy_Commander";
             unitCard.CheckAndUpdateXP(xpTrigger);
             if (unitCard.HasPilot())
             {
@@ -316,7 +316,7 @@ public class Player
 
     public void DrawFromDeck(sbyte playerIndex, sbyte drawCount, bool isNewTurn)
     {
-        for (int i = 0; i < drawCount; i++)
+        for (var i = 0; i < drawCount; i++)
         {
             if (Deck.Count == 0)
             {
@@ -324,10 +324,10 @@ public class Player
                 continue;
             }
 
-            Card card = Hand.DrawFromDeck(Deck, _gameState, playerIndex);
+            var card = Hand.DrawFromDeck(Deck, _gameState, playerIndex);
             if (card != null)
             {
-                CardDrawCcgEvent logData = new CardDrawCcgEvent(CcgEventType.DeckDraw, card.InstanceId, playerIndex,
+                var logData = new CardDrawCcgEvent(CcgEventType.DeckDraw, card.InstanceId, playerIndex,
                     card.TemplateId, card.Rank);
                 _gameState.AddCCGEventLog(logData);
                 _gameState.CardDrawn(card, true, isNewTurn);

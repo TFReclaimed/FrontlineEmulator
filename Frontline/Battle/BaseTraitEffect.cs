@@ -73,9 +73,9 @@ public class BaseTraitEffect
             return;
         }
 
-        List<Card> list = new List<Card>();
+        var list = new List<Card>();
         Card card2 = null;
-        TraitActivateCcgEvent traitActivateCCGEvent = new TraitActivateCcgEvent();
+        var traitActivateCCGEvent = new TraitActivateCcgEvent();
         traitActivateCCGEvent.CardId = card.InstanceId;
         traitActivateCCGEvent.Owner = card.ActiveData.Owner;
         traitActivateCCGEvent.TraitId = TraitParentId;
@@ -84,7 +84,7 @@ public class BaseTraitEffect
         traitActivateCCGEvent.Deactivate = false;
         GameState.AddCCGEventLog(traitActivateCCGEvent);
         GameState.TraitEffectActivating(this, card, target, region);
-        ActiveTrait activeTrait = CheckEffectNegation(card);
+        var activeTrait = CheckEffectNegation(card);
         if (activeTrait != null)
         {
             if (activeTrait.HasCharges())
@@ -108,7 +108,7 @@ public class BaseTraitEffect
         {
             if (Targets.Area == TargetableArea.FriendlyCommander)
             {
-                sbyte owner = card.ActiveData.Owner;
+                var owner = card.ActiveData.Owner;
                 card2 = GameState.Players[owner].Commander.PrimaryCard;
                 if (CheckAndApplyTrait(card2, card, false, true))
                 {
@@ -117,7 +117,7 @@ public class BaseTraitEffect
             }
             else if (Targets.Area == TargetableArea.EnemyCommander)
             {
-                sbyte opponentPlayerIndex = GameState.GetOpponentPlayerIndex(card.ActiveData.Owner);
+                var opponentPlayerIndex = GameState.GetOpponentPlayerIndex(card.ActiveData.Owner);
                 card2 = GameState.Players[opponentPlayerIndex].Commander.PrimaryCard;
                 if (CheckAndApplyTrait(card2, card, false, true))
                 {
@@ -135,17 +135,17 @@ public class BaseTraitEffect
         }
         else if (Targets.Area == TargetableArea.UnitStack || Targets.Scope == TraitTargetScope.UnitStack)
         {
-            CardStack cardStack = target;
+            var cardStack = target;
             if (cardStack == null)
             {
                 if (Targets.Area == TargetableArea.FriendlyCommander)
                 {
-                    sbyte owner2 = card.ActiveData.Owner;
+                    var owner2 = card.ActiveData.Owner;
                     cardStack = GameState.Players[owner2].Commander;
                 }
                 else if (Targets.Area == TargetableArea.EnemyCommander)
                 {
-                    sbyte opponentPlayerIndex2 = GameState.GetOpponentPlayerIndex(card.ActiveData.Owner);
+                    var opponentPlayerIndex2 = GameState.GetOpponentPlayerIndex(card.ActiveData.Owner);
                     cardStack = GameState.Players[opponentPlayerIndex2].Commander;
                 }
             }
@@ -163,10 +163,10 @@ public class BaseTraitEffect
                         }
                     }
 
-                    List<Card> secrets = cardStack.PrimaryCard.GetSecrets();
+                    var secrets = cardStack.PrimaryCard.GetSecrets();
                     if (secrets != null)
                     {
-                        for (int num = secrets.Count - 1; num >= 0; num--)
+                        for (var num = secrets.Count - 1; num >= 0; num--)
                         {
                             card2 = secrets[num];
                             if (CheckAndApplyTrait(card2, card, false, true))
@@ -198,7 +198,7 @@ public class BaseTraitEffect
         if (list.Count > 0)
         {
             traitActivateCCGEvent.Targets = new ActiveTraitCardInfo[list.Count];
-            for (int i = 0; i < list.Count; i++)
+            for (var i = 0; i < list.Count; i++)
             {
                 traitActivateCCGEvent.Targets[i] = new ActiveTraitCardInfo();
                 traitActivateCCGEvent.Targets[i].InstanceId = list[i].InstanceId;
@@ -214,44 +214,44 @@ public class BaseTraitEffect
             return;
         }
 
-        List<Card> list = new List<Card>();
+        var list = new List<Card>();
         if (triggerTarget.Scope == TraitTargetScope.Self)
         {
             if (triggerTarget.DoesMatchType(card))
             {
-                ActiveTrait active = GenerateActiveTrait(card, card);
+                var active = GenerateActiveTrait(card, card);
                 Apply(card, card, active);
             }
         }
         else if (triggerTarget.Area == TargetableArea.FriendlyCommander)
         {
-            Card primaryCard = GameState.Players[card.ActiveData.Owner].Commander.PrimaryCard;
+            var primaryCard = GameState.Players[card.ActiveData.Owner].Commander.PrimaryCard;
             if (triggerTarget.DoesMatchType(primaryCard))
             {
-                ActiveTrait active2 = GenerateActiveTrait(primaryCard, card);
+                var active2 = GenerateActiveTrait(primaryCard, card);
                 Apply(primaryCard, card, active2);
                 list.Add(primaryCard);
             }
         }
         else if (triggerTarget.Area == TargetableArea.EnemyCommander)
         {
-            sbyte opponentPlayerIndex = GameState.GetOpponentPlayerIndex(card.ActiveData.Owner);
-            Card primaryCard2 = GameState.Players[opponentPlayerIndex].Commander.PrimaryCard;
+            var opponentPlayerIndex = GameState.GetOpponentPlayerIndex(card.ActiveData.Owner);
+            var primaryCard2 = GameState.Players[opponentPlayerIndex].Commander.PrimaryCard;
             if (triggerTarget.DoesMatchType(primaryCard2))
             {
-                ActiveTrait active3 = GenerateActiveTrait(primaryCard2, card);
+                var active3 = GenerateActiveTrait(primaryCard2, card);
                 Apply(primaryCard2, card, active3);
                 list.Add(primaryCard2);
             }
         }
         else if (triggerTarget.Area == TargetableArea.AnyCommander)
         {
-            for (int i = 0; i < GameState.Players.Length; i++)
+            for (var i = 0; i < GameState.Players.Length; i++)
             {
-                Card primaryCard3 = GameState.Players[i].Commander.PrimaryCard;
+                var primaryCard3 = GameState.Players[i].Commander.PrimaryCard;
                 if (triggerTarget.DoesMatchType(primaryCard3))
                 {
-                    ActiveTrait active4 = GenerateActiveTrait(primaryCard3, card);
+                    var active4 = GenerateActiveTrait(primaryCard3, card);
                     Apply(primaryCard3, card, active4);
                     list.Add(primaryCard3);
                 }
@@ -259,13 +259,13 @@ public class BaseTraitEffect
         }
         else if (triggerTarget.HasAreaTarget())
         {
-            List<CardStack> list2 = GameState.FindCards(triggerTarget, Region.NumRegions, card);
-            for (int j = 0; j < list2.Count; j++)
+            var list2 = GameState.FindCards(triggerTarget, Region.NumRegions, card);
+            for (var j = 0; j < list2.Count; j++)
             {
-                Card primaryCard4 = list2[j].PrimaryCard;
+                var primaryCard4 = list2[j].PrimaryCard;
                 if (triggerTarget.DoesMatchType(primaryCard4))
                 {
-                    ActiveTrait active5 = GenerateActiveTrait(primaryCard4, card);
+                    var active5 = GenerateActiveTrait(primaryCard4, card);
                     Apply(primaryCard4, card, active5);
                     list.Add(primaryCard4);
                 }
@@ -273,10 +273,10 @@ public class BaseTraitEffect
         }
         else if (target != null && target.PrimaryCard != null)
         {
-            Card primaryCard5 = target.PrimaryCard;
+            var primaryCard5 = target.PrimaryCard;
             if (triggerTarget.DoesMatchType(primaryCard5))
             {
-                ActiveTrait active6 = GenerateActiveTrait(primaryCard5, card);
+                var active6 = GenerateActiveTrait(primaryCard5, card);
                 Apply(primaryCard5, card, active6);
                 list.Add(primaryCard5);
             }
@@ -285,19 +285,19 @@ public class BaseTraitEffect
 
     public void CheckGlobalApply(Card card, Region region, bool ignoreSelf, List<Card> appliedTo = null)
     {
-        Region region2 = Region.NumRegions;
+        var region2 = Region.NumRegions;
         if (Targets.Area == TargetableArea.CurrentRegion)
         {
             region2 = region;
         }
 
-        List<CardStack> list = GameState.FindCards(Targets, region2, card);
+        var list = GameState.FindCards(Targets, region2, card);
         Card card2 = null;
         CardStack cardStack = null;
         if (Targets.Scope == TraitTargetScope.RandomEnemy || Targets.Scope == TraitTargetScope.RandomFriendly)
         {
-            List<Card> list2 = new List<Card>();
-            for (int i = 0; i < list.Count; i++)
+            var list2 = new List<Card>();
+            for (var i = 0; i < list.Count; i++)
             {
                 cardStack = list[i];
                 if (cardStack == null)
@@ -316,10 +316,10 @@ public class BaseTraitEffect
                         }
                     }
 
-                    List<Card> secrets = cardStack.PrimaryCard.GetSecrets();
+                    var secrets = cardStack.PrimaryCard.GetSecrets();
                     if (secrets != null)
                     {
-                        for (int num = secrets.Count - 1; num >= 0; num--)
+                        for (var num = secrets.Count - 1; num >= 0; num--)
                         {
                             card2 = secrets[num];
                             if (DoesApply(card2, card, false, true))
@@ -345,9 +345,9 @@ public class BaseTraitEffect
 
             if (list2.Count > 0)
             {
-                int serverIntValue = GameState.GetGame().GetServerIntValue(0, list2.Count);
+                var serverIntValue = GameState.GetGame().GetServerIntValue(0, list2.Count);
                 card2 = list2[serverIntValue];
-                ActiveTrait active = GenerateActiveTrait(card2, card);
+                var active = GenerateActiveTrait(card2, card);
                 Apply(card2, card, active);
                 if (appliedTo != null)
                 {
@@ -358,7 +358,7 @@ public class BaseTraitEffect
             return;
         }
 
-        for (int j = 0; j < list.Count; j++)
+        for (var j = 0; j < list.Count; j++)
         {
             cardStack = list[j];
             if (cardStack == null)
@@ -377,10 +377,10 @@ public class BaseTraitEffect
                     }
                 }
 
-                List<Card> secrets2 = cardStack.PrimaryCard.GetSecrets();
+                var secrets2 = cardStack.PrimaryCard.GetSecrets();
                 if (secrets2 != null)
                 {
-                    for (int num2 = secrets2.Count - 1; num2 >= 0; num2--)
+                    for (var num2 = secrets2.Count - 1; num2 >= 0; num2--)
                     {
                         card2 = secrets2[num2];
                         if (CheckAndApplyTrait(card2, card, false, true) && appliedTo != null)
@@ -409,7 +409,7 @@ public class BaseTraitEffect
     {
         if (DoesApply(card, source, checkRange, onDeploy))
         {
-            ActiveTrait active = GenerateActiveTrait(card, source);
+            var active = GenerateActiveTrait(card, source);
             Apply(card, source, active);
             return true;
         }
@@ -419,7 +419,7 @@ public class BaseTraitEffect
 
     public List<Card> CheckForAppliedTargets(Card card, CardStack target, Region region)
     {
-        List<Card> list = new List<Card>();
+        var list = new List<Card>();
         List<Card> list2 = null;
         Card card2 = null;
         if (IsTrigger() || TargetTrait())
@@ -427,7 +427,7 @@ public class BaseTraitEffect
             return list;
         }
 
-        ActiveTrait activeTrait = CheckEffectNegation(card);
+        var activeTrait = CheckEffectNegation(card);
         if (activeTrait != null)
         {
             if (activeTrait.HasCharges())
@@ -451,7 +451,7 @@ public class BaseTraitEffect
         {
             if (Targets.Area == TargetableArea.FriendlyCommander)
             {
-                sbyte owner = card.ActiveData.Owner;
+                var owner = card.ActiveData.Owner;
                 card2 = GameState.Players[owner].Commander.PrimaryCard;
                 if (DoesApply(card2, card, false, true))
                 {
@@ -460,7 +460,7 @@ public class BaseTraitEffect
             }
             else if (Targets.Area == TargetableArea.EnemyCommander)
             {
-                sbyte opponentPlayerIndex = GameState.GetOpponentPlayerIndex(card.ActiveData.Owner);
+                var opponentPlayerIndex = GameState.GetOpponentPlayerIndex(card.ActiveData.Owner);
                 card2 = GameState.Players[opponentPlayerIndex].Commander.PrimaryCard;
                 if (DoesApply(card2, card, false, true))
                 {
@@ -478,17 +478,17 @@ public class BaseTraitEffect
         }
         else if (Targets.Area == TargetableArea.UnitStack || Targets.Scope == TraitTargetScope.UnitStack)
         {
-            CardStack cardStack = target;
+            var cardStack = target;
             if (cardStack == null)
             {
                 if (Targets.Area == TargetableArea.FriendlyCommander)
                 {
-                    sbyte owner2 = card.ActiveData.Owner;
+                    var owner2 = card.ActiveData.Owner;
                     cardStack = GameState.Players[owner2].Commander;
                 }
                 else if (Targets.Area == TargetableArea.EnemyCommander)
                 {
-                    sbyte opponentPlayerIndex2 = GameState.GetOpponentPlayerIndex(card.ActiveData.Owner);
+                    var opponentPlayerIndex2 = GameState.GetOpponentPlayerIndex(card.ActiveData.Owner);
                     cardStack = GameState.Players[opponentPlayerIndex2].Commander;
                 }
             }
@@ -509,7 +509,7 @@ public class BaseTraitEffect
                     list2 = cardStack.PrimaryCard.GetSecrets();
                     if (list2 != null)
                     {
-                        for (int num = list2.Count - 1; num >= 0; num--)
+                        for (var num = list2.Count - 1; num >= 0; num--)
                         {
                             card2 = list2[num];
                             if (DoesApply(card2, card, false, true))
@@ -535,15 +535,15 @@ public class BaseTraitEffect
         }
         else
         {
-            Region region2 = Region.NumRegions;
+            var region2 = Region.NumRegions;
             if (Targets.Area == TargetableArea.CurrentRegion)
             {
                 region2 = region;
             }
 
-            List<CardStack> list3 = GameState.FindCards(Targets, region2, card);
+            var list3 = GameState.FindCards(Targets, region2, card);
             CardStack cardStack2 = null;
-            for (int i = 0; i < list3.Count; i++)
+            for (var i = 0; i < list3.Count; i++)
             {
                 cardStack2 = list3[i];
                 if (cardStack2 != null && cardStack2.PrimaryCard != null)
@@ -557,7 +557,7 @@ public class BaseTraitEffect
                     list2 = cardStack2.PrimaryCard.GetSecrets();
                     if (list2 != null)
                     {
-                        for (int num2 = list2.Count - 1; num2 >= 0; num2--)
+                        for (var num2 = list2.Count - 1; num2 >= 0; num2--)
                         {
                             card2 = list2[num2];
                             if (DoesApply(card2, card, false, true))
@@ -617,7 +617,7 @@ public class BaseTraitEffect
             }
             else if (Targets.Area == TargetableArea.UnitStack)
             {
-                List<CardStack> list = GameState.FindCardStack(card);
+                var list = GameState.FindCardStack(card);
                 if (list == null || list.Count == 0)
                 {
                     return false;
@@ -625,8 +625,8 @@ public class BaseTraitEffect
             }
             else if (Targets.Area == TargetableArea.CurrentRegion)
             {
-                Region traitActorRegion = GameState.GetTraitActorRegion(card.ActiveData.Owner, card.InstanceId);
-                Region traitActorRegion2 = GameState.GetTraitActorRegion(source.ActiveData.Owner, source.InstanceId);
+                var traitActorRegion = GameState.GetTraitActorRegion(card.ActiveData.Owner, card.InstanceId);
+                var traitActorRegion2 = GameState.GetTraitActorRegion(source.ActiveData.Owner, source.InstanceId);
                 if (traitActorRegion != traitActorRegion2)
                 {
                     return false;
@@ -634,7 +634,7 @@ public class BaseTraitEffect
             }
             else
             {
-                Region traitActorRegion3 = GameState.GetTraitActorRegion(card.ActiveData.Owner, card.InstanceId);
+                var traitActorRegion3 = GameState.GetTraitActorRegion(card.ActiveData.Owner, card.InstanceId);
                 if (!Targets.CheckRegion(traitActorRegion3, source.ActiveData.Owner))
                 {
                     return false;
@@ -686,17 +686,17 @@ public class BaseTraitEffect
 
     public virtual void Deactivate(ActiveTrait active)
     {
-        Card traitSource = active.GetTraitSource();
-        Card traitTarget = active.GetTraitTarget();
-        TraitActivateCcgEvent traitActivateCCGEvent = new TraitActivateCcgEvent();
-        traitActivateCCGEvent.CardId = ((traitSource != null) ? traitSource.InstanceId : 0);
-        traitActivateCCGEvent.Owner = (sbyte) ((traitSource != null) ? traitSource.ActiveData.Owner : 0);
+        var traitSource = active.GetTraitSource();
+        var traitTarget = active.GetTraitTarget();
+        var traitActivateCCGEvent = new TraitActivateCcgEvent();
+        traitActivateCCGEvent.CardId = traitSource != null ? traitSource.InstanceId : 0;
+        traitActivateCCGEvent.Owner = (sbyte) (traitSource != null ? traitSource.ActiveData.Owner : 0);
         traitActivateCCGEvent.TraitId = TraitParentId;
         traitActivateCCGEvent.EffectId = EffectTraitId;
         traitActivateCCGEvent.Deactivate = true;
         if (traitTarget != null)
         {
-            ActiveTraitCardInfo activeTraitCardInfo = new ActiveTraitCardInfo();
+            var activeTraitCardInfo = new ActiveTraitCardInfo();
             activeTraitCardInfo.InstanceId = traitTarget.InstanceId;
             activeTraitCardInfo.Owner = traitTarget.ActiveData.Owner;
             traitActivateCCGEvent.Targets = new ActiveTraitCardInfo[1];
@@ -708,11 +708,11 @@ public class BaseTraitEffect
 
     public ActiveTrait GenerateActiveTrait(Card card, Card source)
     {
-        ActiveTrait activeTrait = new ActiveTrait();
+        var activeTrait = new ActiveTrait();
         activeTrait.Init(this, card, source, DurationData);
-        int num = 0;
+        var num = 0;
         ActiveTrait activeTrait2 = null;
-        for (int i = 0; i < card.ActiveData.ActiveTraits.Count; i++)
+        for (var i = 0; i < card.ActiveData.ActiveTraits.Count; i++)
         {
             activeTrait2 = card.ActiveData.ActiveTraits[i];
             if (activeTrait2.GetTraitInfo() == null)
@@ -737,8 +737,8 @@ public class BaseTraitEffect
     public ActiveTrait CheckEffectNegation(Card source)
     {
         ActiveTrait activeTrait = null;
-        List<ActiveTrait> battleEffects = GameState.GetBattleEffects();
-        for (int num = battleEffects.Count - 1; num >= 0; num--)
+        var battleEffects = GameState.GetBattleEffects();
+        for (var num = battleEffects.Count - 1; num >= 0; num--)
         {
             activeTrait = battleEffects[num];
             if (activeTrait.GetTraitInfo().DoesNegateEffect(this, source, activeTrait))

@@ -43,7 +43,7 @@ public class TraitTargeting
     {
         if (checkRegion != Region.NumRegions)
         {
-            Region region = (Region) (0 + (byte) owner);
+            var region = (Region) (0 + (byte) owner);
             switch (Area)
             {
                 case TargetableArea.AnyAreas:
@@ -108,7 +108,7 @@ public class TraitTargeting
     public bool CardTargetMatch(CCG gameState, Card card, Card source)
     {
         CardStack cardStack = null;
-        List<CardStack> list = gameState.FindCardStack(card);
+        var list = gameState.FindCardStack(card);
         if (list != null && list.Count > 0)
         {
             cardStack = list[0];
@@ -157,7 +157,7 @@ public class TraitTargeting
                 break;
         }
 
-        Region traitActorRegion = gameState.GetTraitActorRegion(card.ActiveData.Owner, card.InstanceId);
+        var traitActorRegion = gameState.GetTraitActorRegion(card.ActiveData.Owner, card.InstanceId);
         if (Area == TargetableArea.CurrentRegion)
         {
             if (traitActorRegion != gameState.GetTraitActorRegion(source.ActiveData.Owner, source.InstanceId))
@@ -221,8 +221,8 @@ public class TraitTargeting
             return false;
         }
 
-        CardType cardType = card.GetTemplate().Type;
-        UnitType unitType = card.GetUnitType();
+        var cardType = card.GetTemplate().Type;
+        var unitType = card.GetUnitType();
         switch (type)
         {
             case TraitTargetType.Pilot:
@@ -233,7 +233,7 @@ public class TraitTargeting
 
                 if (mod == TargetTypeMod.EmbarkedPilot)
                 {
-                    UnitCard unitCard = (UnitCard) card;
+                    var unitCard = (UnitCard) card;
                     if (!unitCard.PilotEmbarked)
                     {
                         return false;
@@ -251,7 +251,7 @@ public class TraitTargeting
                 {
                     case TargetTypeMod.Piloted:
                     {
-                        UnitCard unitCard3 = (UnitCard) card;
+                        var unitCard3 = (UnitCard) card;
                         if (unitCard3.EmbarkedPilot == null)
                         {
                             return false;
@@ -261,7 +261,7 @@ public class TraitTargeting
                     }
                     case TargetTypeMod.NotPiloted:
                     {
-                        UnitCard unitCard2 = (UnitCard) card;
+                        var unitCard2 = (UnitCard) card;
                         if (unitCard2.EmbarkedPilot != null)
                         {
                             return false;
@@ -387,9 +387,9 @@ public class TraitTargeting
         {
             case TargetTypeMod.HasIntercept:
             {
-                for (int num = card.ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
+                for (var num = card.ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
                 {
-                    ActiveTrait activeTrait = card.ActiveData.ActiveTraits[num];
+                    var activeTrait = card.ActiveData.ActiveTraits[num];
                     if (activeTrait.GetTraitInfo().IsIntercept(activeTrait))
                     {
                         return true;
@@ -400,9 +400,9 @@ public class TraitTargeting
             }
             case TargetTypeMod.HasStealth:
             {
-                for (int num2 = card.ActiveData.ActiveTraits.Count - 1; num2 >= 0; num2--)
+                for (var num2 = card.ActiveData.ActiveTraits.Count - 1; num2 >= 0; num2--)
                 {
-                    ActiveTrait activeTrait2 = card.ActiveData.ActiveTraits[num2];
+                    var activeTrait2 = card.ActiveData.ActiveTraits[num2];
                     if (activeTrait2.GetTraitInfo().IsCombatManipulationPassive(1, activeTrait2))
                     {
                         return true;
@@ -421,7 +421,7 @@ public class TraitTargeting
             case TargetTypeMod.IsWounded:
                 if (card.GetTemplate().Type != CardType.BurnCard && card.GetTemplate().Type != CardType.Secret)
                 {
-                    sbyte maxModHealth = card.GetMaxModHealth();
+                    var maxModHealth = card.GetMaxModHealth();
                     if (card.GetCurrentHealth(false) < maxModHealth)
                     {
                         return true;
@@ -478,18 +478,18 @@ public class TraitTargeting
 
     public int CalculateCount(CCG gameState, ActiveTrait active)
     {
-        int num = 0;
-        Region region = Region.NumRegions;
+        var num = 0;
+        var region = Region.NumRegions;
         if (Area == TargetableArea.CurrentRegion)
         {
             region = gameState.GetTraitActorRegion(active.GetTraitTarget().ActiveData.Owner,
                 active.GetTraitTarget().InstanceId);
         }
 
-        List<CardStack> list = gameState.FindCards(this, region, active.GetTraitSource());
+        var list = gameState.FindCards(this, region, active.GetTraitSource());
         Card card = null;
         List<Card> list2 = null;
-        for (int i = 0; i < list.Count; i++)
+        for (var i = 0; i < list.Count; i++)
         {
             card = list[i].PrimaryCard;
             if (DoesMatchType(card))
@@ -500,7 +500,7 @@ public class TraitTargeting
             list2 = card.GetSecrets();
             if (list2 != null)
             {
-                for (int j = 0; j < list2.Count; j++)
+                for (var j = 0; j < list2.Count; j++)
                 {
                     if (DoesMatchType(list2[j]))
                     {

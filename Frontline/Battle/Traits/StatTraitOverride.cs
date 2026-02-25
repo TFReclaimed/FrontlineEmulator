@@ -30,17 +30,17 @@ public class StatTraitOverride : BaseTraitEffect
             return;
         }
 
-        int dataValue = 0;
-        Card card2 = card;
+        var dataValue = 0;
+        var card2 = card;
         if (StatSource == 1)
         {
             card2 = source;
         }
         else if (StatSource == 2)
         {
-            int count = GameState.GetTemporaryEffects().Count;
+            var count = GameState.GetTemporaryEffects().Count;
             ActiveTrait activeTrait = null;
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
                 activeTrait = GameState.GetTemporaryEffects()[i];
                 if (activeTrait.GetTraitInfo().TargetTrait() && activeTrait.GetTraitSource().EqualsTo(source))

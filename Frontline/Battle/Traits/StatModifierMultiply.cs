@@ -13,8 +13,8 @@ public class StatModifierMultiply : StatModifierPassive
 
         if (TraitTargeting.DoesMatchType(TargetType, TargetTypeMod.NumMods, 0, target))
         {
-            int num = CountInfo.CalculateCount(GameState, active);
-            sbyte result = (sbyte) (IsAttack * num);
+            var num = CountInfo.CalculateCount(GameState, active);
+            var result = (sbyte) (IsAttack * num);
             if (IsAttack != 0 && active.DataValue != 0)
             {
                 result = (sbyte) (active.DataValue * num);
@@ -35,8 +35,8 @@ public class StatModifierMultiply : StatModifierPassive
 
         if (TraitTargeting.DoesMatchType(TargetType, TargetTypeMod.NumMods, 0, target))
         {
-            int num = CountInfo.CalculateCount(GameState, active);
-            sbyte result = (sbyte) (BypassDefense * num);
+            var num = CountInfo.CalculateCount(GameState, active);
+            var result = (sbyte) (BypassDefense * num);
             if (BypassDefense != 0 && active.DataValue != 0)
             {
                 result = (sbyte) (active.DataValue * num);
@@ -55,8 +55,8 @@ public class StatModifierMultiply : StatModifierPassive
             return 0;
         }
 
-        int num = CountInfo.CalculateCount(GameState, active);
-        sbyte result = (sbyte) (Defense * num);
+        var num = CountInfo.CalculateCount(GameState, active);
+        var result = (sbyte) (Defense * num);
         if (Defense != 0 && active.DataValue != 0)
         {
             result = (sbyte) (active.DataValue * num);
@@ -72,8 +72,8 @@ public class StatModifierMultiply : StatModifierPassive
             return 0;
         }
 
-        int num = CountInfo.CalculateCount(GameState, active);
-        sbyte result = (sbyte) (Health * num);
+        var num = CountInfo.CalculateCount(GameState, active);
+        var result = (sbyte) (Health * num);
         if (Health != 0 && active.DataValue != 0)
         {
             result = (sbyte) (active.DataValue * num);
@@ -89,8 +89,8 @@ public class StatModifierMultiply : StatModifierPassive
             return 0;
         }
 
-        int num = CountInfo.CalculateCount(GameState, active);
-        sbyte result = (sbyte) (Command * num);
+        var num = CountInfo.CalculateCount(GameState, active);
+        var result = (sbyte) (Command * num);
         if (Command != 0 && active.DataValue != 0)
         {
             result = (sbyte) (active.DataValue * num);

@@ -6,8 +6,8 @@ public class DrawCardMultiply : DrawCardEffect
 
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
-        Player player = GameState.Players[source.ActiveData.Owner];
-        sbyte b = (sbyte) CountInfo.CalculateCount(GameState, active);
+        var player = GameState.Players[source.ActiveData.Owner];
+        var b = (sbyte) CountInfo.CalculateCount(GameState, active);
         if (b > 0 && active.DataValue > 0)
         {
             b = (sbyte) (active.DataValue * b);

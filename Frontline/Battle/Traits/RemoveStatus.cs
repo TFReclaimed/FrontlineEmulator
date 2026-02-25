@@ -14,8 +14,8 @@ public class RemoveStatus : BaseTraitEffect
         if (!owner.IsCardTraitsDetered() && DurationData.Type == TraitDurationType.Permanent &&
             owner.ActiveData.Owner == playerIndex)
         {
-            Region region = Region.NumRegions;
-            CardStack target = GameState.FindCardStack(owner)[0];
+            var region = Region.NumRegions;
+            var target = GameState.FindCardStack(owner)[0];
             if (Targets.Area == TargetableArea.CurrentRegion)
             {
                 region = GameState.GetTraitActorRegion(playerIndex, owner.InstanceId);

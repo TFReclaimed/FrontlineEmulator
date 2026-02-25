@@ -13,6 +13,6 @@ public class DamageImmunity : BaseTraitEffect
             return false;
         }
 
-        return (!bypass) ? NormalDamage : BypassDamage;
+        return !bypass ? NormalDamage : BypassDamage;
     }
 }

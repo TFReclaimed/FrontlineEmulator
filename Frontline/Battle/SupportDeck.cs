@@ -26,7 +26,7 @@ public class SupportDeck : Deck
     public void Create(List<Card> support, CCG game, sbyte playerIndex, bool skipShuffle)
     {
         Cards = support;
-        for (int i = 0; i < Cards.Count; i++)
+        for (var i = 0; i < Cards.Count; i++)
         {
             Cards[i] = Cards[i].GenerateAndInit(game);
             Cards[i].ActiveData.Owner = playerIndex;
@@ -53,8 +53,8 @@ public class SupportDeck : Deck
         }
         else if (CurrentSupport == Cards.Count - 1)
         {
-            int index = Cards.Count - 1;
-            Card item = Cards[index];
+            var index = Cards.Count - 1;
+            var item = Cards[index];
             Cards.RemoveAt(index);
             Cards.Insert(0, item);
         }
@@ -62,7 +62,7 @@ public class SupportDeck : Deck
 
     public void Init(CCG game, sbyte playerIndex)
     {
-        for (int i = 0; i < Cards.Count; i++)
+        for (var i = 0; i < Cards.Count; i++)
         {
             Cards[i] = Cards[i].GenerateAndInit(game);
             Cards[i].ActiveData.Owner = playerIndex;
@@ -81,7 +81,7 @@ public class SupportDeck : Deck
 
     public void InitActiveData()
     {
-        for (int i = 0; i < Cards.Count; i++)
+        for (var i = 0; i < Cards.Count; i++)
         {
             Cards[i].InitActiveData();
         }
@@ -103,8 +103,8 @@ public class SupportDeck : Deck
         if (CanRepeat && Repeater != null)
         {
             CanRepeat = false;
-            bool flag = false;
-            for (int i = 0; i < Cards.Count; i++)
+            var flag = false;
+            for (var i = 0; i < Cards.Count; i++)
             {
                 if (Cards[i].TemplateId == Repeater.TemplateId)
                 {
@@ -115,13 +115,13 @@ public class SupportDeck : Deck
 
             if (!flag)
             {
-                CardTemplate cardTemplate = RulesetParser.GetCardTemplate(Repeater.TemplateId, Repeater.Rank);
+                var cardTemplate = RulesetParser.GetCardTemplate(Repeater.TemplateId, Repeater.Rank);
                 if (cardTemplate == null)
                 {
                     return;
                 }
 
-                Card card = cardTemplate.GenerateCard(_gameState);
+                var card = cardTemplate.GenerateCard(_gameState);
                 card.InstanceId = _gameState.GetNextSummonInstanceId();
                 card.ActiveData.Owner = Repeater.ActiveData.Owner;
                 card.Setup();
@@ -139,7 +139,7 @@ public class SupportDeck : Deck
             {
                 if (Cards[num].TemplateId == Ultimate.TemplateId)
                 {
-                    Card value = Cards[num];
+                    var value = Cards[num];
                     Cards[num] = Cards[CurrentSupport];
                     Cards[CurrentSupport] = value;
                     break;
@@ -154,7 +154,7 @@ public class SupportDeck : Deck
             {
                 if (Cards[num2].GetTemplate().Cost <= commandAccum)
                 {
-                    Card value2 = Cards[num2];
+                    var value2 = Cards[num2];
                     Cards[num2] = Cards[CurrentSupport];
                     Cards[CurrentSupport] = value2;
                     break;
@@ -162,8 +162,8 @@ public class SupportDeck : Deck
             }
         }
 
-        Card card2 = Cards[CurrentSupport];
-        CardDrawCcgEvent logData = new CardDrawCcgEvent(CcgEventType.SupportDraw, card2.InstanceId,
+        var card2 = Cards[CurrentSupport];
+        var logData = new CardDrawCcgEvent(CcgEventType.SupportDraw, card2.InstanceId,
             card2.ActiveData.Owner, card2.TemplateId, card2.Rank);
         _gameState.AddCCGEventLog(logData);
         _gameState.CardDrawn(card2, false, isNewTurn);
@@ -184,7 +184,7 @@ public class SupportDeck : Deck
         Card result = null;
         if (CurrentSupport < Cards.Count)
         {
-            Card card = Cards[CurrentSupport];
+            var card = Cards[CurrentSupport];
             if (card.InstanceId == cardId)
             {
                 result = card;

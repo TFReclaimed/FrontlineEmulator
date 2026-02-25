@@ -23,7 +23,7 @@ public class GameRegion
 
     public void Create(GameTemplate rules, Region region)
     {
-        int num = 0;
+        var num = 0;
         RegionLocation = region;
         switch (region)
         {
@@ -41,7 +41,7 @@ public class GameRegion
         }
 
         Slots = new CardStack[num];
-        for (int i = 0; i < num; i++)
+        for (var i = 0; i < num; i++)
         {
             Slots[i] = new CardStack();
             Slots[i].Create();
@@ -50,7 +50,7 @@ public class GameRegion
 
     public void Init(CCG game, bool independentSlots, short[] slotsForTitans)
     {
-        for (int i = 0; i < Slots.Length; i++)
+        for (var i = 0; i < Slots.Length; i++)
         {
             Slots[i].Init(game);
         }
@@ -61,7 +61,7 @@ public class GameRegion
 
     public void InitActiveData()
     {
-        for (int i = 0; i < Slots.Length; i++)
+        for (var i = 0; i < Slots.Length; i++)
         {
             Slots[i].InitActiveData();
         }
@@ -69,7 +69,7 @@ public class GameRegion
 
     public void NewTurn(sbyte playerTurn)
     {
-        for (int i = 0; i < Slots.Length; i++)
+        for (var i = 0; i < Slots.Length; i++)
         {
             Slots[i].NewTurn(playerTurn);
         }
@@ -77,14 +77,14 @@ public class GameRegion
 
     public bool CanDeploy(Card card, TargetableArea area, sbyte slotIndex, sbyte pushDir)
     {
-        CardTemplate template = card.GetTemplate();
-        int num = Slots.Length;
-        int num2 = ((titanSlots != null) ? titanSlots.Length : 0);
-        bool emptyAvailable = slotIndependent && HasEmpty();
-        bool flag = slotIndependent && pushDir != 0;
-        bool flag2 = false;
-        bool flag3 = false;
-        bool flag4 = false;
+        var template = card.GetTemplate();
+        var num = Slots.Length;
+        var num2 = titanSlots != null ? titanSlots.Length : 0;
+        var emptyAvailable = slotIndependent && HasEmpty();
+        var flag = slotIndependent && pushDir != 0;
+        var flag2 = false;
+        var flag3 = false;
+        var flag4 = false;
         if (template.Type == CardType.Titan)
         {
             flag3 = true;
@@ -124,9 +124,9 @@ public class GameRegion
         {
             if (flag3 && num2 > 0)
             {
-                for (int i = 0; i < num2; i++)
+                for (var i = 0; i < num2; i++)
                 {
-                    CardStack target = Slots[titanSlots[i]];
+                    var target = Slots[titanSlots[i]];
                     if (card.CanDeploy(target, RegionLocation, emptyAvailable, flag2))
                     {
                         return true;
@@ -143,9 +143,9 @@ public class GameRegion
             }
             else
             {
-                for (int j = 0; j < num; j++)
+                for (var j = 0; j < num; j++)
                 {
-                    CardStack target = Slots[j];
+                    var target = Slots[j];
                     if (card.CanDeploy(target, RegionLocation, emptyAvailable, flag2))
                     {
                         return true;
@@ -170,16 +170,17 @@ public class GameRegion
                 return false;
             }
 
-            CardStack target = Slots[slotIndex];
+            var target = Slots[slotIndex];
             return card.CanDeploy(target, RegionLocation, emptyAvailable, flag2);
         }
 
         return false;
     }
 
-    public CardStack Deploy(Card card, sbyte slotIndex, sbyte pushDir, Region target, CardTransitionCcgEvent deployEvent)
+    public CardStack Deploy(Card card, sbyte slotIndex, sbyte pushDir, Region target,
+        CardTransitionCcgEvent deployEvent)
     {
-        bool flag = card.Deploy(Slots[slotIndex], pushDir == 0, target, deployEvent);
+        var flag = card.Deploy(Slots[slotIndex], pushDir == 0, target, deployEvent);
         if (!flag)
         {
             PushEmpty(slotIndex, pushDir);
@@ -202,10 +203,10 @@ public class GameRegion
     public void Disembark(int titanCardId, sbyte indexOfPlayerOwner, bool isFrontline, bool doesEject,
         BaseTraitEffect traitCause)
     {
-        sbyte b = GetCardStackIdx(titanCardId, indexOfPlayerOwner);
-        CardStack cardStack = Slots[b];
-        UnitCard unitCard = (UnitCard) cardStack.PrimaryCard;
-        UnitCard embarkedPilot = unitCard.EmbarkedPilot;
+        var b = GetCardStackIdx(titanCardId, indexOfPlayerOwner);
+        var cardStack = Slots[b];
+        var unitCard = (UnitCard) cardStack.PrimaryCard;
+        var embarkedPilot = unitCard.EmbarkedPilot;
         sbyte b2 = 0;
         if (embarkedPilot == null)
         {
@@ -243,7 +244,7 @@ public class GameRegion
             cardStack = Slots[b];
         }
 
-        CardTransitionCcgEvent cardTransitionCCGEvent = new CardTransitionCcgEvent(CcgEventType.Disembark,
+        var cardTransitionCCGEvent = new CardTransitionCcgEvent(CcgEventType.Disembark,
             embarkedPilot.InstanceId, embarkedPilot.ActiveData.Owner, unitCard.InstanceId, unitCard.ActiveData.Owner,
             doesEject, RegionLocation, b, b2);
         _gameState.AddCCGEventLog(cardTransitionCCGEvent);
@@ -261,12 +262,12 @@ public class GameRegion
 
     public bool CanMove(CardStack stack, sbyte slotIndex, sbyte pushDir)
     {
-        int num = Slots.Length;
-        int num2 = ((titanSlots != null) ? titanSlots.Length : 0);
-        bool emptyAvailable = slotIndependent && pushDir != 0 && HasEmpty();
-        Card primaryCard = stack.PrimaryCard;
-        CardTemplate template = primaryCard.GetTemplate();
-        bool flag = false;
+        var num = Slots.Length;
+        var num2 = titanSlots != null ? titanSlots.Length : 0;
+        var emptyAvailable = slotIndependent && pushDir != 0 && HasEmpty();
+        var primaryCard = stack.PrimaryCard;
+        var template = primaryCard.GetTemplate();
+        var flag = false;
         if (template.Type == CardType.Titan)
         {
             flag = true;
@@ -281,7 +282,7 @@ public class GameRegion
                     return false;
                 }
 
-                CardStack cardStack = Slots[slotIndex];
+                var cardStack = Slots[slotIndex];
                 return stack != cardStack && primaryCard.CanMove(stack, cardStack, emptyAvailable, pushDir == 0);
             }
         }
@@ -289,9 +290,9 @@ public class GameRegion
         {
             if (flag && num2 > 0)
             {
-                for (int i = 0; i < num2; i++)
+                for (var i = 0; i < num2; i++)
                 {
-                    CardStack cardStack = Slots[titanSlots[i]];
+                    var cardStack = Slots[titanSlots[i]];
                     if (stack != cardStack && primaryCard.CanMove(stack, cardStack, emptyAvailable, pushDir == 0))
                     {
                         return true;
@@ -300,9 +301,9 @@ public class GameRegion
             }
             else
             {
-                for (int j = 0; j < num; j++)
+                for (var j = 0; j < num; j++)
                 {
-                    CardStack cardStack = Slots[j];
+                    var cardStack = Slots[j];
                     if (stack != cardStack && primaryCard.CanMove(stack, cardStack, emptyAvailable, pushDir == 0))
                     {
                         return true;
@@ -325,7 +326,7 @@ public class GameRegion
 
     public void EndTurn(sbyte playerIndex)
     {
-        for (int i = 0; i < Slots.Length; i++)
+        for (var i = 0; i < Slots.Length; i++)
         {
             Slots[i].EndTurn(playerIndex);
         }
@@ -333,21 +334,21 @@ public class GameRegion
 
     public bool CanAttack(CardStack stack, sbyte slotIndex)
     {
-        Card primaryCard = stack.PrimaryCard;
-        int num = Slots.Length;
+        var primaryCard = stack.PrimaryCard;
+        var num = Slots.Length;
         if (slotIndex >= 0)
         {
             if (slotIndex < num)
             {
-                CardStack target = Slots[slotIndex];
+                var target = Slots[slotIndex];
                 return primaryCard.CanAttack(stack, target);
             }
         }
         else if (slotIndex == -1)
         {
-            for (int i = 0; i < num; i++)
+            for (var i = 0; i < num; i++)
             {
-                CardStack target = Slots[i];
+                var target = Slots[i];
                 if (primaryCard.CanAttack(stack, target))
                 {
                     return true;
@@ -360,21 +361,21 @@ public class GameRegion
 
     public void Attack(CardStack stack, sbyte slotIndex)
     {
-        Card primaryCard = stack.PrimaryCard;
-        int num = Slots.Length;
+        var primaryCard = stack.PrimaryCard;
+        var num = Slots.Length;
         if (slotIndex >= 0)
         {
             if (slotIndex < num)
             {
-                CardStack cardStack = Slots[slotIndex];
+                var cardStack = Slots[slotIndex];
                 primaryCard.Attack(stack, cardStack.PrimaryCard);
             }
         }
         else if (slotIndex == -1)
         {
-            for (int i = 0; i < num; i++)
+            for (var i = 0; i < num; i++)
             {
-                CardStack cardStack = Slots[i];
+                var cardStack = Slots[i];
                 primaryCard.Attack(stack, cardStack.PrimaryCard);
             }
         }
@@ -382,9 +383,9 @@ public class GameRegion
 
     public Card FindTraitActor(int cardId, sbyte ownerId)
     {
-        for (int i = 0; i < Slots.Length; i++)
+        for (var i = 0; i < Slots.Length; i++)
         {
-            Card card = Slots[i].FindTraitActor(cardId, ownerId);
+            var card = Slots[i].FindTraitActor(cardId, ownerId);
             if (card != null)
             {
                 return card;
@@ -396,7 +397,7 @@ public class GameRegion
 
     public void FindCards(TraitTargeting info, Card source, List<CardStack> found)
     {
-        for (int i = 0; i < Slots.Length; i++)
+        for (var i = 0; i < Slots.Length; i++)
         {
             Slots[i].FindCards(info, source, found);
         }
@@ -404,7 +405,7 @@ public class GameRegion
 
     public bool FindCardStack(Card card, List<CardStack> found)
     {
-        for (int i = 0; i < Slots.Length; i++)
+        for (var i = 0; i < Slots.Length; i++)
         {
             if (Slots[i].FindCardStack(card, found))
             {
@@ -417,9 +418,9 @@ public class GameRegion
 
     public CardStack FindCard(int cardId, sbyte ownerId)
     {
-        for (int i = 0; i < Slots.Length; i++)
+        for (var i = 0; i < Slots.Length; i++)
         {
-            CardStack cardStack = Slots[i].FindCard(cardId, ownerId);
+            var cardStack = Slots[i].FindCard(cardId, ownerId);
             if (cardStack != null)
             {
                 return cardStack;
@@ -433,7 +434,7 @@ public class GameRegion
     {
         for (sbyte b = 0; b < Slots.Length; b++)
         {
-            CardStack cardStack = Slots[b].FindCard(cardId, ownerId);
+            var cardStack = Slots[b].FindCard(cardId, ownerId);
             if (cardStack != null)
             {
                 return b;
@@ -445,9 +446,9 @@ public class GameRegion
 
     public Card RemoveCard(int cardId, sbyte ownerId)
     {
-        for (int i = 0; i < Slots.Length; i++)
+        for (var i = 0; i < Slots.Length; i++)
         {
-            Card card = Slots[i].RemoveCard(cardId, ownerId);
+            var card = Slots[i].RemoveCard(cardId, ownerId);
             if (card != null)
             {
                 return card;
@@ -459,8 +460,8 @@ public class GameRegion
 
     public bool CheckDiscards(Player[] players)
     {
-        bool result = false;
-        for (int i = 0; i < Slots.Length; i++)
+        var result = false;
+        for (var i = 0; i < Slots.Length; i++)
         {
             if (Slots[i].CheckDiscard(players))
             {
@@ -478,10 +479,10 @@ public class GameRegion
             return;
         }
 
-        int num = Slots.Length;
+        var num = Slots.Length;
         int num2 = desiredSlotIndex;
         int i;
-        for (i = desiredSlotIndex + pushDir; (pushDir <= 0) ? (i >= 0) : (i < num); i += pushDir)
+        for (i = desiredSlotIndex + pushDir; pushDir <= 0 ? i >= 0 : i < num; i += pushDir)
         {
             if (Slots[i].PrimaryCard == null)
             {
@@ -492,9 +493,9 @@ public class GameRegion
 
         if (num2 != desiredSlotIndex)
         {
-            CardStack cardStack = Slots[num2];
+            var cardStack = Slots[num2];
             i = num2;
-            while ((pushDir <= 0) ? (i < desiredSlotIndex) : (i > desiredSlotIndex))
+            while (pushDir <= 0 ? i < desiredSlotIndex : i > desiredSlotIndex)
             {
                 Slots[i] = Slots[i - pushDir];
                 i -= pushDir;
@@ -505,7 +506,7 @@ public class GameRegion
         }
 
         i = desiredSlotIndex - pushDir;
-        while ((pushDir <= 0) ? (i < num) : (i >= 0))
+        while (pushDir <= 0 ? i < num : i >= 0)
         {
             if (Slots[i].PrimaryCard == null)
             {
@@ -518,8 +519,8 @@ public class GameRegion
 
         if (num2 != desiredSlotIndex)
         {
-            CardStack cardStack = Slots[num2];
-            for (i = num2; (pushDir <= 0) ? (i > desiredSlotIndex) : (i < desiredSlotIndex); i += pushDir)
+            var cardStack = Slots[num2];
+            for (i = num2; pushDir <= 0 ? i > desiredSlotIndex : i < desiredSlotIndex; i += pushDir)
             {
                 Slots[i] = Slots[i + pushDir];
             }
@@ -530,8 +531,8 @@ public class GameRegion
 
     public bool HasEmpty()
     {
-        bool result = false;
-        for (int i = 0; i < Slots.Length; i++)
+        var result = false;
+        for (var i = 0; i < Slots.Length; i++)
         {
             if (Slots[i].PrimaryCard == null)
             {
@@ -562,7 +563,7 @@ public class GameRegion
 
     public CardStack FindEmptyCardStack(bool titanOnly, bool reverseSearch)
     {
-        int emptyCardStackIndex = GetEmptyCardStackIndex(titanOnly, reverseSearch);
+        var emptyCardStackIndex = GetEmptyCardStackIndex(titanOnly, reverseSearch);
         if (emptyCardStackIndex == -1)
         {
             return null;
@@ -575,7 +576,7 @@ public class GameRegion
     {
         if (!reverseSearch)
         {
-            for (int i = 0; i < Slots.Length; i++)
+            for (var i = 0; i < Slots.Length; i++)
             {
                 if (IsSlotEmpty(i, titanOnly))
                 {
@@ -585,7 +586,7 @@ public class GameRegion
         }
         else
         {
-            for (int num = Slots.Length - 1; num >= 0; num--)
+            for (var num = Slots.Length - 1; num >= 0; num--)
             {
                 if (IsSlotEmpty(num, titanOnly))
                 {
@@ -599,13 +600,13 @@ public class GameRegion
 
     private bool IsTitanSlotIndex(int slotIndex)
     {
-        int num = ((titanSlots != null) ? titanSlots.Length : 0);
+        var num = titanSlots != null ? titanSlots.Length : 0;
         if (num == 0)
         {
             return true;
         }
 
-        for (int i = 0; i < num; i++)
+        for (var i = 0; i < num; i++)
         {
             if (titanSlots[i] == slotIndex)
             {

@@ -8,9 +8,9 @@ public class DiscardEffect : BaseTraitEffect
 
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
-        sbyte owner = card.ActiveData.Owner;
-        Player player = GameState.Players[owner];
-        int num = player.Hand.Cards.Count;
+        var owner = card.ActiveData.Owner;
+        var player = GameState.Players[owner];
+        var num = player.Hand.Cards.Count;
         int[] array = null;
         Card card2 = null;
         MulliganDrawCcgEventCardData[] array2 = null;
@@ -19,7 +19,7 @@ public class DiscardEffect : BaseTraitEffect
             return;
         }
 
-        sbyte b = NumberOfCards;
+        var b = NumberOfCards;
         if (NumberOfCards > 0 && active.DataValue > 0)
         {
             b = (sbyte) active.DataValue;
@@ -29,7 +29,7 @@ public class DiscardEffect : BaseTraitEffect
         {
             array = new int[num];
             array2 = new MulliganDrawCcgEventCardData[num];
-            for (int i = 0; i < num; i++)
+            for (var i = 0; i < num; i++)
             {
                 card2 = player.Hand.Cards[i];
                 array[i] = card2.InstanceId;
@@ -38,9 +38,9 @@ public class DiscardEffect : BaseTraitEffect
         }
         else
         {
-            int num2 = 0;
-            int num3 = 0;
-            bool flag = false;
+            var num2 = 0;
+            var num3 = 0;
+            var flag = false;
             array = new int[b];
             array2 = new MulliganDrawCcgEventCardData[b];
             while (num2 < b)
@@ -49,7 +49,7 @@ public class DiscardEffect : BaseTraitEffect
                 num3 = GameState.GetGame().GetServerIntValue(0, num);
                 card2 = player.Hand.Cards[num3];
                 num3 = card2.InstanceId;
-                for (int j = 0; j < num2; j++)
+                for (var j = 0; j < num2; j++)
                 {
                     if (array[j] == num3)
                     {
@@ -68,7 +68,7 @@ public class DiscardEffect : BaseTraitEffect
             num = b;
         }
 
-        DiscardEffectCcgEvent discardEffectCCGEvent = new DiscardEffectCcgEvent(owner, array2);
+        var discardEffectCCGEvent = new DiscardEffectCcgEvent(owner, array2);
         discardEffectCCGEvent.EffectId = EffectTraitId;
         discardEffectCCGEvent.TraitId = TraitParentId;
         GameState.AddCCGEventLog(discardEffectCCGEvent);

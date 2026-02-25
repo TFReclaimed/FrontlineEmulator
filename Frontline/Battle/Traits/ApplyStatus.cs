@@ -30,7 +30,7 @@ public class ApplyStatus : BaseTraitEffect
         if (IsDeterStatus(StatusType))
         {
             ActiveTrait activeTrait = null;
-            for (int i = 0; i < card.ActiveData.ActiveTraits.Count; i++)
+            for (var i = 0; i < card.ActiveData.ActiveTraits.Count; i++)
             {
                 activeTrait = card.ActiveData.ActiveTraits[i];
                 if (activeTrait.GetTraitInfo().Deterable)
@@ -49,9 +49,9 @@ public class ApplyStatus : BaseTraitEffect
         if (IsDeterStatus(StatusType))
         {
             ActiveTrait activeTrait = null;
-            ActiveCardData activeData = active.GetTraitTarget().ActiveData;
-            bool flag = false;
-            for (int i = 0; i < activeData.ActiveTraits.Count; i++)
+            var activeData = active.GetTraitTarget().ActiveData;
+            var flag = false;
+            for (var i = 0; i < activeData.ActiveTraits.Count; i++)
             {
                 activeTrait = activeData.ActiveTraits[i];
                 if (activeTrait != active && (activeTrait.GetTraitInfo().IsStatusEffect(2, activeTrait) ||
@@ -63,7 +63,7 @@ public class ApplyStatus : BaseTraitEffect
 
             if (!flag)
             {
-                for (int j = 0; j < active.GetTraitTarget().ActiveData.ActiveTraits.Count; j++)
+                for (var j = 0; j < active.GetTraitTarget().ActiveData.ActiveTraits.Count; j++)
                 {
                     activeTrait = active.GetTraitTarget().ActiveData.ActiveTraits[j];
                     activeTrait.Detered = !activeTrait.EmbarkedCheck();

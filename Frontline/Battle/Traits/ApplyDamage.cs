@@ -18,9 +18,9 @@ public class ApplyDamage : BaseTraitEffect
         if (card.GetTemplate().Type == CardType.Secret)
         {
             GameState.SecretDestroyed(card, source);
-            List<CardStack> list = GameState.FindCardStack(card);
+            var list = GameState.FindCardStack(card);
             List<Card> list2 = null;
-            for (int i = 0; i < list.Count; i++)
+            for (var i = 0; i < list.Count; i++)
             {
                 list2 = list[i].PrimaryCard.GetSecrets();
                 if (list2 == null)
@@ -28,7 +28,7 @@ public class ApplyDamage : BaseTraitEffect
                     continue;
                 }
 
-                for (int num = list2.Count - 1; num >= 0; num--)
+                for (var num = list2.Count - 1; num >= 0; num--)
                 {
                     if (list2[num].EqualsTo(card))
                     {
@@ -43,16 +43,16 @@ public class ApplyDamage : BaseTraitEffect
 
         if (card.GetTemplate().Type == CardType.Pilot)
         {
-            UnitCard unitCard = (UnitCard) card;
+            var unitCard = (UnitCard) card;
             if (unitCard != null && unitCard.IsEmbarked())
             {
                 return;
             }
         }
 
-        sbyte currentHealth = card.GetCurrentHealth(false);
-        sbyte attack = Damage;
-        sbyte bypass = BypassDefense;
+        var currentHealth = card.GetCurrentHealth(false);
+        var attack = Damage;
+        var bypass = BypassDefense;
         if (Damage == -1)
         {
             attack = currentHealth;
@@ -82,8 +82,8 @@ public class ApplyDamage : BaseTraitEffect
         if (!owner.IsCardTraitsDetered() && DurationData.Type == TraitDurationType.Permanent &&
             owner.ActiveData.Owner == playerIndex)
         {
-            Region region = Region.NumRegions;
-            CardStack target = GameState.FindCardStack(owner)[0];
+            var region = Region.NumRegions;
+            var target = GameState.FindCardStack(owner)[0];
             if (Targets.Area == TargetableArea.CurrentRegion)
             {
                 region = GameState.GetTraitActorRegion(playerIndex, owner.InstanceId);

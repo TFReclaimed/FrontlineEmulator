@@ -13,7 +13,7 @@ public class ApplyHeal : BaseTraitEffect
 
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
-        sbyte b = Heal;
+        var b = Heal;
         if (active.DataValue > 0)
         {
             b = (sbyte) active.DataValue;
@@ -26,7 +26,7 @@ public class ApplyHeal : BaseTraitEffect
 
         if (b > 0)
         {
-            CardTraumaCcgEvent logData = new CardTraumaCcgEvent(CcgEventType.CardHeal, b, source.InstanceId,
+            var logData = new CardTraumaCcgEvent(CcgEventType.CardHeal, b, source.InstanceId,
                 source.ActiveData.Owner, card.InstanceId, card.ActiveData.Owner);
             GameState.AddCCGEventLog(logData);
         }
@@ -37,8 +37,8 @@ public class ApplyHeal : BaseTraitEffect
         if (!owner.IsCardTraitsDetered() && DurationData.Type == TraitDurationType.Permanent &&
             owner.ActiveData.Owner == playerIndex)
         {
-            Region region = Region.NumRegions;
-            CardStack target = GameState.FindCardStack(owner)[0];
+            var region = Region.NumRegions;
+            var target = GameState.FindCardStack(owner)[0];
             if (Targets.Area == TargetableArea.CurrentRegion)
             {
                 region = GameState.GetTraitActorRegion(playerIndex, owner.InstanceId);

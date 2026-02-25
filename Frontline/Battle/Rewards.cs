@@ -29,7 +29,7 @@ public class Rewards
     {
         IsWinner = winner;
         ClearTotals();
-        for (int i = 0; i < rewards.Count; i++)
+        for (var i = 0; i < rewards.Count; i++)
         {
             PlayerXp += rewards[i].PlayerXp;
             Trophies += rewards[i].Trophies;

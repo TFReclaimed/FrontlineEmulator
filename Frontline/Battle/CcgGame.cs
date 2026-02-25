@@ -41,7 +41,7 @@ public class CcgGame
         GameState = new CCG(this);
 
         var deckCards = new List<List<Card>>();
-        for (int i = 0; i < 2; i++)
+        for (var i = 0; i < 2; i++)
         {
             var playerDeckCards = new List<Card>();
             foreach (var deckEntity in deckEntities[i])
@@ -62,7 +62,7 @@ public class CcgGame
         }
 
         var supportCards = new List<List<Card>>();
-        for (int i = 0; i < 2; i++)
+        for (var i = 0; i < 2; i++)
         {
             var playerSupportCards = new List<Card>();
             foreach (var supportEntity in supportEntities[i])
@@ -141,10 +141,10 @@ public class CcgGame
     public int Deploy(sbyte playerIndex, int cardId, sbyte targetIndex, int targetId, TargetableArea area,
         Region target, sbyte slotIndex, sbyte pushDir, bool remote)
     {
-        bool flag = area != TargetableArea.AnyAreas;
-        bool flag2 = area == TargetableArea.CurrentRegion;
-        bool flag3 = target != Region.NumRegions && slotIndex != -1;
-        bool flag4 = GameState.CanDeploy(playerIndex, cardId, area, target, slotIndex, pushDir, remote);
+        var flag = area != TargetableArea.AnyAreas;
+        var flag2 = area == TargetableArea.CurrentRegion;
+        var flag3 = target != Region.NumRegions && slotIndex != -1;
+        var flag4 = GameState.CanDeploy(playerIndex, cardId, area, target, slotIndex, pushDir, remote);
         Console.WriteLine("GAME DEPLOY - {0} {1} {2} {3} {4} {5} {6}", playerIndex, cardId, targetIndex, targetId, area,
             target, slotIndex);
         if (flag && (!flag2 || flag3) && flag4)
@@ -262,7 +262,7 @@ public class CcgGame
 
     public int TriggerEndTurnTraits(sbyte playerIndex, bool remote)
     {
-        Player player = GameState.GetPlayer(playerIndex);
+        var player = GameState.GetPlayer(playerIndex);
         if (player != null && player.EndTurnTraitsTriggered)
         {
             return 1;
@@ -344,7 +344,7 @@ public class CcgGame
         if (GameState.CanDoInitialSwap(playerIndex, cardIdsToReshuffle))
         {
             GameState.GetCCGEventLog().Clear();
-            bool flag = GameState.DoInitialSwap(playerIndex, cardIdsToReshuffle, deckSwapIndices, true);
+            var flag = GameState.DoInitialSwap(playerIndex, cardIdsToReshuffle, deckSwapIndices, true);
 
             if (flag)
             {
@@ -364,7 +364,7 @@ public class CcgGame
 
         if (GameState.CanDoDiscard(playerIndex, cardIds))
         {
-            bool flag = GameState.DoCardDiscard(playerIndex, cardIds);
+            var flag = GameState.DoCardDiscard(playerIndex, cardIds);
 
             if (flag)
             {
@@ -378,7 +378,7 @@ public class CcgGame
     public int Cheat_GiveCardAndCommandPoints(sbyte playerIndex, int cardId, int rank, int commandPoints, bool remote)
     {
         GameState.GetCCGEventLog().Clear();
-        bool flag = GameState.GiveCardAndCmdPts(playerIndex, cardId, rank, commandPoints);
+        var flag = GameState.GiveCardAndCmdPts(playerIndex, cardId, rank, commandPoints);
 
         if (flag)
         {
