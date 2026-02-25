@@ -227,6 +227,11 @@ public class BattleService : IBattleService
         player.MatchesPlayed++;
         player.HighestTrophies = Math.Max(player.HighestTrophies, player.Trophies);
 
+        if (rewards.IsWinner)
+        {
+            player.Wins++;
+        }
+
         await playerRepository.UpdateAsync(player);
         userService.IncrementChangeCounter(player.Id);
     }
