@@ -1,6 +1,6 @@
+using System.Text.Json.Serialization;
 using Frontline.Battle.CcgEvents;
 using Frontline.Game;
-using Frontline.Game.Card;
 
 namespace Frontline.Battle;
 
@@ -8,13 +8,14 @@ public class SupportDeck : Deck
 {
     public sbyte CurrentSupport { get; set; }
 
-    public Card Repeater { get; set; }
+    public Card? Repeater { get; set; }
 
-    public Card Ultimate { get; set; }
+    public Card? Ultimate { get; set; }
 
     public bool CanRepeat { get; set; }
 
-    public bool Noshuffle { get; set; }
+    [JsonPropertyName("noshuffle")]
+    public bool NoShuffle { get; set; }
 
     private readonly CCG _gameState;
 
@@ -35,11 +36,11 @@ public class SupportDeck : Deck
 
         Count = (sbyte) Cards.Count;
         Repeater = Cards[0];
-        Ultimate = Cards[Cards.Count - 1];
-        Noshuffle = skipShuffle;
-        if (!Noshuffle)
+        Ultimate = Cards[^1];
+        NoShuffle = skipShuffle;
+        if (!NoShuffle)
         {
-            Shuffle(Noshuffle);
+            Shuffle(NoShuffle);
         }
 
         CurrentSupport = (sbyte) Cards.Count;
@@ -68,22 +69,15 @@ public class SupportDeck : Deck
             Cards[i].ActiveData.Owner = playerIndex;
         }
 
-        if (Repeater != null)
-        {
-            Repeater.Init();
-        }
-
-        if (Ultimate != null)
-        {
-            Ultimate.Init();
-        }
+        Repeater?.Init();
+        Ultimate?.Init();
     }
 
     public void InitActiveData()
     {
-        for (var i = 0; i < Cards.Count; i++)
+        foreach (var card in Cards)
         {
-            Cards[i].InitActiveData();
+            card.InitActiveData();
         }
     }
 
@@ -103,17 +97,9 @@ public class SupportDeck : Deck
         if (CanRepeat && Repeater != null)
         {
             CanRepeat = false;
-            var flag = false;
-            for (var i = 0; i < Cards.Count; i++)
-            {
-                if (Cards[i].TemplateId == Repeater.TemplateId)
-                {
-                    flag = true;
-                    break;
-                }
-            }
+            var hasRepeater = Cards.Any(t => t.TemplateId == Repeater.TemplateId);
 
-            if (!flag)
+            if (!hasRepeater)
             {
                 var cardTemplate = RulesetParser.GetCardTemplate(Repeater.TemplateId, Repeater.Rank);
                 if (cardTemplate == null)
@@ -131,7 +117,7 @@ public class SupportDeck : Deck
             }
         }
 
-        Shuffle(Noshuffle);
+        Shuffle(NoShuffle);
         CurrentSupport = (sbyte) (Cards.Count - 1);
         if (Ultimate != null && Ultimate.GetTemplate().Cost == commandAccum)
         {
@@ -139,9 +125,7 @@ public class SupportDeck : Deck
             {
                 if (Cards[num].TemplateId == Ultimate.TemplateId)
                 {
-                    var value = Cards[num];
-                    Cards[num] = Cards[CurrentSupport];
-                    Cards[CurrentSupport] = value;
+                    (Cards[num], Cards[CurrentSupport]) = (Cards[CurrentSupport], Cards[num]);
                     break;
                 }
             }
@@ -154,22 +138,20 @@ public class SupportDeck : Deck
             {
                 if (Cards[num2].GetTemplate().Cost <= commandAccum)
                 {
-                    var value2 = Cards[num2];
-                    Cards[num2] = Cards[CurrentSupport];
-                    Cards[CurrentSupport] = value2;
+                    (Cards[num2], Cards[CurrentSupport]) = (Cards[CurrentSupport], Cards[num2]);
                     break;
                 }
             }
         }
 
         var card2 = Cards[CurrentSupport];
-        var logData = new CardDrawCcgEvent(CcgEventType.SupportDraw, card2.InstanceId,
+        var cardDrawEvent = new CardDrawCcgEvent(CcgEventType.SupportDraw, card2.InstanceId,
             card2.ActiveData.Owner, card2.TemplateId, card2.Rank);
-        _gameState.AddCCGEventLog(logData);
+        _gameState.AddCCGEventLog(cardDrawEvent);
         _gameState.CardDrawn(card2, false, isNewTurn);
     }
 
-    public Card GetCurrent()
+    public Card? GetCurrent()
     {
         if (CurrentSupport >= 0 && CurrentSupport < Cards.Count)
         {
@@ -179,9 +161,9 @@ public class SupportDeck : Deck
         return null;
     }
 
-    public Card DeployCard(int cardId)
+    public Card? DeployCard(int cardId)
     {
-        Card result = null;
+        Card? result = null;
         if (CurrentSupport < Cards.Count)
         {
             var card = Cards[CurrentSupport];

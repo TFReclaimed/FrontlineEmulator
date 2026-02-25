@@ -8,19 +8,19 @@ public class Deck
 
     public virtual void Shuffle(bool skip)
     {
-        if (!skip)
+        if (skip)
         {
-            for (var num = Cards.Count - 1; num > 1; num--)
-            {
-                var index = Random.Shared.Next(0, num);
-                var value = Cards[num];
-                Cards[num] = Cards[index];
-                Cards[index] = value;
-            }
+            return;
+        }
+
+        for (var num = Cards.Count - 1; num > 1; num--)
+        {
+            var index = Random.Shared.Next(0, num);
+            (Cards[num], Cards[index]) = (Cards[index], Cards[num]);
         }
     }
 
-    public Card DrawCard(CCG game)
+    public Card? DrawCard(CCG game)
     {
         var num = Cards.Count - 1;
         if (num < 0)
@@ -53,16 +53,8 @@ public class Deck
         Count++;
     }
 
-    public Card FindCard(int cardId)
+    public Card? FindCard(int cardId)
     {
-        for (var i = 0; i < Cards.Count; i++)
-        {
-            if (Cards[i].InstanceId == cardId)
-            {
-                return Cards[i];
-            }
-        }
-
-        return null;
+        return Cards.FirstOrDefault(card => card.InstanceId == cardId);
     }
 }

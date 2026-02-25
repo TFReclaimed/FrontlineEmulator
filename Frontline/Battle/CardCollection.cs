@@ -16,7 +16,7 @@ public class CardCollection
         }
         else
         {
-            Cards = new List<Card>();
+            Cards = [];
         }
     }
 
@@ -30,13 +30,13 @@ public class CardCollection
 
     public void InitActiveData()
     {
-        for (var i = 0; i < Cards.Count; i++)
+        foreach (var card in Cards)
         {
-            Cards[i].InitActiveData();
+            card.InitActiveData();
         }
     }
 
-    public Card DrawFromDeck(Deck theDeck, CCG game, sbyte playerIndex)
+    public Card? DrawFromDeck(Deck theDeck, CCG game, sbyte playerIndex)
     {
         var card = theDeck.DrawCard(game);
         if (card != null)
@@ -49,21 +49,12 @@ public class CardCollection
         return card;
     }
 
-    public Card FindCard(int cardId)
+    public Card? FindCard(int cardId)
     {
-        for (var i = 0; i < Cards.Count; i++)
-        {
-            var card = Cards[i];
-            if (card.InstanceId == cardId)
-            {
-                return card;
-            }
-        }
-
-        return null;
+        return Cards.FirstOrDefault(card => card.InstanceId == cardId);
     }
 
-    public Card RemoveCard(int cardId)
+    public Card? RemoveCard(int cardId)
     {
         for (var i = 0; i < Cards.Count; i++)
         {
