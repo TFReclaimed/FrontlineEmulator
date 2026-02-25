@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Frontline.Battle.CcgEvents;
+using Frontline.Battle.GameEvents.Result;
 
 namespace Frontline.Battle.GameEvents;
 
@@ -22,16 +23,6 @@ public class GameEventParams
 
     public List<CCGEventData> CcgEventsLog { get; set; }
 
-    public GameEventParams()
-    {
-    }
-
-    public GameEventParams(GameEvent gameEv, sbyte player)
-    {
-        PlayerIndex = player;
-        GameEvent = gameEv;
-    }
-
     public virtual GameEventResult ReplayEvent(CcgGame game)
     {
         if (GameEvent == GameEvent.Surrender)
@@ -46,6 +37,6 @@ public class GameEventParams
             return null;
         }
 
-        return GameEventResult.OK_RESULT;
+        return GameEventResult.OkResult;
     }
 }

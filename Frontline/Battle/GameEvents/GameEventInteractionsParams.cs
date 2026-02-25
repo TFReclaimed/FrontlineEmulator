@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Frontline.Battle.GameEvents.Result;
 
 namespace Frontline.Battle.GameEvents;
 
@@ -20,6 +21,6 @@ public class GameEventInteractionsParams : GameEventParams
 
     public override GameEventResult ReplayEvent(CcgGame game)
     {
-        return GameEventResult.OK_RESULT;
+        return GameEventResult.OkResult;
     }
 }

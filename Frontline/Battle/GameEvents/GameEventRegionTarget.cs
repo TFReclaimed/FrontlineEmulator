@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Frontline.Battle.GameEvents.Result;
 
 namespace Frontline.Battle.GameEvents;
 
@@ -18,57 +19,40 @@ public class GameEventRegionTarget : GameEventCardParams
 
     public sbyte PushDir { get; set; }
 
-    public GameEventRegionTarget()
-    {
-    }
-
-    public GameEventRegionTarget(GameEvent gameEv, int cardId, sbyte player, int targetId, sbyte ownerId,
-        TargetableArea targetArea, Region targetRegion, sbyte targetSlot, sbyte dir)
-        : base(gameEv, cardId, player)
-    {
-        TargetId = targetId;
-        TargetOwnerId = ownerId;
-        Area = targetArea;
-        Target = targetRegion;
-        SlotIndex = targetSlot;
-        PushDir = dir;
-        CcgEventsLog = null;
-    }
-
     public override GameEventResult ReplayEvent(CcgGame game)
     {
-        bool flag = true;
+        var success = true;
         if (GameEvent == GameEvent.Deploy)
         {
             if (game.Deploy(PlayerIndex, ActingCardId, TargetOwnerId, TargetId, Area, Target, SlotIndex, PushDir,
                     true) != 1)
             {
-                flag = false;
+                success = false;
             }
         }
         else if (GameEvent == GameEvent.Attack)
         {
             if (game.Attack(PlayerIndex, ActingCardId, TargetOwnerId, TargetId, true) != 1)
             {
-                flag = false;
+                success = false;
             }
         }
         else if (GameEvent == GameEvent.Move)
         {
             if (game.Move(PlayerIndex, ActingCardId, Target, SlotIndex, PushDir, true) != 1)
             {
-                flag = false;
+                success = false;
             }
         }
         else if (GameEvent == GameEvent.ActivateTrait)
         {
             if (game.ActivateTrait(PlayerIndex, ActingCardId, TargetOwnerId, TargetId, Area, Target, true) != 1)
             {
-                flag = false;
+                success = false;
             }
         }
 
         CcgEventsLog = game.GameState.GetCCGEventLog();
-        return (!flag) ? null : GameEventResult.OK_RESULT;
+        return success ? GameEventResult.OkResult : null;
     }
 }

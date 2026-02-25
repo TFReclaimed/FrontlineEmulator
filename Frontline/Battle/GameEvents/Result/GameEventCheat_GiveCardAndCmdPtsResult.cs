@@ -1,6 +1,6 @@
-namespace Frontline.Battle.GameEvents;
+namespace Frontline.Battle.GameEvents.Result;
 
-internal class GameEventCheat_GiveCardAndCmdPtsResult : GameEventResult
+public class GameEventCheat_GiveCardAndCmdPtsResult : GameEventResult
 {
     public byte PlayerIndex { get; set; }
 

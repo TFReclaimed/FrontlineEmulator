@@ -1,4 +1,4 @@
-namespace Frontline.Battle.GameEvents;
+namespace Frontline.Battle.GameEvents.Result;
 
 public class DiscardEventResult : GameEventResult
 {

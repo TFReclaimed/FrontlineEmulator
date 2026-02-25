@@ -1,18 +1,10 @@
+using Frontline.Battle.GameEvents.Result;
+
 namespace Frontline.Battle.GameEvents;
 
 public class GameEventMessageParams : GameEventParams
 {
     public sbyte MessageId { get; set; }
-
-    public GameEventMessageParams()
-    {
-    }
-
-    public GameEventMessageParams(GameEvent gameEv, sbyte player, sbyte id)
-        : base(gameEv, player)
-    {
-        MessageId = id;
-    }
 
     public override GameEventResult ReplayEvent(CcgGame game)
     {
@@ -21,6 +13,6 @@ public class GameEventMessageParams : GameEventParams
             return null;
         }
 
-        return GameEventResult.OK_RESULT;
+        return GameEventResult.OkResult;
     }
 }

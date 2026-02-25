@@ -1,18 +1,10 @@
+using Frontline.Battle.GameEvents.Result;
+
 namespace Frontline.Battle.GameEvents;
 
 public class GameEventCardParams : GameEventParams
 {
     public int ActingCardId { get; set; }
-
-    public GameEventCardParams()
-    {
-    }
-
-    public GameEventCardParams(GameEvent gameEv, int cardId, sbyte player)
-        : base(gameEv, player)
-    {
-        ActingCardId = cardId;
-    }
 
     public override GameEventResult ReplayEvent(CcgGame game)
     {
@@ -25,6 +17,6 @@ public class GameEventCardParams : GameEventParams
         }
 
         CcgEventsLog = game.GameState.GetCCGEventLog();
-        return GameEventResult.OK_RESULT;
+        return GameEventResult.OkResult;
     }
 }

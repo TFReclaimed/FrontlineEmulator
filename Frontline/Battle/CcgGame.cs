@@ -149,8 +149,6 @@ public class CcgGame
             target, slotIndex);
         if (flag && (!flag2 || flag3) && flag4)
         {
-            GameEventRegionTarget gameEventRegionTarget = new GameEventRegionTarget(GameEvent.Deploy, cardId,
-                playerIndex, targetId, targetIndex, area, target, slotIndex, pushDir);
             if (remote)
             {
                 GameState.GetCCGEventLog().Clear();
@@ -178,8 +176,6 @@ public class CcgGame
         if (target != Region.NumRegions && slotIndex != -1 &&
             GameState.CanMove(playerIndex, cardId, target, slotIndex, pushDir, remote))
         {
-            GameEventRegionTarget gameEventRegionTarget = new GameEventRegionTarget(GameEvent.Move, cardId, playerIndex,
-                0, 0, TargetableArea.CurrentRegion, target, slotIndex, pushDir);
             if (remote)
             {
                 GameState.GetCCGEventLog().Clear();
@@ -203,8 +199,6 @@ public class CcgGame
         Console.WriteLine("GAME ATTACK - {0} {1} {2} {3}", playerIndex, cardId, ownerId, targetId);
         if (GameState.CanAttack(playerIndex, cardId, ownerId, targetId, remote))
         {
-            GameEventRegionTarget gameEventRegionTarget = new GameEventRegionTarget(GameEvent.Attack, cardId,
-                playerIndex, targetId, ownerId, TargetableArea.AnyAreas, Region.NumRegions, -1, 0);
             if (remote)
             {
                 GameState.GetCCGEventLog().Clear();
@@ -228,8 +222,6 @@ public class CcgGame
     {
         if (GameState.CanActivate(playerIndex, cardId, ownerId, targetId, area, region, remote))
         {
-            GameEventRegionTarget gameEventRegionTarget = new GameEventRegionTarget(GameEvent.ActivateTrait, cardId,
-                playerIndex, targetId, ownerId, area, region, -1, 0);
             if (remote)
             {
                 GameState.GetCCGEventLog().Clear();
@@ -251,7 +243,6 @@ public class CcgGame
     {
         if (GameState.CanDisembark(playerIndex, cardId, remote))
         {
-            GameEventCardParams gameEventCardParams = new GameEventCardParams(GameEvent.Disembark, cardId, playerIndex);
             if (remote)
             {
                 GameState.GetCCGEventLog().Clear();
@@ -279,7 +270,6 @@ public class CcgGame
 
         if (GameState.CanTriggerEndTurnTraits(playerIndex, remote))
         {
-            GameEventParams gameEventParams = new GameEventParams(GameEvent.TriggerEndTurnTraits, playerIndex);
             if (remote)
             {
                 GameState.GetCCGEventLog().Clear();
@@ -311,7 +301,6 @@ public class CcgGame
                 GameState.GetCCGEventLog().Clear();
                 if (GameState.EndTurn(playerIndex, cardsToDiscard))
                 {
-                    GameEventEndTurnParams eventParams = new GameEventEndTurnParams(playerIndex, cardsToDiscard);
                     return 1;
                 }
 
@@ -328,7 +317,6 @@ public class CcgGame
     {
         if (GameState.CanSurrender(playerIndex))
         {
-            GameEventParams gameEventParams = new GameEventParams(GameEvent.Surrender, playerIndex);
             if (remote)
             {
                 GameState.GetCCGEventLog().Clear();
@@ -407,8 +395,6 @@ public class CcgGame
             if (remote)
             {
                 GameState.GetCCGEventLog().Clear();
-                GameEventMessageParams gameEventMessageParams =
-                    new GameEventMessageParams(GameEvent.Message, playerIndex, messageId);
 
                 return 1;
             }
