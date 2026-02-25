@@ -18,7 +18,7 @@ public class UnitCardTemplate : EntityCardTemplate
 
     public UnitCardTemplate(UnitCardTemplate template)
     {
-        Traits = template.Traits;
+        Traits = new List<int>(template.Traits);
         CardId = template.CardId;
         Rarity = template.Rarity;
         Type = template.Type;
