@@ -26,10 +26,13 @@ public class CcgGame
 
     public event Action<CcgGame>? OnBattleFinished;
 
+    private readonly bool _isProduction;
+
     private readonly DateTime _creationTime;
 
     public CcgGame(int player1Id, int player2Id, string player1Name, string player2Name, VersusType versusType,
-        List<ItemEntity>[] deckEntities, List<ItemEntity>[] supportEntities, List<ItemEntity> commanderEntities)
+        List<ItemEntity>[] deckEntities, List<ItemEntity>[] supportEntities, List<ItemEntity> commanderEntities,
+        bool production)
     {
         Id = Guid.NewGuid();
         Player1Id = player1Id;
@@ -99,6 +102,7 @@ public class CcgGame
             Version = 0
         };
 
+        _isProduction = production;
         _creationTime = DateTime.UtcNow;
     }
 
@@ -316,6 +320,11 @@ public class CcgGame
     public int Cheat_GiveCardAndCommandPoints(sbyte playerIndex, int cardId, int rank, int commandPoints)
     {
         GameState.GetCCGEventLog().Clear();
+
+        if (_isProduction)
+        {
+            return 0;
+        }
 
         if (GameState.GiveCardAndCmdPts(playerIndex, cardId, rank, commandPoints))
         {

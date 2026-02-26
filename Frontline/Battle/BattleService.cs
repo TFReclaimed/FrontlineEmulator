@@ -20,14 +20,18 @@ public class BattleService : IBattleService
 
     private readonly IServiceScopeFactory _serviceScopeFactory;
 
+    private readonly IWebHostEnvironment _environment;
+
     private readonly Dictionary<Guid, CcgGame> _battles = new();
 
     private readonly Lock _lock = new();
 
-    public BattleService(ILogger<BattleService> logger, IServiceScopeFactory serviceScopeFactory)
+    public BattleService(ILogger<BattleService> logger, IServiceScopeFactory serviceScopeFactory,
+        IWebHostEnvironment environment)
     {
         _logger = logger;
         _serviceScopeFactory = serviceScopeFactory;
+        _environment = environment;
     }
 
     public CcgGame? GetBattle(Guid gameId)
@@ -68,7 +72,7 @@ public class BattleService : IBattleService
 
         var battle = new CcgGame(player1Id, player2Id, player1Entity.Name, player2Entity.Name, versusType,
             [player1Deck, player2Deck], [player1Support, player2Support],
-            [player1Commander, player2Commander]);
+            [player1Commander, player2Commander], _environment.IsProduction());
         battle.OnBattleFinished += OnBattleFinished;
 
         lock (_lock)
