@@ -126,6 +126,7 @@ public class CcgGame
         gameEventParams.EventResult = result;
         GameEvents.Add(gameEventParams);
         GameChangeCounter++;
+        CurrentEventCount++;
     }
 
     public void EndGame()

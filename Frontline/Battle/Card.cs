@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Frontline.Battle.CcgEvents;
 using Frontline.Data.Entities;
 using Frontline.Game;
@@ -5,6 +6,9 @@ using Frontline.Game.Card;
 
 namespace Frontline.Battle;
 
+[JsonDerivedType(typeof(CommanderCard), "CommanderCard")]
+[JsonDerivedType(typeof(EntityCard), "EntityCard")]
+[JsonDerivedType(typeof(UnitCard), "UnitCard")]
 public class Card : Item
 {
     public ActiveCardData ActiveData { get; set; }
