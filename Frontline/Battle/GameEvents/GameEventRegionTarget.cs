@@ -24,29 +24,28 @@ public class GameEventRegionTarget : GameEventCardParams
         var success = true;
         if (GameEvent == GameEvent.Deploy)
         {
-            if (game.Deploy(PlayerIndex, ActingCardId, TargetOwnerId, TargetId, Area, Target, SlotIndex, PushDir,
-                    true) != 1)
+            if (game.Deploy(PlayerIndex, ActingCardId, TargetOwnerId, TargetId, Area, Target, SlotIndex, PushDir) != 1)
             {
                 success = false;
             }
         }
         else if (GameEvent == GameEvent.Attack)
         {
-            if (game.Attack(PlayerIndex, ActingCardId, TargetOwnerId, TargetId, true) != 1)
+            if (game.Attack(PlayerIndex, ActingCardId, TargetOwnerId, TargetId) != 1)
             {
                 success = false;
             }
         }
         else if (GameEvent == GameEvent.Move)
         {
-            if (game.Move(PlayerIndex, ActingCardId, Target, SlotIndex, PushDir, true) != 1)
+            if (game.Move(PlayerIndex, ActingCardId, Target, SlotIndex, PushDir) != 1)
             {
                 success = false;
             }
         }
         else if (GameEvent == GameEvent.ActivateTrait)
         {
-            if (game.ActivateTrait(PlayerIndex, ActingCardId, TargetOwnerId, TargetId, Area, Target, true) != 1)
+            if (game.ActivateTrait(PlayerIndex, ActingCardId, TargetOwnerId, TargetId, Area, Target) != 1)
             {
                 success = false;
             }

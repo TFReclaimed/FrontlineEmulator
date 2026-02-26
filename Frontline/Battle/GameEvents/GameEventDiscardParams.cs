@@ -13,7 +13,7 @@ public class GameEventDiscardParams : GameEventParams
             CardIdsRemovedFromHand = HandCardIdsToDiscard
         };
 
-        if (game.DoCardDiscard(PlayerIndex, HandCardIdsToDiscard, true) == 1)
+        if (game.DoCardDiscard(PlayerIndex, HandCardIdsToDiscard) == 1)
         {
             return result;
         }

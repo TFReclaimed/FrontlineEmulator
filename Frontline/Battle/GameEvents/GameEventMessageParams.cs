@@ -8,7 +8,7 @@ public class GameEventMessageParams : GameEventParams
 
     public override GameEventResult ReplayEvent(CcgGame game)
     {
-        if (game.SendMessage(PlayerIndex, MessageId, true) != 1)
+        if (game.SendMessage(PlayerIndex) != 1)
         {
             return null;
         }

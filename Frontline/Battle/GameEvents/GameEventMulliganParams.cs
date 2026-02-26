@@ -14,7 +14,7 @@ public class GameEventMulliganParams : GameEventParams
             DeckReplacementIndices = new int[HandCardIdsToReplace.Length]
         };
 
-        if (game.DoInitialSwap(PlayerIndex, result.CardIdsRemovedFromHand, result.DeckReplacementIndices, true) == 1)
+        if (game.DoInitialSwap(PlayerIndex, result.CardIdsRemovedFromHand, result.DeckReplacementIndices) == 1)
         {
             CcgEventsLog = game.GameState.GetCCGEventLog();
             return result;

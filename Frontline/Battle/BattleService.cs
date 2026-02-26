@@ -77,14 +77,6 @@ public class BattleService : IBattleService
         }
     }
 
-    public void RemoveBattle(Guid gameId)
-    {
-        lock (_lock)
-        {
-            _battles.Remove(gameId);
-        }
-    }
-
     public bool IsPlayerInGame(int userId, [NotNullWhen(true)] out CcgGame? game)
     {
         lock (_lock)

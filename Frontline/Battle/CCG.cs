@@ -315,9 +315,9 @@ public class CCG
     }
 
     public bool CanDeploy(sbyte playerIndex, int cardId, TargetableArea area, Region target, sbyte slotIndex,
-        sbyte pushDir, bool remote)
+        sbyte pushDir)
     {
-        if (PlayerTurn == playerIndex && remote)
+        if (PlayerTurn == playerIndex)
         {
             var player = Players[playerIndex];
             if (player.CanSubmitActions())
@@ -501,9 +501,9 @@ public class CCG
         return false;
     }
 
-    public bool CanMove(sbyte playerIndex, int cardId, Region target, sbyte slotIndex, sbyte pushDir, bool remote)
+    public bool CanMove(sbyte playerIndex, int cardId, Region target, sbyte slotIndex, sbyte pushDir)
     {
-        if (PlayerTurn == playerIndex && remote && pushDir >= -1 && pushDir <= 1)
+        if (PlayerTurn == playerIndex && pushDir >= -1 && pushDir <= 1)
         {
             var player = Players[playerIndex];
             if (player.CanSubmitActions())
@@ -575,9 +575,9 @@ public class CCG
         return false;
     }
 
-    public bool CanDisembark(sbyte playerIndex, int cardId, bool remote)
+    public bool CanDisembark(sbyte playerIndex, int cardId)
     {
-        if (PlayerTurn == playerIndex && remote)
+        if (PlayerTurn == playerIndex)
         {
             var player = Players[playerIndex];
             if (player.CanSubmitActions())
@@ -734,7 +734,7 @@ public class CCG
         return false;
     }
 
-    public bool DoInitialSwap(sbyte playerIndex, int[] cardIdsToSwap, int[] newDeckIndices, bool isServer)
+    public bool DoInitialSwap(sbyte playerIndex, int[] cardIdsToSwap, int[] newDeckIndices)
     {
         var player = Players[playerIndex];
         var hand = player.Hand;
@@ -763,14 +763,7 @@ public class CCG
         var count = deck.Cards.Count;
         for (var k = 0; k < array.Length; k++)
         {
-            if (isServer)
-            {
-                deck.InsertCardAtIndex(index: newDeckIndices[k] = Random.Shared.Next(0, count + k), card: array[k]);
-                continue;
-            }
-
-            var num = newDeckIndices[k];
-            deck.Count++;
+            deck.InsertCardAtIndex(index: newDeckIndices[k] = Random.Shared.Next(0, count + k), card: array[k]);
         }
 
         player.InitialCardsSwapped = true;
@@ -864,9 +857,9 @@ public class CCG
         return true;
     }
 
-    public bool CanTriggerEndTurnTraits(sbyte playerIndex, bool remote)
+    public bool CanTriggerEndTurnTraits(sbyte playerIndex)
     {
-        if (PlayerTurn == playerIndex && remote)
+        if (PlayerTurn == playerIndex)
         {
             var player = Players[playerIndex];
             if (!player.CanTriggerEndTurnTraits(gameRules))
@@ -900,9 +893,9 @@ public class CCG
         return false;
     }
 
-    public bool CanEndTurn(sbyte playerIndex, bool remote, int[] cardsToDiscard)
+    public bool CanEndTurn(sbyte playerIndex, int[] cardsToDiscard)
     {
-        if (PlayerTurn == playerIndex && remote)
+        if (PlayerTurn == playerIndex)
         {
             var player = Players[playerIndex];
             if (!player.CanEndTurn(gameRules, cardsToDiscard))
@@ -936,9 +929,9 @@ public class CCG
         return false;
     }
 
-    public bool CanAttack(sbyte playerIndex, int cardId, sbyte targetOwner, int targetId, bool remote)
+    public bool CanAttack(sbyte playerIndex, int cardId, sbyte targetOwner, int targetId)
     {
-        if (PlayerTurn == playerIndex && remote)
+        if (PlayerTurn == playerIndex)
         {
             var player = Players[playerIndex];
             if (player.CanSubmitActions())
@@ -964,7 +957,7 @@ public class CCG
     }
 
     public bool CanActivate(sbyte playerIndex, int cardId, sbyte ownerId, int targetId, TargetableArea area,
-        Region region, bool remote)
+        Region region)
     {
         var player = Players[playerIndex];
         if (!player.CanSubmitActions())
@@ -1169,7 +1162,7 @@ public class CCG
 
     public void GenerateRewards()
     {
-        if (GameType != 0)
+        if (GameType != VersusType.PvpRanked)
         {
             return;
         }

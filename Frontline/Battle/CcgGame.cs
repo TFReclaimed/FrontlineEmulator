@@ -14,8 +14,6 @@ public class CcgGame
 
     public readonly int Player2Id;
 
-    public readonly VersusType VersusType;
-
     public readonly List<GameEventParams> GameEvents = [];
 
     public CCG GameState { get; set; }
@@ -36,9 +34,11 @@ public class CcgGame
         Id = Guid.NewGuid();
         Player1Id = player1Id;
         Player2Id = player2Id;
-        VersusType = versusType;
 
-        GameState = new CCG(this);
+        GameState = new CCG(this)
+        {
+            GameType = versusType
+        };
 
         var deckCards = new List<List<Card>>();
         for (var i = 0; i < 2; i++)
@@ -95,7 +95,7 @@ public class CcgGame
 
         RulesetPath = new RulesetPathResponse
         {
-            Uri = null, //_urlOptions.Value.RulesetsUrl
+            Uri = null,
             Version = 0
         };
 
@@ -140,29 +140,24 @@ public class CcgGame
     }
 
     public int Deploy(sbyte playerIndex, int cardId, sbyte targetIndex, int targetId, TargetableArea area,
-        Region target, sbyte slotIndex, sbyte pushDir, bool remote)
+        Region target, sbyte slotIndex, sbyte pushDir)
     {
         var flag = area != TargetableArea.AnyAreas;
         var flag2 = area == TargetableArea.CurrentRegion;
         var flag3 = target != Region.NumRegions && slotIndex != -1;
-        var flag4 = GameState.CanDeploy(playerIndex, cardId, area, target, slotIndex, pushDir, remote);
+        var flag4 = GameState.CanDeploy(playerIndex, cardId, area, target, slotIndex, pushDir);
         Console.WriteLine("GAME DEPLOY - {0} {1} {2} {3} {4} {5} {6}", playerIndex, cardId, targetIndex, targetId, area,
             target, slotIndex);
         if (flag && (!flag2 || flag3) && flag4)
         {
-            if (remote)
+            GameState.GetCCGEventLog().Clear();
+            if (GameState.Deploy(playerIndex, cardId, targetIndex, targetId, area, target, slotIndex, pushDir,
+                    null))
             {
-                GameState.GetCCGEventLog().Clear();
-                if (GameState.Deploy(playerIndex, cardId, targetIndex, targetId, area, target, slotIndex, pushDir,
-                        null))
-                {
-                    return 1;
-                }
-
-                return 0;
+                return 1;
             }
 
-            return -1;
+            return 0;
         }
 
         Console.WriteLine(
@@ -171,47 +166,37 @@ public class CcgGame
         return 0;
     }
 
-    public int Move(sbyte playerIndex, int cardId, Region target, sbyte slotIndex, sbyte pushDir, bool remote)
+    public int Move(sbyte playerIndex, int cardId, Region target, sbyte slotIndex, sbyte pushDir)
     {
         Console.WriteLine("GAME MOVE - {0} {1} {2} {3}", playerIndex, cardId, target, slotIndex);
         if (target != Region.NumRegions && slotIndex != -1 &&
-            GameState.CanMove(playerIndex, cardId, target, slotIndex, pushDir, remote))
+            GameState.CanMove(playerIndex, cardId, target, slotIndex, pushDir))
         {
-            if (remote)
+            GameState.GetCCGEventLog().Clear();
+            if (GameState.Move(playerIndex, cardId, target, slotIndex, pushDir, null))
             {
-                GameState.GetCCGEventLog().Clear();
-                if (GameState.Move(playerIndex, cardId, target, slotIndex, pushDir, null))
-                {
-                    return 1;
-                }
-
-                return 0;
+                return 1;
             }
 
-            return -1;
+            return 0;
         }
 
         Console.WriteLine("MOVE FAILED - GameState.CanMove failed");
         return 0;
     }
 
-    public int Attack(sbyte playerIndex, int cardId, sbyte ownerId, int targetId, bool remote)
+    public int Attack(sbyte playerIndex, int cardId, sbyte ownerId, int targetId)
     {
         Console.WriteLine("GAME ATTACK - {0} {1} {2} {3}", playerIndex, cardId, ownerId, targetId);
-        if (GameState.CanAttack(playerIndex, cardId, ownerId, targetId, remote))
+        if (GameState.CanAttack(playerIndex, cardId, ownerId, targetId))
         {
-            if (remote)
+            GameState.GetCCGEventLog().Clear();
+            if (GameState.Attack(playerIndex, cardId, ownerId, targetId))
             {
-                GameState.GetCCGEventLog().Clear();
-                if (GameState.Attack(playerIndex, cardId, ownerId, targetId))
-                {
-                    return 1;
-                }
-
-                return 0;
+                return 1;
             }
 
-            return -1;
+            return 0;
         }
 
         Console.WriteLine("ATTACK FAILED - GameState.CanAttack failed");
@@ -219,49 +204,35 @@ public class CcgGame
     }
 
     public int ActivateTrait(sbyte playerIndex, int cardId, sbyte ownerId, int targetId, TargetableArea area,
-        Region region, bool remote)
+        Region region)
     {
-        if (GameState.CanActivate(playerIndex, cardId, ownerId, targetId, area, region, remote))
+        if (GameState.CanActivate(playerIndex, cardId, ownerId, targetId, area, region))
         {
-            if (remote)
+            GameState.GetCCGEventLog().Clear();
+            if (GameState.ActivateTrait(playerIndex, cardId, ownerId, targetId, area, region))
             {
-                GameState.GetCCGEventLog().Clear();
-                if (GameState.ActivateTrait(playerIndex, cardId, ownerId, targetId, area, region))
-                {
-                    return 1;
-                }
-
-                return 0;
+                return 1;
             }
-
-            return -1;
         }
 
         return 0;
     }
 
-    public int Disembark(sbyte playerIndex, int cardId, bool remote)
+    public int Disembark(sbyte playerIndex, int cardId)
     {
-        if (GameState.CanDisembark(playerIndex, cardId, remote))
+        if (GameState.CanDisembark(playerIndex, cardId))
         {
-            if (remote)
+            GameState.GetCCGEventLog().Clear();
+            if (GameState.Disembark(playerIndex, cardId, false, null))
             {
-                GameState.GetCCGEventLog().Clear();
-                if (GameState.Disembark(playerIndex, cardId, false, null))
-                {
-                    return 1;
-                }
-
-                return 0;
+                return 1;
             }
-
-            return -1;
         }
 
         return 0;
     }
 
-    public int TriggerEndTurnTraits(sbyte playerIndex, bool remote)
+    public int TriggerEndTurnTraits(sbyte playerIndex)
     {
         var player = GameState.GetPlayer(playerIndex);
         if (player != null && player.EndTurnTraitsTriggered)
@@ -269,85 +240,58 @@ public class CcgGame
             return 1;
         }
 
-        if (GameState.CanTriggerEndTurnTraits(playerIndex, remote))
+        if (GameState.CanTriggerEndTurnTraits(playerIndex))
         {
-            if (remote)
+            GameState.GetCCGEventLog().Clear();
+            if (GameState.TriggerEndTurnTraits(playerIndex))
             {
-                GameState.GetCCGEventLog().Clear();
-                if (GameState.TriggerEndTurnTraits(playerIndex))
-                {
-                    return 1;
-                }
-
-                return 0;
+                return 1;
             }
-
-            return -1;
         }
 
         return 0;
     }
 
-    public int EndTurn(sbyte playerIndex, bool remote, int[] cardsToDiscard)
+    public int EndTurn(sbyte playerIndex, int[] cardsToDiscard)
     {
         if (cardsToDiscard == null)
         {
             return 0;
         }
 
-        if (GameState.CanEndTurn(playerIndex, remote, cardsToDiscard))
+        if (GameState.CanEndTurn(playerIndex, cardsToDiscard))
         {
-            if (remote)
+            GameState.GetCCGEventLog().Clear();
+            if (GameState.EndTurn(playerIndex, cardsToDiscard))
             {
-                GameState.GetCCGEventLog().Clear();
-                if (GameState.EndTurn(playerIndex, cardsToDiscard))
-                {
-                    return 1;
-                }
-
-                return 0;
+                return 1;
             }
-
-            return -1;
         }
 
         return 0;
     }
 
-    public int Surrender(sbyte playerIndex, bool remote)
+    public int Surrender(sbyte playerIndex)
     {
         if (GameState.CanSurrender(playerIndex))
         {
-            if (remote)
+            GameState.GetCCGEventLog().Clear();
+            if (GameState.Surrender(playerIndex))
             {
-                GameState.GetCCGEventLog().Clear();
-                if (GameState.Surrender(playerIndex))
-                {
-                    return 1;
-                }
-
-                return 0;
+                return 1;
             }
-
-            return -1;
         }
 
         return 0;
     }
 
-    public int DoInitialSwap(sbyte playerIndex, int[] cardIdsToReshuffle, int[] deckSwapIndices, bool remote)
+    public int DoInitialSwap(sbyte playerIndex, int[] cardIdsToReshuffle, int[] deckSwapIndices)
     {
-        if (!remote)
-        {
-            return -1;
-        }
-
         if (GameState.CanDoInitialSwap(playerIndex, cardIdsToReshuffle))
         {
             GameState.GetCCGEventLog().Clear();
-            var flag = GameState.DoInitialSwap(playerIndex, cardIdsToReshuffle, deckSwapIndices, true);
 
-            if (flag)
+            if (GameState.DoInitialSwap(playerIndex, cardIdsToReshuffle, deckSwapIndices))
             {
                 return 1;
             }
@@ -356,18 +300,11 @@ public class CcgGame
         return 0;
     }
 
-    public int DoCardDiscard(sbyte playerIndex, int[] cardIds, bool remote)
+    public int DoCardDiscard(sbyte playerIndex, int[] cardIds)
     {
-        if (!remote)
-        {
-            return -1;
-        }
-
         if (GameState.CanDoDiscard(playerIndex, cardIds))
         {
-            var flag = GameState.DoCardDiscard(playerIndex, cardIds);
-
-            if (flag)
+            if (GameState.DoCardDiscard(playerIndex, cardIds))
             {
                 return 1;
             }
@@ -376,12 +313,11 @@ public class CcgGame
         return 0;
     }
 
-    public int Cheat_GiveCardAndCommandPoints(sbyte playerIndex, int cardId, int rank, int commandPoints, bool remote)
+    public int Cheat_GiveCardAndCommandPoints(sbyte playerIndex, int cardId, int rank, int commandPoints)
     {
         GameState.GetCCGEventLog().Clear();
-        var flag = GameState.GiveCardAndCmdPts(playerIndex, cardId, rank, commandPoints);
 
-        if (flag)
+        if (GameState.GiveCardAndCmdPts(playerIndex, cardId, rank, commandPoints))
         {
             return 1;
         }
@@ -389,18 +325,12 @@ public class CcgGame
         return 0;
     }
 
-    public int SendMessage(sbyte playerIndex, sbyte messageId, bool remote)
+    public int SendMessage(sbyte playerIndex)
     {
         if (GameState.CanMessage(playerIndex))
         {
-            if (remote)
-            {
-                GameState.GetCCGEventLog().Clear();
-
-                return 1;
-            }
-
-            return -1;
+            GameState.GetCCGEventLog().Clear();
+            return 1;
         }
 
         return 0;
