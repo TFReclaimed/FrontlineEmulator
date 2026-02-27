@@ -1,5 +1,4 @@
 using Frontline.Battle.CcgEvents;
-using Frontline.Game;
 using Frontline.Game.Card;
 
 namespace Frontline.Battle;
@@ -8,43 +7,39 @@ public class GameRegion
 {
     public CardStack[] Slots { get; set; }
 
-    public Region RegionLocation { get; set; } = Region.NumRegions;
+    public Region RegionLocation { get; set; }
 
     private readonly CCG _gameState;
 
-    private short[] titanSlots;
+    private short[] _titanSlots;
 
-    private bool slotIndependent = true;
+    private bool _slotIndependent = true;
 
-    public GameRegion(CCG gameState)
+    public GameRegion(CCG gameState, Region region)
     {
         _gameState = gameState;
-    }
 
-    public void Create(GameTemplate rules, Region region)
-    {
-        var num = 0;
+        var size = 0;
         RegionLocation = region;
         switch (region)
         {
             case Region.Player0:
-                num = rules.FirstPlayerRegionSize;
+                size = gameState.GetGameTemplate().FirstPlayerRegionSize;
                 break;
             case Region.Player1:
-                num = rules.OtherPlayerRegionSize;
+                size = gameState.GetGameTemplate().OtherPlayerRegionSize;
                 break;
             case Region.Control:
-                num = rules.ControlRegionSize;
-                slotIndependent = rules.ControlRegionSlotIndependent;
-                titanSlots = rules.ControlRegionTitanSlots;
+                size = gameState.GetGameTemplate().ControlRegionSize;
+                _slotIndependent = gameState.GetGameTemplate().ControlRegionSlotIndependent;
+                _titanSlots = gameState.GetGameTemplate().ControlRegionTitanSlots;
                 break;
         }
 
-        Slots = new CardStack[num];
-        for (var i = 0; i < num; i++)
+        Slots = new CardStack[size];
+        for (var i = 0; i < size; i++)
         {
             Slots[i] = new CardStack();
-            Slots[i].Create();
         }
     }
 
@@ -55,8 +50,8 @@ public class GameRegion
             Slots[i].Init(game);
         }
 
-        slotIndependent = independentSlots;
-        titanSlots = slotsForTitans;
+        _slotIndependent = independentSlots;
+        _titanSlots = slotsForTitans;
     }
 
     public void InitActiveData()
@@ -79,9 +74,9 @@ public class GameRegion
     {
         var template = card.GetTemplate();
         var num = Slots.Length;
-        var num2 = titanSlots != null ? titanSlots.Length : 0;
-        var emptyAvailable = slotIndependent && HasEmpty();
-        var flag = slotIndependent && pushDir != 0;
+        var num2 = _titanSlots != null ? _titanSlots.Length : 0;
+        var emptyAvailable = _slotIndependent && HasEmpty();
+        var flag = _slotIndependent && pushDir != 0;
         var flag2 = false;
         var flag3 = false;
         var flag4 = false;
@@ -126,7 +121,7 @@ public class GameRegion
             {
                 for (var i = 0; i < num2; i++)
                 {
-                    var target = Slots[titanSlots[i]];
+                    var target = Slots[_titanSlots[i]];
                     if (card.CanDeploy(target, RegionLocation, emptyAvailable, flag2))
                     {
                         return true;
@@ -263,8 +258,8 @@ public class GameRegion
     public bool CanMove(CardStack stack, sbyte slotIndex, sbyte pushDir)
     {
         var num = Slots.Length;
-        var num2 = titanSlots != null ? titanSlots.Length : 0;
-        var emptyAvailable = slotIndependent && pushDir != 0 && HasEmpty();
+        var num2 = _titanSlots != null ? _titanSlots.Length : 0;
+        var emptyAvailable = _slotIndependent && pushDir != 0 && HasEmpty();
         var primaryCard = stack.PrimaryCard;
         var template = primaryCard.GetTemplate();
         var flag = false;
@@ -292,7 +287,7 @@ public class GameRegion
             {
                 for (var i = 0; i < num2; i++)
                 {
-                    var cardStack = Slots[titanSlots[i]];
+                    var cardStack = Slots[_titanSlots[i]];
                     if (stack != cardStack && primaryCard.CanMove(stack, cardStack, emptyAvailable, pushDir == 0))
                     {
                         return true;
@@ -600,7 +595,7 @@ public class GameRegion
 
     private bool IsTitanSlotIndex(int slotIndex)
     {
-        var num = titanSlots != null ? titanSlots.Length : 0;
+        var num = _titanSlots != null ? _titanSlots.Length : 0;
         if (num == 0)
         {
             return true;
@@ -608,7 +603,7 @@ public class GameRegion
 
         for (var i = 0; i < num; i++)
         {
-            if (titanSlots[i] == slotIndex)
+            if (_titanSlots[i] == slotIndex)
             {
                 return true;
             }

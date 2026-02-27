@@ -6,7 +6,7 @@ public class CardStack
 
     private EntityCard? _ejectedCard;
 
-    public void Create()
+    public CardStack()
     {
         PrimaryCard = null;
         _ejectedCard = null;

@@ -19,30 +19,21 @@ public class SupportDeck : Deck
 
     private readonly CCG _gameState;
 
-    public SupportDeck(CCG gameState)
+    public SupportDeck(CCG gameState, List<Card> cards, sbyte playerIndex, bool skipShuffle)
+        : base(cards)
     {
         _gameState = gameState;
-    }
 
-    public void Create(List<Card> support, CCG game, sbyte playerIndex, bool skipShuffle)
-    {
-        Cards = support;
         for (var i = 0; i < Cards.Count; i++)
         {
-            Cards[i] = Cards[i].GenerateAndInit(game);
+            Cards[i] = Cards[i].GenerateAndInit(_gameState);
             Cards[i].ActiveData.Owner = playerIndex;
             Cards[i].Setup();
         }
 
-        Count = (sbyte) Cards.Count;
         Repeater = Cards[0];
         Ultimate = Cards[^1];
         NoShuffle = skipShuffle;
-        if (!NoShuffle)
-        {
-            Shuffle(NoShuffle);
-        }
-
         CurrentSupport = (sbyte) Cards.Count;
     }
 
@@ -171,7 +162,6 @@ public class SupportDeck : Deck
             {
                 result = card;
                 Cards.RemoveAt(CurrentSupport);
-                Count--;
                 CurrentSupport = (sbyte) Cards.Count;
             }
         }

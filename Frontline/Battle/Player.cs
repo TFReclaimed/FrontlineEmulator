@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Frontline.Battle.CcgEvents;
 using Frontline.Game;
 
@@ -5,23 +6,32 @@ namespace Frontline.Battle;
 
 public class Player
 {
-    public Deck Deck { get; set; }
+    [JsonInclude]
+    public readonly Deck Deck;
 
-    public SupportDeck SupportDeck { get; set; }
+    [JsonInclude]
+    public readonly SupportDeck SupportDeck;
 
-    public CardCollection Hand { get; set; }
+    [JsonInclude]
+    public readonly CardCollection Hand;
 
-    public CardCollection Discard { get; set; }
+    [JsonInclude]
+    public readonly CardCollection Discard;
 
-    public GameResources Resources { get; set; }
+    [JsonInclude]
+    public readonly GameResources Resources;
 
-    public CardStack Commander { get; set; }
+    [JsonInclude]
+    public readonly CardStack Commander;
 
-    public List<Card> Secrets { get; set; }
+    [JsonInclude]
+    public readonly List<Card> Secrets = [];
 
-    public string Name { get; set; }
+    [JsonInclude]
+    public readonly string Name;
 
-    public int UserId { get; set; }
+    [JsonInclude]
+    public readonly int UserId;
 
     public bool InitialCardsSwapped { get; set; }
 
@@ -31,40 +41,34 @@ public class Player
 
     private readonly CCG _gameState;
 
-    public Player(CCG gameState)
+    public Player(CCG gameState, int id, string profileName, List<Card> cards, List<Card> support,
+        CommanderCard currentCommander, sbyte playerIndex, bool skipShuffle)
     {
         _gameState = gameState;
-    }
-
-    public void Create(int id, string profileName, List<Card> cards, List<Card> support, Card currentCommander,
-        GameTemplate gameTemplate, sbyte playerIndex, bool skipShuffle)
-    {
         UserId = id;
-        Deck = new Deck();
-        Deck.Cards = cards;
+        Name = profileName;
+
+        Deck = new Deck(cards);
         Deck.Shuffle(skipShuffle);
-        Deck.Count = (sbyte) cards.Count;
-        SupportDeck = new SupportDeck(_gameState);
-        SupportDeck.Create(support, _gameState, playerIndex, skipShuffle);
-        Hand = new CardCollection();
-        Hand.Create(gameTemplate.InitialDraw, Deck, _gameState, playerIndex);
-        Discard = new CardCollection();
-        Discard.Create(0, null, _gameState, playerIndex);
-        Resources = new GameResources();
-        Resources.Create(gameTemplate.InitialPlayerHealth);
-        if (currentCommander != null)
+
+        SupportDeck = new SupportDeck(_gameState, support, playerIndex, skipShuffle);
+        if (!skipShuffle)
         {
-            var commanderCard = (CommanderCard) currentCommander.GenerateAndInit(_gameState);
-            commanderCard.SetPlayer(this);
-            commanderCard.ActiveData.Owner = playerIndex;
-            commanderCard.Setup();
-            Commander = new CardStack();
-            Commander.Create();
-            Commander.PrimaryCard = commanderCard;
+            SupportDeck.Shuffle(skipShuffle);
         }
 
-        Secrets = new List<Card>();
-        Name = profileName;
+        Hand = new CardCollection(_gameState.GetGameTemplate().InitialDraw, Deck, _gameState, playerIndex);
+        Discard = new CardCollection(0, null, _gameState, playerIndex);
+        Resources = new GameResources(_gameState.GetGameTemplate().InitialPlayerHealth);
+
+        var commanderCard = (CommanderCard) currentCommander.GenerateAndInit(_gameState);
+        commanderCard.SetPlayer(this);
+        commanderCard.ActiveData.Owner = playerIndex;
+        commanderCard.Setup();
+        Commander = new CardStack
+        {
+            PrimaryCard = commanderCard
+        };
     }
 
     public void ActivateCommander()

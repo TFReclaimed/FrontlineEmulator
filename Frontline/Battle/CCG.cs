@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Frontline.Battle.CcgEvents;
 using Frontline.Game;
 using Frontline.Game.Card;
@@ -10,13 +11,23 @@ public class CCG
 
     public const sbyte GameStartIndicator = -2;
 
-    public Guid GameInstanceId { get; set; }
+    [JsonInclude]
+    public readonly Guid GameInstanceId;
 
-    public Player[] Players { get; set; }
+    [JsonInclude]
+    public readonly int GameTemplateId;
 
-    public GameBoard Board { get; set; }
+    [JsonInclude]
+    public readonly VersusType GameType;
 
-    public int GameTemplateId { get; set; }
+    [JsonInclude]
+    public readonly Player[] Players = new Player[2];
+
+    [JsonInclude]
+    public readonly GameBoard Board;
+
+    [JsonInclude]
+    public readonly Rewards[] Rewards = new Rewards[2];
 
     public sbyte CurrentRound { get; set; }
 
@@ -30,33 +41,95 @@ public class CCG
 
     public bool SurrenderGameOver { get; set; }
 
-    public Rewards[] Rewards { get; set; }
-
     public int NextSummonInstanceId { get; set; } = -1;
 
-    public VersusType GameType { get; set; }
-
-    private GameTemplate gameRules;
+    private readonly GameTemplate _gameRules;
 
     private readonly CcgGame _game;
 
-    private List<RewardsTemplate> winGameRewards = new();
+    private readonly List<RewardsTemplate> _winGameRewards = [];
 
-    private List<RewardsTemplate> loseGameRewards = new();
+    private readonly List<RewardsTemplate> _loseGameRewards = [];
 
-    private List<ActiveTrait> battleEffects = new();
+    private readonly List<ActiveTrait> _battleEffects = [];
 
-    private List<ActiveTrait> temporaryEffects = new();
+    private readonly List<ActiveTrait> _temporaryEffects = [];
 
-    private BaseTrait pilotEmbarkTrait;
+    private readonly BaseTrait _pilotEmbarkTrait;
 
-    private BaseTrait titanPilotEmbarkTrait;
+    private readonly BaseTrait _titanPilotEmbarkTrait;
 
-    private List<CcgEventData> ccgEventsLog = new();
+    private readonly List<CcgEventData> _ccgEventsLog = [];
 
-    public CCG(CcgGame game)
+    public CCG(CcgGame game, Guid gameInstance, int gameId, VersusType gameType)
     {
         _game = game;
+        GameInstanceId = gameInstance;
+        GameTemplateId = gameId;
+        GameType = gameType;
+
+        var gameRules = RulesetParser.GetGameTemplate(GameTemplateId);
+        if (gameRules == null)
+        {
+            throw new Exception($"Game rules not found for GameTemplateId: {GameTemplateId}");
+        }
+
+        _gameRules = gameRules;
+
+        Board = new GameBoard(this);
+
+        var winRewards = RulesetParser.GetRewardsTemplate(_gameRules.WinRewardId);
+        if (winRewards == null)
+        {
+            throw new Exception($"Win rewards not found for WinRewardId: {_gameRules.WinRewardId}");
+        }
+
+        _winGameRewards.Add(winRewards);
+
+        var lossRewards = RulesetParser.GetRewardsTemplate(_gameRules.LossRewardId);
+        if (lossRewards == null)
+        {
+            throw new Exception($"Loss rewards not found for LossRewardId: {_gameRules.LossRewardId}");
+        }
+
+        _loseGameRewards.Add(lossRewards);
+
+        var pilotEmbarkTrait = RulesetParser.GetTraitTemplate(_gameRules.EmbarkedPilotTrait);
+        if (pilotEmbarkTrait == null)
+        {
+            throw new Exception($"Pilot embark trait not found for EmbarkedPilotTrait: {_gameRules.EmbarkedPilotTrait}");
+        }
+
+        _pilotEmbarkTrait = pilotEmbarkTrait;
+        
+        var titanPilotEmbarkTrait = RulesetParser.GetTraitTemplate(_gameRules.PilotTitanEmbarkedTrait);
+        if (titanPilotEmbarkTrait == null)
+        {
+            throw new Exception($"Titan pilot embark trait not found for PilotTitanEmbarkedTrait: {_gameRules.PilotTitanEmbarkedTrait}");
+        }
+
+        _titanPilotEmbarkTrait = titanPilotEmbarkTrait;
+
+        _pilotEmbarkTrait.Init(this);
+        _titanPilotEmbarkTrait.Init(this);
+    }
+
+    public void CreatePlayers(int[] playerIds, string[] playerNames, List<List<Card>> deckCards,
+        List<List<Card>> supportCards, List<CommanderCard> commanders)
+    {
+        for (var i = 0; i < 2; i++)
+        {
+            Players[i] = new Player(this, playerIds[i], playerNames[i], deckCards[i], supportCards[i],
+                commanders[i], (sbyte) i, false);
+            Rewards[i] = new Rewards();
+        }
+
+        foreach (var player in Players)
+        {
+            player.ActivateCommander();
+        }
+
+        PlayerTurn = GameStartIndicator;
     }
 
     public CcgGame GetGame()
@@ -66,7 +139,7 @@ public class CCG
 
     public GameTemplate GetGameTemplate()
     {
-        return gameRules;
+        return _gameRules;
     }
 
     public int GetNextSummonInstanceId()
@@ -104,48 +177,12 @@ public class CCG
 
     public BaseTrait GetPilotEmbarkTrait()
     {
-        return pilotEmbarkTrait;
+        return _pilotEmbarkTrait;
     }
 
     public BaseTrait GetTitanPilotEmbarkTrait()
     {
-        return titanPilotEmbarkTrait;
-    }
-
-    public void Create(Guid gameInstance, int gameId, int[] playerIds, string[] playerNames,
-        List<List<Card>> deckCards, List<List<Card>> supportCards, List<Card> commanders, bool[] skipShuffle)
-    {
-        GameInstanceId = gameInstance;
-        GameTemplateId = gameId;
-        gameRules = RulesetParser.GetGameTemplate(GameTemplateId)!;
-        Board = new GameBoard(this);
-        Board.Create(gameRules);
-        var num = playerIds.Length;
-        Players = new Player[num];
-        for (var i = 0; i < num; i++)
-        {
-            Players[i] = new Player(this);
-            Players[i].Create(playerIds[i], playerNames[i], deckCards[i], supportCards[i], commanders[i], gameRules,
-                (sbyte) i, skipShuffle[i]);
-        }
-
-        Rewards = new Rewards[num];
-        for (var j = 0; j < num; j++)
-        {
-            Rewards[j] = new Rewards();
-            Players[j].ActivateCommander();
-        }
-
-        PlayerTurn = GameStartIndicator;
-
-        winGameRewards.Add(RulesetParser.GetRewardsTemplate(gameRules.WinRewardId)!);
-        loseGameRewards.Add(RulesetParser.GetRewardsTemplate(gameRules.LossRewardId)!);
-
-        pilotEmbarkTrait = RulesetParser.GetTraitTemplate(gameRules.EmbarkedPilotTrait)!;
-        titanPilotEmbarkTrait = RulesetParser.GetTraitTemplate(gameRules.PilotTitanEmbarkedTrait)!;
-
-        pilotEmbarkTrait.Init(this);
-        titanPilotEmbarkTrait.Init(this);
+        return _titanPilotEmbarkTrait;
     }
 
     public bool IsGameOver()
@@ -186,15 +223,15 @@ public class CCG
 
     public List<ActiveTrait> GetBattleEffects()
     {
-        return battleEffects;
+        return _battleEffects;
     }
 
     public bool HasInterceptBattleEffect(int owner)
     {
         ActiveTrait activeTrait = null;
-        for (var i = 0; i < battleEffects.Count; i++)
+        for (var i = 0; i < _battleEffects.Count; i++)
         {
-            activeTrait = battleEffects[i];
+            activeTrait = _battleEffects[i];
             if (activeTrait.GetTraitInfo().IsIntercept(activeTrait) && activeTrait.Target.Owner != owner)
             {
                 return true;
@@ -206,22 +243,22 @@ public class CCG
 
     public void CaptureTemporaryEffect(ActiveTrait active)
     {
-        temporaryEffects.Add(active);
+        _temporaryEffects.Add(active);
     }
 
     public void PurgeTemporaryEffects()
     {
-        for (var i = 0; i < temporaryEffects.Count; i++)
+        for (var i = 0; i < _temporaryEffects.Count; i++)
         {
-            temporaryEffects[i].Deactivate(false);
+            _temporaryEffects[i].Deactivate(false);
         }
 
-        temporaryEffects.Clear();
+        _temporaryEffects.Clear();
     }
 
     public List<ActiveTrait> GetTemporaryEffects()
     {
-        return temporaryEffects;
+        return _temporaryEffects;
     }
 
     public List<CardStack> FindCards(TraitTargeting info, Region region, Card source)
@@ -278,9 +315,10 @@ public class CCG
                     var card = Players[j].Discard.Cards[k];
                     if (info.CardTargetMatch(this, card, source))
                     {
-                        var cardStack = new CardStack();
-                        cardStack.Create();
-                        cardStack.PrimaryCard = Players[j].Discard.Cards[k];
+                        var cardStack = new CardStack
+                        {
+                            PrimaryCard = Players[j].Discard.Cards[k]
+                        };
                         list.Add(cardStack);
                     }
                 }
@@ -409,7 +447,7 @@ public class CCG
                     }
 
                     Board.CheckDiscards(Players);
-                    gameRules.CheckEndGame(this);
+                    _gameRules.CheckEndGame(this);
                     return true;
                 }
             }
@@ -426,7 +464,7 @@ public class CCG
             }
 
             Board.CheckDiscards(Players);
-            gameRules.CheckEndGame(this);
+            _gameRules.CheckEndGame(this);
             return true;
         }
 
@@ -446,9 +484,10 @@ public class CCG
                 card = player.Discard.FindCard(targetId);
                 if (card != null)
                 {
-                    cardStack = new CardStack();
-                    cardStack.Create();
-                    cardStack.PrimaryCard = card;
+                    cardStack = new CardStack
+                    {
+                        PrimaryCard = card
+                    };
                 }
 
                 break;
@@ -456,9 +495,10 @@ public class CCG
                 card = player2.Discard.FindCard(targetId);
                 if (card != null)
                 {
-                    cardStack = new CardStack();
-                    cardStack.Create();
-                    cardStack.PrimaryCard = card;
+                    cardStack = new CardStack
+                    {
+                        PrimaryCard = card
+                    };
                 }
 
                 break;
@@ -466,9 +506,10 @@ public class CCG
                 card = player.Hand.FindCard(targetId);
                 if (card != null)
                 {
-                    cardStack = new CardStack();
-                    cardStack.Create();
-                    cardStack.PrimaryCard = card;
+                    cardStack = new CardStack
+                    {
+                        PrimaryCard = card
+                    };
                 }
 
                 break;
@@ -476,9 +517,10 @@ public class CCG
                 card = player2.Hand.FindCard(targetId);
                 if (card != null)
                 {
-                    cardStack = new CardStack();
-                    cardStack.Create();
-                    cardStack.PrimaryCard = card;
+                    cardStack = new CardStack
+                    {
+                        PrimaryCard = card
+                    };
                 }
 
                 break;
@@ -508,7 +550,7 @@ public class CCG
             var player = Players[playerIndex];
             if (player.CanSubmitActions())
             {
-                return Board.CanMove(cardId, playerIndex, target, slotIndex, pushDir, gameRules);
+                return Board.CanMove(cardId, playerIndex, target, slotIndex, pushDir, _gameRules);
             }
         }
 
@@ -606,7 +648,7 @@ public class CCG
             return false;
         }
 
-        pilotEmbarkTrait.Deactivate(unitCard, embarkedPilot);
+        _pilotEmbarkTrait.Deactivate(unitCard, embarkedPilot);
         Board.Disembark(cardId, playerIndex, eject, traitCause);
         return true;
     }
@@ -717,7 +759,7 @@ public class CCG
 
             var hand = player.Hand;
             var num = cardIdsToSwap.Length;
-            if (num <= hand.Cards.Count && num <= gameRules.MulliganDiscard)
+            if (num <= hand.Cards.Count && num <= _gameRules.MulliganDiscard)
             {
                 for (var i = 0; i < cardIdsToSwap.Length; i++)
                 {
@@ -862,7 +904,7 @@ public class CCG
         if (PlayerTurn == playerIndex)
         {
             var player = Players[playerIndex];
-            if (!player.CanTriggerEndTurnTraits(gameRules))
+            if (!player.CanTriggerEndTurnTraits(_gameRules))
             {
                 return false;
             }
@@ -878,7 +920,7 @@ public class CCG
         var logData = new TurnChangeCcgEvent(CcgEventType.EndTurn, playerIndex);
         AddCCGEventLog(logData);
         var player = Players[playerIndex];
-        if (player.TriggerEndTurnTraits(gameRules, playerIndex))
+        if (player.TriggerEndTurnTraits(_gameRules, playerIndex))
         {
             Board.EndTurn(playerIndex);
             for (var i = 0; i < Players.Length; i++)
@@ -898,7 +940,7 @@ public class CCG
         if (PlayerTurn == playerIndex)
         {
             var player = Players[playerIndex];
-            if (!player.CanEndTurn(gameRules, cardsToDiscard))
+            if (!player.CanEndTurn(_gameRules, cardsToDiscard))
             {
                 return false;
             }
@@ -912,7 +954,7 @@ public class CCG
     public bool EndTurn(sbyte playerIndex, int[] cardIdsToDiscard)
     {
         var player = Players[playerIndex];
-        if (player.EndTurn(gameRules, playerIndex))
+        if (player.EndTurn(_gameRules, playerIndex))
         {
             var hand = Players[playerIndex].Hand;
             for (var i = 0; i < cardIdsToDiscard.Length; i++)
@@ -949,7 +991,7 @@ public class CCG
         if (Board.Attack(playerIndex, cardId, ownerId, targetId, Players))
         {
             Board.CheckDiscards(Players);
-            gameRules.CheckEndGame(this);
+            _gameRules.CheckEndGame(this);
             return true;
         }
 
@@ -981,7 +1023,7 @@ public class CCG
         if (Board.ActivateTrait(playerIndex, cardId, ownerId, targetId, area, region, Players))
         {
             Board.CheckDiscards(Players);
-            gameRules.CheckEndGame(this);
+            _gameRules.CheckEndGame(this);
             return true;
         }
 
@@ -1136,7 +1178,7 @@ public class CCG
 
     public sbyte GetNextPlayerIndex(sbyte playerIndex)
     {
-        if (SurrenderGameOver || Players == null || gameRules == null)
+        if (SurrenderGameOver || Players == null || _gameRules == null)
         {
             return GameOverIndicator;
         }
@@ -1150,7 +1192,7 @@ public class CCG
             {
                 b = 0;
             }
-        } while (b != playerIndex && !gameRules.IsActive(b, this));
+        } while (b != playerIndex && !_gameRules.IsActive(b, this));
 
         if (b != playerIndex)
         {
@@ -1171,23 +1213,23 @@ public class CCG
         {
             if (i == WinningPlayer || (SurrenderGameOver && !Players[i].Surrender))
             {
-                Rewards[i].Generate(true, winGameRewards);
+                Rewards[i].Generate(true, _winGameRewards);
             }
             else
             {
-                Rewards[i].Generate(false, loseGameRewards);
+                Rewards[i].Generate(false, _loseGameRewards);
             }
         }
     }
 
     public void AddCCGEventLog(CcgEventData logData)
     {
-        ccgEventsLog.Add(logData);
+        _ccgEventsLog.Add(logData);
     }
 
     public List<CcgEventData> GetCCGEventLog()
     {
-        return ccgEventsLog;
+        return _ccgEventsLog;
     }
 
     private void StartNewTurn(sbyte playerIndex)
@@ -1208,7 +1250,7 @@ public class CCG
         }
 
         Board.CheckDiscards(Players);
-        gameRules.CheckEndGame(this);
+        _gameRules.CheckEndGame(this);
     }
 
     private void SetCurrentRound()
@@ -1225,14 +1267,14 @@ public class CCG
         var flag2 = PlayerTurn == 0;
         if (flag && flag2)
         {
-            return gameRules.FirstTurnDrawFirstPlayer;
+            return _gameRules.FirstTurnDrawFirstPlayer;
         }
 
         if (flag && !flag2)
         {
-            return gameRules.FirstTurnDrawOtherPlayer;
+            return _gameRules.FirstTurnDrawOtherPlayer;
         }
 
-        return gameRules.NewTurnDraw;
+        return _gameRules.NewTurnDraw;
     }
 }

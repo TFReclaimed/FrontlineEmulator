@@ -12,13 +12,12 @@ public class GameResources
 
     public sbyte MaxHealth { get; set; }
 
-    public sbyte DrawDamage { get; set; }
+    public sbyte DrawDamage { get; set; } = 1;
 
-    public void Create(sbyte baseHealth)
+    public GameResources(sbyte baseHealth)
     {
         MaxHealth = baseHealth;
         Health = MaxHealth;
-        DrawDamage = 1;
     }
 
     public void NewTurn(GameTemplate rules)

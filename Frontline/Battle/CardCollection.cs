@@ -2,21 +2,19 @@ namespace Frontline.Battle;
 
 public class CardCollection
 {
-    public List<Card> Cards { get; set; }
+    public List<Card> Cards { get; set; } = [];
 
-    public void Create(sbyte drawCount, Deck theDeck, CCG game, sbyte playerIndex)
+    public CardCollection(sbyte drawCount, Deck? deck, CCG gameState, sbyte playerIndex)
     {
-        if (drawCount > 0)
+        if (drawCount <= 0)
         {
-            Cards = new List<Card>(drawCount);
-            for (var i = 0; i < drawCount; i++)
-            {
-                DrawFromDeck(theDeck, game, playerIndex);
-            }
+            return;
         }
-        else
+
+        Cards = new List<Card>(drawCount);
+        for (var i = 0; i < drawCount; i++)
         {
-            Cards = [];
+            DrawFromDeck(deck!, gameState, playerIndex);
         }
     }
 
@@ -36,9 +34,9 @@ public class CardCollection
         }
     }
 
-    public Card? DrawFromDeck(Deck theDeck, CCG game, sbyte playerIndex)
+    public Card? DrawFromDeck(Deck deck, CCG gameState, sbyte playerIndex)
     {
-        var card = theDeck.DrawCard(game);
+        var card = deck.DrawCard(gameState);
         if (card != null)
         {
             Cards.Add(card);

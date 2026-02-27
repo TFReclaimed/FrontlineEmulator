@@ -38,10 +38,7 @@ public class CcgGame
         Player1Id = player1Id;
         Player2Id = player2Id;
 
-        GameState = new CCG(this)
-        {
-            GameType = versusType
-        };
+        GameState = new CCG(this, Id, 1, versusType);
 
         var deckCards = new List<List<Card>>();
         for (var i = 0; i < 2; i++)
@@ -85,7 +82,7 @@ public class CcgGame
             supportCards.Add(playerSupportCards);
         }
 
-        var commanders = new List<Card>();
+        var commanders = new List<CommanderCard>();
         foreach (var commanderEntity in commanderEntities)
         {
             var card = new CommanderCard(GameState, commanderEntity);
@@ -93,8 +90,8 @@ public class CcgGame
             commanders.Add(card);
         }
 
-        GameState.Create(Id, 1, [player1Id, player2Id], [player1Name, player2Name],
-            deckCards, supportCards, commanders, [false, false]);
+        GameState.CreatePlayers([player1Id, player2Id], [player1Name, player2Name],
+            deckCards, supportCards, commanders);
 
         RulesetPath = new RulesetPathResponse
         {

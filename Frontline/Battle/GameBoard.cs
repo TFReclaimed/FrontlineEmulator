@@ -8,23 +8,19 @@ public class GameBoard
 {
     public GameRegion[] Regions { get; set; }
 
-    private Region sourceRegion = Region.NumRegions;
+    private Region _sourceRegion = Region.NumRegions;
 
     private readonly CCG _gameState;
 
     public GameBoard(CCG gameState)
     {
         _gameState = gameState;
-    }
 
-    public void Create(GameTemplate rules)
-    {
         var num = 3;
         Regions = new GameRegion[num];
         for (var i = 0; i < num; i++)
         {
-            Regions[i] = new GameRegion(_gameState);
-            Regions[i].Create(rules, (Region) i);
+            Regions[i] = new GameRegion(_gameState, (Region) i);
         }
     }
 
@@ -171,7 +167,7 @@ public class GameBoard
         {
             for (var i = 0; i < 3; i++)
             {
-                if (((int) sourceRegion != i || sourceRegion == Region.Control || pushDir == 0) &&
+                if (((int) _sourceRegion != i || _sourceRegion == Region.Control || pushDir == 0) &&
                     primaryCard.CanMove((Region) i) && Regions[i].CanMove(cardStack, slotIndex, pushDir))
                 {
                     return true;
@@ -181,7 +177,7 @@ public class GameBoard
             return false;
         }
 
-        if (sourceRegion == target && pushDir != 0 && sourceRegion != Region.Control && pushDir != 0)
+        if (_sourceRegion == target && pushDir != 0 && _sourceRegion != Region.Control && pushDir != 0)
         {
             Console.WriteLine("GameBoard.CanMove false - trying to move in the same region");
             return false;
@@ -224,15 +220,15 @@ public class GameBoard
             return false;
         }
 
-        return Regions[(uint) sourceRegion].CanDisembark();
+        return Regions[(uint) _sourceRegion].CanDisembark();
     }
 
     public bool Disembark(int cardId, sbyte ownerId, bool eject, BaseTraitEffect traitCause)
     {
-        if (Regions[(uint) sourceRegion].HasEmpty() || eject)
+        if (Regions[(uint) _sourceRegion].HasEmpty() || eject)
         {
-            Regions[(uint) sourceRegion]
-                .Disembark(cardId, ownerId, sourceRegion == Region.Control, eject, traitCause);
+            Regions[(uint) _sourceRegion]
+                .Disembark(cardId, ownerId, _sourceRegion == Region.Control, eject, traitCause);
             return true;
         }
 
@@ -266,7 +262,7 @@ public class GameBoard
         var player = players[targetOwner];
         if (player.Resources.Health > 0 && targetId == player.Commander.PrimaryCard.InstanceId)
         {
-            if (sourceRegion == Region.Control || primaryCard.HasStatusEffect(8))
+            if (_sourceRegion == Region.Control || primaryCard.HasStatusEffect(8))
             {
                 return primaryCard.CanAttack(cardStack, player.Commander);
             }
@@ -371,13 +367,13 @@ public class GameBoard
 
     public Card FindTraitActor(int cardId, sbyte ownerId)
     {
-        sourceRegion = Region.NumRegions;
+        _sourceRegion = Region.NumRegions;
         for (var i = 0; i < 3; i++)
         {
             var card = Regions[i].FindTraitActor(cardId, ownerId);
             if (card != null)
             {
-                sourceRegion = (Region) i;
+                _sourceRegion = (Region) i;
                 return card;
             }
         }
@@ -387,18 +383,18 @@ public class GameBoard
 
     public Region GetTraitActorRegion(int cardId, sbyte ownerId)
     {
-        sourceRegion = Region.NumRegions;
+        _sourceRegion = Region.NumRegions;
         for (var i = 0; i < 3; i++)
         {
             var card = Regions[i].FindTraitActor(cardId, ownerId);
             if (card != null)
             {
-                sourceRegion = (Region) i;
-                return sourceRegion;
+                _sourceRegion = (Region) i;
+                return _sourceRegion;
             }
         }
 
-        return sourceRegion;
+        return _sourceRegion;
     }
 
     public void FindCards(TraitTargeting info, Region region, Card source, List<CardStack> found)
@@ -586,13 +582,13 @@ public class GameBoard
 
     private CardStack FindCard(int cardId, sbyte ownerId)
     {
-        sourceRegion = Region.NumRegions;
+        _sourceRegion = Region.NumRegions;
         for (var i = 0; i < 3; i++)
         {
             var cardStack = Regions[i].FindCard(cardId, ownerId);
             if (cardStack != null)
             {
-                sourceRegion = (Region) i;
+                _sourceRegion = (Region) i;
                 return cardStack;
             }
         }

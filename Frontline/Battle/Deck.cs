@@ -1,10 +1,19 @@
+using System.Text.Json.Serialization;
+
 namespace Frontline.Battle;
 
 public class Deck
 {
-    public List<Card> Cards { get; set; }
+    [JsonInclude]
+    public readonly List<Card> Cards;
 
-    public sbyte Count { get; set; }
+    [JsonInclude]
+    public sbyte Count => (sbyte) Cards.Count;
+
+    public Deck(List<Card> cards)
+    {
+        Cards = cards;
+    }
 
     public virtual void Shuffle(bool skip)
     {
@@ -30,7 +39,6 @@ public class Deck
 
         var card = Cards[num];
         Cards.RemoveAt(num);
-        Count--;
         card = card.GenerateAndInit(game);
         card.Setup();
         card.InitActiveData();
@@ -50,7 +58,6 @@ public class Deck
         }
 
         Cards.Insert(index, card);
-        Count++;
     }
 
     public Card? FindCard(int cardId)
