@@ -84,28 +84,6 @@ public class Player
         }
     }
 
-    public void Init(sbyte playerIndex)
-    {
-        SupportDeck.Init(_gameState, playerIndex);
-        Hand.Init(_gameState);
-        if (Commander != null)
-        {
-            var commanderCard =
-                (CommanderCard) Commander.PrimaryCard.GenerateAndInit(_gameState);
-            commanderCard.SetPlayer(this);
-            Commander.PrimaryCard = commanderCard;
-        }
-
-        Discard.Init(_gameState);
-    }
-
-    public void InitActiveData()
-    {
-        SupportDeck.InitActiveData();
-        Hand.InitActiveData();
-        Commander.PrimaryCard.InitActiveData();
-    }
-
     public Card FindTraitActor(int cardId)
     {
         Card card = null;
@@ -310,10 +288,10 @@ public class Player
         {
             var unitCard = (UnitCard) source;
             var xpTrigger = "Destroy_Commander";
-            unitCard.CheckAndUpdateXP(xpTrigger);
+            unitCard.CheckAndUpdateXp(xpTrigger);
             if (unitCard.HasPilot())
             {
-                unitCard.EmbarkedPilot.CheckAndUpdateXP(xpTrigger);
+                unitCard.EmbarkedPilot.CheckAndUpdateXp(xpTrigger);
             }
         }
     }

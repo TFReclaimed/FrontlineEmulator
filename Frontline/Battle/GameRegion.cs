@@ -11,9 +11,9 @@ public class GameRegion
 
     private readonly CCG _gameState;
 
-    private short[] _titanSlots;
+    private readonly short[] _titanSlots;
 
-    private bool _slotIndependent = true;
+    private readonly bool _slotIndependent = true;
 
     public GameRegion(CCG gameState, Region region)
     {
@@ -40,25 +40,6 @@ public class GameRegion
         for (var i = 0; i < size; i++)
         {
             Slots[i] = new CardStack();
-        }
-    }
-
-    public void Init(CCG game, bool independentSlots, short[] slotsForTitans)
-    {
-        for (var i = 0; i < Slots.Length; i++)
-        {
-            Slots[i].Init(game);
-        }
-
-        _slotIndependent = independentSlots;
-        _titanSlots = slotsForTitans;
-    }
-
-    public void InitActiveData()
-    {
-        for (var i = 0; i < Slots.Length; i++)
-        {
-            Slots[i].InitActiveData();
         }
     }
 
@@ -352,28 +333,6 @@ public class GameRegion
         }
 
         return false;
-    }
-
-    public void Attack(CardStack stack, sbyte slotIndex)
-    {
-        var primaryCard = stack.PrimaryCard;
-        var num = Slots.Length;
-        if (slotIndex >= 0)
-        {
-            if (slotIndex < num)
-            {
-                var cardStack = Slots[slotIndex];
-                primaryCard.Attack(stack, cardStack.PrimaryCard);
-            }
-        }
-        else if (slotIndex == -1)
-        {
-            for (var i = 0; i < num; i++)
-            {
-                var cardStack = Slots[i];
-                primaryCard.Attack(stack, cardStack.PrimaryCard);
-            }
-        }
     }
 
     public Card FindTraitActor(int cardId, sbyte ownerId)

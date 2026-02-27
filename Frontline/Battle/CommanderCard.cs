@@ -98,11 +98,6 @@ public class CommanderCard : Card
         return null;
     }
 
-    public override bool CanDeployAnywhere()
-    {
-        return false;
-    }
-
     public override bool DoesMatchTargetingInfo(TraitTargeting info, Card source)
     {
         if (base.DoesMatchTargetingInfo(info, source))
@@ -265,34 +260,6 @@ public class CommanderCard : Card
     public override sbyte HealDamage(CardStack stack, sbyte heal)
     {
         return parent.Resources.HealDamage(heal);
-    }
-
-    public sbyte GetResetDefense()
-    {
-        sbyte b = 0;
-        ActiveTrait activeTrait = null;
-        for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
-        {
-            activeTrait = ActiveData.ActiveTraits[i];
-            b += activeTrait.GetTraitInfo().GetDefenseBonus(activeTrait);
-        }
-
-        return b;
-    }
-
-    public sbyte GetMaxDefense()
-    {
-        return 0;
-    }
-
-    public sbyte GetMaxHealth()
-    {
-        if (parent == null || parent.Resources == null)
-        {
-            return 0;
-        }
-
-        return parent.Resources.MaxHealth;
     }
 
     public override sbyte GetMaxModHealth()

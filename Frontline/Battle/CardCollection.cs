@@ -18,22 +18,6 @@ public class CardCollection
         }
     }
 
-    public void Init(CCG game)
-    {
-        for (var i = 0; i < Cards.Count; i++)
-        {
-            Cards[i] = Cards[i].GenerateAndInit(game);
-        }
-    }
-
-    public void InitActiveData()
-    {
-        foreach (var card in Cards)
-        {
-            card.InitActiveData();
-        }
-    }
-
     public Card? DrawFromDeck(Deck deck, CCG gameState, sbyte playerIndex)
     {
         var card = deck.DrawCard(gameState);

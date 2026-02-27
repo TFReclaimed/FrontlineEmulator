@@ -29,14 +29,14 @@ public class Rewards
     {
         IsWinner = winner;
         ClearTotals();
-        for (var i = 0; i < rewards.Count; i++)
+        foreach (var reward in rewards)
         {
-            PlayerXp += rewards[i].PlayerXp;
-            Trophies += rewards[i].Trophies;
-            Credits += rewards[i].Credits;
-            Supply += rewards[i].Supply;
-            Boosters += rewards[i].Boosters;
-            Tokens += rewards[i].Tokens;
+            PlayerXp += reward.PlayerXp;
+            Trophies += reward.Trophies;
+            Credits += reward.Credits;
+            Supply += reward.Supply;
+            Boosters += reward.Boosters;
+            Tokens += reward.Tokens;
         }
     }
 

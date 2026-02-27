@@ -227,33 +227,6 @@ public class Card : Item
         return null;
     }
 
-    public virtual bool CanDeployAnywhere()
-    {
-        for (var i = 0; i < cardTraits.Length; i++)
-        {
-            if (cardTraits[i].CanDropAnywhere())
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public bool HasTrait(int traitId)
-    {
-        for (var i = 0; i < cardTraits.Length; i++)
-        {
-            var baseTrait = cardTraits[i];
-            if (baseTrait != null && baseTrait.TraitId == traitId)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     public virtual bool HasActiveTraitEffect(int effectId)
     {
         ActiveTrait activeTrait = null;
@@ -282,11 +255,6 @@ public class Card : Item
         }
 
         return false;
-    }
-
-    public void DeactivateTrait(int traitId, Card source)
-    {
-        ActiveData.DeactivateTrait(traitId, this, source);
     }
 
     public virtual bool Deploy(CardStack stack, bool embark, Region target, CardTransitionCcgEvent deployEvent)
@@ -578,11 +546,6 @@ public class Card : Item
     public virtual bool Disembark(CardStack location, Region region)
     {
         return false;
-    }
-
-    public virtual bool HasActed()
-    {
-        return true;
     }
 
     public virtual bool HasActed(sbyte actions)
@@ -1014,15 +977,5 @@ public class Card : Item
 
             activeTrait.Detered = detered;
         }
-    }
-
-    public static int SortByCommandCostDescending(Card card1, Card card2)
-    {
-        return card2.GetCurrentCost().CompareTo(card1.GetCurrentCost());
-    }
-
-    public virtual bool IsImmobile()
-    {
-        return true;
     }
 }

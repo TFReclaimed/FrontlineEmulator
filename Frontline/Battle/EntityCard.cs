@@ -58,11 +58,6 @@ public class EntityCard : Card
         base.InitStackedCards();
     }
 
-    public override bool CanDeployAnywhere()
-    {
-        return false;
-    }
-
     public override Card FindTraitActor(int cardId, sbyte ownerId)
     {
         var card = base.FindTraitActor(cardId, ownerId);
@@ -160,12 +155,6 @@ public class EntityCard : Card
         SetActed(14);
         ActiveData.MoveTraits(target, region, embark);
         return base.Move(target, region, origin, embark);
-    }
-
-    public override bool HasActed()
-    {
-        var activeEntityCardData = (ActiveEntityCardData) ActiveData;
-        return activeEntityCardData.Acted != 0;
     }
 
     public override bool HasActed(sbyte actions)
@@ -358,10 +347,10 @@ public class EntityCard : Card
         {
             var unitCard = (UnitCard) myDeathCard;
             var xpTrigger = "Destroy_" + template.Type;
-            unitCard.CheckAndUpdateXP(xpTrigger);
+            unitCard.CheckAndUpdateXp(xpTrigger);
             if (unitCard.HasPilot())
             {
-                unitCard.EmbarkedPilot.CheckAndUpdateXP(xpTrigger);
+                unitCard.EmbarkedPilot.CheckAndUpdateXp(xpTrigger);
             }
         }
 
@@ -389,10 +378,10 @@ public class EntityCard : Card
         {
             var unitCard2 = (UnitCard) myDeathCard;
             var xpTrigger2 = "Destroy_Pilot";
-            unitCard2.CheckAndUpdateXP(xpTrigger2);
+            unitCard2.CheckAndUpdateXp(xpTrigger2);
             if (unitCard2.HasPilot())
             {
-                unitCard2.EmbarkedPilot.CheckAndUpdateXP(xpTrigger2);
+                unitCard2.EmbarkedPilot.CheckAndUpdateXp(xpTrigger2);
             }
         }
     }

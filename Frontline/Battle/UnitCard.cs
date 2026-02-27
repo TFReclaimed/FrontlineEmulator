@@ -438,7 +438,7 @@ public class UnitCard : EntityCard
     {
         if (base.Deploy(stack, embark, target, deployEvent))
         {
-            CheckAndUpdateXP("Deploy");
+            CheckAndUpdateXp("Deploy");
             return true;
         }
 
@@ -477,7 +477,7 @@ public class UnitCard : EntityCard
                     GameState.GetTitanPilotEmbarkTrait().Activate(this, stack, target, GameState);
                 }
 
-                CheckAndUpdateXP("Deploy");
+                CheckAndUpdateXp("Deploy");
                 return true;
             }
 
@@ -509,7 +509,7 @@ public class UnitCard : EntityCard
                     GameState.GetTitanPilotEmbarkTrait().Activate(unitCard2, stack, target, GameState);
                 }
 
-                CheckAndUpdateXP("Deploy");
+                CheckAndUpdateXp("Deploy");
                 return true;
             }
 
@@ -973,16 +973,6 @@ public class UnitCard : EntityCard
         return 0;
     }
 
-    public override bool IsImmobile()
-    {
-        if (HasStatusEffect(1) || HasStatusEffect(4))
-        {
-            return true;
-        }
-
-        return false;
-    }
-
     public bool IsEmbarked()
     {
         return PilotEmbarked || EmbarkedPilot != null;
@@ -1130,16 +1120,17 @@ public class UnitCard : EntityCard
         }
     }
 
-    public void CheckAndUpdateXP(string xpTrigger)
+    public void CheckAndUpdateXp(string xpTrigger)
     {
         var trigger = RulesetParser.GetXpTrigger(xpTrigger);
-        if (trigger > 0)
+        if (trigger <= 0)
         {
-            Xp += trigger;
-            var logData = new CardInfoCcgEvent(CcgEventType.CardXpEarned, InstanceId, ActiveData.Owner,
-                trigger, xpTrigger);
-            GameState.AddCCGEventLog(logData);
+            return;
         }
+
+        Xp += trigger;
+        var logData = new CardInfoCcgEvent(CcgEventType.CardXpEarned, InstanceId, ActiveData.Owner, trigger, xpTrigger);
+        GameState.AddCCGEventLog(logData);
     }
 
     public override void Discard(Player[] players)

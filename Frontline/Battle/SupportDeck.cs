@@ -52,26 +52,6 @@ public class SupportDeck : Deck
         }
     }
 
-    public void Init(CCG game, sbyte playerIndex)
-    {
-        for (var i = 0; i < Cards.Count; i++)
-        {
-            Cards[i] = Cards[i].GenerateAndInit(game);
-            Cards[i].ActiveData.Owner = playerIndex;
-        }
-
-        Repeater?.Init();
-        Ultimate?.Init();
-    }
-
-    public void InitActiveData()
-    {
-        foreach (var card in Cards)
-        {
-            card.InitActiveData();
-        }
-    }
-
     public void NewTurn(sbyte commandAccum)
     {
         CanRepeat = true;

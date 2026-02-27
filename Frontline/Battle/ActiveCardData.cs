@@ -56,22 +56,6 @@ public class ActiveCardData
         }
     }
 
-    public void DeactivateTrait(int traitId, Card card, Card source)
-    {
-        for (var num = ActiveTraits.Count - 1; num >= 0; num--)
-        {
-            var activeTrait = ActiveTraits[num];
-            if (activeTrait.TraitEffectId == traitId)
-            {
-                var source2 = activeTrait.Source;
-                if (source2.InstanceId == source.InstanceId && source2.Owner == source.ActiveData.Owner)
-                {
-                    activeTrait.Deactivate(true);
-                }
-            }
-        }
-    }
-
     public void DeactivateTraits()
     {
         for (var num = ActiveTraits.Count - 1; num >= 0; num--)

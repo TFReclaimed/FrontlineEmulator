@@ -372,14 +372,6 @@ public class TraitTrigger : BaseTraitEffect
         }
     }
 
-    public override void CardActivateTrait(Card source, Card target, ActiveTrait active)
-    {
-    }
-
-    public override void CardHacked(Card runner, Card target, ActiveTrait active)
-    {
-    }
-
     public override void CardGainedStatus(Card theCard, Card source, sbyte statusType, ActiveTrait activeTrait)
     {
     }

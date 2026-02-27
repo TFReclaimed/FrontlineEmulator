@@ -898,11 +898,6 @@ public class BaseTraitEffect
     {
     }
 
-    public virtual bool CanDisembark()
-    {
-        return true;
-    }
-
     public virtual void CardDeployed(Card deployed, ActiveTrait active)
     {
     }
@@ -917,14 +912,6 @@ public class BaseTraitEffect
     }
 
     public virtual void CardCounterAttacked(Card attacker, Card target, ActiveTrait active)
-    {
-    }
-
-    public virtual void CardActivateTrait(Card source, Card target, ActiveTrait active)
-    {
-    }
-
-    public virtual void CardHacked(Card runner, Card target, ActiveTrait active)
     {
     }
 

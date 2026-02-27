@@ -24,30 +24,6 @@ public class GameBoard
         }
     }
 
-    public void Init(GameTemplate rules, CCG game)
-    {
-        for (var i = 0; i < Regions.Length; i++)
-        {
-            var independentSlots = true;
-            short[] slotsForTitans = null;
-            if (i == 2)
-            {
-                independentSlots = rules.ControlRegionSlotIndependent;
-                slotsForTitans = rules.ControlRegionTitanSlots;
-            }
-
-            Regions[i].Init(game, independentSlots, slotsForTitans);
-        }
-    }
-
-    public void InitActiveData()
-    {
-        for (var i = 0; i < Regions.Length; i++)
-        {
-            Regions[i].InitActiveData();
-        }
-    }
-
     public void NewTurn(sbyte playerTurn)
     {
         for (var i = 0; i < Regions.Length; i++)
@@ -608,16 +584,5 @@ public class GameBoard
         }
 
         return null;
-    }
-
-    private sbyte RegionToPlayerIndex(Region region, Player[] players)
-    {
-        var b = (sbyte) region;
-        if (b >= 0 && b < players.Length)
-        {
-            return b;
-        }
-
-        return -1;
     }
 }

@@ -12,16 +12,6 @@ public class CardStack
         _ejectedCard = null;
     }
 
-    public void Init(CCG game)
-    {
-        PrimaryCard = PrimaryCard?.GenerateAndInit(game);
-    }
-
-    public void InitActiveData()
-    {
-        PrimaryCard?.InitActiveData();
-    }
-
     public bool HasCard(Card? card)
     {
         if (card == null)

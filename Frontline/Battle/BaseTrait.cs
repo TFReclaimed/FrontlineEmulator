@@ -35,26 +35,6 @@ public class BaseTrait
                TraitType == TraitType.BurnCard || TraitType == TraitType.Gear || TraitType == TraitType.Basic;
     }
 
-    public bool CanDropAnywhere()
-    {
-        var primaryTargeting = GetPrimaryTargeting(0);
-        if (primaryTargeting == null)
-        {
-            return false;
-        }
-
-        if (primaryTargeting.TargetTrait())
-        {
-            var targetEffect = (TargetEffect) primaryTargeting;
-            if (targetEffect.DropAnywhere)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     public virtual bool CanActivate(Region region, sbyte owner)
     {
         var primaryTargeting = GetPrimaryTargeting(0);
@@ -261,11 +241,6 @@ public class BaseTrait
         game.PurgeTemporaryEffects();
     }
 
-    public virtual bool CanDeactivate()
-    {
-        return true;
-    }
-
     public virtual void Deactivate(Card card, Card source)
     {
         ActiveTrait activeTrait = null;
@@ -277,11 +252,6 @@ public class BaseTrait
                 activeTrait.Deactivate(true);
             }
         }
-    }
-
-    public virtual bool DisplayTraitDescription()
-    {
-        return true;
     }
 
     public BaseTraitEffect GetPrimaryTargeting(sbyte priority)
