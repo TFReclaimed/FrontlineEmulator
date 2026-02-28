@@ -6,33 +6,21 @@ namespace Frontline.Battle;
 [JsonDerivedType(typeof(ActiveUnitCardData), "ActiveUnitCardData")]
 public class ActiveCardData
 {
-    public List<ActiveTrait> ActiveTraits { get; set; }
+    public List<ActiveTrait> ActiveTraits { get; set; } = [];
 
-    public bool[] TraitActivated { get; set; }
+    public bool[] TraitActivated { get; set; } = [];
 
     public sbyte Owner { get; set; }
 
-    public ActiveCardData()
-    {
-        ActiveTraits = new List<ActiveTrait>();
-    }
-
     public void Init(CcgGameState game, Card ownerCard)
     {
-        if (ActiveTraits == null)
+        for (var num = ActiveTraits.Count - 1; num >= 0; num--)
         {
-            ActiveTraits = new List<ActiveTrait>();
-        }
-        else
-        {
-            for (var num = ActiveTraits.Count - 1; num >= 0; num--)
-            {
-                var activeTrait = ActiveTraits[num];
-                activeTrait.Init(ownerCard);
-            }
+            var activeTrait = ActiveTraits[num];
+            activeTrait.Init(ownerCard);
         }
 
-        if (ownerCard.TemplateId != 0 && (TraitActivated == null || TraitActivated.Length != ownerCard.GetNumTraits()))
+        if (ownerCard.TemplateId != 0 && TraitActivated.Length != ownerCard.GetNumTraits())
         {
             game.Logger.Warning("Active Data Init for card " + ownerCard.InstanceId + " - traitActivated is invalid!");
             TraitActivated = new bool[ownerCard.GetNumTraits()];
@@ -45,7 +33,7 @@ public class ActiveCardData
 
     public virtual void Setup(Card card)
     {
-        if (TraitActivated == null || TraitActivated.Length != card.GetNumTraits())
+        if (TraitActivated.Length != card.GetNumTraits())
         {
             TraitActivated = new bool[card.GetNumTraits()];
         }

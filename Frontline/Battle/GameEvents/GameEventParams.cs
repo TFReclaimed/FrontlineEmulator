@@ -19,11 +19,11 @@ public class GameEventParams
 
     public GameEvent GameEvent { get; set; } = GameEvent.NumEvents;
 
-    public GameEventResult EventResult { get; set; }
+    public GameEventResult? EventResult { get; set; }
 
-    public List<CcgEventData> CcgEventsLog { get; set; }
+    public List<CcgEventData>? CcgEventsLog { get; set; }
 
-    public virtual GameEventResult ReplayEvent(CcgGame game)
+    public virtual GameEventResult? ReplayEvent(CcgGame game)
     {
         if (GameEvent == GameEvent.Surrender)
         {

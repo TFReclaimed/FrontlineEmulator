@@ -4,9 +4,9 @@ namespace Frontline.Battle.GameEvents;
 
 public class GameEventDiscardParams : GameEventParams
 {
-    public int[] HandCardIdsToDiscard { get; set; }
+    public int[] HandCardIdsToDiscard { get; set; } = [];
 
-    public override GameEventResult ReplayEvent(CcgGame game)
+    public override GameEventResult? ReplayEvent(CcgGame game)
     {
         var result = new DiscardEventResult
         {

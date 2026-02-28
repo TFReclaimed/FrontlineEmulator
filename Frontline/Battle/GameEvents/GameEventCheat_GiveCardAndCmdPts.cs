@@ -10,7 +10,7 @@ internal class GameEventCheat_GiveCardAndCmdPts : GameEventParams
 
     public int CommandPoints { get; set; }
 
-    public override GameEventResult ReplayEvent(CcgGame game)
+    public override GameEventResult? ReplayEvent(CcgGame game)
     {
         var result = new GameEventCheat_GiveCardAndCmdPtsResult
         {

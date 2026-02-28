@@ -4,9 +4,9 @@ namespace Frontline.Battle.GameEvents;
 
 public class GameEventMulliganParams : GameEventParams
 {
-    public int[] HandCardIdsToReplace { get; set; }
+    public int[] HandCardIdsToReplace { get; set; } = [];
 
-    public override GameEventResult ReplayEvent(CcgGame game)
+    public override GameEventResult? ReplayEvent(CcgGame game)
     {
         var result = new InitialSwapEventResult
         {

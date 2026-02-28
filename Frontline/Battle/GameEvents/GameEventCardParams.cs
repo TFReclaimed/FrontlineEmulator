@@ -6,7 +6,7 @@ public class GameEventCardParams : GameEventParams
 {
     public int ActingCardId { get; set; }
 
-    public override GameEventResult ReplayEvent(CcgGame game)
+    public override GameEventResult? ReplayEvent(CcgGame game)
     {
         if (GameEvent == GameEvent.Disembark)
         {

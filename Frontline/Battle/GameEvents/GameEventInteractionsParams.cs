@@ -17,7 +17,7 @@ public class GameEventInteractionsParams : GameEventParams
         GameEvent = GameEvent.Interactions;
     }
 
-    public override GameEventResult ReplayEvent(CcgGame game)
+    public override GameEventResult? ReplayEvent(CcgGame game)
     {
         return GameEventResult.OkResult;
     }

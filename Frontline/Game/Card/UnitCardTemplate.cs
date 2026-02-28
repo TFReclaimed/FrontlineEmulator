@@ -97,7 +97,7 @@ public class UnitCardTemplate : EntityCardTemplate
 
         if (embark)
         {
-            Battle.Card primaryCard = target.PrimaryCard;
+            var primaryCard = target.PrimaryCard;
             if (Type == CardType.Titan && primaryCard.GetTemplate().Type == CardType.Pilot)
             {
                 return true;
@@ -121,14 +121,14 @@ public class UnitCardTemplate : EntityCardTemplate
 
         if (embark)
         {
-            Battle.Card primaryCard = target.PrimaryCard;
-            Battle.Card primaryCard2 = source.PrimaryCard;
+            var primaryCard = target.PrimaryCard;
+            var primaryCard2 = source.PrimaryCard;
             if (Type == CardType.Titan && primaryCard.GetTemplate().Type == CardType.Pilot)
             {
                 if (!source.PrimaryCard.HasPilot())
                 {
-                    Region traitActorRegion = gameState.GetTraitActorRegion(primaryCard.ActiveData.Owner, primaryCard.InstanceId);
-                    Region traitActorRegion2 = gameState.GetTraitActorRegion(primaryCard2.ActiveData.Owner, primaryCard2.InstanceId);
+                    var traitActorRegion = gameState.GetTraitActorRegion(primaryCard.ActiveData.Owner, primaryCard.InstanceId);
+                    var traitActorRegion2 = gameState.GetTraitActorRegion(primaryCard2.ActiveData.Owner, primaryCard2.InstanceId);
 
                     if (traitActorRegion != traitActorRegion2)
                     {
@@ -145,8 +145,8 @@ public class UnitCardTemplate : EntityCardTemplate
             {
                 if (!target.PrimaryCard.HasPilot())
                 {
-                    Region traitActorRegion3 = gameState.GetTraitActorRegion(primaryCard.ActiveData.Owner, primaryCard.InstanceId);
-                    Region traitActorRegion4 = gameState.GetTraitActorRegion(primaryCard2.ActiveData.Owner, primaryCard2.InstanceId);
+                    var traitActorRegion3 = gameState.GetTraitActorRegion(primaryCard.ActiveData.Owner, primaryCard.InstanceId);
+                    var traitActorRegion4 = gameState.GetTraitActorRegion(primaryCard2.ActiveData.Owner, primaryCard2.InstanceId);
 
                     if (traitActorRegion3 != traitActorRegion4)
                     {
@@ -168,7 +168,7 @@ public class UnitCardTemplate : EntityCardTemplate
 
     public override bool CanAttack(CardStack source, CardStack target)
     {
-        CardTemplate template = target.PrimaryCard.GetTemplate();
+        var template = target.PrimaryCard.GetTemplate();
         return template.IsAttackable(source);
     }
 

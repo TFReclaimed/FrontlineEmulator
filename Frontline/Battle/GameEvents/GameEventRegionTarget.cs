@@ -19,7 +19,7 @@ public class GameEventRegionTarget : GameEventCardParams
 
     public sbyte PushDir { get; set; }
 
-    public override GameEventResult ReplayEvent(CcgGame game)
+    public override GameEventResult? ReplayEvent(CcgGame game)
     {
         var success = true;
         if (GameEvent == GameEvent.Deploy)

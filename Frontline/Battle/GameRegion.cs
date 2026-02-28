@@ -18,6 +18,7 @@ public class GameRegion
     public GameRegion(CcgGameState gameState, Region region)
     {
         _gameState = gameState;
+        _titanSlots = [];
 
         var size = 0;
         RegionLocation = region;
@@ -55,7 +56,7 @@ public class GameRegion
     {
         var template = card.GetTemplate();
         var num = Slots.Length;
-        var num2 = _titanSlots != null ? _titanSlots.Length : 0;
+        var num2 = _titanSlots.Length;
         var emptyAvailable = _slotIndependent && HasEmpty();
         var flag = _slotIndependent && pushDir != 0;
         var flag2 = false;
@@ -239,7 +240,7 @@ public class GameRegion
     public bool CanMove(CardStack stack, sbyte slotIndex, sbyte pushDir)
     {
         var num = Slots.Length;
-        var num2 = _titanSlots != null ? _titanSlots.Length : 0;
+        var num2 = _titanSlots.Length;
         var emptyAvailable = _slotIndependent && pushDir != 0 && HasEmpty();
         var primaryCard = stack.PrimaryCard;
         var template = primaryCard.GetTemplate();
@@ -308,34 +309,7 @@ public class GameRegion
         }
     }
 
-    public bool CanAttack(CardStack stack, sbyte slotIndex)
-    {
-        var primaryCard = stack.PrimaryCard;
-        var num = Slots.Length;
-        if (slotIndex >= 0)
-        {
-            if (slotIndex < num)
-            {
-                var target = Slots[slotIndex];
-                return primaryCard.CanAttack(stack, target);
-            }
-        }
-        else if (slotIndex == -1)
-        {
-            for (var i = 0; i < num; i++)
-            {
-                var target = Slots[i];
-                if (primaryCard.CanAttack(stack, target))
-                {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    public Card FindTraitActor(int cardId, sbyte ownerId)
+    public Card? FindTraitActor(int cardId, sbyte ownerId)
     {
         for (var i = 0; i < Slots.Length; i++)
         {
@@ -370,7 +344,7 @@ public class GameRegion
         return false;
     }
 
-    public CardStack FindCard(int cardId, sbyte ownerId)
+    public CardStack? FindCard(int cardId, sbyte ownerId)
     {
         for (var i = 0; i < Slots.Length; i++)
         {
@@ -398,7 +372,7 @@ public class GameRegion
         return -1;
     }
 
-    public Card RemoveCard(int cardId, sbyte ownerId)
+    public Card? RemoveCard(int cardId, sbyte ownerId)
     {
         for (var i = 0; i < Slots.Length; i++)
         {
@@ -515,7 +489,7 @@ public class GameRegion
         return false;
     }
 
-    public CardStack FindEmptyCardStack(bool titanOnly, bool reverseSearch)
+    public CardStack? FindEmptyCardStack(bool titanOnly, bool reverseSearch)
     {
         var emptyCardStackIndex = GetEmptyCardStackIndex(titanOnly, reverseSearch);
         if (emptyCardStackIndex == -1)
@@ -554,7 +528,7 @@ public class GameRegion
 
     private bool IsTitanSlotIndex(int slotIndex)
     {
-        var num = _titanSlots != null ? _titanSlots.Length : 0;
+        var num = _titanSlots.Length;
         if (num == 0)
         {
             return true;

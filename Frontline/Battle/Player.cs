@@ -85,9 +85,9 @@ public class Player
         }
     }
 
-    public Card FindTraitActor(int cardId)
+    public Card? FindTraitActor(int cardId)
     {
-        Card card = null;
+        Card? card = null;
         if (Commander != null)
         {
             card = Commander.FindTraitActor(cardId, Commander.PrimaryCard.ActiveData.Owner);
@@ -111,7 +111,7 @@ public class Player
         return card;
     }
 
-    public Card FindCard(int cardId)
+    public Card? FindCard(int cardId)
     {
         var current = SupportDeck.GetCurrent();
         if (current != null && current.InstanceId == cardId)
@@ -154,9 +154,9 @@ public class Player
         return null;
     }
 
-    public Card RemoveCardForTrait(int cardId, sbyte myIndex, BaseTraitEffect effect)
+    public Card? RemoveCardForTrait(int cardId, sbyte myIndex, BaseTraitEffect effect)
     {
-        Card card = null;
+        Card? card;
         if (effect.Targets.Area == TargetableArea.FriendlyDiscard || effect.Targets.Area == TargetableArea.EnemyDiscard)
         {
             card = Discard.RemoveCard(cardId);
@@ -183,7 +183,6 @@ public class Player
         {
             card = _gameState.FindTraitActor(myIndex, cardId);
             var list = _gameState.FindCardStack(card);
-            card = null;
             if (list != null && list.Count > 0)
             {
                 var cardStack = list[0];

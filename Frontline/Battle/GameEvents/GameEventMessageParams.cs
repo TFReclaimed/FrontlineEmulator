@@ -6,7 +6,7 @@ public class GameEventMessageParams : GameEventParams
 {
     public sbyte MessageId { get; set; }
 
-    public override GameEventResult ReplayEvent(CcgGame game)
+    public override GameEventResult? ReplayEvent(CcgGame game)
     {
         if (game.SendMessage(PlayerIndex) != 1)
         {

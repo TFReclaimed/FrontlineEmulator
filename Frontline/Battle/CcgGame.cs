@@ -257,11 +257,6 @@ public class CcgGame
 
     public int EndTurn(sbyte playerIndex, int[] cardsToDiscard)
     {
-        if (cardsToDiscard == null)
-        {
-            return 0;
-        }
-
         if (GameState.CanEndTurn(playerIndex, cardsToDiscard))
         {
             GameState.GetCCGEventLog().Clear();

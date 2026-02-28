@@ -158,7 +158,7 @@ public class CcgGameState
         return num;
     }
 
-    public Player GetPlayer(sbyte playerIndex)
+    public Player? GetPlayer(sbyte playerIndex)
     {
         if (playerIndex >= 0 && playerIndex < Players.Length)
         {
@@ -194,7 +194,7 @@ public class CcgGameState
         return SurrenderGameOver || PlayerTurn == GameOverIndicator;
     }
 
-    public Card FindTraitActor(sbyte playerIndex, int cardId)
+    public Card? FindTraitActor(sbyte playerIndex, int cardId)
     {
         if (playerIndex >= 0 && playerIndex < Players.Length)
         {
@@ -211,14 +211,13 @@ public class CcgGameState
 
     public Region GetTraitActorRegion(sbyte playerIndex, int cardId)
     {
-        var result = Region.NumRegions;
         if (playerIndex >= 0 && playerIndex < Players.Length)
         {
             var player = Players[playerIndex];
             var card = player.FindTraitActor(cardId);
             if (card != null)
             {
-                return result;
+                return Region.NumRegions;
             }
         }
 
@@ -232,10 +231,8 @@ public class CcgGameState
 
     public bool HasInterceptBattleEffect(int owner)
     {
-        ActiveTrait activeTrait = null;
-        for (var i = 0; i < _battleEffects.Count; i++)
+        foreach (var activeTrait in _battleEffects)
         {
-            activeTrait = _battleEffects[i];
             if (activeTrait.GetTraitInfo().IsIntercept(activeTrait) && activeTrait.Target.Owner != owner)
             {
                 return true;
@@ -252,9 +249,9 @@ public class CcgGameState
 
     public void PurgeTemporaryEffects()
     {
-        for (var i = 0; i < _temporaryEffects.Count; i++)
+        foreach (var effect in _temporaryEffects)
         {
-            _temporaryEffects[i].Deactivate(false);
+            effect.Deactivate(false);
         }
 
         _temporaryEffects.Clear();
@@ -314,14 +311,13 @@ public class CcgGameState
                     continue;
                 }
 
-                for (var k = 0; k < Players[j].Discard.Cards.Count; k++)
+                foreach (var card in Players[j].Discard.Cards)
                 {
-                    var card = Players[j].Discard.Cards[k];
                     if (info.CardTargetMatch(this, card, source))
                     {
                         var cardStack = new CardStack(this)
                         {
-                            PrimaryCard = Players[j].Discard.Cards[k]
+                            PrimaryCard = card
                         };
                         list.Add(cardStack);
                     }
@@ -343,12 +339,12 @@ public class CcgGameState
     public List<CardStack> FindCardStack(Card card)
     {
         var list = new List<CardStack>();
-        for (var i = 0; i < Players.Length; i++)
+        foreach (var player in Players)
         {
-            var primaryCard = Players[i].Commander.PrimaryCard;
+            var primaryCard = player.Commander.PrimaryCard;
             if (primaryCard.EqualsTo(card))
             {
-                list.Add(Players[i].Commander);
+                list.Add(player.Commander);
             }
         }
 
@@ -462,9 +458,9 @@ public class CcgGameState
                 return false;
             }
 
-            for (var l = 0; l < Players.Length; l++)
+            foreach (var loopPlayer in Players)
             {
-                Players[l].Commander.CardDeployed(card);
+                loopPlayer.Commander.CardDeployed(card);
             }
 
             Board.CheckDiscards(Players);
@@ -657,10 +653,10 @@ public class CcgGameState
         return true;
     }
 
-    private CardStack FindCardStackForSummon(sbyte playerIndex, bool isTitan, bool reverseSearch,
+    private CardStack? FindCardStackForSummon(sbyte playerIndex, bool isTitan, bool reverseSearch,
         Region currentRegion, TargetableArea targetableArea)
     {
-        var num = -1;
+        int num;
         switch (targetableArea)
         {
             case TargetableArea.FriendlyPerimeter:
@@ -753,7 +749,7 @@ public class CcgGameState
 
     public bool CanDoInitialSwap(sbyte playerIndex, int[] cardIdsToSwap)
     {
-        if (cardIdsToSwap != null && playerIndex >= 0 && playerIndex < Players.Length)
+        if (playerIndex >= 0 && playerIndex < Players.Length)
         {
             var player = Players[playerIndex];
             if (player.Surrender || player.InitialCardsSwapped)
@@ -765,9 +761,9 @@ public class CcgGameState
             var num = cardIdsToSwap.Length;
             if (num <= hand.Cards.Count && num <= _gameRules.MulliganDiscard)
             {
-                for (var i = 0; i < cardIdsToSwap.Length; i++)
+                foreach (var cardId in cardIdsToSwap)
                 {
-                    if (hand.FindCard(cardIdsToSwap[i]) == null)
+                    if (hand.FindCard(cardId) == null)
                     {
                         return false;
                     }
@@ -814,9 +810,9 @@ public class CcgGameState
 
         player.InitialCardsSwapped = true;
         var flag = true;
-        for (var l = 0; l < Players.Length; l++)
+        foreach (var loopPlayer in Players)
         {
-            if (!Players[l].InitialCardsSwapped)
+            if (!loopPlayer.InitialCardsSwapped)
             {
                 flag = false;
             }
@@ -835,7 +831,7 @@ public class CcgGameState
 
     public bool CanDoDiscard(sbyte playerIndex, int[] cardIdsToDiscard)
     {
-        if (cardIdsToDiscard != null && playerIndex >= 0 && playerIndex < Players.Length)
+        if (playerIndex >= 0 && playerIndex < Players.Length)
         {
             var player = Players[playerIndex];
             if (player.Surrender)
@@ -844,9 +840,9 @@ public class CcgGameState
             }
 
             var hand = player.Hand;
-            for (var i = 0; i < cardIdsToDiscard.Length; i++)
+            foreach (var cardId in cardIdsToDiscard)
             {
-                if (hand.FindCard(cardIdsToDiscard[i]) == null)
+                if (hand.FindCard(cardId) == null)
                 {
                     return false;
                 }
@@ -861,10 +857,10 @@ public class CcgGameState
     public bool DoCardDiscard(sbyte playerIndex, int[] cardIdsToDiscard)
     {
         var hand = Players[playerIndex].Hand;
-        for (var i = 0; i < cardIdsToDiscard.Length; i++)
+        foreach (var cardId in cardIdsToDiscard)
         {
-            var card = hand.RemoveCard(cardIdsToDiscard[i]);
-            card.Discard(Players);
+            var card = hand.RemoveCard(cardId);
+            card?.Discard(Players);
         }
 
         return true;
@@ -883,22 +879,23 @@ public class CcgGameState
             player.Resources.AddCommandPoints((sbyte) commandPoints, GetGameTemplate());
         }
 
-        if (cardTemplateId != 0)
+        if (cardTemplateId == 0)
         {
-            var cardTemplate = RulesetParser.GetCardTemplate(cardTemplateId, (sbyte) rank);
-            if (cardTemplate != null)
-            {
-                var card = cardTemplate.GenerateCard(this);
-                if (card != null)
-                {
-                    card.InstanceId = GetNextSummonInstanceId();
-                    card.Setup();
-                    card.ActiveData.Owner = playerIndex;
-                    player.Hand.Cards.Add(card);
-                    Logger.Debug("**** CCG.GiveCardAndCmdPts - Spanwed New Card * " + card.InstanceId);
-                }
-            }
+            return true;
         }
+
+        var cardTemplate = RulesetParser.GetCardTemplate(cardTemplateId, (sbyte) rank);
+        if (cardTemplate == null)
+        {
+            return true;
+        }
+
+        var card = cardTemplate.GenerateCard(this);
+        card.InstanceId = GetNextSummonInstanceId();
+        card.Setup();
+        card.ActiveData.Owner = playerIndex;
+        player.Hand.Cards.Add(card);
+        Logger.Debug("**** CCG.GiveCardAndCmdPts - Spanwed New Card * " + card.InstanceId);
 
         return true;
     }
@@ -927,9 +924,9 @@ public class CcgGameState
         if (player.TriggerEndTurnTraits(_gameRules, playerIndex))
         {
             Board.EndTurn(playerIndex);
-            for (var i = 0; i < Players.Length; i++)
+            foreach (var loopPlayer in Players)
             {
-                Players[i].Commander.EndTurn(playerIndex);
+                loopPlayer.Commander.EndTurn(playerIndex);
             }
 
             Board.CheckDiscards(Players);
@@ -961,10 +958,10 @@ public class CcgGameState
         if (player.EndTurn(_gameRules, playerIndex))
         {
             var hand = Players[playerIndex].Hand;
-            for (var i = 0; i < cardIdsToDiscard.Length; i++)
+            foreach (var cardId in cardIdsToDiscard)
             {
-                var card = hand.RemoveCard(cardIdsToDiscard[i]);
-                card.Discard(Players);
+                var card = hand.RemoveCard(cardId);
+                card?.Discard(Players);
             }
 
             var nextPlayerIndex = GetNextPlayerIndex(playerIndex);
@@ -1037,99 +1034,99 @@ public class CcgGameState
     public void CardMoved(Card card, CardStack target, Region region, Region origin)
     {
         Board.CardMoved(card, target, region, origin);
-        for (var i = 0; i < Players.Length; i++)
+        foreach (var player in Players)
         {
-            Players[i].Commander.CardMoved(card, target, region, origin);
+            player.Commander.CardMoved(card, target, region, origin);
         }
     }
 
     public void CardAttacked(Card attacker, Card target)
     {
         Board.CardAttacked(attacker, target);
-        for (var i = 0; i < Players.Length; i++)
+        foreach (var player in Players)
         {
-            Players[i].Commander.CardAttacked(attacker, target);
+            player.Commander.CardAttacked(attacker, target);
         }
     }
 
     public void CardCounterAttacked(Card attacker, Card target)
     {
         Board.CardCounterAttacked(attacker, target);
-        for (var i = 0; i < Players.Length; i++)
+        foreach (var player in Players)
         {
-            Players[i].Commander.CardCounterAttacked(attacker, target);
+            player.Commander.CardCounterAttacked(attacker, target);
         }
     }
 
     public void CardGainedStatus(Card theCard, Card source, ApplyStatusTraitStatusType statusType)
     {
         Board.CardGainedStatus(theCard, source, statusType);
-        for (var i = 0; i < Players.Length; i++)
+        foreach (var player in Players)
         {
-            Players[i].Commander.CardGainedStatus(theCard, source, statusType);
+            player.Commander.CardGainedStatus(theCard, source, statusType);
         }
     }
 
     public void CardDamaged(Card damangedCard, Card source)
     {
         Board.CardDamaged(damangedCard, source);
-        for (var i = 0; i < Players.Length; i++)
+        foreach (var player in Players)
         {
-            Players[i].Commander.CardDamaged(damangedCard, source);
+            player.Commander.CardDamaged(damangedCard, source);
         }
     }
 
     public void CardDied(Card deadCard, Card source)
     {
         Board.CardDied(deadCard, source);
-        for (var i = 0; i < Players.Length; i++)
+        foreach (var player in Players)
         {
-            Players[i].Commander.CardDied(deadCard, source);
+            player.Commander.CardDied(deadCard, source);
         }
     }
 
     public void CardDrawn(Card drawnCard, bool regularDraw, bool isNewTurn)
     {
         Board.CardDrawn(drawnCard, regularDraw, isNewTurn);
-        for (var i = 0; i < Players.Length; i++)
+        foreach (var player in Players)
         {
-            Players[i].Commander.CardDrawn(drawnCard, regularDraw, isNewTurn);
+            player.Commander.CardDrawn(drawnCard, regularDraw, isNewTurn);
         }
     }
 
     public void CardDiscardEffect(sbyte playerIndex, int numberOfCards)
     {
         Board.CardDiscardEffect(playerIndex, numberOfCards);
-        for (var i = 0; i < Players.Length; i++)
+        foreach (var player in Players)
         {
-            Players[i].Commander.CardDiscardEffect(playerIndex, numberOfCards);
+            player.Commander.CardDiscardEffect(playerIndex, numberOfCards);
         }
     }
 
     public void SecretTriggered(Card secret, Card source)
     {
         Board.SecretTriggered(secret, source);
-        for (var i = 0; i < Players.Length; i++)
+        foreach (var player in Players)
         {
-            Players[i].Commander.SecretTriggered(secret, source);
+            player.Commander.SecretTriggered(secret, source);
         }
     }
 
     public void SecretDestroyed(Card secret, Card source)
     {
         Board.SecretDestroyed(secret, source);
-        for (var i = 0; i < Players.Length; i++)
+        foreach (var player in Players)
         {
-            Players[i].Commander.SecretDestroyed(secret, source);
+            player.Commander.SecretDestroyed(secret, source);
         }
     }
 
     public void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack target, Region region)
     {
         Board.TraitEffectActivating(effect, source, target, region);
-        for (var i = 0; i < Players.Length; i++)
+        foreach (var player in Players)
         {
-            Players[i].Commander.TraitEffectActivating(effect, source, target, region);
+            player.Commander.TraitEffectActivating(effect, source, target, region);
         }
     }
 
@@ -1182,7 +1179,7 @@ public class CcgGameState
 
     public sbyte GetNextPlayerIndex(sbyte playerIndex)
     {
-        if (SurrenderGameOver || Players == null || _gameRules == null)
+        if (SurrenderGameOver)
         {
             return GameOverIndicator;
         }
@@ -1247,9 +1244,9 @@ public class CcgGameState
             AddCCGEventLog(logData);
             Players[PlayerTurn].NewTurn(PlayerTurn, GetDrawCount());
             Board.NewTurn(PlayerTurn);
-            for (var i = 0; i < Players.Length; i++)
+            foreach (var player in Players)
             {
-                Players[i].Commander.NewTurn(playerIndex);
+                player.Commander.NewTurn(playerIndex);
             }
         }
 
