@@ -145,6 +145,11 @@ public class MatchmakingService : IMatchmakingService
     {
         try
         {
+            if (Random.Shared.Next(2) == 1)
+            {
+                (ticket1, ticket2) = (ticket2, ticket1);
+            }
+
             await _battleService.CreateBattle(ticket1.UserId, ticket2.UserId, ticket1.VersusType);
 
             _userService.IncrementChangeCounter(ticket1.UserId);
