@@ -1,3 +1,5 @@
+using Frontline.Battle.Traits;
+
 namespace Frontline.Battle;
 
 public class CardStack
@@ -186,7 +188,7 @@ public class CardStack
         _ejectedCard?.CardMoved(card, target, region, origin);
     }
 
-    public void CardGainedStatus(Card theCard, Card source, sbyte statusType)
+    public void CardGainedStatus(Card theCard, Card source, ApplyStatusTraitStatusType statusType)
     {
         PrimaryCard?.CardGainedStatus(theCard, source, statusType);
         _ejectedCard?.CardGainedStatus(theCard, source, statusType);

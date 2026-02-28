@@ -1,4 +1,5 @@
 using Frontline.Battle.CcgEvents;
+using Frontline.Battle.Traits;
 using Frontline.Game;
 using Frontline.Game.Card;
 
@@ -218,7 +219,7 @@ public class ActiveTrait
         trait.CardCounterAttacked(attacker, target, this);
     }
 
-    public void CardGainedStatus(Card theCard, Card source, sbyte statusType)
+    public void CardGainedStatus(Card theCard, Card source, ApplyStatusTraitStatusType statusType)
     {
         trait.CardGainedStatus(theCard, source, statusType, this);
     }

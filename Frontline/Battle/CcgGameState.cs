@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Frontline.Battle.CcgEvents;
+using Frontline.Battle.Traits;
 using Frontline.Game;
 using Frontline.Game.Card;
 
@@ -1060,7 +1061,7 @@ public class CcgGameState
         }
     }
 
-    public void CardGainedStatus(Card theCard, Card source, sbyte statusType)
+    public void CardGainedStatus(Card theCard, Card source, ApplyStatusTraitStatusType statusType)
     {
         Board.CardGainedStatus(theCard, source, statusType);
         for (var i = 0; i < Players.Length; i++)

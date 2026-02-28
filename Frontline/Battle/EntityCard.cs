@@ -1,4 +1,5 @@
 using Frontline.Battle.CcgEvents;
+using Frontline.Battle.Traits;
 using Frontline.Data.Entities;
 using Frontline.Game.Card;
 
@@ -115,7 +116,7 @@ public class EntityCard : Card
     {
         if (stack.PrimaryCard == null)
         {
-            SetActed(15);
+            SetActed(EntityActionType.AnyActionMask);
             stack.PrimaryCard = this;
             for (var i = 0; i < cardTraits.Length; i++)
             {
@@ -152,7 +153,7 @@ public class EntityCard : Card
         }
 
         target.PrimaryCard = this;
-        SetActed(14);
+        SetActed(EntityActionType.AnyButDeployMask);
         ActiveData.MoveTraits(target, region, embark);
         return base.Move(target, region, origin, embark);
     }
@@ -237,7 +238,7 @@ public class EntityCard : Card
             return;
         }
 
-        SetActed(14);
+        SetActed(EntityActionType.AnyButDeployMask);
         ActiveData.AttackTraits(target);
         var list = GameState.FindCardStack(target);
         if (list.Count > 0)
@@ -257,7 +258,7 @@ public class EntityCard : Card
         {
             if (cardTraits[i].TraitType == TraitType.OneShot && !ActiveData.TraitActivated[i])
             {
-                SetActed(14);
+                SetActed(EntityActionType.AnyButDeployMask);
                 ActiveData.TraitActivated[i] = true;
                 for (var num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
                 {
@@ -531,7 +532,7 @@ public class EntityCard : Card
         }
     }
 
-    protected void SetActed(sbyte action)
+    protected void SetActed(EntityActionType action)
     {
         var activeEntityCardData = (ActiveEntityCardData) ActiveData;
         activeEntityCardData.Acted = (sbyte) ((byte) activeEntityCardData.Acted | (byte) action);
@@ -543,7 +544,7 @@ public class EntityCard : Card
         activeEntityCardData.Acted = 0;
     }
 
-    public void ClearActed(sbyte action)
+    public void ClearActed(EntityActionType action)
     {
         var activeEntityCardData = (ActiveEntityCardData) ActiveData;
         activeEntityCardData.Acted = (sbyte) ((byte) activeEntityCardData.Acted & ~(byte) action);
@@ -634,7 +635,7 @@ public class EntityCard : Card
         }
     }
 
-    public override void CardGainedStatus(Card theCard, Card source, sbyte statusType)
+    public override void CardGainedStatus(Card theCard, Card source, ApplyStatusTraitStatusType statusType)
     {
         base.CardGainedStatus(theCard, source, statusType);
         if (Secrets != null)

@@ -139,7 +139,7 @@ public class StatModifierPassive : BaseTraitEffect
         }
     }
 
-    public override void CardGainedStatus(Card theCard, Card source, sbyte statusType, ActiveTrait active)
+    public override void CardGainedStatus(Card theCard, Card source, ApplyStatusTraitStatusType statusType, ActiveTrait active)
     {
         if (Targets.Scope != 0 && Targets.Scope != TraitTargetScope.UnitStack &&
             ApplyStatus.IsDeterStatus(statusType) && active.GetTraitSource() != null &&

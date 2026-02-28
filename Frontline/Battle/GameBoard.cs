@@ -1,4 +1,5 @@
 using Frontline.Battle.CcgEvents;
+using Frontline.Battle.Traits;
 using Frontline.Game;
 using Frontline.Game.Card;
 
@@ -238,7 +239,7 @@ public class GameBoard
         var player = players[targetOwner];
         if (player.Resources.Health > 0 && targetId == player.Commander.PrimaryCard.InstanceId)
         {
-            if (_sourceRegion == Region.Control || primaryCard.HasStatusEffect(8))
+            if (_sourceRegion == Region.Control || primaryCard.HasStatusEffect(ApplyStatusTraitStatusType.Operative))
             {
                 return primaryCard.CanAttack(cardStack, player.Commander);
             }
@@ -452,7 +453,7 @@ public class GameBoard
         }
     }
 
-    public void CardGainedStatus(Card theCard, Card source, sbyte statusType)
+    public void CardGainedStatus(Card theCard, Card source, ApplyStatusTraitStatusType statusType)
     {
         GameRegion gameRegion = null;
         for (var i = 0; i < 3; i++)

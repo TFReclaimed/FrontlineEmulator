@@ -158,17 +158,17 @@ public class BaseTrait
                     break;
             }
 
-            if (TraitType == TraitType.BurnCard && primaryCard.HasStatusEffect(5))
+            if (TraitType == TraitType.BurnCard && primaryCard.HasStatusEffect(ApplyStatusTraitStatusType.CannotTargetBurn))
             {
                 return false;
             }
 
-            if (TraitType == TraitType.OneShot && primaryCard.HasStatusEffect(6))
+            if (TraitType == TraitType.OneShot && primaryCard.HasStatusEffect(ApplyStatusTraitStatusType.CannotTargetTrait))
             {
                 return false;
             }
 
-            if (TraitType == TraitType.Secret && primaryCard.HasStatusEffect(7))
+            if (TraitType == TraitType.Secret && primaryCard.HasStatusEffect(ApplyStatusTraitStatusType.CannotTargetSecret))
             {
                 return false;
             }

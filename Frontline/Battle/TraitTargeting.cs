@@ -404,7 +404,7 @@ public class TraitTargeting
                 for (var num2 = card.ActiveData.ActiveTraits.Count - 1; num2 >= 0; num2--)
                 {
                     var activeTrait2 = card.ActiveData.ActiveTraits[num2];
-                    if (activeTrait2.GetTraitInfo().IsCombatManipulationPassive(CombatManipulationPassive.Stealth, activeTrait2))
+                    if (activeTrait2.GetTraitInfo().IsCombatManipulationPassive(CombatManipulationPassiveType.Stealth, activeTrait2))
                     {
                         return true;
                     }
@@ -431,21 +431,21 @@ public class TraitTargeting
 
                 return false;
             case TargetTypeMod.IsStunned:
-                if (card.HasStatusEffect(1))
+                if (card.HasStatusEffect(ApplyStatusTraitStatusType.Stun))
                 {
                     return true;
                 }
 
                 return false;
             case TargetTypeMod.IsDeterred:
-                if (card.HasStatusEffect(2))
+                if (card.HasStatusEffect(ApplyStatusTraitStatusType.Deter))
                 {
                     return true;
                 }
 
                 return false;
             case TargetTypeMod.IsImmobilized:
-                if (card.HasStatusEffect(4))
+                if (card.HasStatusEffect(ApplyStatusTraitStatusType.Immobilize))
                 {
                     return true;
                 }

@@ -372,7 +372,7 @@ public class TraitTrigger : BaseTraitEffect
         }
     }
 
-    public override void CardGainedStatus(Card theCard, Card source, sbyte statusType, ActiveTrait activeTrait)
+    public override void CardGainedStatus(Card theCard, Card source, ApplyStatusTraitStatusType statusType, ActiveTrait activeTrait)
     {
     }
 

@@ -17,7 +17,7 @@ public class ActedModPassive : BaseTraitEffect
 
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
-        sbyte b = 0;
+        EntityActionType b = 0;
         var entityCard = (EntityCard) card;
         var flag = entityCard.IsCardTraitsDetered();
         if (!active.GetTraitInfo().Deterable)
@@ -32,22 +32,22 @@ public class ActedModPassive : BaseTraitEffect
             {
                 if (Deploy)
                 {
-                    b = (sbyte) ((byte) b | 1);
+                    b |= EntityActionType.Deploy;
                 }
 
                 if (IsAttack)
                 {
-                    b = (sbyte) ((byte) b | 2);
+                    b |= EntityActionType.Attack;
                 }
 
                 if (IsMove)
                 {
-                    b = (sbyte) ((byte) b | 4);
+                    b |= EntityActionType.Move;
                 }
 
                 if (IsActivate)
                 {
-                    b = (sbyte) ((byte) b | 8);
+                    b |= EntityActionType.Activate;
                 }
 
                 entityCard.ClearActed(b);
@@ -57,22 +57,22 @@ public class ActedModPassive : BaseTraitEffect
         {
             if (Deploy)
             {
-                b = (sbyte) ((byte) b | 1);
+                b |= EntityActionType.Deploy;
             }
 
             if (IsAttack)
             {
-                b = (sbyte) ((byte) b | 2);
+                b |= EntityActionType.Attack;
             }
 
             if (IsMove)
             {
-                b = (sbyte) ((byte) b | 4);
+                b |= EntityActionType.Move;
             }
 
             if (IsActivate)
             {
-                b = (sbyte) ((byte) b | 8);
+                b |= EntityActionType.Activate;
             }
 
             entityCard.ClearActed(b);
@@ -85,7 +85,7 @@ public class ActedModPassive : BaseTraitEffect
             IsMove)
         {
             var entityCard = (EntityCard) active.GetTraitTarget();
-            entityCard.ClearActed(14);
+            entityCard.ClearActed(EntityActionType.AnyButDeployMask);
             if (active.HasCharges())
             {
                 active.ExpendCharge();
@@ -99,7 +99,7 @@ public class ActedModPassive : BaseTraitEffect
             IsAttack)
         {
             var entityCard = (EntityCard) active.GetTraitTarget();
-            entityCard.ClearActed(14);
+            entityCard.ClearActed(EntityActionType.AnyButDeployMask);
             if (active.HasCharges())
             {
                 active.ExpendCharge();
@@ -113,7 +113,7 @@ public class ActedModPassive : BaseTraitEffect
             IsActivate)
         {
             var entityCard = (EntityCard) active.GetTraitTarget();
-            entityCard.ClearActed(14);
+            entityCard.ClearActed(EntityActionType.AnyButDeployMask);
             if (active.HasCharges())
             {
                 active.ExpendCharge();

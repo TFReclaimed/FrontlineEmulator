@@ -1,4 +1,5 @@
 using Frontline.Battle.CcgEvents;
+using Frontline.Battle.Traits;
 using Frontline.Data.Entities;
 using Frontline.Game.Card;
 
@@ -340,7 +341,7 @@ public class CommanderCard : Card
         }
     }
 
-    public override void CardGainedStatus(Card theCard, Card source, sbyte statusType)
+    public override void CardGainedStatus(Card theCard, Card source, ApplyStatusTraitStatusType statusType)
     {
         base.CardGainedStatus(theCard, source, statusType);
         for (var num = Secrets.Count - 1; num >= 0; num--)

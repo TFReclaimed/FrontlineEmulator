@@ -21,7 +21,7 @@ public class ActedModExclusive : BaseTraitEffect
             IsMove)
         {
             var entityCard = (EntityCard) active.GetTraitTarget();
-            entityCard.ClearActed(10);
+            entityCard.ClearActed(EntityActionType.ActivateAttackMask);
             if (active.HasCharges())
             {
                 active.ExpendCharge();
@@ -35,7 +35,7 @@ public class ActedModExclusive : BaseTraitEffect
             IsAttack)
         {
             var entityCard = (EntityCard) active.GetTraitTarget();
-            entityCard.ClearActed(12);
+            entityCard.ClearActed(EntityActionType.MoveActivateMask);
             if (active.HasCharges())
             {
                 active.ExpendCharge();
@@ -49,7 +49,7 @@ public class ActedModExclusive : BaseTraitEffect
             IsActivate)
         {
             var entityCard = (EntityCard) active.GetTraitTarget();
-            entityCard.ClearActed(6);
+            entityCard.ClearActed(EntityActionType.MoveAttackMask);
             if (active.HasCharges())
             {
                 active.ExpendCharge();

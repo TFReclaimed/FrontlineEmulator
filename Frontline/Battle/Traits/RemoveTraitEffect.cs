@@ -6,18 +6,8 @@ namespace Frontline.Battle.Traits;
 
 public class RemoveTraitEffect : BaseTraitEffect
 {
-    public const sbyte BurnCard = 1;
-
-    public const sbyte Secret = 2;
-
-    public const sbyte Activated = 3;
-
-    public const sbyte Stealth = 4;
-
-    public const sbyte TraitId = 5;
-
     [JsonPropertyName("traitType")]
-    public sbyte RemoveTraitType { get; set; }
+    public RemoveTraitType RemoveTraitType { get; set; }
 
     [JsonPropertyName("templateID")]
     public int TemplateId { get; set; }
@@ -38,7 +28,7 @@ public class RemoveTraitEffect : BaseTraitEffect
     {
         switch (RemoveTraitType)
         {
-            case BurnCard:
+            case RemoveTraitType.BurnCard:
                 if (active.GetTraitSource() != null)
                 {
                     var traitSource2 = active.GetTraitSource();
@@ -57,7 +47,7 @@ public class RemoveTraitEffect : BaseTraitEffect
                 }
 
                 break;
-            case Secret:
+            case RemoveTraitType.Secret:
                 if (active.GetTraitSource() != null)
                 {
                     var traitSource = active.GetTraitSource();
@@ -76,14 +66,14 @@ public class RemoveTraitEffect : BaseTraitEffect
                 }
 
                 break;
-            case Stealth:
-                if (active.GetTraitInfo().IsCombatManipulationPassive(CombatManipulationPassive.Stealth, active))
+            case RemoveTraitType.Stealth:
+                if (active.GetTraitInfo().IsCombatManipulationPassive(CombatManipulationPassiveType.Stealth, active))
                 {
                     return true;
                 }
 
                 break;
-            case TraitId:
+            case RemoveTraitType.TraitId:
                 if (active.TraitSourceId == TemplateId)
                 {
                     return true;
@@ -94,4 +84,13 @@ public class RemoveTraitEffect : BaseTraitEffect
 
         return false;
     }
+}
+
+public enum RemoveTraitType
+{
+    BurnCard = 1,
+    Secret = 2,
+    Activated = 3,
+    Stealth = 4,
+    TraitId = 5
 }

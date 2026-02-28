@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Frontline.Battle.CcgEvents;
+using Frontline.Battle.Traits;
 using Frontline.Data.Entities;
 using Frontline.Game;
 using Frontline.Game.Card;
@@ -779,7 +780,7 @@ public class Card : Item
         }
     }
 
-    public virtual void CardGainedStatus(Card theCard, Card source, sbyte statusType)
+    public virtual void CardGainedStatus(Card theCard, Card source, ApplyStatusTraitStatusType statusType)
     {
         for (var num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
         {
@@ -929,12 +930,12 @@ public class Card : Item
         }
     }
 
-    public virtual bool HasStatusEffect(sbyte effectID)
+    public virtual bool HasStatusEffect(ApplyStatusTraitStatusType effectId)
     {
         for (var num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
         {
             var activeTrait = ActiveData.ActiveTraits[num];
-            if (activeTrait.GetTraitInfo().IsStatusEffect(effectID, activeTrait))
+            if (activeTrait.GetTraitInfo().IsStatusEffect(effectId, activeTrait))
             {
                 return true;
             }
@@ -953,8 +954,8 @@ public class Card : Item
                 GameState.Logger.Warning(string.Concat("Card ", InstanceId, " has missing trait data on Active Trait index ",
                     num, " !!!!!!!! ", activeTrait, " !!!!!!"));
             }
-            else if (activeTrait.GetTraitInfo().IsStatusEffect(2, activeTrait) ||
-                     activeTrait.GetTraitInfo().IsStatusEffect(1, activeTrait))
+            else if (activeTrait.GetTraitInfo().IsStatusEffect(ApplyStatusTraitStatusType.Deter, activeTrait) ||
+                     activeTrait.GetTraitInfo().IsStatusEffect(ApplyStatusTraitStatusType.Stun, activeTrait))
             {
                 return true;
             }
@@ -963,14 +964,14 @@ public class Card : Item
         return false;
     }
 
-    public virtual void RemoveStatusEffect(sbyte effectID)
+    public virtual void RemoveStatusEffect(ApplyStatusTraitStatusType effectId)
     {
         for (var num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
         {
             var activeTrait = ActiveData.ActiveTraits[num];
             var detered = activeTrait.Detered;
             activeTrait.Detered = false;
-            if (activeTrait.GetTraitInfo().IsStatusEffect(effectID, activeTrait))
+            if (activeTrait.GetTraitInfo().IsStatusEffect(effectId, activeTrait))
             {
                 activeTrait.Deactivate(true);
             }

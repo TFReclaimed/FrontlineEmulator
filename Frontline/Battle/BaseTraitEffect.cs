@@ -861,12 +861,12 @@ public class BaseTraitEffect
         return false;
     }
 
-    public virtual bool IsStatusEffect(sbyte effectID, ActiveTrait active)
+    public virtual bool IsStatusEffect(ApplyStatusTraitStatusType effectId, ActiveTrait active)
     {
         return false;
     }
 
-    public virtual bool IsCombatManipulationPassive(sbyte effectID, ActiveTrait active)
+    public virtual bool IsCombatManipulationPassive(CombatManipulationPassiveType effectId, ActiveTrait active)
     {
         return false;
     }
@@ -915,7 +915,7 @@ public class BaseTraitEffect
     {
     }
 
-    public virtual void CardGainedStatus(Card theCard, Card source, sbyte statusType, ActiveTrait activeTrait)
+    public virtual void CardGainedStatus(Card theCard, Card source, ApplyStatusTraitStatusType statusType, ActiveTrait activeTrait)
     {
     }
 

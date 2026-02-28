@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Frontline.Battle.CcgEvents;
+using Frontline.Battle.Traits;
 using Frontline.Game;
 
 namespace Frontline.Battle;
@@ -126,7 +127,7 @@ public class Player
         EndTurnTraitsTriggered = false;
         var gameTemplate = _gameState.GetGameTemplate();
         Resources.NewTurn(gameTemplate);
-        if (!Commander.PrimaryCard.HasStatusEffect(1))
+        if (!Commander.PrimaryCard.HasStatusEffect(ApplyStatusTraitStatusType.Stun))
         {
             SupportDeck.NewTurn(Resources.CommandAccum);
         }

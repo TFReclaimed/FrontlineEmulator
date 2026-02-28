@@ -2,27 +2,9 @@ namespace Frontline.Battle.Traits;
 
 public class CombatManipulationPassive : BaseTraitEffect
 {
-    public const sbyte Stealth = 1;
+    public CombatManipulationPassiveType EffectType { get; set; }
 
-    public const sbyte IgnoreStealth = 2;
-
-    public const sbyte Dodge = 3;
-
-    public const sbyte Sniper = 4;
-
-    public const sbyte IgnoreSniper = 5;
-
-    public const sbyte Block = 6;
-
-    public const sbyte DisableCounter = 7;
-
-    public const sbyte DamageConvertAp = 8;
-
-    public const sbyte DamageConvertNormal = 9;
-
-    public sbyte EffectType { get; set; }
-
-    public override bool IsCombatManipulationPassive(sbyte effectId, ActiveTrait active)
+    public override bool IsCombatManipulationPassive(CombatManipulationPassiveType effectId, ActiveTrait active)
     {
         if (Deterable && active.Detered)
         {
@@ -46,7 +28,7 @@ public class CombatManipulationPassive : BaseTraitEffect
         }
     }
 
-    public override void CardGainedStatus(Card theCard, Card source, sbyte statusType, ActiveTrait active)
+    public override void CardGainedStatus(Card theCard, Card source, ApplyStatusTraitStatusType statusType, ActiveTrait active)
     {
         if (Targets.Scope != 0 && Targets.Scope != TraitTargetScope.UnitStack &&
             ApplyStatus.IsDeterStatus(statusType) && theCard.EqualsTo(active.GetTraitSource()))
@@ -62,6 +44,19 @@ public class CombatManipulationPassive : BaseTraitEffect
             return true;
         }
 
-        return EffectType != DisableCounter;
+        return EffectType != CombatManipulationPassiveType.DisableCounter;
     }
+}
+
+public enum CombatManipulationPassiveType
+{
+    Stealth = 1,
+    IgnoreStealth = 2,
+    Dodge = 3,
+    Sniper = 4,
+    IgnoreSniper = 5,
+    Block = 6,
+    DisableCounter = 7,
+    DamageConvertAp = 8,
+    DamageConvertNormal = 9
 }
