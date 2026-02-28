@@ -59,9 +59,9 @@ public class BaseTraitEffect
 
     public TraitDuration DurationData { get; set; }
 
-    protected CCG GameState = null!;
+    protected CcgGameState GameState = null!;
 
-    public void Init(CCG gameState)
+    public void Init(CcgGameState gameState)
     {
         GameState = gameState;
     }

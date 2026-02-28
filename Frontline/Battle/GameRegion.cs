@@ -9,13 +9,13 @@ public class GameRegion
 
     public Region RegionLocation { get; set; }
 
-    private readonly CCG _gameState;
+    private readonly CcgGameState _gameState;
 
     private readonly short[] _titanSlots;
 
     private readonly bool _slotIndependent = true;
 
-    public GameRegion(CCG gameState, Region region)
+    public GameRegion(CcgGameState gameState, Region region)
     {
         _gameState = gameState;
 

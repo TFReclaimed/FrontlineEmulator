@@ -6,9 +6,9 @@ public class CardStack
 
     private EntityCard? _ejectedCard;
 
-    private readonly CCG _gameState;
+    private readonly CcgGameState _gameState;
 
-    public CardStack(CCG gameState)
+    public CardStack(CcgGameState gameState)
     {
         _gameState = gameState;
         PrimaryCard = null;

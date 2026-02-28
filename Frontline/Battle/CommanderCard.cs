@@ -12,12 +12,12 @@ public class CommanderCard : Card
 
     private Player parent;
 
-    public CommanderCard(CCG game)
+    public CommanderCard(CcgGameState game)
         : base(game)
     {
     }
 
-    public CommanderCard(CCG game, Card other)
+    public CommanderCard(CcgGameState game, Card other)
         : base(game, other)
     {
         if (other is CommanderCard)
@@ -28,7 +28,7 @@ public class CommanderCard : Card
         }
     }
 
-    public CommanderCard(CCG game, ItemEntity itemEntity)
+    public CommanderCard(CcgGameState game, ItemEntity itemEntity)
         : base(game, itemEntity)
     {
     }

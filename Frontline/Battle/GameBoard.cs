@@ -10,9 +10,9 @@ public class GameBoard
 
     private Region _sourceRegion = Region.NumRegions;
 
-    private readonly CCG _gameState;
+    private readonly CcgGameState _gameState;
 
-    public GameBoard(CCG gameState)
+    public GameBoard(CcgGameState gameState)
     {
         _gameState = gameState;
 

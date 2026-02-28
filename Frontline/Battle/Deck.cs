@@ -29,7 +29,7 @@ public class Deck
         }
     }
 
-    public Card? DrawCard(CCG game)
+    public Card? DrawCard(CcgGameState game)
     {
         var num = Cards.Count - 1;
         if (num < 0)

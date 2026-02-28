@@ -17,7 +17,7 @@ public class ActiveCardData
         ActiveTraits = new List<ActiveTrait>();
     }
 
-    public void Init(CCG game, Card ownerCard)
+    public void Init(CcgGameState game, Card ownerCard)
     {
         if (ActiveTraits == null)
         {

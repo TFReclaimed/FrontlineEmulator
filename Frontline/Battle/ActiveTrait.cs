@@ -28,9 +28,9 @@ public class ActiveTrait
 
     private Card traitTarget;
 
-    private readonly CCG _gameState;
+    private readonly CcgGameState _gameState;
 
-    public ActiveTrait(CCG gameState)
+    public ActiveTrait(CcgGameState gameState)
     {
         _gameState = gameState;
     }

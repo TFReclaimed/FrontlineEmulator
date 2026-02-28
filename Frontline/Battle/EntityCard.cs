@@ -14,18 +14,18 @@ public class EntityCard : Card
 
     private bool isDead;
 
-    public EntityCard(CCG game)
+    public EntityCard(CcgGameState game)
         : base(game)
     {
     }
 
-    public EntityCard(CCG game, Card other)
+    public EntityCard(CcgGameState game, Card other)
         : base(game, other)
     {
         Secrets = other.GetSecrets();
     }
 
-    public EntityCard(CCG game, ItemEntity itemEntity)
+    public EntityCard(CcgGameState game, ItemEntity itemEntity)
         : base(game, itemEntity)
     {
     }
@@ -250,7 +250,7 @@ public class EntityCard : Card
         }
     }
 
-    public void ActivateTrait(CardStack target, Region region, CCG game)
+    public void ActivateTrait(CardStack target, Region region, CcgGameState game)
     {
         ActiveTrait activeTrait = null;
         for (var i = 0; i < cardTraits.Length; i++)

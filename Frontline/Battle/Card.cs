@@ -23,20 +23,20 @@ public class Card : Item
 
     protected sbyte currentCost;
 
-    protected readonly CCG GameState;
+    protected readonly CcgGameState GameState;
 
-    public Card(CCG game)
+    public Card(CcgGameState game)
     {
         GameState = game;
     }
 
-    public Card(CCG game, Card other)
+    public Card(CcgGameState game, Card other)
     {
         GameState = game;
         Copy(other);
     }
 
-    public Card(CCG game, ItemEntity itemEntity)
+    public Card(CcgGameState game, ItemEntity itemEntity)
     {
         GameState = game;
         InstanceId = itemEntity.ItemId;
@@ -45,7 +45,7 @@ public class Card : Item
         Rank = itemEntity.Rank;
     }
 
-    public Card GenerateAndInit(CCG game)
+    public Card GenerateAndInit(CcgGameState game)
     {
         if (TemplateId == 0)
         {

@@ -69,7 +69,7 @@ public class UnitCardTemplate : EntityCardTemplate
         return unitTemplate;
     }
 
-    public override Battle.Card GenerateCard(CCG game, Battle.Card? source = null)
+    public override Battle.Card GenerateCard(CcgGameState game, Battle.Card? source = null)
     {
         UnitCard unitCard;
         if (source != null)
@@ -112,7 +112,7 @@ public class UnitCardTemplate : EntityCardTemplate
         return false;
     }
 
-    public override bool CanMove(CCG gameState, CardStack source, CardStack target, bool emptyAvailable, bool embark)
+    public override bool CanMove(CcgGameState gameState, CardStack source, CardStack target, bool emptyAvailable, bool embark)
     {
         if (base.CanMove(gameState, source, target, emptyAvailable, embark))
         {

@@ -18,12 +18,12 @@ public class UnitCard : EntityCard
 
     private sbyte defense;
 
-    public UnitCard(CCG game)
+    public UnitCard(CcgGameState game)
         : base(game)
     {
     }
 
-    public UnitCard(CCG game, Card other)
+    public UnitCard(CcgGameState game, Card other)
         : base(game, other)
     {
         if (other is UnitCard)
@@ -34,7 +34,7 @@ public class UnitCard : EntityCard
         }
     }
 
-    public UnitCard(CCG game, ItemEntity itemEntity)
+    public UnitCard(CcgGameState game, ItemEntity itemEntity)
         : base(game, itemEntity)
     {
     }

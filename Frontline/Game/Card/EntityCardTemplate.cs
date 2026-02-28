@@ -6,7 +6,7 @@ public class EntityCardTemplate : CardTemplate
 {
     public sbyte Health { get; set; }
 
-    public override Battle.Card GenerateCard(CCG game, Battle.Card? source = null)
+    public override Battle.Card GenerateCard(CcgGameState game, Battle.Card? source = null)
     {
         EntityCard entityCard;
         if (source != null)
@@ -60,7 +60,7 @@ public class EntityCardTemplate : CardTemplate
         return false;
     }
 
-    public override bool CanMove(CCG gameState, CardStack source, CardStack target, bool emptyAvailable, bool embark)
+    public override bool CanMove(CcgGameState gameState, CardStack source, CardStack target, bool emptyAvailable, bool embark)
     {
         if (target.PrimaryCard == null)
         {

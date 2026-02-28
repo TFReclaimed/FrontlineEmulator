@@ -16,7 +16,7 @@ public class CcgGame
 
     public readonly List<GameEventParams> GameEvents = [];
 
-    public CCG GameState { get; set; }
+    public CcgGameState GameState { get; set; }
 
     public RulesetPathResponse RulesetPath { get; set; }
 
@@ -40,7 +40,7 @@ public class CcgGame
 
         var innerLogger = loggerFactory.CreateLogger("Frontline.Battle.Game");
         var gameLogger = new GameLogger(innerLogger, Id);
-        GameState = new CCG(this, gameLogger, Id, 1, versusType);
+        GameState = new CcgGameState(this, gameLogger, Id, 1, versusType);
 
         var deckCards = new List<List<Card>>();
         for (var i = 0; i < 2; i++)

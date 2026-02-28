@@ -21,7 +21,7 @@ public class BaseTrait
 
     public List<BaseTraitEffect> Effects { get; set; }
 
-    public void Init(CCG gameState)
+    public void Init(CcgGameState gameState)
     {
         foreach (var effect in Effects)
         {
@@ -179,13 +179,13 @@ public class BaseTrait
         return targets.CheckRegion(region, owner);
     }
 
-    public bool CanActivate(Card target, Card source, Region region, CCG game)
+    public bool CanActivate(Card target, Card source, Region region, CcgGameState game)
     {
         var list = game.FindCardStack(target);
         return CanActivate(list[0], region, source.ActiveData.Owner);
     }
 
-    public bool HasActiveTargets(Card card, CardStack target, Region region, CCG game)
+    public bool HasActiveTargets(Card card, CardStack target, Region region, CcgGameState game)
     {
         for (var i = 0; i < Effects.Count; i++)
         {
@@ -198,7 +198,7 @@ public class BaseTrait
         return false;
     }
 
-    public void Activate(Card card, CardStack target, Region region, CCG game)
+    public void Activate(Card card, CardStack target, Region region, CcgGameState game)
     {
         var trigger = GetTrigger(0);
         if (trigger != null)

@@ -106,7 +106,7 @@ public class TraitTargeting
         return true;
     }
 
-    public bool CardTargetMatch(CCG gameState, Card card, Card source)
+    public bool CardTargetMatch(CcgGameState gameState, Card card, Card source)
     {
         CardStack cardStack = null;
         var list = gameState.FindCardStack(card);
@@ -477,7 +477,7 @@ public class TraitTargeting
         return true;
     }
 
-    public int CalculateCount(CCG gameState, ActiveTrait active)
+    public int CalculateCount(CcgGameState gameState, ActiveTrait active)
     {
         var num = 0;
         var region = Region.NumRegions;

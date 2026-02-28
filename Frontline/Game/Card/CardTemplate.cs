@@ -24,7 +24,7 @@ public class CardTemplate
         return this;
     }
 
-    public virtual Battle.Card GenerateCard(CCG game, Battle.Card? source = null)
+    public virtual Battle.Card GenerateCard(CcgGameState game, Battle.Card? source = null)
     {
         Battle.Card card;
         if (source != null)
@@ -98,7 +98,7 @@ public class CardTemplate
         return false;
     }
 
-    public virtual bool CanMove(CCG gameState, CardStack source, CardStack target, bool emptyAvailable, bool embark)
+    public virtual bool CanMove(CcgGameState gameState, CardStack source, CardStack target, bool emptyAvailable, bool embark)
     {
         return false;
     }

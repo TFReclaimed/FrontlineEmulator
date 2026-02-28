@@ -5,7 +5,7 @@ using Frontline.Game.Card;
 
 namespace Frontline.Battle;
 
-public class CCG
+public class CcgGameState
 {
     public const sbyte GameOverIndicator = -1;
 
@@ -63,7 +63,7 @@ public class CCG
 
     private readonly List<CcgEventData> _ccgEventsLog = [];
 
-    public CCG(CcgGame game, GameLogger logger, Guid gameInstance, int gameId, VersusType gameType)
+    public CcgGameState(CcgGame game, GameLogger logger, Guid gameInstance, int gameId, VersusType gameType)
     {
         _game = game;
         Logger = logger;

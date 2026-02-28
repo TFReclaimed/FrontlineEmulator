@@ -4,7 +4,7 @@ public class CardCollection
 {
     public List<Card> Cards { get; set; } = [];
 
-    public CardCollection(sbyte drawCount, Deck? deck, CCG gameState, sbyte playerIndex)
+    public CardCollection(sbyte drawCount, Deck? deck, CcgGameState gameState, sbyte playerIndex)
     {
         if (drawCount <= 0)
         {
@@ -18,7 +18,7 @@ public class CardCollection
         }
     }
 
-    public Card? DrawFromDeck(Deck deck, CCG gameState, sbyte playerIndex)
+    public Card? DrawFromDeck(Deck deck, CcgGameState gameState, sbyte playerIndex)
     {
         var card = deck.DrawCard(gameState);
         if (card != null)

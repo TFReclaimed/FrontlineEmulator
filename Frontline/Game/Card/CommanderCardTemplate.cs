@@ -6,7 +6,7 @@ public class CommanderCardTemplate : CardTemplate
 {
     public required List<int> SupportIds { get; set; }
 
-    public override Battle.Card GenerateCard(CCG game, Battle.Card? source = null)
+    public override Battle.Card GenerateCard(CcgGameState game, Battle.Card? source = null)
     {
         CommanderCard commanderCard;
         if (source != null)

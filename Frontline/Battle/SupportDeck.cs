@@ -17,9 +17,9 @@ public class SupportDeck : Deck
     [JsonPropertyName("noshuffle")]
     public bool NoShuffle { get; set; }
 
-    private readonly CCG _gameState;
+    private readonly CcgGameState _gameState;
 
-    public SupportDeck(CCG gameState, List<Card> cards, sbyte playerIndex, bool skipShuffle)
+    public SupportDeck(CcgGameState gameState, List<Card> cards, sbyte playerIndex, bool skipShuffle)
         : base(cards)
     {
         _gameState = gameState;

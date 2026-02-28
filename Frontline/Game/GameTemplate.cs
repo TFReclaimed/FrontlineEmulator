@@ -26,7 +26,7 @@ public class GameTemplate
     [JsonPropertyName("lossRewardID")]
     public int LossRewardId { get; set; }
 
-    public void CheckEndGame(CCG gameState)
+    public void CheckEndGame(CcgGameState gameState)
     {
         sbyte b = -127;
         int num = -1;
@@ -37,7 +37,7 @@ public class GameTemplate
             sbyte health = resources.Health;
             if (health <= 0)
             {
-                gameState.PlayerTurn = CCG.GameOverIndicator;
+                gameState.PlayerTurn = CcgGameState.GameOverIndicator;
             }
             else if (health > b)
             {
@@ -49,7 +49,7 @@ public class GameTemplate
                 num = i;
             }
         }
-        if (gameState.PlayerTurn == CCG.GameOverIndicator)
+        if (gameState.PlayerTurn == CcgGameState.GameOverIndicator)
         {
             gameState.WinningPlayer = (sbyte)num;
             gameState.GenerateRewards();
@@ -57,7 +57,7 @@ public class GameTemplate
         }
     }
 
-    public bool IsActive(sbyte playerIndex, CCG gameState)
+    public bool IsActive(sbyte playerIndex, CcgGameState gameState)
     {
         return gameState.Players[playerIndex].Resources.Health > 0;
     }

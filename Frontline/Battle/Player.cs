@@ -39,9 +39,9 @@ public class Player
 
     public bool EndTurnTraitsTriggered { get; set; }
 
-    private readonly CCG _gameState;
+    private readonly CcgGameState _gameState;
 
-    public Player(CCG gameState, int id, string profileName, List<Card> cards, List<Card> support,
+    public Player(CcgGameState gameState, int id, string profileName, List<Card> cards, List<Card> support,
         CommanderCard currentCommander, sbyte playerIndex, bool skipShuffle)
     {
         _gameState = gameState;
