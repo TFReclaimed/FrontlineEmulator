@@ -24,7 +24,7 @@ public class ActedModExclusive : BaseTraitEffect
             entityCard.ClearActed(10);
             if (active.HasCharges())
             {
-                active.ExpendCharge(GameState);
+                active.ExpendCharge();
             }
         }
     }
@@ -38,7 +38,7 @@ public class ActedModExclusive : BaseTraitEffect
             entityCard.ClearActed(12);
             if (active.HasCharges())
             {
-                active.ExpendCharge(GameState);
+                active.ExpendCharge();
             }
         }
     }
@@ -52,7 +52,7 @@ public class ActedModExclusive : BaseTraitEffect
             entityCard.ClearActed(6);
             if (active.HasCharges())
             {
-                active.ExpendCharge(GameState);
+                active.ExpendCharge();
             }
         }
     }

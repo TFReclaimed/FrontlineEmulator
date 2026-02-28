@@ -27,7 +27,7 @@ public class EjectEffect : BaseTraitEffect
             GameState.Disembark(unitCard.ActiveData.Owner, unitCard.InstanceId, true, this);
             if (active.HasCharges())
             {
-                active.ExpendCharge(GameState);
+                active.ExpendCharge();
             }
         }
     }

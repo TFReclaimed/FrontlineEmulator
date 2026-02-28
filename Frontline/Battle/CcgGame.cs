@@ -32,13 +32,15 @@ public class CcgGame
 
     public CcgGame(int player1Id, int player2Id, string player1Name, string player2Name, VersusType versusType,
         List<ItemEntity>[] deckEntities, List<ItemEntity>[] supportEntities, List<ItemEntity> commanderEntities,
-        bool production)
+        bool production, ILoggerFactory loggerFactory)
     {
         Id = Guid.NewGuid();
         Player1Id = player1Id;
         Player2Id = player2Id;
 
-        GameState = new CCG(this, Id, 1, versusType);
+        var innerLogger = loggerFactory.CreateLogger("Frontline.Battle.Game");
+        var gameLogger = new GameLogger(innerLogger, Id);
+        GameState = new CCG(this, gameLogger, Id, 1, versusType);
 
         var deckCards = new List<List<Card>>();
         for (var i = 0; i < 2; i++)
@@ -147,7 +149,7 @@ public class CcgGame
         var flag2 = area == TargetableArea.CurrentRegion;
         var flag3 = target != Region.NumRegions && slotIndex != -1;
         var flag4 = GameState.CanDeploy(playerIndex, cardId, area, target, slotIndex, pushDir);
-        Console.WriteLine("GAME DEPLOY - {0} {1} {2} {3} {4} {5} {6}", playerIndex, cardId, targetIndex, targetId, area,
+        GameState.Logger.Debug("GAME DEPLOY - {0} {1} {2} {3} {4} {5} {6}", playerIndex, cardId, targetIndex, targetId, area,
             target, slotIndex);
         if (flag && (!flag2 || flag3) && flag4)
         {
@@ -161,7 +163,7 @@ public class CcgGame
             return 0;
         }
 
-        Console.WriteLine(
+        GameState.Logger.Warning(
             "DEPLOY FAILED - Game.Deploy isSpecificArea-{0} isCurrentRegion-{1} isSlotSpecified-{2} canDeploy-{3}",
             flag, flag2, flag3, flag4);
         return 0;
@@ -169,7 +171,7 @@ public class CcgGame
 
     public int Move(sbyte playerIndex, int cardId, Region target, sbyte slotIndex, sbyte pushDir)
     {
-        Console.WriteLine("GAME MOVE - {0} {1} {2} {3}", playerIndex, cardId, target, slotIndex);
+        GameState.Logger.Debug("GAME MOVE - {0} {1} {2} {3}", playerIndex, cardId, target, slotIndex);
         if (target != Region.NumRegions && slotIndex != -1 &&
             GameState.CanMove(playerIndex, cardId, target, slotIndex, pushDir))
         {
@@ -182,13 +184,13 @@ public class CcgGame
             return 0;
         }
 
-        Console.WriteLine("MOVE FAILED - GameState.CanMove failed");
+        GameState.Logger.Warning("MOVE FAILED - GameState.CanMove failed");
         return 0;
     }
 
     public int Attack(sbyte playerIndex, int cardId, sbyte ownerId, int targetId)
     {
-        Console.WriteLine("GAME ATTACK - {0} {1} {2} {3}", playerIndex, cardId, ownerId, targetId);
+        GameState.Logger.Debug("GAME ATTACK - {0} {1} {2} {3}", playerIndex, cardId, ownerId, targetId);
         if (GameState.CanAttack(playerIndex, cardId, ownerId, targetId))
         {
             GameState.GetCCGEventLog().Clear();
@@ -200,7 +202,7 @@ public class CcgGame
             return 0;
         }
 
-        Console.WriteLine("ATTACK FAILED - GameState.CanAttack failed");
+        GameState.Logger.Warning("ATTACK FAILED - GameState.CanAttack failed");
         return 0;
     }
 

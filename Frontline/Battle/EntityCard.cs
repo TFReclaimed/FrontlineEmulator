@@ -131,7 +131,7 @@ public class EntityCard : Card
 
         if (!embark)
         {
-            Console.WriteLine("DEPLOY FAILED - EntityCard.Deploy target cardstack was not empty ID" +
+            GameState.Logger.Debug("DEPLOY FAILED - EntityCard.Deploy target cardstack was not empty ID" +
                               stack.PrimaryCard.InstanceId);
         }
 
@@ -144,7 +144,7 @@ public class EntityCard : Card
         {
             if (!embark)
             {
-                Console.WriteLine("MOVE FAILED - EntityCard.Move - target CardStack not empty. CID-" +
+                GameState.Logger.Warning("MOVE FAILED - EntityCard.Move - target CardStack not empty. CID-" +
                                   target.PrimaryCard.InstanceId);
             }
 
@@ -200,13 +200,13 @@ public class EntityCard : Card
     {
         if (target.PrimaryCard == null)
         {
-            Console.WriteLine("EntityCard.CanAttack false - Target stack is empty");
+            GameState.Logger.Debug("EntityCard.CanAttack false - Target stack is empty");
             return false;
         }
 
         if (CanDiscard())
         {
-            Console.WriteLine("EntityCard.CanAttack false - card is dead");
+            GameState.Logger.Debug("EntityCard.CanAttack false - card is dead");
             return false;
         }
 
@@ -224,7 +224,7 @@ public class EntityCard : Card
 
         if (flag2 && !flag)
         {
-            Console.WriteLine("EntityCard.CanAttack false - target card is not intercept");
+            GameState.Logger.Debug("EntityCard.CanAttack false - target card is not intercept");
         }
 
         return !flag2 || flag;

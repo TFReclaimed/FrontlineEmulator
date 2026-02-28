@@ -28,13 +28,13 @@ public class ActiveCardData
             for (var num = ActiveTraits.Count - 1; num >= 0; num--)
             {
                 var activeTrait = ActiveTraits[num];
-                activeTrait.Init(game, ownerCard);
+                activeTrait.Init(ownerCard);
             }
         }
 
         if (ownerCard.TemplateId != 0 && (TraitActivated == null || TraitActivated.Length != ownerCard.GetNumTraits()))
         {
-            Console.WriteLine("Active Data Init for card " + ownerCard.InstanceId + " - traitActivated is invalid!");
+            game.Logger.Warning("Active Data Init for card " + ownerCard.InstanceId + " - traitActivated is invalid!");
             TraitActivated = new bool[ownerCard.GetNumTraits()];
             for (var i = 0; i < TraitActivated.Length; i++)
             {

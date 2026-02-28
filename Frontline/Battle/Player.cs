@@ -65,7 +65,7 @@ public class Player
         commanderCard.SetPlayer(this);
         commanderCard.ActiveData.Owner = playerIndex;
         commanderCard.Setup();
-        Commander = new CardStack
+        Commander = new CardStack(_gameState)
         {
             PrimaryCard = commanderCard
         };

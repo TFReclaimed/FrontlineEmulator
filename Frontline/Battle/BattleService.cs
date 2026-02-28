@@ -18,6 +18,8 @@ public class BattleService : IBattleService
 {
     private readonly ILogger<BattleService> _logger;
 
+    private readonly ILoggerFactory _loggerFactory;
+
     private readonly IServiceScopeFactory _serviceScopeFactory;
 
     private readonly IWebHostEnvironment _environment;
@@ -26,10 +28,11 @@ public class BattleService : IBattleService
 
     private readonly Lock _lock = new();
 
-    public BattleService(ILogger<BattleService> logger, IServiceScopeFactory serviceScopeFactory,
-        IWebHostEnvironment environment)
+    public BattleService(ILogger<BattleService> logger, ILoggerFactory loggerFactory,
+        IServiceScopeFactory serviceScopeFactory, IWebHostEnvironment environment)
     {
         _logger = logger;
+        _loggerFactory = loggerFactory;
         _serviceScopeFactory = serviceScopeFactory;
         _environment = environment;
     }
@@ -72,7 +75,7 @@ public class BattleService : IBattleService
 
         var battle = new CcgGame(player1Id, player2Id, player1Entity.Name, player2Entity.Name, versusType,
             [player1Deck, player2Deck], [player1Support, player2Support],
-            [player1Commander, player2Commander], _environment.IsProduction());
+            [player1Commander, player2Commander], _environment.IsProduction(), _loggerFactory);
         battle.OnBattleFinished += OnBattleFinished;
 
         lock (_lock)

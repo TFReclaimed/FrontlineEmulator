@@ -28,12 +28,19 @@ public class ActiveTrait
 
     private Card traitTarget;
 
+    private readonly CCG _gameState;
+
+    public ActiveTrait(CCG gameState)
+    {
+        _gameState = gameState;
+    }
+
     public void Init(BaseTraitEffect traitInfo, Card targetCard, Card sourceCard, TraitDuration duration)
     {
         trait = traitInfo;
         if (trait == null)
         {
-            Console.WriteLine(" INVALID TRAIT! null effect data for trait #" + TraitSourceId);
+            _gameState.Logger.Warning(" INVALID TRAIT! null effect data for trait #" + TraitSourceId);
             trait = new BaseTraitEffect();
         }
 
@@ -59,13 +66,13 @@ public class ActiveTrait
         }
     }
 
-    public void Init(CCG game, Card owner)
+    public void Init(Card owner)
     {
         var traitEffectsList = RulesetParser.GetTraitEffectsList(TraitSourceId);
         if (traitEffectsList == null)
         {
-            Console.WriteLine(" INVALID TRAIT! No Trait effects found for trait #" + TraitSourceId);
-            Init(new BaseTraitEffect(), game, owner);
+            _gameState.Logger.Warning(" INVALID TRAIT! No Trait effects found for trait #" + TraitSourceId);
+            Init(new BaseTraitEffect(), owner);
             return;
         }
 
@@ -73,18 +80,18 @@ public class ActiveTrait
         {
             if (traitEffectsList[i].EffectTraitId == TraitEffectId)
             {
-                Init(traitEffectsList[i], game, owner);
+                Init(traitEffectsList[i], owner);
                 break;
             }
         }
     }
 
-    public void Init(BaseTraitEffect newTrait, CCG game, Card owner)
+    public void Init(BaseTraitEffect newTrait, Card owner)
     {
         trait = newTrait;
         if (trait == null)
         {
-            Console.WriteLine(" INVALID TRAIT! null effect data for trait #" + TraitSourceId);
+            _gameState.Logger.Warning(" INVALID TRAIT! null effect data for trait #" + TraitSourceId);
             trait = new BaseTraitEffect();
         }
 
@@ -96,7 +103,7 @@ public class ActiveTrait
         }
         else
         {
-            traitSource = game.FindTraitActor(Source.Owner, Source.InstanceId);
+            traitSource = _gameState.FindTraitActor(Source.Owner, Source.InstanceId);
         }
 
         if (Target.InstanceId == instanceId && Target.Owner == owner2)
@@ -105,7 +112,7 @@ public class ActiveTrait
         }
         else
         {
-            traitTarget = game.FindTraitActor(Target.Owner, Target.InstanceId);
+            traitTarget = _gameState.FindTraitActor(Target.Owner, Target.InstanceId);
         }
 
         trait.Init(traitTarget, traitSource, this);
@@ -251,7 +258,7 @@ public class ActiveTrait
         trait.TraitEffectActivating(effect, source, target, region, this);
     }
 
-    public void ExpendCharge(CCG gameState)
+    public void ExpendCharge()
     {
         if (DurationData.Charges > 0)
         {
@@ -261,7 +268,7 @@ public class ActiveTrait
         var logData = new TraitInfoCcgEvent(CcgEventType.TraitExpendCharge, trait.TraitParentId,
             trait.EffectTraitId, traitTarget.InstanceId, traitTarget.ActiveData.Owner, traitSource.InstanceId,
             traitSource.ActiveData.Owner, DurationData.Charges);
-        gameState.AddCCGEventLog(logData);
+        _gameState.AddCCGEventLog(logData);
         if (DurationData.Charges == 0 && DurationData.Type != TraitDurationType.Permanent)
         {
             Deactivate(true);

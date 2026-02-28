@@ -46,7 +46,7 @@ public class TraitTrigger : BaseTraitEffect
             {
                 if (activeTrait.HasCharges())
                 {
-                    activeTrait.ExpendCharge(GameState);
+                    activeTrait.ExpendCharge();
                 }
 
                 flag = true;
@@ -115,7 +115,7 @@ public class TraitTrigger : BaseTraitEffect
 
         if (active.HasCharges())
         {
-            active.ExpendCharge(GameState);
+            active.ExpendCharge();
         }
         else if (DurationData.Type == TraitDurationType.Instant)
         {
@@ -209,11 +209,11 @@ public class TraitTrigger : BaseTraitEffect
             {
                 if (trait.Targets.Scope == TraitTargetScope.TriggeringUnit && source == null)
                 {
-                    Console.WriteLine("Trigger Activation Error: Trigging Unit is NULL");
+                    GameState.Logger.Warning("Trigger Activation Error: Trigging Unit is NULL");
                 }
                 else if (trait.Targets.Scope == TraitTargetScope.TriggerTarget && target == null)
                 {
-                    Console.WriteLine("Trigger Activation Error: Trigger Target is NULL");
+                    GameState.Logger.Warning("Trigger Activation Error: Trigger Target is NULL");
                 }
 
                 trait.Activate(traitTarget, target2, traitActorRegion);

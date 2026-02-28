@@ -72,7 +72,7 @@ public class EntityCardTemplate : CardTemplate
             return true;
         }
 
-        Console.WriteLine("EntityTemplate.CanMove false - Target CardStack not Empty " + target.PrimaryCard.InstanceId);
+        gameState.Logger.Debug("EntityTemplate.CanMove false - Target CardStack not Empty " + target.PrimaryCard.InstanceId);
         return false;
     }
 

@@ -24,22 +24,22 @@ public class GameRegion
         switch (region)
         {
             case Region.Player0:
-                size = gameState.GetGameTemplate().FirstPlayerRegionSize;
+                size = _gameState.GetGameTemplate().FirstPlayerRegionSize;
                 break;
             case Region.Player1:
-                size = gameState.GetGameTemplate().OtherPlayerRegionSize;
+                size = _gameState.GetGameTemplate().OtherPlayerRegionSize;
                 break;
             case Region.Control:
-                size = gameState.GetGameTemplate().ControlRegionSize;
-                _slotIndependent = gameState.GetGameTemplate().ControlRegionSlotIndependent;
-                _titanSlots = gameState.GetGameTemplate().ControlRegionTitanSlots;
+                size = _gameState.GetGameTemplate().ControlRegionSize;
+                _slotIndependent = _gameState.GetGameTemplate().ControlRegionSlotIndependent;
+                _titanSlots = _gameState.GetGameTemplate().ControlRegionTitanSlots;
                 break;
         }
 
         Slots = new CardStack[size];
         for (var i = 0; i < size; i++)
         {
-            Slots[i] = new CardStack();
+            Slots[i] = new CardStack(_gameState);
         }
     }
 
@@ -86,7 +86,7 @@ public class GameRegion
 
             if (area != TargetableArea.AnyAreas)
             {
-                Console.WriteLine("GameRegion.CanDeploy false - invalid region {0} {1}", area, RegionLocation);
+                _gameState.Logger.Debug("GameRegion.CanDeploy false - invalid region {0} {1}", area, RegionLocation);
                 return false;
             }
         }
@@ -115,7 +115,7 @@ public class GameRegion
                     }
                 }
 
-                Console.WriteLine("GameRegion.CanDeploy false - No valid Titan Slots found");
+                _gameState.Logger.Debug("GameRegion.CanDeploy false - No valid Titan Slots found");
             }
             else
             {
@@ -134,7 +134,7 @@ public class GameRegion
                     }
                 }
 
-                Console.WriteLine("GameRegion.CanDeploy false - No valid deploy Slots found");
+                _gameState.Logger.Debug("GameRegion.CanDeploy false - No valid deploy Slots found");
             }
         }
 
@@ -142,7 +142,7 @@ public class GameRegion
         {
             if (flag3 && !IsTitanSlotIndex(slotIndex))
             {
-                Console.WriteLine("GameRegion.CanDeploy false - Not a Titan Slot");
+                _gameState.Logger.Debug("GameRegion.CanDeploy false - Not a Titan Slot");
                 return false;
             }
 

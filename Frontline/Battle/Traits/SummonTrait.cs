@@ -39,7 +39,7 @@ public class SummonTrait : BaseTraitEffect
                 if (GameState.CanSummon(owner, targetID, traitActorRegion, area) &&
                     !GameState.Summon(owner, targetID, traitActorRegion, area, this))
                 {
-                    Console.WriteLine("SummonTrait failed when it should have worked");
+                    GameState.Logger.Warning("SummonTrait failed when it should have worked");
                 }
 
                 b--;
@@ -47,7 +47,7 @@ public class SummonTrait : BaseTraitEffect
         }
         else if (!GameState.Summon(owner, targetID, traitActorRegion, area, this))
         {
-            Console.WriteLine("SummonTrait failed when it should have worked");
+            GameState.Logger.Warning("SummonTrait failed when it should have worked");
         }
     }
 }

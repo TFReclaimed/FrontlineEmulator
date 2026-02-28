@@ -11,6 +11,8 @@ public class CCG
 
     public const sbyte GameStartIndicator = -2;
 
+    public readonly GameLogger Logger;
+
     [JsonInclude]
     public readonly Guid GameInstanceId;
 
@@ -61,9 +63,10 @@ public class CCG
 
     private readonly List<CcgEventData> _ccgEventsLog = [];
 
-    public CCG(CcgGame game, Guid gameInstance, int gameId, VersusType gameType)
+    public CCG(CcgGame game, GameLogger logger, Guid gameInstance, int gameId, VersusType gameType)
     {
         _game = game;
+        Logger = logger;
         GameInstanceId = gameInstance;
         GameTemplateId = gameId;
         GameType = gameType;
@@ -315,7 +318,7 @@ public class CCG
                     var card = Players[j].Discard.Cards[k];
                     if (info.CardTargetMatch(this, card, source))
                     {
-                        var cardStack = new CardStack
+                        var cardStack = new CardStack(this)
                         {
                             PrimaryCard = Players[j].Discard.Cards[k]
                         };
@@ -484,7 +487,7 @@ public class CCG
                 card = player.Discard.FindCard(targetId);
                 if (card != null)
                 {
-                    cardStack = new CardStack
+                    cardStack = new CardStack(this)
                     {
                         PrimaryCard = card
                     };
@@ -495,7 +498,7 @@ public class CCG
                 card = player2.Discard.FindCard(targetId);
                 if (card != null)
                 {
-                    cardStack = new CardStack
+                    cardStack = new CardStack(this)
                     {
                         PrimaryCard = card
                     };
@@ -506,7 +509,7 @@ public class CCG
                 card = player.Hand.FindCard(targetId);
                 if (card != null)
                 {
-                    cardStack = new CardStack
+                    cardStack = new CardStack(this)
                     {
                         PrimaryCard = card
                     };
@@ -517,7 +520,7 @@ public class CCG
                 card = player2.Hand.FindCard(targetId);
                 if (card != null)
                 {
-                    cardStack = new CardStack
+                    cardStack = new CardStack(this)
                     {
                         PrimaryCard = card
                     };
@@ -554,7 +557,7 @@ public class CCG
             }
         }
 
-        Console.WriteLine("CCG.CanMove false - player cannot move now");
+        Logger.Debug("CCG.CanMove false - player cannot move now");
         return false;
     }
 
@@ -719,7 +722,7 @@ public class CCG
             card.InstanceId = GetNextSummonInstanceId();
             card.ActiveData.Owner = playerIndex;
             card.Setup();
-            Console.WriteLine("**** CCG.Summon - Spanwed New Card * " + card.InstanceId);
+            Logger.Debug("**** CCG.Summon - Spanwed New Card * " + card.InstanceId);
             card.Deploy(cardStack, false, currentRegion, null);
             currentRegion = GetTraitActorRegion(playerIndex, card.InstanceId);
             var slots = Board.Regions[(uint) currentRegion].Slots;
@@ -891,7 +894,7 @@ public class CCG
                     card.Setup();
                     card.ActiveData.Owner = playerIndex;
                     player.Hand.Cards.Add(card);
-                    Console.WriteLine("**** CCG.GiveCardAndCmdPts - Spanwed New Card * " + card.InstanceId);
+                    Logger.Debug("**** CCG.GiveCardAndCmdPts - Spanwed New Card * " + card.InstanceId);
                 }
             }
         }
@@ -982,7 +985,7 @@ public class CCG
             }
         }
 
-        Console.WriteLine("CCG.CanAttack false - player cannot attack now");
+        Logger.Debug("CCG.CanAttack false - player cannot attack now");
         return false;
     }
 

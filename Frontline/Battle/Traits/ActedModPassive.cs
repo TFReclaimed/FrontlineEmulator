@@ -88,7 +88,7 @@ public class ActedModPassive : BaseTraitEffect
             entityCard.ClearActed(14);
             if (active.HasCharges())
             {
-                active.ExpendCharge(GameState);
+                active.ExpendCharge();
             }
         }
     }
@@ -102,7 +102,7 @@ public class ActedModPassive : BaseTraitEffect
             entityCard.ClearActed(14);
             if (active.HasCharges())
             {
-                active.ExpendCharge(GameState);
+                active.ExpendCharge();
             }
         }
     }
@@ -116,7 +116,7 @@ public class ActedModPassive : BaseTraitEffect
             entityCard.ClearActed(14);
             if (active.HasCharges())
             {
-                active.ExpendCharge(GameState);
+                active.ExpendCharge();
             }
         }
     }

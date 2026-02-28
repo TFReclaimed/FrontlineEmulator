@@ -55,7 +55,7 @@ public class Card : Item
         var cardTemplate = RulesetParser.GetCardTemplate(TemplateId, Rank);
         if (cardTemplate == null)
         {
-            Console.WriteLine("Invalid card (id {0:D} in player inventory for current ruleset (instance id {1:D})",
+            GameState.Logger.Warning("Invalid card (id {0:D} in player inventory for current ruleset (instance id {1:D})",
                 TemplateId, InstanceId);
             return this;
         }
@@ -86,7 +86,7 @@ public class Card : Item
             return this;
         }
 
-        Console.WriteLine("Trying to init an invalid Card ID {0} for rank {1}", TemplateId, Rank);
+        GameState.Logger.Warning("Trying to init an invalid Card ID {0} for rank {1}", TemplateId, Rank);
         return null;
     }
 
@@ -139,7 +139,7 @@ public class Card : Item
             cardTraits[i] = RulesetParser.GetTraitTemplate(traits[i]);
             if (cardTraits[i] == null)
             {
-                Console.WriteLine("Could Not Load Valid Card Trait {0} for card {1}", traits[i], GetTemplate().CardId);
+                GameState.Logger.Warning("Could Not Load Valid Card Trait {0} for card {1}", traits[i], GetTemplate().CardId);
                 cardTraits[i] = new BaseTrait();
                 cardTraits[i].Effects = new List<BaseTraitEffect>();
             }
@@ -407,7 +407,7 @@ public class Card : Item
                             return false;
                         }
 
-                        Console.WriteLine("Card.CanDeploy false - Can't add secrets to this card");
+                        GameState.Logger.Debug("Card.CanDeploy false - Can't add secrets to this card");
                     }
 
                     for (var i = 0; i < cardTraits.Length; i++)
@@ -415,7 +415,7 @@ public class Card : Item
                         var baseTrait = cardTraits[i];
                         if (baseTrait == null || !baseTrait.CanActivate(target, region, ActiveData.Owner))
                         {
-                            Console.WriteLine("Card.CanDeploy false - Trait activation not supported");
+                            GameState.Logger.Debug("Card.CanDeploy false - Trait activation not supported");
                             return false;
                         }
                     }
@@ -431,7 +431,7 @@ public class Card : Item
                             }
                         }
 
-                        Console.WriteLine("Card.CanDeploy false - Trait activation has no active targets");
+                        GameState.Logger.Debug("Card.CanDeploy false - Trait activation has no active targets");
                         return false;
                     }
                 }
@@ -441,7 +441,7 @@ public class Card : Item
         }
         else
         {
-            Console.WriteLine("Card.CanDeploy false - Template check failed");
+            GameState.Logger.Debug("Card.CanDeploy false - Template check failed");
         }
 
         return false;
@@ -459,7 +459,7 @@ public class Card : Item
             var activeTrait = ActiveData.ActiveTraits[i];
             if (!activeTrait.GetTraitInfo().CanMove(target, ActiveData.Owner, activeTrait))
             {
-                Console.WriteLine("Card.CanMove false - Move prevented by trait " + activeTrait.TraitEffectId);
+                GameState.Logger.Debug("Card.CanMove false - Move prevented by trait " + activeTrait.TraitEffectId);
                 return false;
             }
         }
@@ -472,7 +472,7 @@ public class Card : Item
                 var activeTrait2 = embarkedPilot.ActiveData.ActiveTraits[j];
                 if (!activeTrait2.GetTraitInfo().CanMove(target, embarkedPilot.ActiveData.Owner, activeTrait2))
                 {
-                    Console.WriteLine("Card.CanMove false - Move prevented by trait " + activeTrait2.TraitEffectId);
+                    GameState.Logger.Debug("Card.CanMove false - Move prevented by trait " + activeTrait2.TraitEffectId);
                     return false;
                 }
             }
@@ -483,7 +483,7 @@ public class Card : Item
             return true;
         }
 
-        Console.WriteLine("Card.CanMove false - template check failed");
+        GameState.Logger.Debug("Card.CanMove false - template check failed");
         return false;
     }
 
@@ -491,7 +491,7 @@ public class Card : Item
     {
         if (embark && target.PrimaryCard != null && (!CanEmbark() || !target.PrimaryCard.CanEmbark()))
         {
-            Console.WriteLine("Card.CanMove false - embark check failed");
+            GameState.Logger.Debug("Card.CanMove false - embark check failed");
             return false;
         }
 
@@ -500,7 +500,7 @@ public class Card : Item
             return true;
         }
 
-        Console.WriteLine("Card.CanMove false -- template check failed");
+        GameState.Logger.Debug("Card.CanMove false -- template check failed");
         return false;
     }
 
@@ -950,7 +950,7 @@ public class Card : Item
             var activeTrait = ActiveData.ActiveTraits[num];
             if (activeTrait == null || activeTrait.GetTraitInfo() == null)
             {
-                Console.WriteLine(string.Concat("Card ", InstanceId, " has missing trait data on Active Trait index ",
+                GameState.Logger.Warning(string.Concat("Card ", InstanceId, " has missing trait data on Active Trait index ",
                     num, " !!!!!!!! ", activeTrait, " !!!!!!"));
             }
             else if (activeTrait.GetTraitInfo().IsStatusEffect(2, activeTrait) ||

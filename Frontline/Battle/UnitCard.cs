@@ -366,7 +366,7 @@ public class UnitCard : EntityCard
 
         if (!cardTemplate.CanDeploy(target, emptyAvailable, embark))
         {
-            Console.WriteLine("UnitCard.CanDeploy false - Template check failed");
+            GameState.Logger.Debug("UnitCard.CanDeploy false - Template check failed");
             return false;
         }
 
@@ -375,13 +375,13 @@ public class UnitCard : EntityCard
             var primaryCard = target.PrimaryCard;
             if (primaryCard.ActiveData.Owner != ActiveData.Owner)
             {
-                Console.WriteLine("UnitCard.CanDeploy false - invalid ebark owner");
+                GameState.Logger.Debug("UnitCard.CanDeploy false - invalid ebark owner");
                 return false;
             }
 
             if (!CanEmbark() || !primaryCard.CanEmbark())
             {
-                Console.WriteLine("UnitCard.CanDeploy false - ineligable ebark unit");
+                GameState.Logger.Debug("UnitCard.CanDeploy false - ineligable ebark unit");
                 return false;
             }
 
@@ -398,7 +398,7 @@ public class UnitCard : EntityCard
                     var baseTraitEffect = cardTraits[i].Effects[j];
                     if (!baseTraitEffect.CanEmbark())
                     {
-                        Console.WriteLine("UnitCard.CanDeploy false - trait prevents embark " +
+                        GameState.Logger.Debug("UnitCard.CanDeploy false - trait prevents embark " +
                                           baseTraitEffect.EffectTraitId);
                         return false;
                     }
@@ -407,7 +407,7 @@ public class UnitCard : EntityCard
         }
         else if (!flag)
         {
-            Console.WriteLine("UnitCard.CanDeploy false - Template check failed");
+            GameState.Logger.Debug("UnitCard.CanDeploy false - Template check failed");
             return false;
         }
 
@@ -424,7 +424,7 @@ public class UnitCard : EntityCard
                 var baseTraitEffect2 = cardTraits[k].Effects[l];
                 if (!baseTraitEffect2.CanDeploy(target, region))
                 {
-                    Console.WriteLine("UnitCard.CanDeploy false - trait prevents deploy " +
+                    GameState.Logger.Debug("UnitCard.CanDeploy false - trait prevents deploy " +
                                       baseTraitEffect2.EffectTraitId);
                     return false;
                 }
@@ -513,7 +513,7 @@ public class UnitCard : EntityCard
                 return true;
             }
 
-            Console.WriteLine("DEPLOY FAILED - UnitCard.Deploy - invalid embark combo");
+            GameState.Logger.Warning("DEPLOY FAILED - UnitCard.Deploy - invalid embark combo");
         }
 
         return false;
@@ -565,7 +565,7 @@ public class UnitCard : EntityCard
                 return true;
             }
 
-            Console.WriteLine("MOVE FAILED - UnitCard.Move - invalid embark combo");
+            GameState.Logger.Warning("MOVE FAILED - UnitCard.Move - invalid embark combo");
         }
 
         return false;
@@ -592,7 +592,7 @@ public class UnitCard : EntityCard
             var activeTrait = ActiveData.ActiveTraits[i];
             if (!activeTrait.GetTraitInfo().CanAttack(target, activeTrait))
             {
-                Console.WriteLine("UnitCard.CanAttack false - trait prevetns attack " + activeTrait.TraitEffectId);
+                GameState.Logger.Debug("UnitCard.CanAttack false - trait prevetns attack " + activeTrait.TraitEffectId);
                 return false;
             }
         }
@@ -608,16 +608,16 @@ public class UnitCard : EntityCard
                         return true;
                     }
 
-                    Console.WriteLine("UnitCard.CanAttack false - card base attack is 0");
+                    GameState.Logger.Debug("UnitCard.CanAttack false - card base attack is 0");
                 }
                 else
                 {
-                    Console.WriteLine("UnitCard.CanAttack false - template check failed");
+                    GameState.Logger.Debug("UnitCard.CanAttack false - template check failed");
                 }
             }
             else
             {
-                Console.WriteLine("UnitCard.CanAttack false - target owner is same as attacker");
+                GameState.Logger.Debug("UnitCard.CanAttack false - target owner is same as attacker");
             }
         }
 
@@ -690,7 +690,7 @@ public class UnitCard : EntityCard
                     list2.Add(eventLogTraitCardInfo);
                     if (activeTrait.HasCharges())
                     {
-                        activeTrait.ExpendCharge(GameState);
+                        activeTrait.ExpendCharge();
                     }
                 }
                 else if (activeTrait.GetTraitInfo().IsCombatManipulationPassive(CombatManipulationPassive.DamageConvertNormal, activeTrait))
@@ -706,7 +706,7 @@ public class UnitCard : EntityCard
                     list2.Add(eventLogTraitCardInfo2);
                     if (activeTrait.HasCharges())
                     {
-                        activeTrait.ExpendCharge(GameState);
+                        activeTrait.ExpendCharge();
                     }
                 }
             }
@@ -770,7 +770,7 @@ public class UnitCard : EntityCard
                 {
                     if (inCombat && activeTrait.HasCharges())
                     {
-                        activeTrait.ExpendCharge(GameState);
+                        activeTrait.ExpendCharge();
                     }
 
                     return false;
@@ -814,7 +814,7 @@ public class UnitCard : EntityCard
                 list.Add(eventLogTraitCardInfo);
                 if (activeTrait.HasCharges())
                 {
-                    activeTrait.ExpendCharge(GameState);
+                    activeTrait.ExpendCharge();
                 }
             }
             else if (activeTrait.GetTraitInfo().IsCombatManipulationPassive(CombatManipulationPassive.DamageConvertNormal, activeTrait))
@@ -830,7 +830,7 @@ public class UnitCard : EntityCard
                 list.Add(eventLogTraitCardInfo2);
                 if (activeTrait.HasCharges())
                 {
-                    activeTrait.ExpendCharge(GameState);
+                    activeTrait.ExpendCharge();
                 }
             }
         }
@@ -929,7 +929,7 @@ public class UnitCard : EntityCard
                 flag = true;
                 if (activeTrait.HasCharges())
                 {
-                    activeTrait.ExpendCharge(GameState);
+                    activeTrait.ExpendCharge();
                 }
 
                 break;
@@ -943,7 +943,7 @@ public class UnitCard : EntityCard
             {
                 if (activeTrait.HasCharges())
                 {
-                    activeTrait.ExpendCharge(GameState);
+                    activeTrait.ExpendCharge();
                 }
 
                 return 1;
@@ -953,7 +953,7 @@ public class UnitCard : EntityCard
             {
                 if (activeTrait.HasCharges())
                 {
-                    activeTrait.ExpendCharge(GameState);
+                    activeTrait.ExpendCharge();
                 }
 
                 return 3;
@@ -963,7 +963,7 @@ public class UnitCard : EntityCard
             {
                 if (activeTrait.HasCharges())
                 {
-                    activeTrait.ExpendCharge(GameState);
+                    activeTrait.ExpendCharge();
                 }
 
                 return 6;
@@ -1154,7 +1154,7 @@ public class UnitCard : EntityCard
                 flag = true;
                 if (activeTrait.HasCharges())
                 {
-                    activeTrait.ExpendCharge(GameState);
+                    activeTrait.ExpendCharge();
                 }
 
                 break;
@@ -1168,7 +1168,7 @@ public class UnitCard : EntityCard
             {
                 if (activeTrait.HasCharges())
                 {
-                    activeTrait.ExpendCharge(GameState);
+                    activeTrait.ExpendCharge();
                 }
 
                 return 4;
@@ -1178,7 +1178,7 @@ public class UnitCard : EntityCard
             {
                 if (activeTrait.HasCharges())
                 {
-                    activeTrait.ExpendCharge(GameState);
+                    activeTrait.ExpendCharge();
                 }
 
                 return 6;
@@ -1188,7 +1188,7 @@ public class UnitCard : EntityCard
             {
                 if (activeTrait.HasCharges())
                 {
-                    activeTrait.ExpendCharge(GameState);
+                    activeTrait.ExpendCharge();
                 }
 
                 return 3;

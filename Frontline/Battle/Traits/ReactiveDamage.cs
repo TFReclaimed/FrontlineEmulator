@@ -37,7 +37,7 @@ public class ReactiveDamage : BaseTraitEffect
             attacker.TakeDamage(attack, b, target, true);
             if (active.HasCharges())
             {
-                active.ExpendCharge(GameState);
+                active.ExpendCharge();
             }
         }
     }

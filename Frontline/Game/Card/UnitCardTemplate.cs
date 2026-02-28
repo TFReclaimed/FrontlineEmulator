@@ -132,14 +132,14 @@ public class UnitCardTemplate : EntityCardTemplate
 
                     if (traitActorRegion != traitActorRegion2)
                     {
-                        Console.WriteLine("UnitTemplate.CanMove false - not in the same region");
+                        gameState.Logger.Debug("UnitTemplate.CanMove false - not in the same region");
                         return false;
                     }
 
                     return true;
                 }
 
-                Console.WriteLine("UnitTemplate.CanMove false - titan already piloted");
+                gameState.Logger.Debug("UnitTemplate.CanMove false - titan already piloted");
             }
             else if (Type == CardType.Pilot && primaryCard.GetTemplate().Type == CardType.Titan)
             {
@@ -150,17 +150,17 @@ public class UnitCardTemplate : EntityCardTemplate
 
                     if (traitActorRegion3 != traitActorRegion4)
                     {
-                        Console.WriteLine("UnitTemplate.CanMove false - not in the same region");
+                        gameState.Logger.Debug("UnitTemplate.CanMove false - not in the same region");
                         return false;
                     }
 
                     return true;
                 }
 
-                Console.WriteLine("UnitTemplate.CanMove false - titan already piloted");
+                gameState.Logger.Debug("UnitTemplate.CanMove false - titan already piloted");
             }
 
-            Console.WriteLine("UnitTemplate.CanMove false - invalid pilot titan combo");
+            gameState.Logger.Debug("UnitTemplate.CanMove false - invalid pilot titan combo");
         }
 
         return false;

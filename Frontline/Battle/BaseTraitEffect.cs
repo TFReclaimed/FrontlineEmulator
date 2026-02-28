@@ -89,7 +89,7 @@ public class BaseTraitEffect
         {
             if (activeTrait.HasCharges())
             {
-                activeTrait.ExpendCharge(GameState);
+                activeTrait.ExpendCharge();
             }
 
             return;
@@ -432,7 +432,7 @@ public class BaseTraitEffect
         {
             if (activeTrait.HasCharges())
             {
-                activeTrait.ExpendCharge(GameState);
+                activeTrait.ExpendCharge();
             }
 
             return list;
@@ -708,7 +708,7 @@ public class BaseTraitEffect
 
     public ActiveTrait GenerateActiveTrait(Card card, Card source)
     {
-        var activeTrait = new ActiveTrait();
+        var activeTrait = new ActiveTrait(GameState);
         activeTrait.Init(this, card, source, DurationData);
         var num = 0;
         ActiveTrait activeTrait2 = null;
@@ -717,7 +717,7 @@ public class BaseTraitEffect
             activeTrait2 = card.ActiveData.ActiveTraits[i];
             if (activeTrait2.GetTraitInfo() == null)
             {
-                Console.WriteLine("Activated Trait is Missing Trait Data! effect:" + activeTrait2.TraitEffectId +
+                GameState.Logger.Warning("Activated Trait is Missing Trait Data! effect:" + activeTrait2.TraitEffectId +
                                   " trait:" + activeTrait2.TraitSourceId);
             }
             else

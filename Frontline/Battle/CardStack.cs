@@ -6,8 +6,11 @@ public class CardStack
 
     private EntityCard? _ejectedCard;
 
-    public CardStack()
+    private readonly CCG _gameState;
+
+    public CardStack(CCG gameState)
     {
+        _gameState = gameState;
         PrimaryCard = null;
         _ejectedCard = null;
     }
@@ -16,7 +19,7 @@ public class CardStack
     {
         if (card == null)
         {
-            Console.WriteLine("CARDSTACK ERROR - Trying to Find a NULL card");
+            _gameState.Logger.Warning("CARDSTACK ERROR - Trying to Find a NULL card");
             return false;
         }
 
