@@ -5,19 +5,9 @@ namespace Frontline.Battle;
 
 public class BaseTrait
 {
-    public int[] GlossaryIds { get; set; }
-
     public int TraitId { get; set; }
 
     public TraitType TraitType { get; set; } = TraitType.Passive;
-
-    public bool EmbarkedInherit { get; set; }
-
-    public bool Hidden { get; set; }
-
-    public bool Functional { get; set; }
-
-    public TraitActivationReq ActRequirement { get; set; }
 
     public List<BaseTraitEffect> Effects { get; set; } = [];
 
@@ -195,7 +185,7 @@ public class BaseTrait
         var trigger = GetTrigger(0);
         if (trigger != null)
         {
-            trigger.ActivateTrigger(card, target, GetPrimaryTargeting(0).Targets);
+            trigger.ActivateTrigger(card, target, GetPrimaryTargeting(0)!.Targets);
         }
         else
         {

@@ -36,7 +36,7 @@ public class ApplyDamageMultiply : ApplyDamage
         if (card.GetTemplate().Type == CardType.Pilot)
         {
             var unitCard = (UnitCard) card;
-            if (unitCard != null && unitCard.IsEmbarked())
+            if (unitCard.IsEmbarked())
             {
                 return;
             }

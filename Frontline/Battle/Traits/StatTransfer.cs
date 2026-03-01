@@ -21,7 +21,7 @@ public class StatTransfer : BaseTraitEffect
         }
     }
 
-    public override sbyte GetAttackBonus(Card target, ActiveTrait active)
+    public override sbyte GetAttackBonus(Card? target, ActiveTrait active)
     {
         if (Deterable && active.Detered)
         {
@@ -36,7 +36,7 @@ public class StatTransfer : BaseTraitEffect
         return 0;
     }
 
-    public override sbyte GetBypassDefenseBonus(Card target, ActiveTrait active)
+    public override sbyte GetBypassDefenseBonus(Card? target, ActiveTrait active)
     {
         if (Deterable && active.Detered)
         {

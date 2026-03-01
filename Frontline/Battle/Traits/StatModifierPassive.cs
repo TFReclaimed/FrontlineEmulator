@@ -17,7 +17,7 @@ public class StatModifierPassive : BaseTraitEffect
 
     public sbyte Command { get; set; }
 
-    public override sbyte GetAttackBonus(Card target, ActiveTrait active)
+    public override sbyte GetAttackBonus(Card? target, ActiveTrait active)
     {
         if (Deterable && active.Detered)
         {
@@ -38,7 +38,7 @@ public class StatModifierPassive : BaseTraitEffect
         return 0;
     }
 
-    public override sbyte GetBypassDefenseBonus(Card target, ActiveTrait active)
+    public override sbyte GetBypassDefenseBonus(Card? target, ActiveTrait active)
     {
         if (Deterable && active.Detered)
         {

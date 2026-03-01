@@ -24,10 +24,6 @@ public class TraitInfoCcgEvent : CcgEventData
 
     public sbyte Data { get; set; }
 
-    public Region Region { get; set; } = Region.NumRegions;
-
-    public ActiveTraitCardInfo[] Targets { get; set; }
-
     public TraitInfoCcgEvent(CcgEventType type, int baseTraitId, int traitEffectId, int targetInstanceId,
         sbyte targetPlayerIdx, int sourceInstanceId, sbyte sourcePlayerIdx, sbyte info)
     {

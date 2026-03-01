@@ -158,7 +158,7 @@ public class BaseTraitEffect
                 {
                     if (cardStack.PrimaryCard.HasPilot())
                     {
-                        card2 = cardStack.PrimaryCard.GetEmbarkedPilot();
+                        card2 = cardStack.PrimaryCard.GetEmbarkedPilot()!;
                         if (CheckAndApplyTrait(card2, card, false, true))
                         {
                             list.Add(card2);
@@ -305,7 +305,7 @@ public class BaseTraitEffect
                 {
                     if (cardStack.PrimaryCard.HasPilot())
                     {
-                        card2 = cardStack.PrimaryCard.GetEmbarkedPilot();
+                        card2 = cardStack.PrimaryCard.GetEmbarkedPilot()!;
                         if (DoesApply(card2, card, false, true))
                         {
                             list2.Add(card2);
@@ -366,7 +366,7 @@ public class BaseTraitEffect
             {
                 if (cardStack.PrimaryCard.HasPilot())
                 {
-                    card2 = cardStack.PrimaryCard.GetEmbarkedPilot();
+                    card2 = cardStack.PrimaryCard.GetEmbarkedPilot()!;
                     if (CheckAndApplyTrait(card2, card, false, true) && appliedTo != null)
                     {
                         appliedTo.Add(card2);
@@ -495,7 +495,7 @@ public class BaseTraitEffect
                 {
                     if (cardStack.PrimaryCard.HasPilot())
                     {
-                        card2 = cardStack.PrimaryCard.GetEmbarkedPilot();
+                        card2 = cardStack.PrimaryCard.GetEmbarkedPilot()!;
                         if (DoesApply(card2, card, false, true))
                         {
                             list.Add(card2);
@@ -564,7 +564,7 @@ public class BaseTraitEffect
 
                     if (cardStack2.PrimaryCard.HasPilot())
                     {
-                        card2 = cardStack2.PrimaryCard.GetEmbarkedPilot();
+                        card2 = cardStack2.PrimaryCard.GetEmbarkedPilot()!;
                         if (DoesApply(card2, card, false, true))
                         {
                             list.Add(card2);
@@ -807,12 +807,12 @@ public class BaseTraitEffect
     {
     }
 
-    public virtual sbyte GetAttackBonus(Card target, ActiveTrait active)
+    public virtual sbyte GetAttackBonus(Card? target, ActiveTrait active)
     {
         return 0;
     }
 
-    public virtual sbyte GetBypassDefenseBonus(Card target, ActiveTrait active)
+    public virtual sbyte GetBypassDefenseBonus(Card? target, ActiveTrait active)
     {
         return 0;
     }

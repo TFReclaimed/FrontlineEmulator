@@ -200,12 +200,12 @@ public class TraitTargeting
         return true;
     }
 
-    public bool DoesMatchType(Card card)
+    public bool DoesMatchType(Card? card)
     {
         return DoesMatchType(Type, Mod, TargetId, card);
     }
 
-    public static bool DoesMatchType(TraitTargetType type, TargetTypeMod mod, int targetID, Card card)
+    public static bool DoesMatchType(TraitTargetType type, TargetTypeMod mod, int targetId, Card? card)
     {
         if (type == TraitTargetType.AnyType && mod == TargetTypeMod.NumMods)
         {
@@ -372,7 +372,7 @@ public class TraitTargeting
 
                 break;
             case TraitTargetType.CardId:
-                if (card.GetTemplate().CardId != targetID)
+                if (card.GetTemplate().CardId != targetId)
                 {
                     return false;
                 }

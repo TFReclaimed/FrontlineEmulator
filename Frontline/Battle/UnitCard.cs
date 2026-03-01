@@ -105,7 +105,7 @@ public class UnitCard : EntityCard
         return unitTemplate.UnitType;
     }
 
-    public override sbyte GetCurrentAttack(Card target, bool combatLog)
+    public override sbyte GetCurrentAttack(Card? target, bool combatLog)
     {
         if (_attack == 0)
         {
@@ -157,7 +157,7 @@ public class UnitCard : EntityCard
         return b;
     }
 
-    public override sbyte GetCurrentBypassDefense(Card target, bool combatLog)
+    public override sbyte GetCurrentBypassDefense(Card? target, bool combatLog)
     {
         if (_attack == 0)
         {
@@ -419,7 +419,7 @@ public class UnitCard : EntityCard
         return true;
     }
 
-    public override bool Deploy(CardStack stack, bool embark, Region target, CardTransitionCcgEvent deployEvent)
+    public override bool Deploy(CardStack stack, bool embark, Region target, CardTransitionCcgEvent? deployEvent)
     {
         if (base.Deploy(stack, embark, target, deployEvent))
         {
@@ -431,7 +431,6 @@ public class UnitCard : EntityCard
         {
             var primaryCard = stack.PrimaryCard;
             var type = GetTemplate().Type;
-            BaseTrait baseTrait = null;
             var flag = primaryCard.HasAnyActionsAvailable();
             if (type == CardType.Titan && primaryCard.GetTemplate().Type == CardType.Pilot)
             {
@@ -449,7 +448,7 @@ public class UnitCard : EntityCard
 
                 for (var i = 0; i < cardTraits.Length; i++)
                 {
-                    baseTrait = cardTraits[i];
+                    var baseTrait = cardTraits[i];
                     if (baseTrait != null && baseTrait.ActivateOnDeploy())
                     {
                         baseTrait.Activate(this, stack, target, GameState);
@@ -481,7 +480,7 @@ public class UnitCard : EntityCard
 
                 for (var j = 0; j < cardTraits.Length; j++)
                 {
-                    baseTrait = cardTraits[j];
+                    var baseTrait = cardTraits[j];
                     if (baseTrait != null && baseTrait.ActivateOnDeploy())
                     {
                         baseTrait.Activate(this, stack, target, GameState);

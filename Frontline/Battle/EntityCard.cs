@@ -112,7 +112,7 @@ public class EntityCard : Card
         return UnitType.None;
     }
 
-    public override bool Deploy(CardStack stack, bool embark, Region target, CardTransitionCcgEvent deployEvent)
+    public override bool Deploy(CardStack stack, bool embark, Region target, CardTransitionCcgEvent? deployEvent)
     {
         if (stack.PrimaryCard == null)
         {

@@ -624,12 +624,12 @@ public class Card : Item
         return false;
     }
 
-    public virtual sbyte GetCurrentAttack(Card target, bool combatLog)
+    public virtual sbyte GetCurrentAttack(Card? target, bool combatLog)
     {
         return 0;
     }
 
-    public virtual sbyte GetCurrentBypassDefense(Card target, bool combatLog)
+    public virtual sbyte GetCurrentBypassDefense(Card? target, bool combatLog)
     {
         return 0;
     }

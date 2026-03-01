@@ -16,7 +16,7 @@ public class CombatBuffsCcgEvent : CcgEventData
 
     public sbyte TargetCardOwner { get; set; }
 
-    public EventLogTraitCardInfo[] BuffTraits { get; set; }
+    public EventLogTraitCardInfo[] BuffTraits { get; set; } = [];
 
     public CombatBuffsCcgEvent(CcgEventType type, int attackerId, sbyte attackerOwner, int targetId, sbyte targetOwner)
     {
