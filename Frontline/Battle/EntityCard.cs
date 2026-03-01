@@ -107,7 +107,7 @@ public class EntityCard : Card
             stack.PrimaryCard = this;
             foreach (var baseTrait in CardTraits)
             {
-                if (baseTrait != null && baseTrait.ActivateOnDeploy())
+                if (baseTrait.ActivateOnDeploy())
                 {
                     baseTrait.Activate(this, stack, target, GameState);
                 }

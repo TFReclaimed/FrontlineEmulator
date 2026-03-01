@@ -20,7 +20,7 @@ public class Card : Item
 
     protected CardTemplate Template;
 
-    protected BaseTrait[] CardTraits;
+    protected BaseTrait[] CardTraits = [];
 
     protected sbyte CurrentCost;
 
@@ -195,13 +195,9 @@ public class Card : Item
     public sbyte GetCurrentCost()
     {
         var b = CurrentCost;
-        for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
+        foreach (var activeTrait in ActiveData.ActiveTraits)
         {
-            var activeTrait = ActiveData.ActiveTraits[i];
-            if (activeTrait != null)
-            {
-                b += activeTrait.GetTraitInfo().GetCommandMod(activeTrait);
-            }
+            b += activeTrait.GetTraitInfo().GetCommandMod(activeTrait);
         }
 
         return b;
@@ -279,7 +275,7 @@ public class Card : Item
         for (var i = 0; i < CardTraits.Length; i++)
         {
             var baseTrait = CardTraits[i];
-            if (baseTrait != null && baseTrait.ActivateOnDeploy())
+            if (baseTrait.ActivateOnDeploy())
             {
                 ActiveData.TraitActivated[i] = true;
                 baseTrait.Activate(this, stack, target, GameState);
@@ -341,7 +337,7 @@ public class Card : Item
             {
                 foreach (var baseTrait in CardTraits)
                 {
-                    if (baseTrait != null && !baseTrait.CanActivate(target, ActiveData.Owner))
+                    if (!baseTrait.CanActivate(target, ActiveData.Owner))
                     {
                         return false;
                     }
@@ -398,7 +394,7 @@ public class Card : Item
 
                     foreach (var baseTrait in CardTraits)
                     {
-                        if (baseTrait == null || !baseTrait.CanActivate(target, region, ActiveData.Owner))
+                        if (!baseTrait.CanActivate(target, region, ActiveData.Owner))
                         {
                             GameState.Logger.Debug("Card.CanDeploy false - Trait activation not supported");
                             return false;
@@ -649,12 +645,9 @@ public class Card : Item
     {
         foreach (var trait in CardTraits)
         {
-            if (trait != null)
+            foreach (var baseTraitEffect in trait.Effects)
             {
-                foreach (var baseTraitEffect in trait.Effects)
-                {
-                    baseTraitEffect.CheckCardDeployed(deployed, this);
-                }
+                baseTraitEffect.CheckCardDeployed(deployed, this);
             }
         }
 
@@ -682,11 +675,6 @@ public class Card : Item
 
         foreach (var trait in CardTraits)
         {
-            if (trait == null)
-            {
-                continue;
-            }
-
             foreach (var effect in trait.Effects)
             {
                 effect.OnNewTurnEvent(this, playerIndex);

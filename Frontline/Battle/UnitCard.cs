@@ -365,12 +365,6 @@ public class UnitCard : EntityCard
 
             foreach (var trait in CardTraits)
             {
-                var baseTrait = trait;
-                if (baseTrait == null)
-                {
-                    continue;
-                }
-
                 foreach (var baseTraitEffect in trait.Effects)
                 {
                     if (!baseTraitEffect.CanEmbark())
@@ -390,12 +384,6 @@ public class UnitCard : EntityCard
 
         foreach (var trait in CardTraits)
         {
-            var baseTrait2 = trait;
-            if (baseTrait2 == null)
-            {
-                continue;
-            }
-
             foreach (var baseTraitEffect2 in trait.Effects)
             {
                 if (!baseTraitEffect2.CanDeploy(target, region))
@@ -439,7 +427,7 @@ public class UnitCard : EntityCard
 
                 foreach (var baseTrait in CardTraits)
                 {
-                    if (baseTrait != null && baseTrait.ActivateOnDeploy())
+                    if (baseTrait.ActivateOnDeploy())
                     {
                         baseTrait.Activate(this, stack, target, GameState);
                     }
@@ -470,7 +458,7 @@ public class UnitCard : EntityCard
 
                 foreach (var baseTrait in CardTraits)
                 {
-                    if (baseTrait != null && baseTrait.ActivateOnDeploy())
+                    if (baseTrait.ActivateOnDeploy())
                     {
                         baseTrait.Activate(this, stack, target, GameState);
                     }
