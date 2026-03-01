@@ -31,7 +31,7 @@ public class ApplyStatus : BaseTraitEffect
     {
         if (IsDeterStatus(StatusType))
         {
-            ActiveTrait activeTrait = null;
+            ActiveTrait? activeTrait = null;
             var activeData = active.GetTraitTarget().ActiveData;
             var flag = false;
             for (var i = 0; i < activeData.ActiveTraits.Count; i++)

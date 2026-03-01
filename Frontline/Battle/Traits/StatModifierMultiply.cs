@@ -2,7 +2,7 @@ namespace Frontline.Battle.Traits;
 
 public class StatModifierMultiply : StatModifierPassive
 {
-    public TraitTargeting CountInfo { get; set; }
+    public required TraitTargeting CountInfo { get; set; }
 
     public override sbyte GetAttackBonus(Card target, ActiveTrait active)
     {

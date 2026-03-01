@@ -4,7 +4,7 @@ namespace Frontline.Battle.Traits;
 
 public class ApplyHealMultiply : ApplyHeal
 {
-    public TraitTargeting CountInfo { get; set; }
+    public required TraitTargeting CountInfo { get; set; }
 
     public override void Apply(Card card, Card source, ActiveTrait active)
     {

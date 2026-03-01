@@ -4,7 +4,7 @@ namespace Frontline.Battle.Traits;
 
 public class ApplyDamageMultiply : ApplyDamage
 {
-    public TraitTargeting CountInfo { get; set; }
+    public required TraitTargeting CountInfo { get; set; }
 
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
@@ -12,10 +12,9 @@ public class ApplyDamageMultiply : ApplyDamage
         {
             GameState.SecretDestroyed(card, source);
             var list = GameState.FindCardStack(card);
-            List<Card> list2 = null;
             for (var i = 0; i < list.Count; i++)
             {
-                list2 = list[i].PrimaryCard.GetSecrets();
+                var list2 = list[i].PrimaryCard.GetSecrets();
                 if (list2 == null)
                 {
                     continue;

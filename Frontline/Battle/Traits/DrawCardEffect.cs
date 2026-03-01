@@ -21,7 +21,6 @@ public class DrawCardEffect : BaseTraitEffect
         }
         else
         {
-            drawCount = 1;
             player.SupportDeck.DrawCard(player.Resources.CommandAccum, false);
         }
     }

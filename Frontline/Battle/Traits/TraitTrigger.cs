@@ -8,7 +8,7 @@ public class TraitTrigger : BaseTraitEffect
 {
     public TriggerType Type { get; set; }
 
-    public TraitTargeting VersusInfo { get; set; }
+    public required TraitTargeting VersusInfo { get; set; }
 
     public bool DelayActivation { get; set; }
 
@@ -21,7 +21,7 @@ public class TraitTrigger : BaseTraitEffect
         return true;
     }
 
-    public void RunTriggerActivation(Card source, Card target, Region destination, ActiveTrait active)
+    public void RunTriggerActivation(Card? source, Card? target, Region destination, ActiveTrait active)
     {
         var traitTemplate = RulesetParser.GetTraitTemplate(TraitParentId);
         sbyte b = 0;
@@ -75,7 +75,7 @@ public class TraitTrigger : BaseTraitEffect
 
         if (b > 0)
         {
-            BaseTraitEffect baseTraitEffect = null;
+            BaseTraitEffect? baseTraitEffect = null;
             for (int k = Priority; k < b; k++)
             {
                 if (baseTraitEffect != null)
@@ -125,18 +125,18 @@ public class TraitTrigger : BaseTraitEffect
         GameState.PurgeTemporaryEffects();
     }
 
-    private void ActivateParentEffect(BaseTrait parent, BaseTraitEffect trait, Card source, Card target,
+    private void ActivateParentEffect(BaseTrait parent, BaseTraitEffect trait, Card? source, Card? target,
         Region destination, ActiveTrait active, bool secondaryTrigger)
     {
-        CardStack target2 = null;
-        CardStack cardStack = null;
-        List<CardStack> list = null;
+        CardStack? target2 = null;
+        CardStack? cardStack;
+        List<CardStack> list;
         var traitTarget = active.GetTraitTarget();
         if (secondaryTrigger)
         {
             var triggerTarget = parent.GetPrimaryTargeting(trait.Priority).Targets;
             list = GameState.FindCardStack(traitTarget);
-            if (list != null && list.Count > 0)
+            if (list.Count > 0)
             {
                 target2 = list[0];
             }
@@ -145,7 +145,7 @@ public class TraitTrigger : BaseTraitEffect
             {
                 cardStack = null;
                 list = GameState.FindCardStack(source);
-                if (list != null && list.Count > 0)
+                if (list.Count > 0)
                 {
                     cardStack = list[0];
                 }
@@ -156,7 +156,7 @@ public class TraitTrigger : BaseTraitEffect
             {
                 cardStack = null;
                 list = GameState.FindCardStack(target);
-                if (list != null && list.Count > 0)
+                if (list.Count > 0)
                 {
                     cardStack = list[0];
                 }
@@ -178,7 +178,7 @@ public class TraitTrigger : BaseTraitEffect
             var traitActorRegion =
                 GameState.GetTraitActorRegion(traitTarget.ActiveData.Owner, traitTarget.InstanceId);
             list = GameState.FindCardStack(traitTarget);
-            if (list != null && list.Count > 0)
+            if (list.Count > 0)
             {
                 target2 = list[0];
             }
@@ -187,7 +187,7 @@ public class TraitTrigger : BaseTraitEffect
             {
                 cardStack = null;
                 list = GameState.FindCardStack(source);
-                if (list != null && list.Count > 0)
+                if (list.Count > 0)
                 {
                     cardStack = list[0];
                 }
@@ -198,7 +198,7 @@ public class TraitTrigger : BaseTraitEffect
             {
                 cardStack = null;
                 list = GameState.FindCardStack(target);
-                if (list != null && list.Count > 0)
+                if (list.Count > 0)
                 {
                     cardStack = list[0];
                 }
@@ -219,16 +219,6 @@ public class TraitTrigger : BaseTraitEffect
                 trait.Activate(traitTarget, target2, traitActorRegion);
             }
         }
-    }
-
-    public override bool Embark(ActiveTrait active)
-    {
-        return base.Embark(active);
-    }
-
-    public override bool Disembark(ActiveTrait active)
-    {
-        return base.Disembark(active);
     }
 
     public override void NewTurn(ActiveTrait active, sbyte playerIndex)

@@ -19,10 +19,9 @@ public class ApplyDamage : BaseTraitEffect
         {
             GameState.SecretDestroyed(card, source);
             var list = GameState.FindCardStack(card);
-            List<Card> list2 = null;
             for (var i = 0; i < list.Count; i++)
             {
-                list2 = list[i].PrimaryCard.GetSecrets();
+                var list2 = list[i].PrimaryCard.GetSecrets();
                 if (list2 == null)
                 {
                     continue;

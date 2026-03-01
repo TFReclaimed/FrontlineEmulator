@@ -4,7 +4,7 @@ public class ForceCombatEffect : BaseTraitEffect
 {
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
-        CardStack cardStack = null;
+        CardStack? cardStack = null;
         var list = GameState.FindCardStack(source);
         if (list.Count > 0)
         {

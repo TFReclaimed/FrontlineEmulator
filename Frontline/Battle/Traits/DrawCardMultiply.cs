@@ -2,7 +2,7 @@ namespace Frontline.Battle.Traits;
 
 public class DrawCardMultiply : DrawCardEffect
 {
-    public TraitTargeting CountInfo { get; set; }
+    public required TraitTargeting CountInfo { get; set; }
 
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
