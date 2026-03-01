@@ -74,7 +74,7 @@ public class Player
 
     public void ActivateCommander()
     {
-        var commanderCard = (CommanderCard) Commander.PrimaryCard;
+        var commanderCard = (CommanderCard) Commander.PrimaryCard!;
         for (var i = 0; i < commanderCard.GetNumTraits(); i++)
         {
             var trait = commanderCard.GetTrait(i);
@@ -87,11 +87,7 @@ public class Player
 
     public Card? FindTraitActor(int cardId)
     {
-        Card? card = null;
-        if (Commander != null)
-        {
-            card = Commander.FindTraitActor(cardId, Commander.PrimaryCard.ActiveData.Owner);
-        }
+        var card = Commander.FindTraitActor(cardId, Commander.PrimaryCard!.ActiveData.Owner);
 
         if (card == null)
         {
@@ -127,7 +123,7 @@ public class Player
         EndTurnTraitsTriggered = false;
         var gameTemplate = _gameState.GetGameTemplate();
         Resources.NewTurn(gameTemplate);
-        if (!Commander.PrimaryCard.HasStatusEffect(ApplyStatusTraitStatusType.Stun))
+        if (!Commander.PrimaryCard!.HasStatusEffect(ApplyStatusTraitStatusType.Stun))
         {
             SupportDeck.NewTurn(Resources.CommandAccum);
         }
@@ -183,7 +179,7 @@ public class Player
         {
             card = _gameState.FindTraitActor(myIndex, cardId);
             var list = _gameState.FindCardStack(card);
-            if (list != null && list.Count > 0)
+            if (list.Count > 0)
             {
                 var cardStack = list[0];
                 card = cardStack.PrimaryCard;
@@ -302,7 +298,7 @@ public class Player
         {
             if (Deck.Count == 0)
             {
-                TakeDamage(0, Resources.DrawDamage++, Commander.PrimaryCard);
+                TakeDamage(0, Resources.DrawDamage++, Commander.PrimaryCard!);
                 continue;
             }
 

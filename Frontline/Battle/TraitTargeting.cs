@@ -108,9 +108,9 @@ public class TraitTargeting
 
     public bool CardTargetMatch(CcgGameState gameState, Card card, Card source)
     {
-        CardStack cardStack = null;
+        CardStack? cardStack = null;
         var list = gameState.FindCardStack(card);
-        if (list != null && list.Count > 0)
+        if (list.Count > 0)
         {
             cardStack = list[0];
         }
@@ -483,9 +483,9 @@ public class TraitTargeting
         }
 
         var list = gameState.FindCards(this, region, active.GetTraitSource());
-        for (var i = 0; i < list.Count; i++)
+        foreach (var cardStack in list)
         {
-            var card = list[i].PrimaryCard;
+            var card = cardStack.PrimaryCard;
             if (DoesMatchType(card))
             {
                 num++;

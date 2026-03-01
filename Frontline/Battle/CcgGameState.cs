@@ -341,7 +341,7 @@ public class CcgGameState
         var list = new List<CardStack>();
         foreach (var player in Players)
         {
-            var primaryCard = player.Commander.PrimaryCard;
+            var primaryCard = player.Commander.PrimaryCard!;
             if (primaryCard.EqualsTo(card))
             {
                 list.Add(player.Commander);

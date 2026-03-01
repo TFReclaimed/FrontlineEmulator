@@ -120,7 +120,7 @@ public class BaseTraitEffect
             else if (Targets.Area == TargetableArea.EnemyCommander)
             {
                 var opponentPlayerIndex = GameState.GetOpponentPlayerIndex(card.ActiveData.Owner);
-                card2 = GameState.Players[opponentPlayerIndex].Commander.PrimaryCard;
+                card2 = GameState.Players[opponentPlayerIndex].Commander.PrimaryCard!;
                 if (CheckAndApplyTrait(card2, card, false, true))
                 {
                     list.Add(card2);
@@ -223,7 +223,7 @@ public class BaseTraitEffect
         }
         else if (triggerTarget.Area == TargetableArea.FriendlyCommander)
         {
-            var primaryCard = GameState.Players[card.ActiveData.Owner].Commander.PrimaryCard;
+            var primaryCard = GameState.Players[card.ActiveData.Owner].Commander.PrimaryCard!;
             if (triggerTarget.DoesMatchType(primaryCard))
             {
                 var active2 = GenerateActiveTrait(primaryCard, card);
@@ -233,7 +233,7 @@ public class BaseTraitEffect
         else if (triggerTarget.Area == TargetableArea.EnemyCommander)
         {
             var opponentPlayerIndex = GameState.GetOpponentPlayerIndex(card.ActiveData.Owner);
-            var primaryCard2 = GameState.Players[opponentPlayerIndex].Commander.PrimaryCard;
+            var primaryCard2 = GameState.Players[opponentPlayerIndex].Commander.PrimaryCard!;
             if (triggerTarget.DoesMatchType(primaryCard2))
             {
                 var active3 = GenerateActiveTrait(primaryCard2, card);
@@ -244,7 +244,7 @@ public class BaseTraitEffect
         {
             for (var i = 0; i < GameState.Players.Length; i++)
             {
-                var primaryCard3 = GameState.Players[i].Commander.PrimaryCard;
+                var primaryCard3 = GameState.Players[i].Commander.PrimaryCard!;
                 if (triggerTarget.DoesMatchType(primaryCard3))
                 {
                     var active4 = GenerateActiveTrait(primaryCard3, card);
@@ -286,17 +286,12 @@ public class BaseTraitEffect
 
         var list = GameState.FindCards(Targets, region2, card);
         Card? card2;
-        CardStack? cardStack;
         if (Targets.Scope == TraitTargetScope.RandomEnemy || Targets.Scope == TraitTargetScope.RandomFriendly)
         {
             var list2 = new List<Card>();
             for (var i = 0; i < list.Count; i++)
             {
-                cardStack = list[i];
-                if (cardStack == null)
-                {
-                    continue;
-                }
+                var cardStack = list[i];
 
                 if (cardStack.PrimaryCard != null)
                 {
@@ -350,11 +345,7 @@ public class BaseTraitEffect
 
         for (var j = 0; j < list.Count; j++)
         {
-            cardStack = list[j];
-            if (cardStack == null)
-            {
-                continue;
-            }
+            var cardStack = list[j];
 
             if (cardStack.PrimaryCard != null)
             {
@@ -439,7 +430,7 @@ public class BaseTraitEffect
             if (Targets.Area == TargetableArea.FriendlyCommander)
             {
                 var owner = card.ActiveData.Owner;
-                card2 = GameState.Players[owner].Commander.PrimaryCard;
+                card2 = GameState.Players[owner].Commander.PrimaryCard!;
                 if (DoesApply(card2, card, false, true))
                 {
                     list.Add(card2);
@@ -448,7 +439,7 @@ public class BaseTraitEffect
             else if (Targets.Area == TargetableArea.EnemyCommander)
             {
                 var opponentPlayerIndex = GameState.GetOpponentPlayerIndex(card.ActiveData.Owner);
-                card2 = GameState.Players[opponentPlayerIndex].Commander.PrimaryCard;
+                card2 = GameState.Players[opponentPlayerIndex].Commander.PrimaryCard!;
                 if (DoesApply(card2, card, false, true))
                 {
                     list.Add(card2);

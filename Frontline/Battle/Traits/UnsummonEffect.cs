@@ -16,12 +16,12 @@ public class UnsummonEffect : BaseTraitEffect
         else
         {
             var list = GameState.FindCardStack(card);
-            if (list == null || list.Count == 0)
+            if (list.Count == 0)
             {
                 return;
             }
 
-            var card2 = list[0].RemoveCard(card.InstanceId, owner);
+            var card2 = list[0].RemoveCard(card.InstanceId, owner)!;
             var secrets = card2.GetSecrets();
             for (var num = secrets.Count - 1; num >= 0; num--)
             {

@@ -237,7 +237,7 @@ public class GameBoard
         }
 
         var player = players[targetOwner];
-        if (player.Resources.Health > 0 && targetId == player.Commander.PrimaryCard.InstanceId)
+        if (player.Resources.Health > 0 && targetId == player.Commander.PrimaryCard!.InstanceId)
         {
             if (_sourceRegion == Region.Control || primaryCard.HasStatusEffect(ApplyStatusTraitStatusType.Operative))
             {
@@ -267,9 +267,8 @@ public class GameBoard
         }
 
         var primaryCard = cardStack.PrimaryCard;
-        CardStack cardStack2 = null;
         var player = players[targetOwner];
-        cardStack2 = targetId != player.Commander.PrimaryCard.InstanceId
+        var cardStack2 = targetId != player.Commander.PrimaryCard!.InstanceId
             ? FindCard(targetId, targetOwner)
             : player.Commander;
         if (cardStack2 == null)
@@ -295,7 +294,7 @@ public class GameBoard
         if (area == TargetableArea.UnitStack)
         {
             var player = players[targetOwner];
-            if (targetId == player.Commander.PrimaryCard.InstanceId)
+            if (targetId == player.Commander.PrimaryCard!.InstanceId)
             {
                 entityCard.ActivateTrait(player.Commander, region, _gameState);
                 return true;

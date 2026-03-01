@@ -306,13 +306,12 @@ public class EntityCard : Card
         _isDead = true;
         var traitActorRegion = GameState.GetTraitActorRegion(ActiveData.Owner, InstanceId);
         var list = GameState.FindCardStack(this);
-        CardStack cardStack = null;
-        if (list == null || list.Count == 0)
+        if (list.Count == 0)
         {
             return;
         }
 
-        cardStack = list[0];
+        var cardStack = list[0];
         for (var i = 0; i < CardTraits.Length; i++)
         {
             if (CardTraits[i].TraitType == TraitType.LastStand && !ActiveData.TraitActivated[i])
