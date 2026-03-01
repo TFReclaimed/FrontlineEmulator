@@ -24,7 +24,7 @@ public class ApplyHealMultiply : ApplyHeal
         {
             var logData = new CardTraumaCcgEvent(CcgEventType.CardHeal, b, source.InstanceId,
                 source.ActiveData.Owner, card.InstanceId, card.ActiveData.Owner);
-            GameState.AddCCGEventLog(logData);
+            GameState.AddCcgEventLog(logData);
         }
     }
 }

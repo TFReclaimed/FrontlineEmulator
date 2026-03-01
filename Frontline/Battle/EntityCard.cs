@@ -298,7 +298,7 @@ public class EntityCard : Card
             GameState.CardDamaged(this, source);
             var logData = new CardTraumaCcgEvent(CcgEventType.CardDamage, b3, source.InstanceId,
                 source.ActiveData.Owner, InstanceId, ActiveData.Owner);
-            GameState.AddCCGEventLog(logData);
+            GameState.AddCcgEventLog(logData);
             if (_myDeathCard == null && CanDiscard())
             {
                 _myDeathCard = source;
@@ -340,7 +340,7 @@ public class EntityCard : Card
         GameState.CardDied(this, _myDeathCard);
         var logData = new CardTraumaCcgEvent(CcgEventType.CardDeath, GetCurrentHealth(false),
             _myDeathCard.InstanceId, _myDeathCard.ActiveData.Owner, InstanceId, ActiveData.Owner);
-        GameState.AddCCGEventLog(logData);
+        GameState.AddCcgEventLog(logData);
         if (_myDeathCard.GetTemplate().IsCombatUnit())
         {
             var unitCard = (UnitCard) _myDeathCard;
@@ -371,7 +371,7 @@ public class EntityCard : Card
         GameState.CardDied(embarkedPilot, _myDeathCard);
         logData = new CardTraumaCcgEvent(CcgEventType.CardDeath, GetCurrentHealth(false), _myDeathCard.InstanceId,
             _myDeathCard.ActiveData.Owner, embarkedPilot.InstanceId, embarkedPilot.ActiveData.Owner);
-        GameState.AddCCGEventLog(logData);
+        GameState.AddCcgEventLog(logData);
         if (_myDeathCard.GetTemplate().IsCombatUnit())
         {
             var unitCard2 = (UnitCard) _myDeathCard;
@@ -452,7 +452,7 @@ public class EntityCard : Card
                 combatBuffsCCGEvent.BuffTraits[j] = list[j];
             }
 
-            GameState.AddCCGEventLog(combatBuffsCCGEvent);
+            GameState.AddCcgEventLog(combatBuffsCCGEvent);
         }
 
         return b;

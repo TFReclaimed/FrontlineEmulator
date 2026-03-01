@@ -16,7 +16,7 @@ public class GameEventMulliganParams : GameEventParams
 
         if (game.DoInitialSwap(PlayerIndex, result.CardIdsRemovedFromHand, result.DeckReplacementIndices) == 1)
         {
-            CcgEventsLog = game.GameState.GetCCGEventLog();
+            CcgEventsLog = game.GameState.GetCcgEventLog();
             return result;
         }
 

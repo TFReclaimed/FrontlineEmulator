@@ -256,7 +256,7 @@ public class ActiveTrait
         var logData = new TraitInfoCcgEvent(CcgEventType.TraitExpendCharge, _trait.TraitParentId,
             _trait.EffectTraitId, _traitTarget.InstanceId, _traitTarget.ActiveData.Owner, _traitSource.InstanceId,
             _traitSource.ActiveData.Owner, DurationData.Charges);
-        _gameState.AddCCGEventLog(logData);
+        _gameState.AddCcgEventLog(logData);
         if (DurationData.Charges == 0 && DurationData.Type != TraitDurationType.Permanent)
         {
             Deactivate(true);

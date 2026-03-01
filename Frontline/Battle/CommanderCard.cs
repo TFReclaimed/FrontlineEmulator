@@ -159,7 +159,7 @@ public class CommanderCard : Card
                 combatBuffsCCGEvent.BuffTraits[j] = list[j];
             }
 
-            GameState.AddCCGEventLog(combatBuffsCCGEvent);
+            GameState.AddCcgEventLog(combatBuffsCCGEvent);
         }
 
         return b;
@@ -202,7 +202,7 @@ public class CommanderCard : Card
                 combatBuffsCCGEvent.BuffTraits[j] = list[j];
             }
 
-            GameState.AddCCGEventLog(combatBuffsCCGEvent);
+            GameState.AddCcgEventLog(combatBuffsCCGEvent);
         }
 
         return b;

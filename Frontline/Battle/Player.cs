@@ -273,7 +273,7 @@ public class Player
         _gameState.CardDamaged(primaryCard, source);
         var logData = new CardTraumaCcgEvent(CcgEventType.CardDamage, num2, source.InstanceId,
             source.ActiveData.Owner, primaryCard.InstanceId, primaryCard.ActiveData.Owner);
-        _gameState.AddCCGEventLog(logData);
+        _gameState.AddCcgEventLog(logData);
         if (Resources.Health > 0)
         {
             return;
@@ -283,7 +283,7 @@ public class Player
         var logData2 = new CardTraumaCcgEvent(CcgEventType.CardDeath,
             primaryCard.GetCurrentHealth(false), source.InstanceId, source.ActiveData.Owner, primaryCard.InstanceId,
             primaryCard.ActiveData.Owner);
-        _gameState.AddCCGEventLog(logData2);
+        _gameState.AddCcgEventLog(logData2);
         if (source.GetTemplate().IsCombatUnit())
         {
             var unitCard = (UnitCard) source;
@@ -311,7 +311,7 @@ public class Player
             {
                 var logData = new CardDrawCcgEvent(CcgEventType.DeckDraw, card.InstanceId, playerIndex,
                     card.TemplateId, card.Rank);
-                _gameState.AddCCGEventLog(logData);
+                _gameState.AddCcgEventLog(logData);
                 _gameState.CardDrawn(card, true, isNewTurn);
             }
         }

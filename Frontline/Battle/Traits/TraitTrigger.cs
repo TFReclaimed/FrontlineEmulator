@@ -38,7 +38,7 @@ public class TraitTrigger : BaseTraitEffect
             var logData = new TraitInfoCcgEvent(CcgEventType.SecretTriggered, TraitParentId,
                 EffectTraitId, traitTarget.InstanceId, traitTarget.ActiveData.Owner, traitSource.InstanceId,
                 traitSource.ActiveData.Owner, 0);
-            GameState.AddCCGEventLog(logData);
+            GameState.AddCcgEventLog(logData);
             GameState.SecretTriggered(traitSource, source);
             var flag = false;
             var activeTrait = CheckEffectNegation(traitSource);

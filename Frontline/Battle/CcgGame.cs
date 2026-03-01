@@ -153,7 +153,7 @@ public class CcgGame
             target, slotIndex);
         if (flag && (!flag2 || flag3) && flag4)
         {
-            GameState.GetCCGEventLog().Clear();
+            GameState.GetCcgEventLog().Clear();
             if (GameState.Deploy(playerIndex, cardId, targetIndex, targetId, area, target, slotIndex, pushDir,
                     null))
             {
@@ -175,7 +175,7 @@ public class CcgGame
         if (target != Region.NumRegions && slotIndex != -1 &&
             GameState.CanMove(playerIndex, cardId, target, slotIndex, pushDir))
         {
-            GameState.GetCCGEventLog().Clear();
+            GameState.GetCcgEventLog().Clear();
             if (GameState.Move(playerIndex, cardId, target, slotIndex, pushDir, null))
             {
                 return 1;
@@ -193,7 +193,7 @@ public class CcgGame
         GameState.Logger.Debug("GAME ATTACK - {0} {1} {2} {3}", playerIndex, cardId, ownerId, targetId);
         if (GameState.CanAttack(playerIndex, cardId, ownerId, targetId))
         {
-            GameState.GetCCGEventLog().Clear();
+            GameState.GetCcgEventLog().Clear();
             if (GameState.Attack(playerIndex, cardId, ownerId, targetId))
             {
                 return 1;
@@ -211,7 +211,7 @@ public class CcgGame
     {
         if (GameState.CanActivate(playerIndex, cardId, ownerId, targetId, area, region))
         {
-            GameState.GetCCGEventLog().Clear();
+            GameState.GetCcgEventLog().Clear();
             if (GameState.ActivateTrait(playerIndex, cardId, ownerId, targetId, area, region))
             {
                 return 1;
@@ -225,7 +225,7 @@ public class CcgGame
     {
         if (GameState.CanDisembark(playerIndex, cardId))
         {
-            GameState.GetCCGEventLog().Clear();
+            GameState.GetCcgEventLog().Clear();
             if (GameState.Disembark(playerIndex, cardId, false, null))
             {
                 return 1;
@@ -245,7 +245,7 @@ public class CcgGame
 
         if (GameState.CanTriggerEndTurnTraits(playerIndex))
         {
-            GameState.GetCCGEventLog().Clear();
+            GameState.GetCcgEventLog().Clear();
             if (GameState.TriggerEndTurnTraits(playerIndex))
             {
                 return 1;
@@ -259,7 +259,7 @@ public class CcgGame
     {
         if (GameState.CanEndTurn(playerIndex, cardsToDiscard))
         {
-            GameState.GetCCGEventLog().Clear();
+            GameState.GetCcgEventLog().Clear();
             if (GameState.EndTurn(playerIndex, cardsToDiscard))
             {
                 return 1;
@@ -273,7 +273,7 @@ public class CcgGame
     {
         if (GameState.CanSurrender(playerIndex))
         {
-            GameState.GetCCGEventLog().Clear();
+            GameState.GetCcgEventLog().Clear();
             if (GameState.Surrender(playerIndex))
             {
                 return 1;
@@ -287,7 +287,7 @@ public class CcgGame
     {
         if (GameState.CanDoInitialSwap(playerIndex, cardIdsToReshuffle))
         {
-            GameState.GetCCGEventLog().Clear();
+            GameState.GetCcgEventLog().Clear();
 
             if (GameState.DoInitialSwap(playerIndex, cardIdsToReshuffle, deckSwapIndices))
             {
@@ -313,7 +313,7 @@ public class CcgGame
 
     public int Cheat_GiveCardAndCommandPoints(sbyte playerIndex, int cardId, int rank, int commandPoints)
     {
-        GameState.GetCCGEventLog().Clear();
+        GameState.GetCcgEventLog().Clear();
 
         if (_isProduction)
         {
@@ -332,7 +332,7 @@ public class CcgGame
     {
         if (GameState.CanMessage(playerIndex))
         {
-            GameState.GetCCGEventLog().Clear();
+            GameState.GetCcgEventLog().Clear();
             return 1;
         }
 

@@ -84,7 +84,7 @@ public class BaseTraitEffect
             Region = region,
             Deactivate = false
         };
-        GameState.AddCCGEventLog(traitActivateCCGEvent);
+        GameState.AddCcgEventLog(traitActivateCCGEvent);
         GameState.TraitEffectActivating(this, card, target, region);
         var activeTrait = CheckEffectNegation(card);
         if (activeTrait != null)
@@ -699,7 +699,7 @@ public class BaseTraitEffect
             traitActivateCCGEvent.Targets[0] = activeTraitCardInfo;
         }
 
-        GameState.AddCCGEventLog(traitActivateCCGEvent);
+        GameState.AddCcgEventLog(traitActivateCCGEvent);
     }
 
     public ActiveTrait GenerateActiveTrait(Card card, Card source)

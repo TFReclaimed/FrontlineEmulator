@@ -72,7 +72,7 @@ public class DiscardEffect : BaseTraitEffect
             TraitId = TraitParentId
         };
 
-        GameState.AddCCGEventLog(discardEffectCCGEvent);
+        GameState.AddCcgEventLog(discardEffectCCGEvent);
         GameState.DoCardDiscard(owner, array);
         GameState.CardDiscardEffect(owner, num);
     }

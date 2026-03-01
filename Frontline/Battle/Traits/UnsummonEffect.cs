@@ -57,7 +57,7 @@ public class UnsummonEffect : BaseTraitEffect
                     EffectId = EffectTraitId,
                     TraitId = TraitParentId
                 };
-                GameState.AddCCGEventLog(cardTransitionCcgEvent);
+                GameState.AddCcgEventLog(cardTransitionCcgEvent);
             }
         }
 
@@ -71,6 +71,6 @@ public class UnsummonEffect : BaseTraitEffect
             EffectId = EffectTraitId,
             TraitId = TraitParentId
         };
-        GameState.AddCCGEventLog(cardTransitionCcgEvent2);
+        GameState.AddCcgEventLog(cardTransitionCcgEvent2);
     }
 }

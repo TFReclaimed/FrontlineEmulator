@@ -187,7 +187,7 @@ public class BattleService : IBattleService
         await ProcessUserRewards(player1Entity, battle.GameState.Rewards[0], playerRepository, userService);
         await ProcessUserRewards(player2Entity, battle.GameState.Rewards[1], playerRepository, userService);
 
-        foreach (var ccgEvent in battle.GameState.GetCCGEventLog())
+        foreach (var ccgEvent in battle.GameState.GetCcgEventLog())
         {
             if (ccgEvent is not CardInfoCcgEvent cardInfoEvent)
             {

@@ -15,7 +15,7 @@ public class GameEventEndTurnParams : GameEventParams
 
         if (game.EndTurn(PlayerIndex, HandCardIdsToDiscard) == 1)
         {
-            CcgEventsLog = game.GameState.GetCCGEventLog();
+            CcgEventsLog = game.GameState.GetCcgEventLog();
             return result;
         }
 

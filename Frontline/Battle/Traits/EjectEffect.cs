@@ -23,7 +23,7 @@ public class EjectEffect : BaseTraitEffect
             var logData = new TraitInfoCcgEvent(CcgEventType.TraitEvent, TraitParentId, EffectTraitId,
                 active.GetTraitTarget().InstanceId, active.GetTraitTarget().ActiveData.Owner,
                 active.GetTraitSource().InstanceId, active.GetTraitSource().ActiveData.Owner, 17);
-            GameState.AddCCGEventLog(logData);
+            GameState.AddCcgEventLog(logData);
             GameState.Disembark(unitCard.ActiveData.Owner, unitCard.InstanceId, true, this);
             if (active.HasCharges())
             {

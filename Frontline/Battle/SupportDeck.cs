@@ -118,7 +118,7 @@ public class SupportDeck : Deck
         var card2 = Cards[CurrentSupport];
         var cardDrawEvent = new CardDrawCcgEvent(CcgEventType.SupportDraw, card2.InstanceId,
             card2.ActiveData.Owner, card2.TemplateId, card2.Rank);
-        _gameState.AddCCGEventLog(cardDrawEvent);
+        _gameState.AddCcgEventLog(cardDrawEvent);
         _gameState.CardDrawn(card2, false, isNewTurn);
     }
 

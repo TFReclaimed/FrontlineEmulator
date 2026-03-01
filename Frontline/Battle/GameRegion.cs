@@ -224,7 +224,7 @@ public class GameRegion
         var cardTransitionCCGEvent = new CardTransitionCcgEvent(CcgEventType.Disembark,
             embarkedPilot.InstanceId, embarkedPilot.ActiveData.Owner, unitCard.InstanceId, unitCard.ActiveData.Owner,
             doesEject, RegionLocation, b, b2);
-        _gameState.AddCCGEventLog(cardTransitionCCGEvent);
+        _gameState.AddCcgEventLog(cardTransitionCCGEvent);
         if (traitCause != null)
         {
             cardTransitionCCGEvent.EffectId = traitCause.EffectTraitId;

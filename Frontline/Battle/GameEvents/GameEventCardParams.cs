@@ -16,7 +16,7 @@ public class GameEventCardParams : GameEventParams
             }
         }
 
-        CcgEventsLog = game.GameState.GetCCGEventLog();
+        CcgEventsLog = game.GameState.GetCcgEventLog();
         return GameEventResult.OkResult;
     }
 }

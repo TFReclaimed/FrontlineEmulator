@@ -425,7 +425,7 @@ public class CcgGameState
                 cardTransitionCCGEvent.TraitId = traitCause.TraitParentId;
             }
 
-            AddCCGEventLog(cardTransitionCCGEvent);
+            AddCcgEventLog(cardTransitionCCGEvent);
             if (card.GetTemplate().Type == CardType.BurnCard || card.GetTemplate().Type == CardType.Secret)
             {
                 cardTransitionCCGEvent.Transition = card.GetTemplate().Type == CardType.BurnCard
@@ -569,7 +569,7 @@ public class CcgGameState
 
         var cardTransitionCCGEvent = new CardTransitionCcgEvent(CcgEventType.Move, cardId,
             playerIndex, 0, 0, false, target, slotIndex, pushDir);
-        AddCCGEventLog(cardTransitionCCGEvent);
+        AddCcgEventLog(cardTransitionCCGEvent);
         if (traitCause != null)
         {
             cardTransitionCCGEvent.EffectId = traitCause.EffectTraitId;
@@ -734,7 +734,7 @@ public class CcgGameState
 
             var cardTransitionCCGEvent = new CardTransitionCcgEvent(CcgEventType.CardSummon,
                 card.InstanceId, playerIndex, 0, 0, false, currentRegion, indexSlot, 1);
-            AddCCGEventLog(cardTransitionCCGEvent);
+            AddCcgEventLog(cardTransitionCCGEvent);
             if (traitCause != null)
             {
                 cardTransitionCCGEvent.EffectId = traitCause.EffectTraitId;
@@ -799,7 +799,7 @@ public class CcgGameState
                 }
             }
 
-            AddCCGEventLog(mulliganDrawCCGEvent);
+            AddCcgEventLog(mulliganDrawCCGEvent);
         }
 
         var count = deck.Cards.Count;
@@ -919,7 +919,7 @@ public class CcgGameState
     public bool TriggerEndTurnTraits(sbyte playerIndex)
     {
         var logData = new TurnChangeCcgEvent(CcgEventType.EndTurn, playerIndex);
-        AddCCGEventLog(logData);
+        AddCcgEventLog(logData);
         var player = Players[playerIndex];
         if (player.TriggerEndTurnTraits(_gameRules, playerIndex))
         {
@@ -1223,12 +1223,12 @@ public class CcgGameState
         }
     }
 
-    public void AddCCGEventLog(CcgEventData logData)
+    public void AddCcgEventLog(CcgEventData logData)
     {
         _ccgEventsLog.Add(logData);
     }
 
-    public List<CcgEventData> GetCCGEventLog()
+    public List<CcgEventData> GetCcgEventLog()
     {
         return _ccgEventsLog;
     }
@@ -1241,7 +1241,7 @@ public class CcgGameState
         if (PlayerTurn >= 0)
         {
             var logData = new TurnChangeCcgEvent(CcgEventType.NewTurn, playerIndex);
-            AddCCGEventLog(logData);
+            AddCcgEventLog(logData);
             Players[PlayerTurn].NewTurn(PlayerTurn, GetDrawCount());
             Board.NewTurn(PlayerTurn);
             foreach (var player in Players)
