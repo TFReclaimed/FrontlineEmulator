@@ -413,7 +413,7 @@ public class BaseTraitEffect
         return false;
     }
 
-    public List<Card> CheckForAppliedTargets(Card card, CardStack target, Region region)
+    public List<Card> CheckForAppliedTargets(Card card, CardStack? target, Region region)
     {
         var list = new List<Card>();
         List<Card> list2 = null;
@@ -538,10 +538,9 @@ public class BaseTraitEffect
             }
 
             var list3 = GameState.FindCards(Targets, region2, card);
-            CardStack cardStack2 = null;
             for (var i = 0; i < list3.Count; i++)
             {
-                cardStack2 = list3[i];
+                var cardStack2 = list3[i];
                 if (cardStack2 != null && cardStack2.PrimaryCard != null)
                 {
                     card2 = cardStack2.PrimaryCard;

@@ -17,13 +17,12 @@ public class UnsummonEffect : BaseTraitEffect
         {
             var list = GameState.FindCardStack(card);
             List<Card> list2 = null;
-            Card? card2;
             if (list == null || list.Count == 0)
             {
                 return;
             }
 
-            card2 = list[0].RemoveCard(card.InstanceId, owner);
+            var card2 = list[0].RemoveCard(card.InstanceId, owner);
             list2 = card2.GetSecrets();
             if (list2 != null)
             {
@@ -36,7 +35,7 @@ public class UnsummonEffect : BaseTraitEffect
 
             if (card2.HasPilot())
             {
-                card2 = card2.GetEmbarkedPilot();
+                card2 = card2.GetEmbarkedPilot()!;
                 list2 = card2.GetSecrets();
                 if (list2 != null)
                 {

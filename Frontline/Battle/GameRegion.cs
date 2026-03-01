@@ -154,7 +154,7 @@ public class GameRegion
         return false;
     }
 
-    public CardStack Deploy(Card card, sbyte slotIndex, sbyte pushDir, Region target,
+    public CardStack? Deploy(Card card, sbyte slotIndex, sbyte pushDir, Region target,
         CardTransitionCcgEvent deployEvent)
     {
         var flag = card.Deploy(Slots[slotIndex], pushDir == 0, target, deployEvent);
@@ -178,7 +178,7 @@ public class GameRegion
     }
 
     public void Disembark(int titanCardId, sbyte indexOfPlayerOwner, bool isFrontline, bool doesEject,
-        BaseTraitEffect traitCause)
+        BaseTraitEffect? traitCause)
     {
         var b = GetCardStackIdx(titanCardId, indexOfPlayerOwner);
         var cardStack = Slots[b];

@@ -105,7 +105,7 @@ public class GameBoard
         return false;
     }
 
-    public CardStack Deploy(Card card, Region target, sbyte slotIndex, sbyte pushDir,
+    public CardStack? Deploy(Card card, Region target, sbyte slotIndex, sbyte pushDir,
         CardTransitionCcgEvent deployEvent)
     {
         var cardStack = Regions[(uint) target].Deploy(card, slotIndex, pushDir, target, deployEvent);
@@ -191,7 +191,7 @@ public class GameBoard
             return false;
         }
 
-        var embarkedPilot = unitCard.EmbarkedPilot;
+        var embarkedPilot = unitCard.EmbarkedPilot!;
         if (!embarkedPilot.CanDisembark(cardStack) || embarkedPilot.HasActed(4))
         {
             return false;
@@ -200,7 +200,7 @@ public class GameBoard
         return Regions[(uint) _sourceRegion].CanDisembark();
     }
 
-    public bool Disembark(int cardId, sbyte ownerId, bool eject, BaseTraitEffect traitCause)
+    public bool Disembark(int cardId, sbyte ownerId, bool eject, BaseTraitEffect? traitCause)
     {
         if (Regions[(uint) _sourceRegion].HasEmpty() || eject)
         {

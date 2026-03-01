@@ -620,7 +620,6 @@ public class UnitCard : EntityCard
         if (target != null)
         {
             var traitActorRegion = GameState.GetTraitActorRegion(target.ActiveData.Owner, target.InstanceId);
-            ActiveTrait activeTrait = null;
             var list = GameState.FindCardStack(target);
             CardStack cardStack = null;
             if (list.Count > 0)
@@ -661,7 +660,7 @@ public class UnitCard : EntityCard
             var list2 = new List<EventLogTraitCardInfo>();
             for (var num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
             {
-                activeTrait = ActiveData.ActiveTraits[num];
+                var activeTrait = ActiveData.ActiveTraits[num];
                 if (activeTrait.GetTraitInfo().IsCombatManipulationPassive(CombatManipulationPassiveType.DamageConvertAp, activeTrait))
                 {
                     bypass += b;

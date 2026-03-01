@@ -35,7 +35,7 @@ public class DeployCardEffect : BaseTraitEffect
         if (card.HasPilot())
         {
             var unitCard = (UnitCard) card;
-            unitCard.EmbarkedPilot.Discard(GameState.Players);
+            unitCard.EmbarkedPilot!.Discard(GameState.Players);
             unitCard.EmbarkedPilot = null;
         }
 

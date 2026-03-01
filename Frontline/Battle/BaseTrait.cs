@@ -19,7 +19,7 @@ public class BaseTrait
 
     public TraitActivationReq ActRequirement { get; set; }
 
-    public List<BaseTraitEffect> Effects { get; set; }
+    public List<BaseTraitEffect> Effects { get; set; } = [];
 
     public void Init(CcgGameState gameState)
     {
@@ -53,10 +53,6 @@ public class BaseTrait
         }
 
         var targets = primaryTargeting.Targets;
-        if (targets == null)
-        {
-            return false;
-        }
 
         if (!targets.HasAreaTarget())
         {
@@ -92,10 +88,6 @@ public class BaseTrait
         }
 
         var targets = primaryTargeting.Targets;
-        if (targets == null)
-        {
-            return false;
-        }
 
         var area = targets.Area;
         if (area == TargetableArea.Self)
@@ -185,7 +177,7 @@ public class BaseTrait
         return CanActivate(list[0], region, source.ActiveData.Owner);
     }
 
-    public bool HasActiveTargets(Card card, CardStack target, Region region, CcgGameState game)
+    public bool HasActiveTargets(Card card, CardStack? target, Region region, CcgGameState game)
     {
         for (var i = 0; i < Effects.Count; i++)
         {
@@ -243,10 +235,9 @@ public class BaseTrait
 
     public virtual void Deactivate(Card card, Card source)
     {
-        ActiveTrait activeTrait = null;
         for (var num = card.ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
         {
-            activeTrait = card.ActiveData.ActiveTraits[num];
+            var activeTrait = card.ActiveData.ActiveTraits[num];
             if (activeTrait.TraitSourceId == TraitId)
             {
                 activeTrait.Deactivate(true);
@@ -254,9 +245,9 @@ public class BaseTrait
         }
     }
 
-    public BaseTraitEffect GetPrimaryTargeting(sbyte priority)
+    public BaseTraitEffect? GetPrimaryTargeting(sbyte priority)
     {
-        BaseTraitEffect baseTraitEffect = null;
+        BaseTraitEffect? baseTraitEffect = null;
         for (var i = 0; i < Effects.Count; i++)
         {
             if (baseTraitEffect == null && Effects[i].TargetPrimary)
@@ -278,9 +269,9 @@ public class BaseTrait
         return baseTraitEffect;
     }
 
-    public BaseTraitEffect GetTrigger(int limit)
+    public BaseTraitEffect? GetTrigger(int limit)
     {
-        BaseTraitEffect baseTraitEffect = null;
+        BaseTraitEffect? baseTraitEffect = null;
         for (var i = 0; i < Effects.Count; i++)
         {
             if (Effects[i].IsTrigger() && Effects[i].Priority >= limit &&

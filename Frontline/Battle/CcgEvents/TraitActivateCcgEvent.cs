@@ -19,5 +19,5 @@ public class TraitActivateCcgEvent : CcgEventData
 
     public Region Region { get; set; } = Region.NumRegions;
 
-    public ActiveTraitCardInfo[] Targets { get; set; }
+    public ActiveTraitCardInfo[] Targets { get; set; } = [];
 }

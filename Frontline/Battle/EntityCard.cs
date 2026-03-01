@@ -348,7 +348,7 @@ public class EntityCard : Card
             unitCard.CheckAndUpdateXp(xpTrigger);
             if (unitCard.HasPilot())
             {
-                unitCard.EmbarkedPilot.CheckAndUpdateXp(xpTrigger);
+                unitCard.EmbarkedPilot!.CheckAndUpdateXp(xpTrigger);
             }
         }
 
@@ -357,7 +357,7 @@ public class EntityCard : Card
             return;
         }
 
-        var embarkedPilot = GetEmbarkedPilot();
+        var embarkedPilot = GetEmbarkedPilot()!;
         for (var j = 0; j < embarkedPilot.cardTraits.Length; j++)
         {
             if (embarkedPilot.cardTraits[j].TraitType == TraitType.LastStand &&
@@ -379,7 +379,7 @@ public class EntityCard : Card
             unitCard2.CheckAndUpdateXp(xpTrigger2);
             if (unitCard2.HasPilot())
             {
-                unitCard2.EmbarkedPilot.CheckAndUpdateXp(xpTrigger2);
+                unitCard2.EmbarkedPilot!.CheckAndUpdateXp(xpTrigger2);
             }
         }
     }
@@ -397,7 +397,7 @@ public class EntityCard : Card
         }
     }
 
-    public override sbyte HealDamage(CardStack stack, sbyte heal)
+    public override sbyte HealDamage(CardStack? stack, sbyte heal)
     {
         var activeEntityCardData = (ActiveEntityCardData) ActiveData;
         var currentHealth = activeEntityCardData.CurrentHealth;

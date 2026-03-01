@@ -135,7 +135,7 @@ public class Player
         DrawFromDeck(playerIndex, drawCount, true);
     }
 
-    public Card DeployCard(int cardId)
+    public Card? DeployCard(int cardId)
     {
         var card = SupportDeck.DeployCard(cardId);
         if (card != null)
@@ -204,7 +204,7 @@ public class Player
                     if (card.HasPilot())
                     {
                         var unitCard = (UnitCard) card;
-                        unitCard.EmbarkedPilot.Discard(_gameState.Players);
+                        unitCard.EmbarkedPilot!.Discard(_gameState.Players);
                         unitCard.EmbarkedPilot = null;
                     }
 
@@ -291,7 +291,7 @@ public class Player
             unitCard.CheckAndUpdateXp(xpTrigger);
             if (unitCard.HasPilot())
             {
-                unitCard.EmbarkedPilot.CheckAndUpdateXp(xpTrigger);
+                unitCard.EmbarkedPilot!.CheckAndUpdateXp(xpTrigger);
             }
         }
     }

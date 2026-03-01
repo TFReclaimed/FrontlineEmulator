@@ -124,7 +124,7 @@ public class CardStack
 
             if (PrimaryCard.HasPilot())
             {
-                card2 = PrimaryCard.GetEmbarkedPilot();
+                card2 = PrimaryCard.GetEmbarkedPilot()!;
                 if (card2.EqualsTo(card))
                 {
                     var unitCard = (UnitCard) PrimaryCard;
@@ -271,7 +271,7 @@ public class CardStack
         if (PrimaryCard != null && PrimaryCard.HasPilot())
         {
             var unitCard = (UnitCard) PrimaryCard;
-            if (unitCard.EmbarkedPilot.EqualsTo(card))
+            if (unitCard.EmbarkedPilot!.EqualsTo(card))
             {
                 unitCard.EmbarkedPilot.PilotEmbarked = false;
                 _ejectedCard = unitCard.EmbarkedPilot;

@@ -488,17 +488,15 @@ public class TraitTargeting
         }
 
         var list = gameState.FindCards(this, region, active.GetTraitSource());
-        Card card = null;
-        List<Card> list2 = null;
         for (var i = 0; i < list.Count; i++)
         {
-            card = list[i].PrimaryCard;
+            var card = list[i].PrimaryCard;
             if (DoesMatchType(card))
             {
                 num++;
             }
 
-            list2 = card.GetSecrets();
+            var list2 = card.GetSecrets();
             if (list2 != null)
             {
                 for (var j = 0; j < list2.Count; j++)
@@ -510,7 +508,7 @@ public class TraitTargeting
                 }
             }
 
-            if (card.HasPilot() && DoesMatchType(card.GetEmbarkedPilot()))
+            if (card.HasPilot() && DoesMatchType(card.GetEmbarkedPilot()!))
             {
                 num++;
             }

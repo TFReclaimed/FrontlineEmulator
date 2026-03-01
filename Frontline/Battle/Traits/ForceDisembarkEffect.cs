@@ -6,7 +6,7 @@ public class ForceDisembarkEffect : BaseTraitEffect
     {
         if (card.HasPilot())
         {
-            Card embarkedPilot = card.GetEmbarkedPilot();
+            Card embarkedPilot = card.GetEmbarkedPilot()!;
             GameState.Disembark(embarkedPilot.ActiveData.Owner, embarkedPilot.InstanceId, false, this);
         }
     }

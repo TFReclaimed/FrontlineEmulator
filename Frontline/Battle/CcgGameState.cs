@@ -406,11 +406,10 @@ public class CcgGameState
     }
 
     public bool Deploy(sbyte playerIndex, int cardId, sbyte targetIndex, int targetId, TargetableArea area,
-        Region target, sbyte slotIndex, sbyte pushDir, BaseTraitEffect traitCause)
+        Region target, sbyte slotIndex, sbyte pushDir, BaseTraitEffect? traitCause)
     {
         var player = Players[playerIndex];
-        Card card = null;
-        card = traitCause != null
+        var card = traitCause != null
             ? player.RemoveCardForTrait(cardId, playerIndex, traitCause)
             : player.DeployCard(cardId);
         if (card != null)
@@ -476,8 +475,8 @@ public class CcgGameState
     {
         var player = Players[deployed.ActiveData.Owner];
         var player2 = Players[targetIndex];
-        Card card = null;
-        CardStack cardStack = null;
+        Card? card = null;
+        CardStack? cardStack = null;
         switch (area)
         {
             case TargetableArea.FriendlyDiscard:
@@ -559,7 +558,7 @@ public class CcgGameState
     }
 
     public bool Move(sbyte playerIndex, int cardId, Region target, sbyte slotIndex, sbyte pushDir,
-        BaseTraitEffect traitCause)
+        BaseTraitEffect? traitCause)
     {
         var flag = false;
         if (pushDir == 0 && Board.Regions[(uint) target].Slots[slotIndex].PrimaryCard != null)
@@ -582,16 +581,13 @@ public class CcgGameState
             {
                 var card = Board.FindTraitActor(cardId, playerIndex);
                 var list = FindCardStack(card);
-                UnitCard unitCard = null;
-                UnitCard unitCard2 = null;
-                CardStack cardStack = null;
                 if (list.Count > 0)
                 {
-                    cardStack = list[0];
+                    var cardStack = list[0];
                     if (cardStack.PrimaryCard.HasPilot())
                     {
-                        unitCard2 = (UnitCard) cardStack.PrimaryCard;
-                        unitCard = unitCard2.EmbarkedPilot;
+                        var unitCard2 = (UnitCard) cardStack.PrimaryCard;
+                        var unitCard = unitCard2.EmbarkedPilot!;
                         if (unitCard2.GetTemplate().Type == CardType.Titan &&
                             unitCard.GetTemplate().Type == CardType.Pilot)
                         {
@@ -631,7 +627,7 @@ public class CcgGameState
         return false;
     }
 
-    public bool Disembark(sbyte playerIndex, int cardId, bool eject, BaseTraitEffect traitCause)
+    public bool Disembark(sbyte playerIndex, int cardId, bool eject, BaseTraitEffect? traitCause)
     {
         var card = Board.FindTraitActor(cardId, playerIndex);
         var list = FindCardStack(card);
@@ -641,8 +637,8 @@ public class CcgGameState
         }
 
         var cardStack = list[0];
-        var unitCard = (UnitCard) cardStack.PrimaryCard;
-        var embarkedPilot = unitCard.EmbarkedPilot;
+        var unitCard = (UnitCard) cardStack.PrimaryCard!;
+        var embarkedPilot = unitCard.EmbarkedPilot!;
         if (embarkedPilot.GetTemplate().Type != 0)
         {
             return false;
@@ -701,7 +697,7 @@ public class CcgGameState
     }
 
     public bool Summon(sbyte playerIndex, int cardTemplateId, Region currentRegion, TargetableArea targetableArea,
-        BaseTraitEffect traitCause)
+        BaseTraitEffect? traitCause)
     {
         var cardTemplate = RulesetParser.GetCardTemplate(cardTemplateId, 0);
         if (cardTemplate == null)

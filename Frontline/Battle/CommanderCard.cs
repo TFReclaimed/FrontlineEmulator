@@ -238,7 +238,7 @@ public class CommanderCard : Card
         _player.TakeDamage(b, bypass2, source);
     }
 
-    public override sbyte HealDamage(CardStack stack, sbyte heal)
+    public override sbyte HealDamage(CardStack? stack, sbyte heal)
     {
         return _player.Resources.HealDamage(heal);
     }
