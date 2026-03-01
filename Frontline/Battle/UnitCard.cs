@@ -23,15 +23,11 @@ public class UnitCard : EntityCard
     {
     }
 
-    public UnitCard(CcgGameState game, Card other)
+    public UnitCard(CcgGameState game, UnitCard other)
         : base(game, other)
     {
-        if (other is UnitCard)
-        {
-            var unitCard = (UnitCard) other;
-            EmbarkedPilot = unitCard.EmbarkedPilot;
-            PilotEmbarked = unitCard.PilotEmbarked;
-        }
+        EmbarkedPilot = other.EmbarkedPilot;
+        PilotEmbarked = other.PilotEmbarked;
     }
 
     public UnitCard(CcgGameState game, UnitCardTemplate template, ItemEntity itemEntity)
@@ -47,7 +43,7 @@ public class UnitCard : EntityCard
         SetCurrentHealth(unitTemplate.Health);
         SetMaxHealth(unitTemplate.Health);
         SetCurrentDefense(unitTemplate.Defense);
-        currentCost = unitTemplate.Cost;
+        CurrentCost = unitTemplate.Cost;
         _attack = unitTemplate.Attack;
         _defense = unitTemplate.Defense;
         SetCurrentDefense(unitTemplate.Defense);
@@ -115,9 +111,8 @@ public class UnitCard : EntityCard
         var b = _attack;
         List<EventLogTraitCardInfo> list = [];
 
-        for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
+        foreach (var activeTrait in ActiveData.ActiveTraits)
         {
-            var activeTrait = ActiveData.ActiveTraits[i];
             var b2 = activeTrait.GetTraitInfo().GetAttackBonus(target, activeTrait);
             if (b2 != 0)
             {
@@ -167,9 +162,8 @@ public class UnitCard : EntityCard
         var b = _bypassDefense;
         List<EventLogTraitCardInfo> list = [];
 
-        for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
+        foreach (var activeTrait in ActiveData.ActiveTraits)
         {
-            var activeTrait = ActiveData.ActiveTraits[i];
             var b2 = activeTrait.GetTraitInfo().GetBypassDefenseBonus(target, activeTrait);
             if (b2 != 0)
             {
@@ -215,9 +209,8 @@ public class UnitCard : EntityCard
         var b = activeUnitCardData.CurrentDefense;
         List<EventLogTraitCardInfo> list = [];
 
-        for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
+        foreach (var activeTrait in ActiveData.ActiveTraits)
         {
-            var activeTrait = ActiveData.ActiveTraits[i];
             var b2 = activeTrait.GetTraitInfo().GetDefenseBonus(activeTrait);
             if (b2 != 0)
             {
@@ -309,9 +302,9 @@ public class UnitCard : EntityCard
             return false;
         }
 
-        for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
+        foreach (var trait in ActiveData.ActiveTraits)
         {
-            var traitInfo = ActiveData.ActiveTraits[i].GetTraitInfo();
+            var traitInfo = trait.GetTraitInfo();
             if (!traitInfo.CanEmbark())
             {
                 return false;
@@ -370,21 +363,20 @@ public class UnitCard : EntityCard
                 return false;
             }
 
-            for (var i = 0; i < cardTraits.Length; i++)
+            foreach (var trait in CardTraits)
             {
-                var baseTrait = cardTraits[i];
+                var baseTrait = trait;
                 if (baseTrait == null)
                 {
                     continue;
                 }
 
-                for (var j = 0; j < cardTraits[i].Effects.Count; j++)
+                foreach (var baseTraitEffect in trait.Effects)
                 {
-                    var baseTraitEffect = cardTraits[i].Effects[j];
                     if (!baseTraitEffect.CanEmbark())
                     {
                         GameState.Logger.Debug("UnitCard.CanDeploy false - trait prevents embark " +
-                                          baseTraitEffect.EffectTraitId);
+                                               baseTraitEffect.EffectTraitId);
                         return false;
                     }
                 }
@@ -396,21 +388,20 @@ public class UnitCard : EntityCard
             return false;
         }
 
-        for (var k = 0; k < cardTraits.Length; k++)
+        foreach (var trait in CardTraits)
         {
-            var baseTrait2 = cardTraits[k];
+            var baseTrait2 = trait;
             if (baseTrait2 == null)
             {
                 continue;
             }
 
-            for (var l = 0; l < cardTraits[k].Effects.Count; l++)
+            foreach (var baseTraitEffect2 in trait.Effects)
             {
-                var baseTraitEffect2 = cardTraits[k].Effects[l];
                 if (!baseTraitEffect2.CanDeploy(target, region))
                 {
                     GameState.Logger.Debug("UnitCard.CanDeploy false - trait prevents deploy " +
-                                      baseTraitEffect2.EffectTraitId);
+                                           baseTraitEffect2.EffectTraitId);
                     return false;
                 }
             }
@@ -446,9 +437,8 @@ public class UnitCard : EntityCard
                     deployEvent.TargetOwner = unitCard.ActiveData.Owner;
                 }
 
-                for (var i = 0; i < cardTraits.Length; i++)
+                foreach (var baseTrait in CardTraits)
                 {
-                    var baseTrait = cardTraits[i];
                     if (baseTrait != null && baseTrait.ActivateOnDeploy())
                     {
                         baseTrait.Activate(this, stack, target, GameState);
@@ -478,9 +468,8 @@ public class UnitCard : EntityCard
                     deployEvent.TargetOwner = unitCard2.ActiveData.Owner;
                 }
 
-                for (var j = 0; j < cardTraits.Length; j++)
+                foreach (var baseTrait in CardTraits)
                 {
-                    var baseTrait = cardTraits[j];
                     if (baseTrait != null && baseTrait.ActivateOnDeploy())
                     {
                         baseTrait.Activate(this, stack, target, GameState);
@@ -571,9 +560,8 @@ public class UnitCard : EntityCard
 
     public override bool CanAttack(CardStack source, CardStack target)
     {
-        for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
+        foreach (var activeTrait in ActiveData.ActiveTraits)
         {
-            var activeTrait = ActiveData.ActiveTraits[i];
             if (!activeTrait.GetTraitInfo().CanAttack(target, activeTrait))
             {
                 GameState.Logger.Debug("UnitCard.CanAttack false - trait prevetns attack " + activeTrait.TraitEffectId);
@@ -626,12 +614,12 @@ public class UnitCard : EntityCard
                 cardStack = list[0];
             }
 
-            for (var i = 0; i < cardTraits.Length; i++)
+            for (var i = 0; i < CardTraits.Length; i++)
             {
-                if (cardTraits[i].TraitType == TraitType.Assault && !ActiveData.TraitActivated[i])
+                if (CardTraits[i].TraitType == TraitType.Assault && !ActiveData.TraitActivated[i])
                 {
                     ActiveData.TraitActivated[i] = true;
-                    cardTraits[i].Activate(this, cardStack, traitActorRegion, GameState);
+                    CardTraits[i].Activate(this, cardStack, traitActorRegion, GameState);
                 }
             }
 
@@ -735,19 +723,15 @@ public class UnitCard : EntityCard
             0, 0);
         GameState.AddCcgEventLog(combatCCGEvent);
         CheckForDeathEvent();
-        if (target != null)
-        {
-            target.CheckForDeathEvent();
-        }
+        target?.CheckForDeathEvent();
     }
 
     public override bool CanCounterAttack(CardStack source, CardStack target, bool inCombat)
     {
         if (GetTemplate().CanAttack(source, target))
         {
-            for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
+            foreach (var activeTrait in ActiveData.ActiveTraits)
             {
-                var activeTrait = ActiveData.ActiveTraits[i];
                 if (!activeTrait.GetTraitInfo().CanCounterAttack(target, activeTrait))
                 {
                     if (inCombat && activeTrait.HasCharges())
@@ -846,9 +830,8 @@ public class UnitCard : EntityCard
     {
         var b = attack;
         var bypass2 = bypass;
-        for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
+        foreach (var activeTrait in ActiveData.ActiveTraits)
         {
-            var activeTrait = ActiveData.ActiveTraits[i];
             if (activeTrait.GetTraitInfo().IsDamageImmunity(false, activeTrait))
             {
                 b = 0;
@@ -873,28 +856,19 @@ public class UnitCard : EntityCard
 
     public override void CreateActiveData()
     {
-        if (ActiveData == null)
-        {
-            ActiveData = new ActiveUnitCardData();
-            ActiveData.Setup(this);
-        }
+        ActiveData = new ActiveUnitCardData();
+        ActiveData.Setup(this);
     }
 
     public override void InitActiveData()
     {
-        if (ActiveData != null)
-        {
-            base.InitActiveData();
-        }
+        base.InitActiveData();
 
         var unitTemplate = (UnitCardTemplate) GetTemplate();
         _bypassDefense = 0;
         _attack = unitTemplate.Attack;
         _defense = unitTemplate.Defense;
-        if (EmbarkedPilot != null)
-        {
-            EmbarkedPilot.InitActiveData();
-        }
+        EmbarkedPilot?.InitActiveData();
     }
 
     private sbyte ValidateAttackEffect(Card source, Card target)
@@ -1139,9 +1113,8 @@ public class UnitCard : EntityCard
             }
         }
 
-        for (var i = 0; i < target.ActiveData.ActiveTraits.Count; i++)
+        foreach (var activeTrait in target.ActiveData.ActiveTraits)
         {
-            var activeTrait = target.ActiveData.ActiveTraits[i];
             if (!flag && activeTrait.GetTraitInfo().IsCombatManipulationPassive(CombatManipulationPassiveType.Sniper, activeTrait))
             {
                 if (activeTrait.HasCharges())

@@ -74,7 +74,7 @@ public class UnitCardTemplate : EntityCardTemplate
         UnitCard unitCard;
         if (source != null)
         {
-            unitCard = new UnitCard(game, source);
+            unitCard = new UnitCard(game, (UnitCard) source);
         }
         else
         {

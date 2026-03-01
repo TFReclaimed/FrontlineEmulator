@@ -105,9 +105,8 @@ public class EntityCard : Card
         {
             SetActed(EntityActionType.AnyActionMask);
             stack.PrimaryCard = this;
-            for (var i = 0; i < cardTraits.Length; i++)
+            foreach (var baseTrait in CardTraits)
             {
-                var baseTrait = cardTraits[i];
                 if (baseTrait != null && baseTrait.ActivateOnDeploy())
                 {
                     baseTrait.Activate(this, stack, target, GameState);
@@ -240,9 +239,9 @@ public class EntityCard : Card
 
     public void ActivateTrait(CardStack target, Region region, CcgGameState game)
     {
-        for (var i = 0; i < cardTraits.Length; i++)
+        for (var i = 0; i < CardTraits.Length; i++)
         {
-            if (cardTraits[i].TraitType == TraitType.OneShot && !ActiveData.TraitActivated[i])
+            if (CardTraits[i].TraitType == TraitType.OneShot && !ActiveData.TraitActivated[i])
             {
                 SetActed(EntityActionType.AnyButDeployMask);
                 ActiveData.TraitActivated[i] = true;
@@ -252,7 +251,7 @@ public class EntityCard : Card
                     activeTrait.GetTraitInfo().ActivateAction(target, region, activeTrait);
                 }
 
-                cardTraits[i].Activate(this, target, region, game);
+                CardTraits[i].Activate(this, target, region, game);
                 break;
             }
         }
@@ -264,9 +263,8 @@ public class EntityCard : Card
         var currentHealth = activeEntityCardData.CurrentHealth;
         var b = attack;
         var b2 = bypass;
-        for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
+        foreach (var activeTrait in ActiveData.ActiveTraits)
         {
-            var activeTrait = ActiveData.ActiveTraits[i];
             if (activeTrait.GetTraitInfo().IsDamageImmunity(false, activeTrait))
             {
                 b = 0;
@@ -315,12 +313,12 @@ public class EntityCard : Card
         }
 
         cardStack = list[0];
-        for (var i = 0; i < cardTraits.Length; i++)
+        for (var i = 0; i < CardTraits.Length; i++)
         {
-            if (cardTraits[i].TraitType == TraitType.LastStand && !ActiveData.TraitActivated[i])
+            if (CardTraits[i].TraitType == TraitType.LastStand && !ActiveData.TraitActivated[i])
             {
                 ActiveData.TraitActivated[i] = true;
-                cardTraits[i].Activate(this, cardStack, traitActorRegion, GameState);
+                CardTraits[i].Activate(this, cardStack, traitActorRegion, GameState);
             }
         }
 
@@ -345,13 +343,13 @@ public class EntityCard : Card
         }
 
         var embarkedPilot = GetEmbarkedPilot()!;
-        for (var j = 0; j < embarkedPilot.cardTraits.Length; j++)
+        for (var j = 0; j < embarkedPilot.CardTraits.Length; j++)
         {
-            if (embarkedPilot.cardTraits[j].TraitType == TraitType.LastStand &&
+            if (embarkedPilot.CardTraits[j].TraitType == TraitType.LastStand &&
                 !embarkedPilot.ActiveData.TraitActivated[j])
             {
                 embarkedPilot.ActiveData.TraitActivated[j] = true;
-                embarkedPilot.cardTraits[j].Activate(embarkedPilot, cardStack, traitActorRegion, GameState);
+                embarkedPilot.CardTraits[j].Activate(embarkedPilot, cardStack, traitActorRegion, GameState);
             }
         }
 
@@ -405,9 +403,8 @@ public class EntityCard : Card
         var b = activeEntityCardData.CurrentHealth;
         List<EventLogTraitCardInfo> list = [];
 
-        for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
+        foreach (var activeTrait in ActiveData.ActiveTraits)
         {
-            var activeTrait = ActiveData.ActiveTraits[i];
             var b2 = activeTrait.GetTraitInfo().GetHealthBonus(activeTrait);
             if (b2 != 0)
             {
@@ -464,9 +461,8 @@ public class EntityCard : Card
     public override sbyte GetMaxModHealth()
     {
         var b = _maxHealth;
-        for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
+        foreach (var activeTrait in ActiveData.ActiveTraits)
         {
-            var activeTrait = ActiveData.ActiveTraits[i];
             var b2 = activeTrait.GetTraitInfo().GetHealthBonus(activeTrait);
             if (b2 != 0)
             {
@@ -479,19 +475,13 @@ public class EntityCard : Card
 
     public override void CreateActiveData()
     {
-        if (ActiveData == null)
-        {
-            ActiveData = new ActiveEntityCardData();
-            ActiveData.Setup(this);
-        }
+        ActiveData = new ActiveEntityCardData();
+        ActiveData.Setup(this);
     }
 
     public override void InitActiveData()
     {
-        if (ActiveData != null)
-        {
-            base.InitActiveData();
-        }
+        base.InitActiveData();
 
         var entityTemplate = (EntityCardTemplate) GetTemplate();
         _maxHealth = entityTemplate.Health;
