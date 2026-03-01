@@ -18,7 +18,7 @@ public class Card : Item
 
     public sbyte Rank { get; set; } = 1;
 
-    protected CardTemplate template;
+    protected CardTemplate Template;
 
     protected BaseTrait[] cardTraits;
 
@@ -26,20 +26,30 @@ public class Card : Item
 
     protected readonly CcgGameState GameState;
 
-    public Card(CcgGameState game)
+    public Card(CcgGameState game, CardTemplate template)
     {
         GameState = game;
+        Template = template;
+        TemplateId = template.CardId;
     }
 
     public Card(CcgGameState game, Card other)
     {
         GameState = game;
-        Copy(other);
+        InstanceId = other.InstanceId;
+        TemplateId = other.TemplateId;
+        Template = other.Template;
+        Xp = other.Xp;
+        Rank = other.Rank;
+        ActiveData = other.ActiveData;
+        cardTraits = other.cardTraits;
+        currentCost = other.currentCost;
     }
 
-    public Card(CcgGameState game, ItemEntity itemEntity)
+    public Card(CcgGameState game, CardTemplate template, ItemEntity itemEntity)
     {
         GameState = game;
+        Template = template;
         InstanceId = itemEntity.ItemId;
         TemplateId = itemEntity.TemplateId;
         Xp = itemEntity.Xp;
@@ -77,11 +87,12 @@ public class Card : Item
             return this;
         }
 
-        template = RulesetParser.GetCardTemplate(TemplateId, Rank);
-        if (template != null)
+        var rankedTemplate = RulesetParser.GetCardTemplate(TemplateId, Rank);
+        if (rankedTemplate != null)
         {
+            Template = rankedTemplate;
             AddTraitsFromTemplate();
-            currentCost = template.Cost;
+            currentCost = Template.Cost;
             CreateActiveData();
             InitStackedCards();
             return this;
@@ -132,7 +143,7 @@ public class Card : Item
 
     protected void AddTraitsFromTemplate()
     {
-        var traits = template.Traits.ToArray();
+        var traits = Template.Traits.ToArray();
         var num = traits.Length;
         cardTraits = new BaseTrait[num];
         for (var i = 0; i < num; i++)
@@ -163,25 +174,17 @@ public class Card : Item
 
     public virtual void Setup()
     {
-        if (template != null)
-        {
-            Rank = (sbyte) template.MinimumRank;
-        }
+        Rank = (sbyte) Template.MinimumRank;
     }
 
     public CardTemplate GetTemplate()
     {
-        return template;
+        return Template;
     }
 
     public virtual List<Card> GetSecrets()
     {
         return null;
-    }
-
-    public void SetTemplate(CardTemplate newTemplate)
-    {
-        template = newTemplate;
     }
 
     public virtual UnitType GetUnitType()
@@ -263,7 +266,7 @@ public class Card : Item
             deployEvent.TargetOwner = stack.PrimaryCard.ActiveData.Owner;
         }
 
-        if (template.Type == CardType.Secret)
+        if (Template.Type == CardType.Secret)
         {
             if (stack.PrimaryCard != null)
             {
@@ -285,7 +288,7 @@ public class Card : Item
             }
         }
 
-        if (template.Type == CardType.BurnCard)
+        if (Template.Type == CardType.BurnCard)
         {
             Discard(GameState.Players);
         }
@@ -882,21 +885,6 @@ public class Card : Item
         return InstanceId == other.InstanceId && ActiveData.Owner == other.ActiveData.Owner;
     }
 
-    protected void Copy(Card? other)
-    {
-        if (other != null)
-        {
-            InstanceId = other.InstanceId;
-            TemplateId = other.TemplateId;
-            template = other.template;
-            Xp = other.Xp;
-            Rank = other.Rank;
-            ActiveData = other.ActiveData;
-            cardTraits = other.cardTraits;
-            currentCost = other.currentCost;
-        }
-    }
-
     public virtual void CreateActiveData()
     {
         if (ActiveData == null)
@@ -913,11 +901,8 @@ public class Card : Item
             ActiveData.Init(GameState, this);
         }
 
-        if (template != null)
-        {
-            currentCost = template.Cost;
-            Rank = (sbyte) template.MinimumRank;
-        }
+        currentCost = Template.Cost;
+        Rank = (sbyte) Template.MinimumRank;
     }
 
     public virtual bool HasStatusEffect(ApplyStatusTraitStatusType effectId)

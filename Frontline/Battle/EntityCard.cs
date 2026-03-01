@@ -15,8 +15,8 @@ public class EntityCard : Card
 
     private bool _isDead;
 
-    public EntityCard(CcgGameState game)
-        : base(game)
+    public EntityCard(CcgGameState game, EntityCardTemplate template)
+        : base(game, template)
     {
     }
 
@@ -26,8 +26,8 @@ public class EntityCard : Card
         Secrets = other.GetSecrets();
     }
 
-    public EntityCard(CcgGameState game, ItemEntity itemEntity)
-        : base(game, itemEntity)
+    public EntityCard(CcgGameState game, EntityCardTemplate template, ItemEntity itemEntity)
+        : base(game, template, itemEntity)
     {
     }
 
@@ -344,7 +344,7 @@ public class EntityCard : Card
         if (_myDeathCard.GetTemplate().IsCombatUnit())
         {
             var unitCard = (UnitCard) _myDeathCard;
-            var xpTrigger = "Destroy_" + template.Type;
+            var xpTrigger = "Destroy_" + Template.Type;
             unitCard.CheckAndUpdateXp(xpTrigger);
             if (unitCard.HasPilot())
             {

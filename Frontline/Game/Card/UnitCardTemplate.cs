@@ -78,9 +78,7 @@ public class UnitCardTemplate : EntityCardTemplate
         }
         else
         {
-            unitCard = new UnitCard(game);
-            unitCard.SetTemplate(this);
-            unitCard.TemplateId = CardId;
+            unitCard = new UnitCard(game, this);
             unitCard.Rank = (sbyte) MinimumRank;
         }
 

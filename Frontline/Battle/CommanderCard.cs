@@ -1,6 +1,7 @@
 using Frontline.Battle.CcgEvents;
 using Frontline.Battle.Traits;
 using Frontline.Data.Entities;
+using Frontline.Game.Card;
 
 namespace Frontline.Battle;
 
@@ -12,8 +13,8 @@ public class CommanderCard : Card
 
     private Player _player = null!;
 
-    public CommanderCard(CcgGameState game)
-        : base(game)
+    public CommanderCard(CcgGameState game, CommanderCardTemplate template)
+        : base(game, template)
     {
     }
 
@@ -28,8 +29,8 @@ public class CommanderCard : Card
         }
     }
 
-    public CommanderCard(CcgGameState game, ItemEntity itemEntity)
-        : base(game, itemEntity)
+    public CommanderCard(CcgGameState game, CommanderCardTemplate template, ItemEntity itemEntity)
+        : base(game, template, itemEntity)
     {
     }
 

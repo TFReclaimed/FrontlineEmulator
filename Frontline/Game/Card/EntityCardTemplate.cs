@@ -15,9 +15,7 @@ public class EntityCardTemplate : CardTemplate
         }
         else
         {
-            entityCard = new EntityCard(game);
-            entityCard.SetTemplate(this);
-            entityCard.TemplateId = CardId;
+            entityCard = new EntityCard(game, this);
             entityCard.Rank = (sbyte) MinimumRank;
         }
 

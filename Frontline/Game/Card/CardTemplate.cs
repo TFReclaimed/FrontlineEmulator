@@ -33,9 +33,7 @@ public class CardTemplate
         }
         else
         {
-            card = new Battle.Card(game);
-            card.SetTemplate(this);
-            card.TemplateId = CardId;
+            card = new Battle.Card(game, this);
             card.Rank = (sbyte) MinimumRank;
         }
 

@@ -18,8 +18,8 @@ public class UnitCard : EntityCard
 
     private sbyte _defense;
 
-    public UnitCard(CcgGameState game)
-        : base(game)
+    public UnitCard(CcgGameState game, UnitCardTemplate template)
+        : base(game, template)
     {
     }
 
@@ -34,8 +34,8 @@ public class UnitCard : EntityCard
         }
     }
 
-    public UnitCard(CcgGameState game, ItemEntity itemEntity)
-        : base(game, itemEntity)
+    public UnitCard(CcgGameState game, UnitCardTemplate template, ItemEntity itemEntity)
+        : base(game, template, itemEntity)
     {
     }
 
@@ -959,7 +959,7 @@ public class UnitCard : EntityCard
 
     public override bool HasPilot()
     {
-        if (template.Type != CardType.Titan)
+        if (Template.Type != CardType.Titan)
         {
             return false;
         }

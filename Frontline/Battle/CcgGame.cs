@@ -50,13 +50,13 @@ public class CcgGame
             {
                 var template = RulesetParser.GetCardTemplate(deckEntity.TemplateId)!;
 
-                if (template is UnitCardTemplate)
+                if (template is UnitCardTemplate unitCardTemplate)
                 {
-                    playerDeckCards.Add(new UnitCard(GameState, deckEntity));
+                    playerDeckCards.Add(new UnitCard(GameState, unitCardTemplate, deckEntity));
                 }
                 else
                 {
-                    playerDeckCards.Add(new Card(GameState, deckEntity));
+                    playerDeckCards.Add(new Card(GameState, template, deckEntity));
                 }
             }
 
@@ -71,13 +71,13 @@ public class CcgGame
             {
                 var template = RulesetParser.GetCardTemplate(supportEntity.TemplateId)!;
 
-                if (template is UnitCardTemplate)
+                if (template is UnitCardTemplate unitCardTemplate)
                 {
-                    playerSupportCards.Add(new UnitCard(GameState, supportEntity));
+                    playerSupportCards.Add(new UnitCard(GameState, unitCardTemplate, supportEntity));
                 }
                 else
                 {
-                    playerSupportCards.Add(new Card(GameState, supportEntity));
+                    playerSupportCards.Add(new Card(GameState, template, supportEntity));
                 }
             }
 
@@ -87,7 +87,8 @@ public class CcgGame
         var commanders = new List<CommanderCard>();
         foreach (var commanderEntity in commanderEntities)
         {
-            var card = new CommanderCard(GameState, commanderEntity);
+            var template = (CommanderCardTemplate) RulesetParser.GetCardTemplate(commanderEntity.TemplateId)!;
+            var card = new CommanderCard(GameState, template, commanderEntity);
             card.Setup();
             commanders.Add(card);
         }
