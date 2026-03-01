@@ -70,7 +70,7 @@ public class Card : Item
         return card;
     }
 
-    public Card Init()
+    public Card? Init()
     {
         if (TemplateId == 0)
         {
@@ -95,7 +95,7 @@ public class Card : Item
     {
     }
 
-    public virtual Card FindTraitActor(int cardId, sbyte ownerId)
+    public virtual Card? FindTraitActor(int cardId, sbyte ownerId)
     {
         if (InstanceId == cardId && ActiveData.Owner == ownerId)
         {
@@ -215,7 +215,7 @@ public class Card : Item
         return cardTraits[index];
     }
 
-    public BaseTrait GetActivationTrait()
+    public BaseTrait? GetActivationTrait()
     {
         for (var i = 0; i < cardTraits.Length; i++)
         {
@@ -448,7 +448,7 @@ public class Card : Item
         return false;
     }
 
-    public virtual bool CanActivate(Card target, Region region)
+    public virtual bool CanActivate(Card? target, Region region)
     {
         return false;
     }
@@ -534,7 +534,7 @@ public class Card : Item
         return false;
     }
 
-    public virtual EntityCard GetEmbarkedPilot()
+    public virtual EntityCard? GetEmbarkedPilot()
     {
         return null;
     }
@@ -579,7 +579,7 @@ public class Card : Item
         return false;
     }
 
-    public virtual void Attack(CardStack source, Card target)
+    public virtual void Attack(CardStack source, Card? target)
     {
     }
 

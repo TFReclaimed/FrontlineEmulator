@@ -8,15 +8,15 @@ namespace Frontline.Battle;
 
 public class UnitCard : EntityCard
 {
-    public UnitCard EmbarkedPilot { get; set; }
+    public UnitCard? EmbarkedPilot { get; set; }
 
     public bool PilotEmbarked { get; set; }
 
-    private sbyte attack;
+    private sbyte _attack;
 
-    private sbyte bypassDefense;
+    private sbyte _bypassDefense;
 
-    private sbyte defense;
+    private sbyte _defense;
 
     public UnitCard(CcgGameState game)
         : base(game)
@@ -43,13 +43,13 @@ public class UnitCard : EntityCard
     {
         base.Setup();
         var unitTemplate = (UnitCardTemplate) GetTemplate();
-        bypassDefense = 0;
+        _bypassDefense = 0;
         SetCurrentHealth(unitTemplate.Health);
         SetMaxHealth(unitTemplate.Health);
         SetCurrentDefense(unitTemplate.Defense);
         currentCost = unitTemplate.Cost;
-        attack = unitTemplate.Attack;
-        defense = unitTemplate.Defense;
+        _attack = unitTemplate.Attack;
+        _defense = unitTemplate.Defense;
         SetCurrentDefense(unitTemplate.Defense);
     }
 
@@ -63,7 +63,7 @@ public class UnitCard : EntityCard
         base.InitStackedCards();
     }
 
-    public override Card FindTraitActor(int cardId, sbyte ownerId)
+    public override Card? FindTraitActor(int cardId, sbyte ownerId)
     {
         var card = base.FindTraitActor(cardId, ownerId);
         if (card != null)
@@ -93,7 +93,7 @@ public class UnitCard : EntityCard
 
         if (HasPilot())
         {
-            return EmbarkedPilot.DoesMatchTargetingInfo(info, source);
+            return EmbarkedPilot!.DoesMatchTargetingInfo(info, source);
         }
 
         return false;
@@ -107,35 +107,30 @@ public class UnitCard : EntityCard
 
     public override sbyte GetCurrentAttack(Card target, bool combatLog)
     {
-        if (attack == 0)
+        if (_attack == 0)
         {
             return 0;
         }
 
-        var b = attack;
-        sbyte b2 = 0;
-        ActiveTrait activeTrait = null;
-        EventLogTraitCardInfo eventLogTraitCardInfo = null;
-        List<EventLogTraitCardInfo> list = null;
-        if (combatLog)
-        {
-            list = new List<EventLogTraitCardInfo>();
-        }
+        var b = _attack;
+        List<EventLogTraitCardInfo> list = [];
 
         for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
         {
-            activeTrait = ActiveData.ActiveTraits[i];
-            b2 = activeTrait.GetTraitInfo().GetAttackBonus(target, activeTrait);
+            var activeTrait = ActiveData.ActiveTraits[i];
+            var b2 = activeTrait.GetTraitInfo().GetAttackBonus(target, activeTrait);
             if (b2 != 0)
             {
                 if (combatLog)
                 {
-                    eventLogTraitCardInfo = new EventLogTraitCardInfo();
-                    eventLogTraitCardInfo.InstanceId = activeTrait.GetTraitSource().InstanceId;
-                    eventLogTraitCardInfo.Owner = activeTrait.GetTraitSource().ActiveData.Owner;
-                    eventLogTraitCardInfo.EffectId = activeTrait.GetTraitInfo().EffectTraitId;
-                    eventLogTraitCardInfo.TraitId = activeTrait.GetTraitInfo().TraitParentId;
-                    eventLogTraitCardInfo.Data = b2;
+                    var eventLogTraitCardInfo = new EventLogTraitCardInfo
+                    {
+                        InstanceId = activeTrait.GetTraitSource().InstanceId,
+                        Owner = activeTrait.GetTraitSource().ActiveData.Owner,
+                        EffectId = activeTrait.GetTraitInfo().EffectTraitId,
+                        TraitId = activeTrait.GetTraitInfo().TraitParentId,
+                        Data = b2
+                    };
                     list.Add(eventLogTraitCardInfo);
                 }
 
@@ -146,10 +141,10 @@ public class UnitCard : EntityCard
         if (combatLog && list.Count > 0)
         {
             var count = list.Count;
-            var targetID = target != null ? target.InstanceId : -1;
+            var targetId = target != null ? target.InstanceId : -1;
             var targetOwner = (sbyte) (target != null ? target.ActiveData.Owner : -1);
             var combatBuffsCCGEvent = new CombatBuffsCcgEvent(CcgEventType.CombatBuffsAttack,
-                InstanceId, ActiveData.Owner, targetID, targetOwner);
+                InstanceId, ActiveData.Owner, targetId, targetOwner);
             combatBuffsCCGEvent.BuffTraits = new EventLogTraitCardInfo[count];
             for (var j = 0; j < count; j++)
             {
@@ -164,35 +159,30 @@ public class UnitCard : EntityCard
 
     public override sbyte GetCurrentBypassDefense(Card target, bool combatLog)
     {
-        if (attack == 0)
+        if (_attack == 0)
         {
             return 0;
         }
 
-        var b = bypassDefense;
-        sbyte b2 = 0;
-        ActiveTrait activeTrait = null;
-        EventLogTraitCardInfo eventLogTraitCardInfo = null;
-        List<EventLogTraitCardInfo> list = null;
-        if (combatLog)
-        {
-            list = new List<EventLogTraitCardInfo>();
-        }
+        var b = _bypassDefense;
+        List<EventLogTraitCardInfo> list = [];
 
         for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
         {
-            activeTrait = ActiveData.ActiveTraits[i];
-            b2 = activeTrait.GetTraitInfo().GetBypassDefenseBonus(target, activeTrait);
+            var activeTrait = ActiveData.ActiveTraits[i];
+            var b2 = activeTrait.GetTraitInfo().GetBypassDefenseBonus(target, activeTrait);
             if (b2 != 0)
             {
                 if (combatLog)
                 {
-                    eventLogTraitCardInfo = new EventLogTraitCardInfo();
-                    eventLogTraitCardInfo.InstanceId = activeTrait.GetTraitSource().InstanceId;
-                    eventLogTraitCardInfo.Owner = activeTrait.GetTraitSource().ActiveData.Owner;
-                    eventLogTraitCardInfo.EffectId = activeTrait.GetTraitInfo().EffectTraitId;
-                    eventLogTraitCardInfo.TraitId = activeTrait.GetTraitInfo().TraitParentId;
-                    eventLogTraitCardInfo.Data = b2;
+                    var eventLogTraitCardInfo = new EventLogTraitCardInfo
+                    {
+                        InstanceId = activeTrait.GetTraitSource().InstanceId,
+                        Owner = activeTrait.GetTraitSource().ActiveData.Owner,
+                        EffectId = activeTrait.GetTraitInfo().EffectTraitId,
+                        TraitId = activeTrait.GetTraitInfo().TraitParentId,
+                        Data = b2
+                    };
                     list.Add(eventLogTraitCardInfo);
                 }
 
@@ -203,10 +193,10 @@ public class UnitCard : EntityCard
         if (combatLog && list.Count > 0)
         {
             var count = list.Count;
-            var targetID = target != null ? target.InstanceId : -1;
+            var targetId = target != null ? target.InstanceId : -1;
             var targetOwner = (sbyte) (target != null ? target.ActiveData.Owner : -1);
             var combatBuffsCCGEvent = new CombatBuffsCcgEvent(CcgEventType.CombatBuffsAttack,
-                InstanceId, ActiveData.Owner, targetID, targetOwner);
+                InstanceId, ActiveData.Owner, targetId, targetOwner);
             combatBuffsCCGEvent.BuffTraits = new EventLogTraitCardInfo[count];
             for (var j = 0; j < count; j++)
             {
@@ -223,29 +213,24 @@ public class UnitCard : EntityCard
     {
         var activeUnitCardData = (ActiveUnitCardData) ActiveData;
         var b = activeUnitCardData.CurrentDefense;
-        sbyte b2 = 0;
-        ActiveTrait activeTrait = null;
-        EventLogTraitCardInfo eventLogTraitCardInfo = null;
-        List<EventLogTraitCardInfo> list = null;
-        if (combatLog)
-        {
-            list = new List<EventLogTraitCardInfo>();
-        }
+        List<EventLogTraitCardInfo> list = [];
 
         for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
         {
-            activeTrait = ActiveData.ActiveTraits[i];
-            b2 = activeTrait.GetTraitInfo().GetDefenseBonus(activeTrait);
+            var activeTrait = ActiveData.ActiveTraits[i];
+            var b2 = activeTrait.GetTraitInfo().GetDefenseBonus(activeTrait);
             if (b2 != 0)
             {
                 if (combatLog)
                 {
-                    eventLogTraitCardInfo = new EventLogTraitCardInfo();
-                    eventLogTraitCardInfo.InstanceId = activeTrait.GetTraitSource().InstanceId;
-                    eventLogTraitCardInfo.Owner = activeTrait.GetTraitSource().ActiveData.Owner;
-                    eventLogTraitCardInfo.EffectId = activeTrait.GetTraitInfo().EffectTraitId;
-                    eventLogTraitCardInfo.TraitId = activeTrait.GetTraitInfo().TraitParentId;
-                    eventLogTraitCardInfo.Data = b2;
+                    var eventLogTraitCardInfo = new EventLogTraitCardInfo
+                    {
+                        InstanceId = activeTrait.GetTraitSource().InstanceId,
+                        Owner = activeTrait.GetTraitSource().ActiveData.Owner,
+                        EffectId = activeTrait.GetTraitInfo().EffectTraitId,
+                        TraitId = activeTrait.GetTraitInfo().TraitParentId,
+                        Data = b2
+                    };
                     list.Add(eventLogTraitCardInfo);
                 }
 
@@ -284,7 +269,7 @@ public class UnitCard : EntityCard
 
     public sbyte GetMaxDefense()
     {
-        return defense;
+        return _defense;
     }
 
     public override bool HasActiveTraitEffect(int effectId)
@@ -296,7 +281,7 @@ public class UnitCard : EntityCard
 
         if (HasPilot())
         {
-            return EmbarkedPilot.HasActiveTraitEffect(effectId);
+            return EmbarkedPilot!.HasActiveTraitEffect(effectId);
         }
 
         return false;
@@ -311,7 +296,7 @@ public class UnitCard : EntityCard
 
         if (HasPilot())
         {
-            return EmbarkedPilot.HasActiveSourceTrait(traitId);
+            return EmbarkedPilot!.HasActiveSourceTrait(traitId);
         }
 
         return false;
@@ -582,7 +567,7 @@ public class UnitCard : EntityCard
 
     public override bool HasAttack()
     {
-        return attack > 0;
+        return _attack > 0;
     }
 
     public override bool CanAttack(CardStack source, CardStack target)
@@ -603,7 +588,7 @@ public class UnitCard : EntityCard
             {
                 if (GetTemplate().CanAttack(source, target))
                 {
-                    if (attack > 0)
+                    if (_attack > 0)
                     {
                         return true;
                     }
@@ -624,7 +609,7 @@ public class UnitCard : EntityCard
         return false;
     }
 
-    public override void Attack(CardStack source, Card target)
+    public override void Attack(CardStack source, Card? target)
     {
         var targetID = target != null ? target.InstanceId : -1;
         var targetOwner = (sbyte) (target != null ? target.ActiveData.Owner : -1);
@@ -762,10 +747,9 @@ public class UnitCard : EntityCard
     {
         if (GetTemplate().CanAttack(source, target))
         {
-            ActiveTrait activeTrait = null;
             for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
             {
-                activeTrait = ActiveData.ActiveTraits[i];
+                var activeTrait = ActiveData.ActiveTraits[i];
                 if (!activeTrait.GetTraitInfo().CanCounterAttack(target, activeTrait))
                 {
                     if (inCombat && activeTrait.HasCharges())
@@ -777,7 +761,7 @@ public class UnitCard : EntityCard
                 }
             }
 
-            return attack > 0;
+            return _attack > 0;
         }
 
         return false;
@@ -785,7 +769,6 @@ public class UnitCard : EntityCard
 
     public override void CounterAttack(CardStack source, Card target)
     {
-        ActiveTrait activeTrait = null;
         sbyte b = 0;
         sbyte bypass = 0;
         var combatCCGEvent = new CombatCcgEvent(CcgEventType.CombatCounter, InstanceId, ActiveData.Owner,
@@ -800,7 +783,7 @@ public class UnitCard : EntityCard
         var list = new List<EventLogTraitCardInfo>();
         for (var num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
         {
-            activeTrait = ActiveData.ActiveTraits[num];
+            var activeTrait = ActiveData.ActiveTraits[num];
             if (activeTrait.GetTraitInfo().IsCombatManipulationPassive(CombatManipulationPassiveType.DamageConvertAp, activeTrait))
             {
                 bypass += b;
@@ -865,10 +848,9 @@ public class UnitCard : EntityCard
     {
         var b = attack;
         var bypass2 = bypass;
-        ActiveTrait activeTrait = null;
         for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
         {
-            activeTrait = ActiveData.ActiveTraits[i];
+            var activeTrait = ActiveData.ActiveTraits[i];
             if (activeTrait.GetTraitInfo().IsDamageImmunity(false, activeTrait))
             {
                 b = 0;
@@ -908,9 +890,9 @@ public class UnitCard : EntityCard
         }
 
         var unitTemplate = (UnitCardTemplate) GetTemplate();
-        bypassDefense = 0;
-        attack = unitTemplate.Attack;
-        defense = unitTemplate.Defense;
+        _bypassDefense = 0;
+        _attack = unitTemplate.Attack;
+        _defense = unitTemplate.Defense;
         if (EmbarkedPilot != null)
         {
             EmbarkedPilot.InitActiveData();
@@ -919,11 +901,10 @@ public class UnitCard : EntityCard
 
     private sbyte ValidateAttackEffect(Card source, Card target)
     {
-        ActiveTrait activeTrait = null;
         var flag = false;
         for (var num = source.ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
         {
-            activeTrait = source.ActiveData.ActiveTraits[num];
+            var activeTrait = source.ActiveData.ActiveTraits[num];
             if (activeTrait.GetTraitInfo().IsCombatManipulationPassive(CombatManipulationPassiveType.IgnoreStealth, activeTrait))
             {
                 flag = true;
@@ -938,7 +919,7 @@ public class UnitCard : EntityCard
 
         for (var num2 = target.ActiveData.ActiveTraits.Count - 1; num2 >= 0; num2--)
         {
-            activeTrait = target.ActiveData.ActiveTraits[num2];
+            var activeTrait = target.ActiveData.ActiveTraits[num2];
             if (!flag && activeTrait.GetTraitInfo().IsCombatManipulationPassive(CombatManipulationPassiveType.Stealth, activeTrait))
             {
                 if (activeTrait.HasCharges())
@@ -988,7 +969,7 @@ public class UnitCard : EntityCard
         return EmbarkedPilot != null;
     }
 
-    public override EntityCard GetEmbarkedPilot()
+    public override EntityCard? GetEmbarkedPilot()
     {
         return EmbarkedPilot;
     }
@@ -998,7 +979,7 @@ public class UnitCard : EntityCard
         base.CardDeployed(deployed);
         if (HasPilot())
         {
-            EmbarkedPilot.CardDeployed(deployed);
+            EmbarkedPilot!.CardDeployed(deployed);
         }
     }
 
@@ -1007,7 +988,7 @@ public class UnitCard : EntityCard
         base.NewTurn(playerIndex);
         if (HasPilot())
         {
-            EmbarkedPilot.NewTurn(playerIndex);
+            EmbarkedPilot!.NewTurn(playerIndex);
         }
     }
 
@@ -1017,7 +998,7 @@ public class UnitCard : EntityCard
         ResetDefense();
         if (HasPilot())
         {
-            EmbarkedPilot.EndTurn(playerIndex);
+            EmbarkedPilot!.EndTurn(playerIndex);
         }
     }
 
@@ -1026,7 +1007,7 @@ public class UnitCard : EntityCard
         base.CardMoved(card, target, region, origin);
         if (HasPilot())
         {
-            EmbarkedPilot.CardMoved(card, target, region, origin);
+            EmbarkedPilot!.CardMoved(card, target, region, origin);
         }
     }
 
@@ -1035,7 +1016,7 @@ public class UnitCard : EntityCard
         base.CardAttacked(attacker, target);
         if (HasPilot())
         {
-            EmbarkedPilot.CardAttacked(attacker, target);
+            EmbarkedPilot!.CardAttacked(attacker, target);
         }
     }
 
@@ -1044,7 +1025,7 @@ public class UnitCard : EntityCard
         base.CardCounterAttacked(attacker, target);
         if (HasPilot())
         {
-            EmbarkedPilot.CardCounterAttacked(attacker, target);
+            EmbarkedPilot!.CardCounterAttacked(attacker, target);
         }
     }
 
@@ -1053,7 +1034,7 @@ public class UnitCard : EntityCard
         base.CardGainedStatus(theCard, source, statusType);
         if (HasPilot())
         {
-            EmbarkedPilot.CardGainedStatus(theCard, source, statusType);
+            EmbarkedPilot!.CardGainedStatus(theCard, source, statusType);
         }
     }
 
@@ -1062,7 +1043,7 @@ public class UnitCard : EntityCard
         base.CardDamaged(damagedCard, source);
         if (HasPilot())
         {
-            EmbarkedPilot.CardDamaged(damagedCard, source);
+            EmbarkedPilot!.CardDamaged(damagedCard, source);
         }
     }
 
@@ -1071,7 +1052,7 @@ public class UnitCard : EntityCard
         base.CardDied(deadCard, source);
         if (HasPilot())
         {
-            EmbarkedPilot.CardDied(deadCard, source);
+            EmbarkedPilot!.CardDied(deadCard, source);
         }
     }
 
@@ -1080,7 +1061,7 @@ public class UnitCard : EntityCard
         base.CardDrawn(drawnCard, regularDraw, isNewTurn);
         if (HasPilot())
         {
-            EmbarkedPilot.CardDrawn(drawnCard, regularDraw, isNewTurn);
+            EmbarkedPilot!.CardDrawn(drawnCard, regularDraw, isNewTurn);
         }
     }
 
@@ -1089,7 +1070,7 @@ public class UnitCard : EntityCard
         base.CardDiscardEffect(playerIndex, numberOfCards);
         if (HasPilot())
         {
-            EmbarkedPilot.CardDiscardEffect(playerIndex, numberOfCards);
+            EmbarkedPilot!.CardDiscardEffect(playerIndex, numberOfCards);
         }
     }
 
@@ -1098,7 +1079,7 @@ public class UnitCard : EntityCard
         base.SecretTriggered(secret, source);
         if (HasPilot())
         {
-            EmbarkedPilot.SecretTriggered(secret, source);
+            EmbarkedPilot!.SecretTriggered(secret, source);
         }
     }
 
@@ -1107,7 +1088,7 @@ public class UnitCard : EntityCard
         base.SecretDestroyed(secret, source);
         if (HasPilot())
         {
-            EmbarkedPilot.SecretDestroyed(secret, source);
+            EmbarkedPilot!.SecretDestroyed(secret, source);
         }
     }
 
@@ -1116,7 +1097,7 @@ public class UnitCard : EntityCard
         base.TraitEffectActivating(effect, source, target, region);
         if (HasPilot())
         {
-            EmbarkedPilot.TraitEffectActivating(effect, source, target, region);
+            EmbarkedPilot!.TraitEffectActivating(effect, source, target, region);
         }
     }
 
@@ -1138,17 +1119,16 @@ public class UnitCard : EntityCard
         base.Discard(players);
         if (HasPilot())
         {
-            EmbarkedPilot.Discard(players);
+            EmbarkedPilot!.Discard(players);
         }
     }
 
     private sbyte ValidateCounterAttackEffect(Card source, Card target)
     {
-        ActiveTrait activeTrait = null;
         var flag = false;
         for (var num = source.ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
         {
-            activeTrait = source.ActiveData.ActiveTraits[num];
+            var activeTrait = source.ActiveData.ActiveTraits[num];
             if (activeTrait.GetTraitInfo().IsCombatManipulationPassive(CombatManipulationPassiveType.IgnoreSniper, activeTrait))
             {
                 flag = true;
@@ -1163,7 +1143,7 @@ public class UnitCard : EntityCard
 
         for (var i = 0; i < target.ActiveData.ActiveTraits.Count; i++)
         {
-            activeTrait = target.ActiveData.ActiveTraits[i];
+            var activeTrait = target.ActiveData.ActiveTraits[i];
             if (!flag && activeTrait.GetTraitInfo().IsCombatManipulationPassive(CombatManipulationPassiveType.Sniper, activeTrait))
             {
                 if (activeTrait.HasCharges())

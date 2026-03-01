@@ -9,11 +9,11 @@ public class EntityCard : Card
 {
     public List<Card> Secrets { get; set; }
 
-    private sbyte maxHealth;
+    private sbyte _maxHealth;
 
-    private Card myDeathCard;
+    private Card? _myDeathCard;
 
-    private bool isDead;
+    private bool _isDead;
 
     public EntityCard(CcgGameState game)
         : base(game)
@@ -35,10 +35,10 @@ public class EntityCard : Card
     {
         base.Setup();
         var entityTemplate = (EntityCardTemplate) GetTemplate();
-        maxHealth = entityTemplate.Health;
+        _maxHealth = entityTemplate.Health;
         Secrets = new List<Card>();
-        myDeathCard = null;
-        isDead = false;
+        _myDeathCard = null;
+        _isDead = false;
     }
 
     public override List<Card> GetSecrets()
@@ -59,7 +59,7 @@ public class EntityCard : Card
         base.InitStackedCards();
     }
 
-    public override Card FindTraitActor(int cardId, sbyte ownerId)
+    public override Card? FindTraitActor(int cardId, sbyte ownerId)
     {
         var card = base.FindTraitActor(cardId, ownerId);
         if (card != null)
@@ -170,7 +170,7 @@ public class EntityCard : Card
         return (((byte) activeEntityCardData.Acted & 0xE) ^ 0xE) != 0;
     }
 
-    public override bool CanActivate(Card target, Region region)
+    public override bool CanActivate(Card? target, Region region)
     {
         if (HasActed(8))
         {
@@ -231,7 +231,7 @@ public class EntityCard : Card
         return !flag2 || flag;
     }
 
-    public override void Attack(CardStack source, Card target)
+    public override void Attack(CardStack source, Card? target)
     {
         if (target == null)
         {
@@ -253,7 +253,6 @@ public class EntityCard : Card
 
     public void ActivateTrait(CardStack target, Region region, CcgGameState game)
     {
-        ActiveTrait activeTrait = null;
         for (var i = 0; i < cardTraits.Length; i++)
         {
             if (cardTraits[i].TraitType == TraitType.OneShot && !ActiveData.TraitActivated[i])
@@ -262,7 +261,7 @@ public class EntityCard : Card
                 ActiveData.TraitActivated[i] = true;
                 for (var num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
                 {
-                    activeTrait = ActiveData.ActiveTraits[num];
+                    var activeTrait = ActiveData.ActiveTraits[num];
                     activeTrait.GetTraitInfo().ActivateAction(target, region, activeTrait);
                 }
 
@@ -278,11 +277,9 @@ public class EntityCard : Card
         var currentHealth = activeEntityCardData.CurrentHealth;
         var b = attack;
         var b2 = bypass;
-        sbyte b3 = 0;
-        ActiveTrait activeTrait = null;
         for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
         {
-            activeTrait = ActiveData.ActiveTraits[i];
+            var activeTrait = ActiveData.ActiveTraits[i];
             if (activeTrait.GetTraitInfo().IsDamageImmunity(false, activeTrait))
             {
                 b = 0;
@@ -294,7 +291,7 @@ public class EntityCard : Card
             }
         }
 
-        b3 = (sbyte) (b + b2);
+        var b3 = (sbyte) (b + b2);
         if (b3 > 0)
         {
             SetCurrentHealth((sbyte) (currentHealth - b3));
@@ -302,9 +299,9 @@ public class EntityCard : Card
             var logData = new CardTraumaCcgEvent(CcgEventType.CardDamage, b3, source.InstanceId,
                 source.ActiveData.Owner, InstanceId, ActiveData.Owner);
             GameState.AddCCGEventLog(logData);
-            if (myDeathCard == null && CanDiscard())
+            if (_myDeathCard == null && CanDiscard())
             {
-                myDeathCard = source;
+                _myDeathCard = source;
             }
 
             if (checkDeath)
@@ -316,12 +313,12 @@ public class EntityCard : Card
 
     public override void CheckForDeathEvent()
     {
-        if (myDeathCard == null || isDead)
+        if (_myDeathCard == null || _isDead)
         {
             return;
         }
 
-        isDead = true;
+        _isDead = true;
         var traitActorRegion = GameState.GetTraitActorRegion(ActiveData.Owner, InstanceId);
         var list = GameState.FindCardStack(this);
         CardStack cardStack = null;
@@ -340,13 +337,13 @@ public class EntityCard : Card
             }
         }
 
-        GameState.CardDied(this, myDeathCard);
+        GameState.CardDied(this, _myDeathCard);
         var logData = new CardTraumaCcgEvent(CcgEventType.CardDeath, GetCurrentHealth(false),
-            myDeathCard.InstanceId, myDeathCard.ActiveData.Owner, InstanceId, ActiveData.Owner);
+            _myDeathCard.InstanceId, _myDeathCard.ActiveData.Owner, InstanceId, ActiveData.Owner);
         GameState.AddCCGEventLog(logData);
-        if (myDeathCard.GetTemplate().IsCombatUnit())
+        if (_myDeathCard.GetTemplate().IsCombatUnit())
         {
-            var unitCard = (UnitCard) myDeathCard;
+            var unitCard = (UnitCard) _myDeathCard;
             var xpTrigger = "Destroy_" + template.Type;
             unitCard.CheckAndUpdateXp(xpTrigger);
             if (unitCard.HasPilot())
@@ -371,13 +368,13 @@ public class EntityCard : Card
             }
         }
 
-        GameState.CardDied(embarkedPilot, myDeathCard);
-        logData = new CardTraumaCcgEvent(CcgEventType.CardDeath, GetCurrentHealth(false), myDeathCard.InstanceId,
-            myDeathCard.ActiveData.Owner, embarkedPilot.InstanceId, embarkedPilot.ActiveData.Owner);
+        GameState.CardDied(embarkedPilot, _myDeathCard);
+        logData = new CardTraumaCcgEvent(CcgEventType.CardDeath, GetCurrentHealth(false), _myDeathCard.InstanceId,
+            _myDeathCard.ActiveData.Owner, embarkedPilot.InstanceId, embarkedPilot.ActiveData.Owner);
         GameState.AddCCGEventLog(logData);
-        if (myDeathCard.GetTemplate().IsCombatUnit())
+        if (_myDeathCard.GetTemplate().IsCombatUnit())
         {
-            var unitCard2 = (UnitCard) myDeathCard;
+            var unitCard2 = (UnitCard) _myDeathCard;
             var xpTrigger2 = "Destroy_Pilot";
             unitCard2.CheckAndUpdateXp(xpTrigger2);
             if (unitCard2.HasPilot())
@@ -389,11 +386,11 @@ public class EntityCard : Card
 
     public override void TestCardDeathState()
     {
-        if (CanDiscard() && !isDead)
+        if (CanDiscard() && !_isDead)
         {
-            if (myDeathCard == null)
+            if (_myDeathCard == null)
             {
-                myDeathCard = this;
+                _myDeathCard = this;
             }
 
             CheckForDeathEvent();
@@ -405,7 +402,7 @@ public class EntityCard : Card
         var activeEntityCardData = (ActiveEntityCardData) ActiveData;
         var currentHealth = activeEntityCardData.CurrentHealth;
         var b = currentHealth;
-        currentHealth = currentHealth + heal <= maxHealth ? (sbyte) (currentHealth + heal) : maxHealth;
+        currentHealth = currentHealth + heal <= _maxHealth ? (sbyte) (currentHealth + heal) : _maxHealth;
         SetCurrentHealth(currentHealth);
         return (sbyte) (currentHealth - b);
     }
@@ -419,29 +416,24 @@ public class EntityCard : Card
     {
         var activeEntityCardData = (ActiveEntityCardData) ActiveData;
         var b = activeEntityCardData.CurrentHealth;
-        sbyte b2 = 0;
-        ActiveTrait activeTrait = null;
-        EventLogTraitCardInfo eventLogTraitCardInfo = null;
-        List<EventLogTraitCardInfo> list = null;
-        if (combatLog)
-        {
-            list = new List<EventLogTraitCardInfo>();
-        }
+        List<EventLogTraitCardInfo> list = [];
 
         for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
         {
-            activeTrait = ActiveData.ActiveTraits[i];
-            b2 = activeTrait.GetTraitInfo().GetHealthBonus(activeTrait);
+            var activeTrait = ActiveData.ActiveTraits[i];
+            var b2 = activeTrait.GetTraitInfo().GetHealthBonus(activeTrait);
             if (b2 != 0)
             {
                 if (combatLog)
                 {
-                    eventLogTraitCardInfo = new EventLogTraitCardInfo();
-                    eventLogTraitCardInfo.InstanceId = activeTrait.GetTraitSource().InstanceId;
-                    eventLogTraitCardInfo.Owner = activeTrait.GetTraitSource().ActiveData.Owner;
-                    eventLogTraitCardInfo.EffectId = activeTrait.GetTraitInfo().EffectTraitId;
-                    eventLogTraitCardInfo.TraitId = activeTrait.GetTraitInfo().TraitParentId;
-                    eventLogTraitCardInfo.Data = b2;
+                    var eventLogTraitCardInfo = new EventLogTraitCardInfo
+                    {
+                        InstanceId = activeTrait.GetTraitSource().InstanceId,
+                        Owner = activeTrait.GetTraitSource().ActiveData.Owner,
+                        EffectId = activeTrait.GetTraitInfo().EffectTraitId,
+                        TraitId = activeTrait.GetTraitInfo().TraitParentId,
+                        Data = b2
+                    };
                     list.Add(eventLogTraitCardInfo);
                 }
 
@@ -474,23 +466,21 @@ public class EntityCard : Card
 
     public sbyte GetMaxHealth()
     {
-        return maxHealth;
+        return _maxHealth;
     }
 
     public void SetMaxHealth(sbyte health)
     {
-        maxHealth = health;
+        _maxHealth = health;
     }
 
     public override sbyte GetMaxModHealth()
     {
-        var b = maxHealth;
-        sbyte b2 = 0;
-        ActiveTrait activeTrait = null;
+        var b = _maxHealth;
         for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
         {
-            activeTrait = ActiveData.ActiveTraits[i];
-            b2 = activeTrait.GetTraitInfo().GetHealthBonus(activeTrait);
+            var activeTrait = ActiveData.ActiveTraits[i];
+            var b2 = activeTrait.GetTraitInfo().GetHealthBonus(activeTrait);
             if (b2 != 0)
             {
                 b += b2;
@@ -517,9 +507,9 @@ public class EntityCard : Card
         }
 
         var entityTemplate = (EntityCardTemplate) GetTemplate();
-        maxHealth = entityTemplate.Health;
-        myDeathCard = null;
-        isDead = false;
+        _maxHealth = entityTemplate.Health;
+        _myDeathCard = null;
+        _isDead = false;
         if (Secrets == null)
         {
             Secrets = new List<Card>();
@@ -578,9 +568,9 @@ public class EntityCard : Card
 
         if (CanDiscard())
         {
-            if (myDeathCard == null)
+            if (_myDeathCard == null)
             {
-                myDeathCard = this;
+                _myDeathCard = this;
             }
 
             CheckForDeathEvent();

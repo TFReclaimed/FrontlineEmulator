@@ -1,7 +1,6 @@
 using Frontline.Battle.CcgEvents;
 using Frontline.Battle.Traits;
 using Frontline.Data.Entities;
-using Frontline.Game.Card;
 
 namespace Frontline.Battle;
 
@@ -11,7 +10,7 @@ public class CommanderCard : Card
 
     public List<Card> Secrets { get; set; }
 
-    private Player parent;
+    private Player _player = null!;
 
     public CommanderCard(CcgGameState game)
         : base(game)
@@ -37,7 +36,6 @@ public class CommanderCard : Card
     public override void Setup()
     {
         base.Setup();
-        var commanderTemplate = (CommanderCardTemplate) GetTemplate();
         Secrets = new List<Card>();
         Defense = 0;
     }
@@ -79,7 +77,7 @@ public class CommanderCard : Card
         base.InitStackedCards();
     }
 
-    public override Card FindTraitActor(int cardId, sbyte ownerId)
+    public override Card? FindTraitActor(int cardId, sbyte ownerId)
     {
         var card = base.FindTraitActor(cardId, ownerId);
         if (card != null)
@@ -119,40 +117,30 @@ public class CommanderCard : Card
 
     public void SetPlayer(Player player)
     {
-        parent = player;
+        _player = player;
     }
 
     public override sbyte GetCurrentHealth(bool combatLog)
     {
-        if (parent == null || parent.Resources == null)
-        {
-            return 0;
-        }
-
-        var b = parent.Resources.Health;
-        sbyte b2 = 0;
-        ActiveTrait activeTrait = null;
-        EventLogTraitCardInfo eventLogTraitCardInfo = null;
-        List<EventLogTraitCardInfo> list = null;
-        if (combatLog)
-        {
-            list = new List<EventLogTraitCardInfo>();
-        }
+        var b = _player.Resources.Health;
+        List<EventLogTraitCardInfo> list = [];
 
         for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
         {
-            activeTrait = ActiveData.ActiveTraits[i];
-            b2 = activeTrait.GetTraitInfo().GetHealthBonus(activeTrait);
+            var activeTrait = ActiveData.ActiveTraits[i];
+            var b2 = activeTrait.GetTraitInfo().GetHealthBonus(activeTrait);
             if (b2 != 0)
             {
                 if (combatLog)
                 {
-                    eventLogTraitCardInfo = new EventLogTraitCardInfo();
-                    eventLogTraitCardInfo.InstanceId = activeTrait.GetTraitSource().InstanceId;
-                    eventLogTraitCardInfo.Owner = activeTrait.GetTraitSource().ActiveData.Owner;
-                    eventLogTraitCardInfo.EffectId = activeTrait.GetTraitInfo().EffectTraitId;
-                    eventLogTraitCardInfo.TraitId = activeTrait.GetTraitInfo().TraitParentId;
-                    eventLogTraitCardInfo.Data = b2;
+                    var eventLogTraitCardInfo = new EventLogTraitCardInfo
+                    {
+                        InstanceId = activeTrait.GetTraitSource().InstanceId,
+                        Owner = activeTrait.GetTraitSource().ActiveData.Owner,
+                        EffectId = activeTrait.GetTraitInfo().EffectTraitId,
+                        TraitId = activeTrait.GetTraitInfo().TraitParentId,
+                        Data = b2
+                    };
                     list.Add(eventLogTraitCardInfo);
                 }
 
@@ -180,24 +168,17 @@ public class CommanderCard : Card
     public override sbyte GetCurrentDefense(bool combatLog)
     {
         var b = Defense;
-        sbyte b2 = 0;
-        ActiveTrait activeTrait = null;
-        EventLogTraitCardInfo eventLogTraitCardInfo = null;
-        List<EventLogTraitCardInfo> list = null;
-        if (combatLog)
-        {
-            list = new List<EventLogTraitCardInfo>();
-        }
+        List<EventLogTraitCardInfo> list = [];
 
         for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
         {
-            activeTrait = ActiveData.ActiveTraits[i];
-            b2 = activeTrait.GetTraitInfo().GetDefenseBonus(activeTrait);
+            var activeTrait = ActiveData.ActiveTraits[i];
+            var b2 = activeTrait.GetTraitInfo().GetDefenseBonus(activeTrait);
             if (b2 != 0)
             {
                 if (combatLog)
                 {
-                    eventLogTraitCardInfo = new EventLogTraitCardInfo();
+                    var eventLogTraitCardInfo = new EventLogTraitCardInfo();
                     eventLogTraitCardInfo.InstanceId = activeTrait.GetTraitSource().InstanceId;
                     eventLogTraitCardInfo.Owner = activeTrait.GetTraitSource().ActiveData.Owner;
                     eventLogTraitCardInfo.EffectId = activeTrait.GetTraitInfo().EffectTraitId;
@@ -231,10 +212,9 @@ public class CommanderCard : Card
     {
         var b = attack;
         var bypass2 = bypass;
-        ActiveTrait activeTrait = null;
         for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
         {
-            activeTrait = ActiveData.ActiveTraits[i];
+            var activeTrait = ActiveData.ActiveTraits[i];
             if (activeTrait.GetTraitInfo().IsDamageImmunity(false, activeTrait))
             {
                 b = 0;
@@ -255,28 +235,21 @@ public class CommanderCard : Card
         var b3 = b < b2 ? b : b2;
         Defense -= b3;
         b -= b3;
-        parent.TakeDamage(b, bypass2, source);
+        _player.TakeDamage(b, bypass2, source);
     }
 
     public override sbyte HealDamage(CardStack stack, sbyte heal)
     {
-        return parent.Resources.HealDamage(heal);
+        return _player.Resources.HealDamage(heal);
     }
 
     public override sbyte GetMaxModHealth()
     {
-        if (parent == null || parent.Resources == null)
-        {
-            return 0;
-        }
-
-        var b = parent.Resources.MaxHealth;
-        sbyte b2 = 0;
-        ActiveTrait activeTrait = null;
+        var b = _player.Resources.MaxHealth;
         for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
         {
-            activeTrait = ActiveData.ActiveTraits[i];
-            b2 = activeTrait.GetTraitInfo().GetHealthBonus(activeTrait);
+            var activeTrait = ActiveData.ActiveTraits[i];
+            var b2 = activeTrait.GetTraitInfo().GetHealthBonus(activeTrait);
             if (b2 != 0)
             {
                 b += b2;

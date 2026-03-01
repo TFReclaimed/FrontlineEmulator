@@ -23,57 +23,49 @@ public class ActiveTrait
 
     public bool Triggered { get; set; }
 
-    private BaseTraitEffect trait;
+    private BaseTraitEffect _trait;
 
-    private Card traitSource;
+    private Card _traitSource;
 
-    private Card traitTarget;
+    private Card _traitTarget;
 
     private readonly CcgGameState _gameState;
 
-    public ActiveTrait(CcgGameState gameState)
+    public ActiveTrait(CcgGameState gameState, BaseTraitEffect traitInfo, Card targetCard, Card sourceCard,
+        TraitDuration duration)
     {
         _gameState = gameState;
-    }
-
-    public void Init(BaseTraitEffect traitInfo, Card targetCard, Card sourceCard, TraitDuration duration)
-    {
-        trait = traitInfo;
-        if (trait == null)
+        _trait = traitInfo;
+        _traitSource = sourceCard;
+        _traitTarget = targetCard;
+        Source = new ActiveTraitCardInfo
         {
-            _gameState.Logger.Warning(" INVALID TRAIT! null effect data for trait #" + TraitSourceId);
-            trait = new BaseTraitEffect();
-        }
-
-        traitSource = sourceCard;
-        traitTarget = targetCard;
-        Source = new ActiveTraitCardInfo();
-        Source.InstanceId = sourceCard.InstanceId;
-        Source.Owner = sourceCard.ActiveData.Owner;
-        Target = new ActiveTraitCardInfo();
-        Target.InstanceId = targetCard.InstanceId;
-        Target.Owner = targetCard.ActiveData.Owner;
-        TraitSourceId = trait.TraitParentId;
-        TraitEffectId = trait.EffectTraitId;
+            InstanceId = sourceCard.InstanceId,
+            Owner = sourceCard.ActiveData.Owner
+        };
+        Target = new ActiveTraitCardInfo
+        {
+            InstanceId = targetCard.InstanceId,
+            Owner = targetCard.ActiveData.Owner
+        };
+        TraitSourceId = _trait.TraitParentId;
+        TraitEffectId = _trait.EffectTraitId;
         Detered = false;
         Triggered = false;
-        DurationData = null;
-        if (duration != null)
+        DurationData = new TraitDuration
         {
-            DurationData = new TraitDuration();
-            DurationData.Type = duration.Type;
-            DurationData.Duration = duration.Duration;
-            DurationData.Charges = duration.Charges;
-        }
+            Type = duration.Type,
+            Duration = duration.Duration,
+            Charges = duration.Charges
+        };
     }
 
     public void Init(Card owner)
     {
         var traitEffectsList = RulesetParser.GetTraitEffectsList(TraitSourceId);
-        if (traitEffectsList == null)
+        if (traitEffectsList.Count == 0)
         {
             _gameState.Logger.Warning(" INVALID TRAIT! No Trait effects found for trait #" + TraitSourceId);
-            Init(new BaseTraitEffect(), owner);
             return;
         }
 
@@ -89,52 +81,47 @@ public class ActiveTrait
 
     public void Init(BaseTraitEffect newTrait, Card owner)
     {
-        trait = newTrait;
-        if (trait == null)
-        {
-            _gameState.Logger.Warning(" INVALID TRAIT! null effect data for trait #" + TraitSourceId);
-            trait = new BaseTraitEffect();
-        }
+        _trait = newTrait;
 
         var owner2 = owner.ActiveData.Owner;
         var instanceId = owner.InstanceId;
         if (Source.InstanceId == instanceId && Source.Owner == owner2)
         {
-            traitSource = owner;
+            _traitSource = owner;
         }
         else
         {
-            traitSource = _gameState.FindTraitActor(Source.Owner, Source.InstanceId);
+            _traitSource = _gameState.FindTraitActor(Source.Owner, Source.InstanceId);
         }
 
         if (Target.InstanceId == instanceId && Target.Owner == owner2)
         {
-            traitTarget = owner;
+            _traitTarget = owner;
         }
         else
         {
-            traitTarget = _gameState.FindTraitActor(Target.Owner, Target.InstanceId);
+            _traitTarget = _gameState.FindTraitActor(Target.Owner, Target.InstanceId);
         }
 
-        trait.Init(traitTarget, traitSource, this);
+        _trait.Init(_traitTarget, _traitSource, this);
     }
 
     public void Deactivate(bool validCheck)
     {
-        trait.Deactivate(this);
-        traitTarget.ActiveData.ActiveTraits.Remove(this);
+        _trait.Deactivate(this);
+        _traitTarget.ActiveData.ActiveTraits.Remove(this);
         if (validCheck)
         {
-            traitTarget.TestCardDeathState();
+            _traitTarget.TestCardDeathState();
         }
     }
 
     public void NewTurn(Card owner, sbyte playerIndex)
     {
-        trait.NewTurn(this, playerIndex);
-        if (trait.DurationData.Charges > 0 && trait.DurationData.Type == TraitDurationType.Permanent)
+        _trait.NewTurn(this, playerIndex);
+        if (_trait.DurationData.Charges > 0 && _trait.DurationData.Type == TraitDurationType.Permanent)
         {
-            DurationData.Charges = trait.DurationData.Charges;
+            DurationData.Charges = _trait.DurationData.Charges;
         }
 
         if (DurationData.Duration <= 0)
@@ -142,7 +129,7 @@ public class ActiveTrait
             return;
         }
 
-        var owner2 = traitSource.ActiveData.Owner;
+        var owner2 = _traitSource.ActiveData.Owner;
         if (DurationData.Type == TraitDurationType.StartOfTurn)
         {
             DurationData.Duration--;
@@ -171,13 +158,13 @@ public class ActiveTrait
 
     public void EndTurn(Card owner, sbyte playerIndex)
     {
-        trait.EndTurn(this, playerIndex);
+        _trait.EndTurn(this, playerIndex);
         if (DurationData.Duration <= 0)
         {
             return;
         }
 
-        var owner2 = traitSource.ActiveData.Owner;
+        var owner2 = _traitSource.ActiveData.Owner;
         if (DurationData.Type == TraitDurationType.EndOfTurn)
         {
             DurationData.Duration--;
@@ -206,57 +193,57 @@ public class ActiveTrait
 
     public void CardMoved(Card card, CardStack target, Region region, Region origin)
     {
-        trait.CardMoved(card, target, region, origin, this);
+        _trait.CardMoved(card, target, region, origin, this);
     }
 
     public void CardAttacked(Card attacker, Card target)
     {
-        trait.CardAttacked(attacker, target, this);
+        _trait.CardAttacked(attacker, target, this);
     }
 
     public void CardCounterAttacked(Card attacker, Card target)
     {
-        trait.CardCounterAttacked(attacker, target, this);
+        _trait.CardCounterAttacked(attacker, target, this);
     }
 
     public void CardGainedStatus(Card theCard, Card source, ApplyStatusTraitStatusType statusType)
     {
-        trait.CardGainedStatus(theCard, source, statusType, this);
+        _trait.CardGainedStatus(theCard, source, statusType, this);
     }
 
     public void CardDied(Card deadCard, Card source)
     {
-        trait.CardDied(deadCard, source, this);
+        _trait.CardDied(deadCard, source, this);
     }
 
     public void CardDamaged(Card damagedCard, Card source)
     {
-        trait.CardDamaged(damagedCard, source, this);
+        _trait.CardDamaged(damagedCard, source, this);
     }
 
     public void CardDrawn(Card drawnCard, bool regularDraw, bool isNewTurn)
     {
-        trait.CardDrawn(drawnCard, regularDraw, isNewTurn, this);
+        _trait.CardDrawn(drawnCard, regularDraw, isNewTurn, this);
     }
 
     public void CardDiscardEffect(sbyte playerIndex, int numberOfCards)
     {
-        trait.CardDiscardEffect(playerIndex, numberOfCards, this);
+        _trait.CardDiscardEffect(playerIndex, numberOfCards, this);
     }
 
     public void SecretTriggered(Card secret, Card source)
     {
-        trait.SecretTriggered(secret, source, this);
+        _trait.SecretTriggered(secret, source, this);
     }
 
     public void SecretDestroyed(Card secret, Card source)
     {
-        trait.SecretDestroyed(secret, source, this);
+        _trait.SecretDestroyed(secret, source, this);
     }
 
     public void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack target, Region region)
     {
-        trait.TraitEffectActivating(effect, source, target, region, this);
+        _trait.TraitEffectActivating(effect, source, target, region, this);
     }
 
     public void ExpendCharge()
@@ -266,9 +253,9 @@ public class ActiveTrait
             DurationData.Charges--;
         }
 
-        var logData = new TraitInfoCcgEvent(CcgEventType.TraitExpendCharge, trait.TraitParentId,
-            trait.EffectTraitId, traitTarget.InstanceId, traitTarget.ActiveData.Owner, traitSource.InstanceId,
-            traitSource.ActiveData.Owner, DurationData.Charges);
+        var logData = new TraitInfoCcgEvent(CcgEventType.TraitExpendCharge, _trait.TraitParentId,
+            _trait.EffectTraitId, _traitTarget.InstanceId, _traitTarget.ActiveData.Owner, _traitSource.InstanceId,
+            _traitSource.ActiveData.Owner, DurationData.Charges);
         _gameState.AddCCGEventLog(logData);
         if (DurationData.Charges == 0 && DurationData.Type != TraitDurationType.Permanent)
         {
@@ -298,12 +285,12 @@ public class ActiveTrait
 
     public bool EmbarkedCheck()
     {
-        if (traitTarget.GetTemplate().Type == CardType.Pilot)
+        if (_traitTarget.GetTemplate().Type == CardType.Pilot)
         {
-            var unitCard = (UnitCard) traitTarget;
+            var unitCard = (UnitCard) _traitTarget;
             if (unitCard.IsEmbarked())
             {
-                return trait.EmbarkedInherit;
+                return _trait.EmbarkedInherit;
             }
         }
 
@@ -317,7 +304,7 @@ public class ActiveTrait
             Detered = !EmbarkedCheck();
         }
 
-        trait.Embark(this);
+        _trait.Embark(this);
     }
 
     public void Disembark(bool hasDeter)
@@ -327,21 +314,21 @@ public class ActiveTrait
             Detered = false;
         }
 
-        trait.Disembark(this);
+        _trait.Disembark(this);
     }
 
     public BaseTraitEffect GetTraitInfo()
     {
-        return trait;
+        return _trait;
     }
 
     public Card GetTraitSource()
     {
-        return traitSource;
+        return _traitSource;
     }
 
     public Card GetTraitTarget()
     {
-        return traitTarget;
+        return _traitTarget;
     }
 }
