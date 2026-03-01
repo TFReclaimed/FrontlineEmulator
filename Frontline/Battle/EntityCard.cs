@@ -7,7 +7,7 @@ namespace Frontline.Battle;
 
 public class EntityCard : Card
 {
-    public List<Card> Secrets { get; set; }
+    public List<Card> Secrets { get; set; } = [];
 
     private sbyte _maxHealth;
 
@@ -36,7 +36,7 @@ public class EntityCard : Card
         base.Setup();
         var entityTemplate = (EntityCardTemplate) GetTemplate();
         _maxHealth = entityTemplate.Health;
-        Secrets = new List<Card>();
+        Secrets = [];
         _myDeathCard = null;
         _isDead = false;
     }
@@ -48,12 +48,9 @@ public class EntityCard : Card
 
     public override void InitStackedCards()
     {
-        if (Secrets != null)
+        for (var num = Secrets.Count - 1; num >= 0; num--)
         {
-            for (var num = Secrets.Count - 1; num >= 0; num--)
-            {
-                Secrets[num] = Secrets[num].GenerateAndInit(GameState);
-            }
+            Secrets[num] = Secrets[num].GenerateAndInit(GameState);
         }
 
         base.InitStackedCards();
@@ -67,14 +64,9 @@ public class EntityCard : Card
             return card;
         }
 
-        if (Secrets == null)
+        foreach (var secret in Secrets)
         {
-            return card;
-        }
-
-        for (var i = 0; i < Secrets.Count; i++)
-        {
-            card = Secrets[i];
+            card = secret;
             if (card.InstanceId == cardId && card.ActiveData.Owner == ownerId)
             {
                 return card;
@@ -91,14 +83,9 @@ public class EntityCard : Card
             return true;
         }
 
-        if (Secrets == null)
+        foreach (var secret in Secrets)
         {
-            return true;
-        }
-
-        for (var i = 0; i < Secrets.Count; i++)
-        {
-            if (Secrets[i].DoesMatchTargetingInfo(info, source))
+            if (secret.DoesMatchTargetingInfo(info, source))
             {
                 return true;
             }
@@ -510,15 +497,10 @@ public class EntityCard : Card
         _maxHealth = entityTemplate.Health;
         _myDeathCard = null;
         _isDead = false;
-        if (Secrets == null)
-        {
-            Secrets = new List<Card>();
-            return;
-        }
 
-        for (var i = 0; i < Secrets.Count; i++)
+        foreach (var secret in Secrets)
         {
-            Secrets[i].InitActiveData();
+            secret.InitActiveData();
         }
     }
 
@@ -543,12 +525,9 @@ public class EntityCard : Card
     public override void CardDeployed(Card deployed)
     {
         base.CardDeployed(deployed);
-        if (Secrets != null)
+        for (var num = Secrets.Count - 1; num >= 0; num--)
         {
-            for (var num = Secrets.Count - 1; num >= 0; num--)
-            {
-                Secrets[num].CardDeployed(deployed);
-            }
+            Secrets[num].CardDeployed(deployed);
         }
     }
 
@@ -556,10 +535,6 @@ public class EntityCard : Card
     {
         base.NewTurn(playerIndex);
         ClearActed();
-        if (Secrets == null)
-        {
-            return;
-        }
 
         for (var num = Secrets.Count - 1; num >= 0; num--)
         {
@@ -580,156 +555,117 @@ public class EntityCard : Card
     public override void EndTurn(sbyte playerIndex)
     {
         base.EndTurn(playerIndex);
-        if (Secrets != null)
+        for (var num = Secrets.Count - 1; num >= 0; num--)
         {
-            for (var num = Secrets.Count - 1; num >= 0; num--)
-            {
-                Secrets[num].EndTurn(playerIndex);
-            }
+            Secrets[num].EndTurn(playerIndex);
         }
     }
 
     public override void CardMoved(Card card, CardStack target, Region region, Region origin)
     {
         base.CardMoved(card, target, region, origin);
-        if (Secrets != null)
+        for (var num = Secrets.Count - 1; num >= 0; num--)
         {
-            for (var num = Secrets.Count - 1; num >= 0; num--)
-            {
-                Secrets[num].CardMoved(card, target, region, origin);
-            }
+            Secrets[num].CardMoved(card, target, region, origin);
         }
     }
 
     public override void CardAttacked(Card attacker, Card target)
     {
         base.CardAttacked(attacker, target);
-        if (Secrets != null)
+        for (var num = Secrets.Count - 1; num >= 0; num--)
         {
-            for (var num = Secrets.Count - 1; num >= 0; num--)
-            {
-                Secrets[num].CardAttacked(attacker, target);
-            }
+            Secrets[num].CardAttacked(attacker, target);
         }
     }
 
     public override void CardCounterAttacked(Card attacker, Card target)
     {
         base.CardCounterAttacked(attacker, target);
-        if (Secrets != null)
+        for (var num = Secrets.Count - 1; num >= 0; num--)
         {
-            for (var num = Secrets.Count - 1; num >= 0; num--)
-            {
-                Secrets[num].CardCounterAttacked(attacker, target);
-            }
+            Secrets[num].CardCounterAttacked(attacker, target);
         }
     }
 
     public override void CardGainedStatus(Card theCard, Card source, ApplyStatusTraitStatusType statusType)
     {
         base.CardGainedStatus(theCard, source, statusType);
-        if (Secrets != null)
+        for (var num = Secrets.Count - 1; num >= 0; num--)
         {
-            for (var num = Secrets.Count - 1; num >= 0; num--)
-            {
-                Secrets[num].CardGainedStatus(theCard, source, statusType);
-            }
+            Secrets[num].CardGainedStatus(theCard, source, statusType);
         }
     }
 
     public override void CardDamaged(Card damagedCard, Card source)
     {
         base.CardDamaged(damagedCard, source);
-        if (Secrets != null)
+        for (var num = Secrets.Count - 1; num >= 0; num--)
         {
-            for (var num = Secrets.Count - 1; num >= 0; num--)
-            {
-                Secrets[num].CardDamaged(damagedCard, source);
-            }
+            Secrets[num].CardDamaged(damagedCard, source);
         }
     }
 
     public override void CardDied(Card deadCard, Card source)
     {
         base.CardDied(deadCard, source);
-        if (Secrets != null)
+        for (var num = Secrets.Count - 1; num >= 0; num--)
         {
-            for (var num = Secrets.Count - 1; num >= 0; num--)
-            {
-                Secrets[num].CardDied(deadCard, source);
-            }
+            Secrets[num].CardDied(deadCard, source);
         }
     }
 
     public override void CardDrawn(Card drawnCard, bool regularDraw, bool isNewTurn)
     {
         base.CardDrawn(drawnCard, regularDraw, isNewTurn);
-        if (Secrets != null)
+        for (var num = Secrets.Count - 1; num >= 0; num--)
         {
-            for (var num = Secrets.Count - 1; num >= 0; num--)
-            {
-                Secrets[num].CardDrawn(drawnCard, regularDraw, isNewTurn);
-            }
+            Secrets[num].CardDrawn(drawnCard, regularDraw, isNewTurn);
         }
     }
 
     public override void CardDiscardEffect(sbyte playerIndex, int numberOfCards)
     {
         base.CardDiscardEffect(playerIndex, numberOfCards);
-        if (Secrets != null)
+        for (var num = Secrets.Count - 1; num >= 0; num--)
         {
-            for (var num = Secrets.Count - 1; num >= 0; num--)
-            {
-                Secrets[num].CardDiscardEffect(playerIndex, numberOfCards);
-            }
+            Secrets[num].CardDiscardEffect(playerIndex, numberOfCards);
         }
     }
 
     public override void SecretTriggered(Card secret, Card source)
     {
         base.SecretTriggered(secret, source);
-        if (Secrets != null)
+        for (var num = Secrets.Count - 1; num >= 0; num--)
         {
-            for (var num = Secrets.Count - 1; num >= 0; num--)
-            {
-                Secrets[num].SecretTriggered(secret, source);
-            }
+            Secrets[num].SecretTriggered(secret, source);
         }
     }
 
     public override void SecretDestroyed(Card secret, Card source)
     {
         base.SecretDestroyed(secret, source);
-        if (Secrets != null)
+        for (var num = Secrets.Count - 1; num >= 0; num--)
         {
-            for (var num = Secrets.Count - 1; num >= 0; num--)
-            {
-                Secrets[num].SecretDestroyed(secret, source);
-            }
+            Secrets[num].SecretDestroyed(secret, source);
         }
     }
 
     public override void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack target, Region region)
     {
         base.TraitEffectActivating(effect, source, target, region);
-        if (Secrets != null)
+        for (var num = Secrets.Count - 1; num >= 0; num--)
         {
-            for (var num = Secrets.Count - 1; num >= 0; num--)
-            {
-                Secrets[num].TraitEffectActivating(effect, source, target, region);
-            }
+            Secrets[num].TraitEffectActivating(effect, source, target, region);
         }
     }
 
     public override void Discard(Player[] players)
     {
         base.Discard(players);
-        if (Secrets != null)
+        for (var num = Secrets.Count - 1; num >= 0; num--)
         {
-            for (var num = Secrets.Count - 1; num >= 0; num--)
-            {
-                Secrets[num].Discard(players);
-            }
+            Secrets[num].Discard(players);
         }
     }
 }

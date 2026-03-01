@@ -22,7 +22,7 @@ public class DeployCardEffect : BaseTraitEffect
         }
 
         var secrets = card.GetSecrets();
-        if (secrets != null && secrets.Count > 0)
+        if (secrets.Count > 0)
         {
             for (var i = 0; i < secrets.Count; i++)
             {

@@ -21,17 +21,13 @@ public class ApplyDamage : BaseTraitEffect
             var list = GameState.FindCardStack(card);
             for (var i = 0; i < list.Count; i++)
             {
-                var list2 = list[i].PrimaryCard.GetSecrets();
-                if (list2 == null)
-                {
-                    continue;
-                }
+                var secrets = list[i].PrimaryCard.GetSecrets();
 
-                for (var num = list2.Count - 1; num >= 0; num--)
+                for (var num = secrets.Count - 1; num >= 0; num--)
                 {
-                    if (list2[num].EqualsTo(card))
+                    if (secrets[num].EqualsTo(card))
                     {
-                        list2.RemoveAt(num);
+                        secrets.RemoveAt(num);
                     }
                 }
             }

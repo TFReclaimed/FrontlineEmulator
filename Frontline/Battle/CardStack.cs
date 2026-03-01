@@ -109,16 +109,13 @@ public class CardStack
             }
 
             var secrets = PrimaryCard.GetSecrets();
-            if (secrets != null)
+            for (var i = 0; i < secrets.Count; i++)
             {
-                for (var i = 0; i < secrets.Count; i++)
+                if (secrets[i].EqualsTo(card))
                 {
-                    if (secrets[i].EqualsTo(card))
-                    {
-                        card2 = secrets[i];
-                        secrets.RemoveAt(i);
-                        return card2;
-                    }
+                    card2 = secrets[i];
+                    secrets.RemoveAt(i);
+                    return card2;
                 }
             }
 
@@ -144,16 +141,13 @@ public class CardStack
             }
 
             var secrets2 = _ejectedCard.GetSecrets();
-            if (secrets2 != null)
+            for (var j = 0; j < secrets2.Count; j++)
             {
-                for (var j = 0; j < secrets2.Count; j++)
+                if (secrets2[j].EqualsTo(card))
                 {
-                    if (secrets2[j].EqualsTo(card))
-                    {
-                        card2 = secrets2[j];
-                        secrets2.RemoveAt(j);
-                        return card2;
-                    }
+                    card2 = secrets2[j];
+                    secrets2.RemoveAt(j);
+                    return card2;
                 }
             }
         }

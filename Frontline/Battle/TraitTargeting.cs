@@ -217,11 +217,6 @@ public class TraitTargeting
             return false;
         }
 
-        if (card.GetTemplate() == null)
-        {
-            return false;
-        }
-
         var cardType = card.GetTemplate().Type;
         var unitType = card.GetUnitType();
         switch (type)
@@ -496,15 +491,12 @@ public class TraitTargeting
                 num++;
             }
 
-            var list2 = card.GetSecrets();
-            if (list2 != null)
+            var secrets = card.GetSecrets();
+            foreach (var secret in secrets)
             {
-                for (var j = 0; j < list2.Count; j++)
+                if (DoesMatchType(secret))
                 {
-                    if (DoesMatchType(list2[j]))
-                    {
-                        num++;
-                    }
+                    num++;
                 }
             }
 

@@ -191,7 +191,7 @@ public class Player
                 if (card != null)
                 {
                     var list2 = card.GetSecrets();
-                    if (list2 != null && list2.Count > 0)
+                    if (list2.Count > 0)
                     {
                         for (var i = 0; i < list2.Count; i++)
                         {

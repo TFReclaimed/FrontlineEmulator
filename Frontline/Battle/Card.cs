@@ -184,7 +184,7 @@ public class Card : Item
 
     public virtual List<Card> GetSecrets()
     {
-        return null;
+        return [];
     }
 
     public virtual UnitType GetUnitType()
@@ -395,11 +395,6 @@ public class Card : Item
                 {
                     if (cardTemplate.Type == CardType.Secret && target != null && target.PrimaryCard != null)
                     {
-                        if (target.PrimaryCard.GetSecrets() == null)
-                        {
-                            return false;
-                        }
-
                         if (target.PrimaryCard.GetSecrets().Count >= 2)
                         {
                             return false;

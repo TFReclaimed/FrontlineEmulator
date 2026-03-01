@@ -11,7 +11,7 @@ public class CommanderCardTemplate : CardTemplate
         CommanderCard commanderCard;
         if (source != null)
         {
-            commanderCard = new CommanderCard(game, source);
+            commanderCard = new CommanderCard(game, (CommanderCard) source);
         }
         else
         {

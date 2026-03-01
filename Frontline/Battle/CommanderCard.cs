@@ -9,7 +9,7 @@ public class CommanderCard : Card
 {
     public sbyte Defense { get; set; }
 
-    public List<Card> Secrets { get; set; }
+    public List<Card> Secrets { get; set; } = [];
 
     private Player _player = null!;
 
@@ -18,15 +18,11 @@ public class CommanderCard : Card
     {
     }
 
-    public CommanderCard(CcgGameState game, Card other)
+    public CommanderCard(CcgGameState game, CommanderCard other)
         : base(game, other)
     {
-        if (other is CommanderCard)
-        {
-            var commanderCard = (CommanderCard) other;
-            Secrets = commanderCard.Secrets;
-            Defense = commanderCard.Defense;
-        }
+        Secrets = other.Secrets;
+        Defense = other.Defense;
     }
 
     public CommanderCard(CcgGameState game, CommanderCardTemplate template, ItemEntity itemEntity)
@@ -37,7 +33,7 @@ public class CommanderCard : Card
     public override void Setup()
     {
         base.Setup();
-        Secrets = new List<Card>();
+        Secrets = [];
         Defense = 0;
     }
 
@@ -53,26 +49,17 @@ public class CommanderCard : Card
             base.InitActiveData();
         }
 
-        if (Secrets == null)
+        foreach (var secret in Secrets)
         {
-            Secrets = new List<Card>();
-            return;
-        }
-
-        for (var i = 0; i < Secrets.Count; i++)
-        {
-            Secrets[i].InitActiveData();
+            secret.InitActiveData();
         }
     }
 
     public override void InitStackedCards()
     {
-        if (Secrets != null)
+        for (var num = Secrets.Count - 1; num >= 0; num--)
         {
-            for (var num = Secrets.Count - 1; num >= 0; num--)
-            {
-                Secrets[num] = Secrets[num].GenerateAndInit(GameState);
-            }
+            Secrets[num] = Secrets[num].GenerateAndInit(GameState);
         }
 
         base.InitStackedCards();
@@ -105,9 +92,9 @@ public class CommanderCard : Card
             return true;
         }
 
-        for (var i = 0; i < Secrets.Count; i++)
+        foreach (var secret in Secrets)
         {
-            if (Secrets[i].DoesMatchTargetingInfo(info, source))
+            if (secret.DoesMatchTargetingInfo(info, source))
             {
                 return true;
             }

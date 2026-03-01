@@ -16,34 +16,27 @@ public class UnsummonEffect : BaseTraitEffect
         else
         {
             var list = GameState.FindCardStack(card);
-            List<Card> list2 = null;
             if (list == null || list.Count == 0)
             {
                 return;
             }
 
             var card2 = list[0].RemoveCard(card.InstanceId, owner);
-            list2 = card2.GetSecrets();
-            if (list2 != null)
+            var secrets = card2.GetSecrets();
+            for (var num = secrets.Count - 1; num >= 0; num--)
             {
-                for (var num = list2.Count - 1; num >= 0; num--)
-                {
-                    list2[num].Discard(GameState.Players);
-                    GameState.SecretDestroyed(list2[num], source);
-                }
+                secrets[num].Discard(GameState.Players);
+                GameState.SecretDestroyed(secrets[num], source);
             }
 
             if (card2.HasPilot())
             {
                 card2 = card2.GetEmbarkedPilot()!;
-                list2 = card2.GetSecrets();
-                if (list2 != null)
+                secrets = card2.GetSecrets();
+                for (var num2 = secrets.Count - 1; num2 >= 0; num2--)
                 {
-                    for (var num2 = list2.Count - 1; num2 >= 0; num2--)
-                    {
-                        list2[num2].Discard(GameState.Players);
-                        GameState.SecretDestroyed(list2[num2], source);
-                    }
+                    secrets[num2].Discard(GameState.Players);
+                    GameState.SecretDestroyed(secrets[num2], source);
                 }
 
                 card2.ResetCard();

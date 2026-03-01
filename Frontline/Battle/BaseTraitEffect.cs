@@ -166,15 +166,12 @@ public class BaseTraitEffect
                     }
 
                     var secrets = cardStack.PrimaryCard.GetSecrets();
-                    if (secrets != null)
+                    for (var num = secrets.Count - 1; num >= 0; num--)
                     {
-                        for (var num = secrets.Count - 1; num >= 0; num--)
+                        card2 = secrets[num];
+                        if (CheckAndApplyTrait(card2, card, false, true))
                         {
-                            card2 = secrets[num];
-                            if (CheckAndApplyTrait(card2, card, false, true))
-                            {
-                                list.Add(card2);
-                            }
+                            list.Add(card2);
                         }
                     }
 
@@ -313,15 +310,12 @@ public class BaseTraitEffect
                     }
 
                     var secrets = cardStack.PrimaryCard.GetSecrets();
-                    if (secrets != null)
+                    for (var num = secrets.Count - 1; num >= 0; num--)
                     {
-                        for (var num = secrets.Count - 1; num >= 0; num--)
+                        card2 = secrets[num];
+                        if (DoesApply(card2, card, false, true))
                         {
-                            card2 = secrets[num];
-                            if (DoesApply(card2, card, false, true))
-                            {
-                                list2.Add(card2);
-                            }
+                            list2.Add(card2);
                         }
                     }
 
@@ -374,15 +368,12 @@ public class BaseTraitEffect
                 }
 
                 var secrets2 = cardStack.PrimaryCard.GetSecrets();
-                if (secrets2 != null)
+                for (var num2 = secrets2.Count - 1; num2 >= 0; num2--)
                 {
-                    for (var num2 = secrets2.Count - 1; num2 >= 0; num2--)
+                    card2 = secrets2[num2];
+                    if (CheckAndApplyTrait(card2, card, false, true) && appliedTo != null)
                     {
-                        card2 = secrets2[num2];
-                        if (CheckAndApplyTrait(card2, card, false, true) && appliedTo != null)
-                        {
-                            appliedTo.Add(card2);
-                        }
+                        appliedTo.Add(card2);
                     }
                 }
 
@@ -503,15 +494,12 @@ public class BaseTraitEffect
                     }
 
                     list2 = cardStack.PrimaryCard.GetSecrets();
-                    if (list2 != null)
+                    for (var num = list2.Count - 1; num >= 0; num--)
                     {
-                        for (var num = list2.Count - 1; num >= 0; num--)
+                        card2 = list2[num];
+                        if (DoesApply(card2, card, false, true))
                         {
-                            card2 = list2[num];
-                            if (DoesApply(card2, card, false, true))
-                            {
-                                list.Add(card2);
-                            }
+                            list.Add(card2);
                         }
                     }
 
@@ -550,15 +538,12 @@ public class BaseTraitEffect
                     }
 
                     list2 = cardStack2.PrimaryCard.GetSecrets();
-                    if (list2 != null)
+                    for (var num2 = list2.Count - 1; num2 >= 0; num2--)
                     {
-                        for (var num2 = list2.Count - 1; num2 >= 0; num2--)
+                        card2 = list2[num2];
+                        if (DoesApply(card2, card, false, true))
                         {
-                            card2 = list2[num2];
-                            if (DoesApply(card2, card, false, true))
-                            {
-                                list.Add(card2);
-                            }
+                            list.Add(card2);
                         }
                     }
 
