@@ -1,4 +1,6 @@
 using System.Text.Json;
+using Frontline.Battle;
+using Frontline.Game.Card;
 
 namespace Frontline.Game;
 
@@ -19,16 +21,22 @@ public static class RulesetParser
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
-        
+
         Ruleset = JsonSerializer.Deserialize<Ruleset>(RulesetJson, options);
-        
+
+        MarkCommandDeckCards();
+        AssignFusionUpgradeSequences();
+    }
+
+    private static void MarkCommandDeckCards()
+    {
         foreach (var cardTemplate in Ruleset!.CardsRuleset.Cards.Values)
         {
             if (cardTemplate.Type != CardType.Commander)
             {
                 continue;
             }
-            
+
             var commanderCard = (CommanderCardTemplate) cardTemplate;
             foreach (var supportId in commanderCard.SupportIds)
             {
@@ -36,12 +44,53 @@ public static class RulesetParser
             }
         }
     }
-    
+
+    private static void AssignFusionUpgradeSequences()
+    {
+        foreach (var (key, upgradeSequence) in Ruleset!.FusionUpgrades.Sequence)
+        {
+            var templateId = int.Parse(key);
+            var cardTemplate = GetCardTemplate(templateId);
+            if (cardTemplate is UnitCardTemplate unitTemplate && unitTemplate.IsCombatUnit())
+            {
+                unitTemplate.SetUpgradeSequence(upgradeSequence);
+            }
+        }
+    }
+
     public static CardTemplate? GetCardTemplate(int templateId)
     {
         return Ruleset?.CardsRuleset.Cards.GetValueOrDefault(templateId.ToString());
     }
-    
+
+    public static CardTemplate? GetCardTemplate(int templateId, sbyte rank)
+    {
+        var cardTemplate = GetCardTemplate(templateId);
+        return cardTemplate?.GetRankedTemplate(rank);
+    }
+
+    public static BaseTrait? GetTraitTemplate(int traitId)
+    {
+        var trait = Ruleset?.CardsRuleset.Traits.GetValueOrDefault(traitId.ToString());
+        trait?.Effects = GetTraitEffectsList(traitId);
+        return trait;
+    }
+
+    public static List<BaseTraitEffect> GetTraitEffectsList(int traitId)
+    {
+        return Ruleset?.CardsRuleset.Effects.GetValueOrDefault(traitId.ToString()) ?? [];
+    }
+
+    public static GameTemplate? GetGameTemplate(int id)
+    {
+        return Ruleset?.GamesRuleset.Games.GetValueOrDefault(id.ToString());
+    }
+
+    public static RewardsTemplate? GetRewardsTemplate(int id)
+    {
+        return Ruleset?.GamesRuleset.Rewards.GetValueOrDefault(id.ToString());
+    }
+
     public static CardXpEntry? GetXpEntry(CardType type, int rank)
     {
         var xpRanks = type switch
@@ -53,7 +102,13 @@ public static class RulesetParser
 
         return xpRanks?.FirstOrDefault(entry => entry.Rank == rank);
     }
-    
+
+    public static int GetXpTrigger(string triggerName)
+    {
+        var trigger = Ruleset?.XpTriggers.Triggers.FirstOrDefault(t => t.Trigger == triggerName);
+        return trigger?.Xp ?? 0;
+    }
+
     public static bool IsCommandDeckCard(int templateId)
     {
         return CommandDeckCardIds.Contains(templateId);

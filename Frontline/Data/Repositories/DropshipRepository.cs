@@ -6,6 +6,7 @@ namespace Frontline.Data.Repositories;
 public interface IDropshipRepository : IRepository<DropshipEntity>
 {
     Task<List<DropshipEntity>> GetDropshipItems(int userId);
+    Task<List<DropshipEntity>> GetDropshipItems(int userId, int dropshipId);
     Task ClearDropshipItemsAsync(int userId, int dropshipId);
 }
 
@@ -20,6 +21,14 @@ public class DropshipRepository : RepositoryBase<DropshipEntity>, IDropshipRepos
         return await Db.Dropships
             .Include(dropship => dropship.Item)
             .Where(dropship => dropship.UserId == userId)
+            .ToListAsync();
+    }
+
+    public async Task<List<DropshipEntity>> GetDropshipItems(int userId, int dropshipId)
+    {
+        return await Db.Dropships
+            .Include(dropship => dropship.Item)
+            .Where(dropship => dropship.UserId == userId && dropship.DropshipId == dropshipId)
             .ToListAsync();
     }
 

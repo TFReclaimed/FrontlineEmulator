@@ -3,6 +3,7 @@ using Frontline.Data.Entities;
 using Frontline.Data.Repositories;
 using Frontline.Extensions;
 using Frontline.Game;
+using Frontline.Game.Card;
 using Frontline.Missions;
 
 namespace Frontline.Endpoints.Missions.CompleteMission;

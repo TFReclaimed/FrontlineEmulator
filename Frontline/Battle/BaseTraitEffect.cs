@@ -1,0 +1,895 @@
+using System.Text.Json.Serialization;
+using Frontline.Battle.CcgEvents;
+using Frontline.Battle.Traits;
+
+namespace Frontline.Battle;
+
+[JsonDerivedType(typeof(ActedModExclusive), "ActedModExlusive")]
+[JsonDerivedType(typeof(ActedModPassive), "ActedModPassive")]
+[JsonDerivedType(typeof(ApplyDamage), "ApplyDamage")]
+[JsonDerivedType(typeof(ApplyDamageMultiply), "ApplyDamageMultiply")]
+[JsonDerivedType(typeof(ApplyHeal), "ApplyHeal")]
+[JsonDerivedType(typeof(ApplyHealMultiply), "ApplyHealMultiply")]
+[JsonDerivedType(typeof(ApplyStatus), "ApplyStatus")]
+[JsonDerivedType(typeof(BlockEmbark), "BlockEmbark")]
+[JsonDerivedType(typeof(ChallengeEffect), "ChallengeEffect")]
+[JsonDerivedType(typeof(CombatManipulationPassive), "CombatManipulationPassive")]
+[JsonDerivedType(typeof(CommandModEffect), "CommandModEffect")]
+[JsonDerivedType(typeof(DamageImmunity), "DamageImmunity")]
+[JsonDerivedType(typeof(DeployCardEffect), "DeployCardEffect")]
+[JsonDerivedType(typeof(DiscardEffect), "DiscardEffect")]
+[JsonDerivedType(typeof(DrawCardEffect), "DrawCardEffect")]
+[JsonDerivedType(typeof(DrawCardMultiply), "DrawCardMultiply")]
+[JsonDerivedType(typeof(EjectEffect), "EjectEffect")]
+[JsonDerivedType(typeof(ForceCombatEffect), "ForceCombatEffect")]
+[JsonDerivedType(typeof(ForceDisembarkEffect), "ForceDisembarkEffect")]
+[JsonDerivedType(typeof(ForceMoveEffect), "ForceMoveEffect")]
+[JsonDerivedType(typeof(IgnoreInterceptPassive), "IgnoreInterceptPassive")]
+[JsonDerivedType(typeof(InterceptPassive), "InterceptPassive")]
+[JsonDerivedType(typeof(NegateActivationEffect), "NegateActivationEffect")]
+[JsonDerivedType(typeof(ReactiveDamage), "ReactiveDamage")]
+[JsonDerivedType(typeof(RemoveStatus), "RemoveStatus")]
+[JsonDerivedType(typeof(RemoveTraitEffect), "RemoveTraitEffect")]
+[JsonDerivedType(typeof(StatModifierMultiply), "StatModifierMultiply")]
+[JsonDerivedType(typeof(StatModifierPassive), "StatModifierPassive")]
+[JsonDerivedType(typeof(StatTraitOverride), "StatTraitOverride")]
+[JsonDerivedType(typeof(StatTransfer), "StatTransfer")]
+[JsonDerivedType(typeof(SummonTrait), "SummonTrait")]
+[JsonDerivedType(typeof(TargetEffect), "TargetEffect")]
+[JsonDerivedType(typeof(TraitTrigger), "TraitTrigger")]
+[JsonDerivedType(typeof(UnsummonEffect), "UnsummonEffect")]
+[JsonDerivedType(typeof(WarpFallEffect), "WarpFallEffect")]
+public class BaseTraitEffect
+{
+    [JsonPropertyName("effectTraitID")]
+    public int EffectTraitId { get; set; }
+
+    [JsonPropertyName("traitParentID")]
+    public int TraitParentId { get; set; }
+
+    public bool TargetPrimary { get; set; }
+
+    public bool EmbarkedInherit { get; set; }
+
+    public bool Deterable { get; set; } = true;
+
+    public sbyte Priority { get; set; }
+
+    public required TraitTargeting Targets { get; set; }
+
+    public required TraitDuration DurationData { get; set; }
+
+    protected CcgGameState GameState = null!;
+
+    public void Init(CcgGameState gameState)
+    {
+        GameState = gameState;
+    }
+
+    public virtual void Activate(Card card, CardStack? target, Region region)
+    {
+        if (IsTrigger())
+        {
+            return;
+        }
+
+        var list = new List<Card>();
+        Card? card2;
+        var traitActivateEvent = new TraitActivateCcgEvent
+        {
+            CardId = card.InstanceId,
+            Owner = card.ActiveData.Owner,
+            TraitId = TraitParentId,
+            EffectId = EffectTraitId,
+            Region = region,
+            Deactivate = false
+        };
+        GameState.AddCcgEventLog(traitActivateEvent);
+        GameState.TraitEffectActivating(this, card, target, region);
+        var activeTrait = CheckEffectNegation(card);
+        if (activeTrait != null)
+        {
+            if (activeTrait.HasCharges())
+            {
+                activeTrait.ExpendCharge();
+            }
+
+            return;
+        }
+
+        if (Targets.Area == TargetableArea.Self || Targets.Scope == TraitTargetScope.Self)
+        {
+            if (CheckAndApplyTrait(card, card, false, true))
+            {
+                list.Add(card);
+            }
+        }
+        else if (Targets.Scope == TraitTargetScope.TriggeringUnit || Targets.Scope == TraitTargetScope.TriggerTarget ||
+                 Targets.Scope == TraitTargetScope.FriendlyUnit ||
+                 Targets.Scope == TraitTargetScope.FriendlyUnitNotSelf || Targets.Scope == TraitTargetScope.EnemyUnit)
+        {
+            if (Targets.Area == TargetableArea.FriendlyCommander)
+            {
+                var owner = card.ActiveData.Owner;
+                card2 = GameState.Players[owner].Commander.PrimaryCard!;
+                if (CheckAndApplyTrait(card2, card, false, true))
+                {
+                    list.Add(card2);
+                }
+            }
+            else if (Targets.Area == TargetableArea.EnemyCommander)
+            {
+                var opponentPlayerIndex = GameState.GetOpponentPlayerIndex(card.ActiveData.Owner);
+                card2 = GameState.Players[opponentPlayerIndex].Commander.PrimaryCard!;
+                if (CheckAndApplyTrait(card2, card, false, true))
+                {
+                    list.Add(card2);
+                }
+            }
+            else if (target != null && target.PrimaryCard != null)
+            {
+                card2 = target.PrimaryCard;
+                if (CheckAndApplyTrait(card2, card, false, true))
+                {
+                    list.Add(card2);
+                }
+            }
+        }
+        else if (Targets.Area == TargetableArea.UnitStack || Targets.Scope == TraitTargetScope.UnitStack)
+        {
+            var cardStack = target;
+            if (cardStack == null)
+            {
+                if (Targets.Area == TargetableArea.FriendlyCommander)
+                {
+                    var owner2 = card.ActiveData.Owner;
+                    cardStack = GameState.Players[owner2].Commander;
+                }
+                else if (Targets.Area == TargetableArea.EnemyCommander)
+                {
+                    var opponentPlayerIndex2 = GameState.GetOpponentPlayerIndex(card.ActiveData.Owner);
+                    cardStack = GameState.Players[opponentPlayerIndex2].Commander;
+                }
+            }
+
+            if (cardStack != null)
+            {
+                if (cardStack.PrimaryCard != null)
+                {
+                    if (cardStack.PrimaryCard.HasPilot())
+                    {
+                        card2 = cardStack.PrimaryCard.GetEmbarkedPilot()!;
+                        if (CheckAndApplyTrait(card2, card, false, true))
+                        {
+                            list.Add(card2);
+                        }
+                    }
+
+                    var secrets = cardStack.PrimaryCard.GetSecrets();
+                    for (var num = secrets.Count - 1; num >= 0; num--)
+                    {
+                        card2 = secrets[num];
+                        if (CheckAndApplyTrait(card2, card, false, true))
+                        {
+                            list.Add(card2);
+                        }
+                    }
+
+                    card2 = cardStack.PrimaryCard;
+                    if (CheckAndApplyTrait(card2, card, false, true))
+                    {
+                        list.Add(card2);
+                    }
+                }
+
+                card2 = cardStack.GetEjectedCard();
+                if (card2 != null && CheckAndApplyTrait(card2, card, false, true))
+                {
+                    list.Add(card2);
+                }
+            }
+        }
+        else
+        {
+            CheckGlobalApply(card, region, false, list);
+        }
+
+        if (list.Count > 0)
+        {
+            traitActivateEvent.Targets = new ActiveTraitCardInfo[list.Count];
+            for (var i = 0; i < list.Count; i++)
+            {
+                traitActivateEvent.Targets[i] = new ActiveTraitCardInfo();
+                traitActivateEvent.Targets[i].InstanceId = list[i].InstanceId;
+                traitActivateEvent.Targets[i].Owner = list[i].ActiveData.Owner;
+            }
+        }
+    }
+
+    public void ActivateTrigger(Card card, CardStack? target, TraitTargeting triggerTarget)
+    {
+        if (!IsTrigger())
+        {
+            return;
+        }
+
+        if (triggerTarget.Scope == TraitTargetScope.Self)
+        {
+            if (triggerTarget.DoesMatchType(card))
+            {
+                var active = GenerateActiveTrait(card, card);
+                Apply(card, card, active);
+            }
+        }
+        else if (triggerTarget.Area == TargetableArea.FriendlyCommander)
+        {
+            var primaryCard = GameState.Players[card.ActiveData.Owner].Commander.PrimaryCard!;
+            if (triggerTarget.DoesMatchType(primaryCard))
+            {
+                var active2 = GenerateActiveTrait(primaryCard, card);
+                Apply(primaryCard, card, active2);
+            }
+        }
+        else if (triggerTarget.Area == TargetableArea.EnemyCommander)
+        {
+            var opponentPlayerIndex = GameState.GetOpponentPlayerIndex(card.ActiveData.Owner);
+            var primaryCard2 = GameState.Players[opponentPlayerIndex].Commander.PrimaryCard!;
+            if (triggerTarget.DoesMatchType(primaryCard2))
+            {
+                var active3 = GenerateActiveTrait(primaryCard2, card);
+                Apply(primaryCard2, card, active3);
+            }
+        }
+        else if (triggerTarget.Area == TargetableArea.AnyCommander)
+        {
+            foreach (var player in GameState.Players)
+            {
+                var primaryCard3 = player.Commander.PrimaryCard!;
+                if (triggerTarget.DoesMatchType(primaryCard3))
+                {
+                    var active4 = GenerateActiveTrait(primaryCard3, card);
+                    Apply(primaryCard3, card, active4);
+                }
+            }
+        }
+        else if (triggerTarget.HasAreaTarget())
+        {
+            var list2 = GameState.FindCards(triggerTarget, Region.NumRegions, card);
+            foreach (var cardStack in list2)
+            {
+                var primaryCard4 = cardStack.PrimaryCard!;
+                if (triggerTarget.DoesMatchType(primaryCard4))
+                {
+                    var active5 = GenerateActiveTrait(primaryCard4, card);
+                    Apply(primaryCard4, card, active5);
+                }
+            }
+        }
+        else if (target != null && target.PrimaryCard != null)
+        {
+            var primaryCard5 = target.PrimaryCard;
+            if (triggerTarget.DoesMatchType(primaryCard5))
+            {
+                var active6 = GenerateActiveTrait(primaryCard5, card);
+                Apply(primaryCard5, card, active6);
+            }
+        }
+    }
+
+    public void CheckGlobalApply(Card card, Region region, bool ignoreSelf, List<Card>? appliedTo = null)
+    {
+        var region2 = Region.NumRegions;
+        if (Targets.Area == TargetableArea.CurrentRegion)
+        {
+            region2 = region;
+        }
+
+        var list = GameState.FindCards(Targets, region2, card);
+        Card? card2;
+        if (Targets.Scope is TraitTargetScope.RandomEnemy or TraitTargetScope.RandomFriendly)
+        {
+            var list2 = new List<Card>();
+            foreach (var cardStack in list)
+            {
+                if (cardStack.PrimaryCard != null)
+                {
+                    if (cardStack.PrimaryCard.HasPilot())
+                    {
+                        card2 = cardStack.PrimaryCard.GetEmbarkedPilot()!;
+                        if (DoesApply(card2, card, false, true))
+                        {
+                            list2.Add(card2);
+                        }
+                    }
+
+                    var secrets = cardStack.PrimaryCard.GetSecrets();
+                    for (var num = secrets.Count - 1; num >= 0; num--)
+                    {
+                        card2 = secrets[num];
+                        if (DoesApply(card2, card, false, true))
+                        {
+                            list2.Add(card2);
+                        }
+                    }
+
+                    card2 = cardStack.PrimaryCard;
+                    if (DoesApply(card2, card, false, true))
+                    {
+                        list2.Add(card2);
+                    }
+                }
+
+                card2 = cardStack.GetEjectedCard();
+                if (card2 != null && DoesApply(card2, card, false, true))
+                {
+                    list2.Add(card2);
+                }
+            }
+
+            if (list2.Count > 0)
+            {
+                var serverIntValue = GameState.GetGame().GetServerIntValue(0, list2.Count);
+                card2 = list2[serverIntValue];
+                var active = GenerateActiveTrait(card2, card);
+                Apply(card2, card, active);
+                if (appliedTo != null)
+                {
+                    appliedTo.Add(card2);
+                }
+            }
+
+            return;
+        }
+
+        foreach (var cardStack in list)
+        {
+            if (cardStack.PrimaryCard != null)
+            {
+                if (cardStack.PrimaryCard.HasPilot())
+                {
+                    card2 = cardStack.PrimaryCard.GetEmbarkedPilot()!;
+                    if (CheckAndApplyTrait(card2, card, false, true) && appliedTo != null)
+                    {
+                        appliedTo.Add(card2);
+                    }
+                }
+
+                var secrets2 = cardStack.PrimaryCard.GetSecrets();
+                for (var num2 = secrets2.Count - 1; num2 >= 0; num2--)
+                {
+                    card2 = secrets2[num2];
+                    if (CheckAndApplyTrait(card2, card, false, true) && appliedTo != null)
+                    {
+                        appliedTo.Add(card2);
+                    }
+                }
+
+                card2 = cardStack.PrimaryCard;
+                if (CheckAndApplyTrait(card2, card, false, true) && appliedTo != null)
+                {
+                    appliedTo.Add(card2);
+                }
+            }
+
+            card2 = cardStack.GetEjectedCard();
+            if (card2 != null && CheckAndApplyTrait(card2, card, false, true) && appliedTo != null)
+            {
+                appliedTo.Add(card2);
+            }
+        }
+    }
+
+    public bool CheckAndApplyTrait(Card card, Card source, bool checkRange, bool onDeploy)
+    {
+        if (!DoesApply(card, source, checkRange, onDeploy))
+        {
+            return false;
+        }
+
+        var active = GenerateActiveTrait(card, source);
+        Apply(card, source, active);
+        return true;
+    }
+
+    public List<Card> CheckForAppliedTargets(Card card, CardStack? target, Region region)
+    {
+        var list = new List<Card>();
+        List<Card> list2;
+        Card? card2;
+        if (IsTrigger() || TargetTrait())
+        {
+            return list;
+        }
+
+        var activeTrait = CheckEffectNegation(card);
+        if (activeTrait != null)
+        {
+            if (activeTrait.HasCharges())
+            {
+                activeTrait.ExpendCharge();
+            }
+
+            return list;
+        }
+
+        if (Targets.Area == TargetableArea.Self || Targets.Scope == TraitTargetScope.Self)
+        {
+            if (DoesApply(card, card, false, true))
+            {
+                list.Add(card);
+            }
+        }
+        else if (Targets.Scope == TraitTargetScope.TriggeringUnit || Targets.Scope == TraitTargetScope.TriggerTarget ||
+                 Targets.Scope == TraitTargetScope.FriendlyUnit ||
+                 Targets.Scope == TraitTargetScope.FriendlyUnitNotSelf || Targets.Scope == TraitTargetScope.EnemyUnit)
+        {
+            if (Targets.Area == TargetableArea.FriendlyCommander)
+            {
+                var owner = card.ActiveData.Owner;
+                card2 = GameState.Players[owner].Commander.PrimaryCard!;
+                if (DoesApply(card2, card, false, true))
+                {
+                    list.Add(card2);
+                }
+            }
+            else if (Targets.Area == TargetableArea.EnemyCommander)
+            {
+                var opponentPlayerIndex = GameState.GetOpponentPlayerIndex(card.ActiveData.Owner);
+                card2 = GameState.Players[opponentPlayerIndex].Commander.PrimaryCard!;
+                if (DoesApply(card2, card, false, true))
+                {
+                    list.Add(card2);
+                }
+            }
+            else if (target != null && target.PrimaryCard != null)
+            {
+                card2 = target.PrimaryCard;
+                if (DoesApply(card2, card, false, true))
+                {
+                    list.Add(card2);
+                }
+            }
+        }
+        else if (Targets.Area == TargetableArea.UnitStack || Targets.Scope == TraitTargetScope.UnitStack)
+        {
+            var cardStack = target;
+            if (cardStack == null)
+            {
+                if (Targets.Area == TargetableArea.FriendlyCommander)
+                {
+                    var owner2 = card.ActiveData.Owner;
+                    cardStack = GameState.Players[owner2].Commander;
+                }
+                else if (Targets.Area == TargetableArea.EnemyCommander)
+                {
+                    var opponentPlayerIndex2 = GameState.GetOpponentPlayerIndex(card.ActiveData.Owner);
+                    cardStack = GameState.Players[opponentPlayerIndex2].Commander;
+                }
+            }
+
+            if (cardStack != null)
+            {
+                if (cardStack.PrimaryCard != null)
+                {
+                    if (cardStack.PrimaryCard.HasPilot())
+                    {
+                        card2 = cardStack.PrimaryCard.GetEmbarkedPilot()!;
+                        if (DoesApply(card2, card, false, true))
+                        {
+                            list.Add(card2);
+                        }
+                    }
+
+                    list2 = cardStack.PrimaryCard.GetSecrets();
+                    for (var num = list2.Count - 1; num >= 0; num--)
+                    {
+                        card2 = list2[num];
+                        if (DoesApply(card2, card, false, true))
+                        {
+                            list.Add(card2);
+                        }
+                    }
+
+                    card2 = cardStack.PrimaryCard;
+                    if (DoesApply(card2, card, false, true))
+                    {
+                        list.Add(card2);
+                    }
+                }
+
+                card2 = cardStack.GetEjectedCard();
+                if (card2 != null && DoesApply(card2, card, false, true))
+                {
+                    list.Add(card2);
+                }
+            }
+        }
+        else
+        {
+            var region2 = Region.NumRegions;
+            if (Targets.Area == TargetableArea.CurrentRegion)
+            {
+                region2 = region;
+            }
+
+            var list3 = GameState.FindCards(Targets, region2, card);
+            foreach (var cardStack2 in list3)
+            {
+                if (cardStack2.PrimaryCard != null)
+                {
+                    card2 = cardStack2.PrimaryCard;
+                    if (DoesApply(card2, card, false, true))
+                    {
+                        list.Add(card2);
+                    }
+
+                    list2 = cardStack2.PrimaryCard.GetSecrets();
+                    for (var num2 = list2.Count - 1; num2 >= 0; num2--)
+                    {
+                        card2 = list2[num2];
+                        if (DoesApply(card2, card, false, true))
+                        {
+                            list.Add(card2);
+                        }
+                    }
+
+                    if (cardStack2.PrimaryCard.HasPilot())
+                    {
+                        card2 = cardStack2.PrimaryCard.GetEmbarkedPilot()!;
+                        if (DoesApply(card2, card, false, true))
+                        {
+                            list.Add(card2);
+                        }
+                    }
+                }
+
+                card2 = cardStack2.GetEjectedCard();
+                if (card2 != null && DoesApply(card2, card, false, true))
+                {
+                    list.Add(card2);
+                }
+            }
+        }
+
+        return list;
+    }
+
+    public bool HasBroadTargetRange()
+    {
+        return Targets.Area != TargetableArea.Self && Targets.Scope != TraitTargetScope.Self &&
+               Targets.Area != TargetableArea.UnitStack && Targets.Scope != TraitTargetScope.UnitStack;
+    }
+
+    public virtual bool DoesApply(Card card, Card source, bool checkRange, bool onDeploy)
+    {
+        if (!onDeploy && DurationData.Type != TraitDurationType.Permanent)
+        {
+            return false;
+        }
+
+        if (checkRange)
+        {
+            if (Targets.Area == TargetableArea.Self)
+            {
+                if (!card.EqualsTo(source))
+                {
+                    return false;
+                }
+            }
+            else if (Targets.Area == TargetableArea.UnitStack)
+            {
+                var list = GameState.FindCardStack(card);
+                if (list.Count == 0)
+                {
+                    return false;
+                }
+            }
+            else if (Targets.Area == TargetableArea.CurrentRegion)
+            {
+                var traitActorRegion = GameState.GetTraitActorRegion(card.ActiveData.Owner, card.InstanceId);
+                var traitActorRegion2 = GameState.GetTraitActorRegion(source.ActiveData.Owner, source.InstanceId);
+                if (traitActorRegion != traitActorRegion2)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                var traitActorRegion3 = GameState.GetTraitActorRegion(card.ActiveData.Owner, card.InstanceId);
+                if (!Targets.CheckRegion(traitActorRegion3, source.ActiveData.Owner))
+                {
+                    return false;
+                }
+            }
+        }
+
+        if (Targets.Scope != TraitTargetScope.TriggeringUnit && Targets.Scope != TraitTargetScope.TriggerTarget)
+        {
+            if (card.ActiveData.Owner == source.ActiveData.Owner && !Targets.CheckFriendly())
+            {
+                return false;
+            }
+
+            if (card.ActiveData.Owner != source.ActiveData.Owner && !Targets.CheckEnemy())
+            {
+                return false;
+            }
+
+            if ((Targets.Scope == TraitTargetScope.AllFriendlyNotSelf ||
+                 Targets.Scope == TraitTargetScope.FriendlyUnitNotSelf ||
+                 Targets.Scope == TraitTargetScope.RandomFriendlyNotSelf) && card.EqualsTo(source))
+            {
+                return false;
+            }
+        }
+
+        return Targets.DoesMatchType(card);
+    }
+
+    public virtual void Apply(Card card, Card source, ActiveTrait active)
+    {
+        if (Deterable && card.IsCardTraitsDetered())
+        {
+            active.Detered = true;
+        }
+
+        card.ActiveData.ActiveTraits.Add(active);
+    }
+
+    public virtual void Init(Card card, Card source, ActiveTrait active)
+    {
+    }
+
+    public virtual void Deactivate(ActiveTrait active)
+    {
+        var traitSource = active.GetTraitSource();
+        var traitTarget = active.GetTraitTarget();
+        var traitActivateEvent = new TraitActivateCcgEvent
+        {
+            CardId = traitSource != null ? traitSource.InstanceId : 0,
+            Owner = (sbyte) (traitSource != null ? traitSource.ActiveData.Owner : 0),
+            TraitId = TraitParentId,
+            EffectId = EffectTraitId,
+            Deactivate = true
+        };
+        if (traitTarget != null)
+        {
+            var activeTraitCardInfo = new ActiveTraitCardInfo();
+            activeTraitCardInfo.InstanceId = traitTarget.InstanceId;
+            activeTraitCardInfo.Owner = traitTarget.ActiveData.Owner;
+            traitActivateEvent.Targets = new ActiveTraitCardInfo[1];
+            traitActivateEvent.Targets[0] = activeTraitCardInfo;
+        }
+
+        GameState.AddCcgEventLog(traitActivateEvent);
+    }
+
+    public ActiveTrait GenerateActiveTrait(Card card, Card source)
+    {
+        var activeTrait = new ActiveTrait(GameState, this, card, source, DurationData);
+        foreach (var activeTrait2 in card.ActiveData.ActiveTraits)
+        {
+            var num = activeTrait2.GetTraitInfo().GetOverrideData(activeTrait2);
+            if (num != 0)
+            {
+                activeTrait.DataValue = num;
+                break;
+            }
+        }
+
+        return activeTrait;
+    }
+
+    public ActiveTrait? CheckEffectNegation(Card source)
+    {
+        var battleEffects = GameState.GetBattleEffects();
+        for (var num = battleEffects.Count - 1; num >= 0; num--)
+        {
+            var activeTrait = battleEffects[num];
+            if (activeTrait.GetTraitInfo().DoesNegateEffect(this, source, activeTrait))
+            {
+                return activeTrait;
+            }
+        }
+
+        return null;
+    }
+
+    public virtual bool TargetTrait()
+    {
+        return false;
+    }
+
+    public virtual bool IsTrigger()
+    {
+        return false;
+    }
+
+    public virtual bool IsDamageHeal(bool damage)
+    {
+        return false;
+    }
+
+    public virtual void CheckCardDeployed(Card deployed, Card source)
+    {
+    }
+
+    public virtual bool Embark(ActiveTrait active)
+    {
+        return true;
+    }
+
+    public virtual bool Disembark(ActiveTrait active)
+    {
+        return true;
+    }
+
+    public virtual bool CanDeploy(CardStack target, Region region)
+    {
+        return true;
+    }
+
+    public virtual bool CanDeployOverride(Region region)
+    {
+        return false;
+    }
+
+    public virtual bool CanMove(Region target, sbyte cardOwner, ActiveTrait active)
+    {
+        return true;
+    }
+
+    public virtual bool CanAttack(CardStack target, ActiveTrait active)
+    {
+        return true;
+    }
+
+    public virtual bool CanCounterAttack(CardStack target, ActiveTrait active)
+    {
+        return true;
+    }
+
+    public virtual void Move(CardStack location, Region region, bool embark, ActiveTrait active)
+    {
+    }
+
+    public virtual void Attack(Card target, ActiveTrait active)
+    {
+    }
+
+    public virtual void ActivateAction(CardStack location, Region region, ActiveTrait active)
+    {
+    }
+
+    public virtual sbyte GetAttackBonus(Card? target, ActiveTrait active)
+    {
+        return 0;
+    }
+
+    public virtual sbyte GetBypassDefenseBonus(Card? target, ActiveTrait active)
+    {
+        return 0;
+    }
+
+    public virtual sbyte GetDefenseBonus(ActiveTrait active)
+    {
+        return 0;
+    }
+
+    public virtual sbyte GetHealthBonus(ActiveTrait active)
+    {
+        return 0;
+    }
+
+    public virtual sbyte GetCommandMod(ActiveTrait active)
+    {
+        return 0;
+    }
+
+    public virtual int GetOverrideData(ActiveTrait active)
+    {
+        return 0;
+    }
+
+    public virtual bool IsIntercept(ActiveTrait active)
+    {
+        return false;
+    }
+
+    public virtual bool IgnoreIntercept(ActiveTrait active)
+    {
+        return false;
+    }
+
+    public virtual bool DoesNegateEffect(BaseTraitEffect effect, Card source, ActiveTrait active)
+    {
+        return false;
+    }
+
+    public virtual bool IsStatusEffect(ApplyStatusTraitStatusType effectId, ActiveTrait active)
+    {
+        return false;
+    }
+
+    public virtual bool IsCombatManipulationPassive(CombatManipulationPassiveType effectId, ActiveTrait active)
+    {
+        return false;
+    }
+
+    public virtual bool IsDamageImmunity(bool bypass, ActiveTrait active)
+    {
+        return false;
+    }
+
+    public virtual bool CanEmbark()
+    {
+        return true;
+    }
+
+    public virtual void OnNewTurnEvent(Card owner, sbyte playerIndex)
+    {
+    }
+
+    public virtual void OnCardMovedEvent(Card parent, Card movedCard, CardStack location, Region region,
+        Region origin)
+    {
+    }
+
+    public virtual void NewTurn(ActiveTrait active, sbyte playerIndex)
+    {
+    }
+
+    public virtual void EndTurn(ActiveTrait active, sbyte playerIndex)
+    {
+    }
+
+    public virtual void CardDeployed(Card deployed, ActiveTrait active)
+    {
+    }
+
+    public virtual void CardMoved(Card theCard, CardStack target, Region destination, Region origin,
+        ActiveTrait active)
+    {
+    }
+
+    public virtual void CardAttacked(Card attacker, Card target, ActiveTrait active)
+    {
+    }
+
+    public virtual void CardCounterAttacked(Card attacker, Card target, ActiveTrait active)
+    {
+    }
+
+    public virtual void CardGainedStatus(Card theCard, Card source, ApplyStatusTraitStatusType statusType, ActiveTrait activeTrait)
+    {
+    }
+
+    public virtual void CardDamaged(Card damagedCard, Card source, ActiveTrait activeTrait)
+    {
+    }
+
+    public virtual void CardDied(Card deadCard, Card source, ActiveTrait active)
+    {
+    }
+
+    public virtual void SecretTriggered(Card secret, Card? source, ActiveTrait active)
+    {
+    }
+
+    public virtual void SecretDestroyed(Card secret, Card source, ActiveTrait active)
+    {
+    }
+
+    public virtual void CardDrawn(Card drawnCard, bool regularDraw, bool isNewTurn, ActiveTrait active)
+    {
+    }
+
+    public virtual void CardDiscardEffect(sbyte playerIndex, int numberOfCards, ActiveTrait active)
+    {
+    }
+
+    public virtual void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack? target, Region region,
+        ActiveTrait active)
+    {
+    }
+}
