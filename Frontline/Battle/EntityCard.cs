@@ -144,7 +144,7 @@ public class EntityCard : Card
         return base.Move(target, region, origin, embark);
     }
 
-    public override bool HasActed(sbyte actions)
+    public override bool HasActed(EntityActionType actions)
     {
         var activeEntityCardData = (ActiveEntityCardData) ActiveData;
         return ((byte) activeEntityCardData.Acted & (byte) actions) != 0;
@@ -158,7 +158,7 @@ public class EntityCard : Card
 
     public override bool CanActivate(Card? target, Region region)
     {
-        if (HasActed(8))
+        if (HasActed(EntityActionType.Activate))
         {
             return false;
         }

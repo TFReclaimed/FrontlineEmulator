@@ -135,7 +135,7 @@ public class GameBoard
         }
 
         var primaryCard = cardStack.PrimaryCard!;
-        if (primaryCard.HasActed(4))
+        if (primaryCard.HasActed(EntityActionType.Move))
         {
             _gameState.Logger.Debug("GameBoard.CanMove false - card Move flag is set");
             return false;
@@ -187,13 +187,13 @@ public class GameBoard
         }
 
         var unitCard = (UnitCard) cardStack.PrimaryCard;
-        if (unitCard.HasActed(15) || unitCard.GetTemplate().Type != CardType.Titan)
+        if (unitCard.HasActed(EntityActionType.AnyActionMask) || unitCard.GetTemplate().Type != CardType.Titan)
         {
             return false;
         }
 
         var embarkedPilot = unitCard.EmbarkedPilot!;
-        if (!embarkedPilot.CanDisembark(cardStack) || embarkedPilot.HasActed(4))
+        if (!embarkedPilot.CanDisembark(cardStack) || embarkedPilot.HasActed(EntityActionType.Move))
         {
             return false;
         }
@@ -231,7 +231,7 @@ public class GameBoard
         }
 
         var primaryCard = cardStack.PrimaryCard!;
-        if (primaryCard.HasActed(2))
+        if (primaryCard.HasActed(EntityActionType.Attack))
         {
             _gameState.Logger.Debug("GameBoard.CanAttack false - card attack flad set");
             return false;

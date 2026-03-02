@@ -524,9 +524,9 @@ public class Card : Item
         return false;
     }
 
-    public virtual bool HasActed(sbyte actions)
+    public virtual bool HasActed(EntityActionType actions)
     {
-        if (actions == 1)
+        if (actions == EntityActionType.Deploy)
         {
             return false;
         }
