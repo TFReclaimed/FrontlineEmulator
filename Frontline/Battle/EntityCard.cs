@@ -118,8 +118,8 @@ public class EntityCard : Card
 
         if (!embark)
         {
-            GameState.Logger.Debug("DEPLOY FAILED - EntityCard.Deploy target cardstack was not empty ID" +
-                              stack.PrimaryCard.InstanceId);
+            GameState.Logger.Debug("DEPLOY FAILED - EntityCard.Deploy target cardstack was not empty ID {CardId}",
+                stack.PrimaryCard.InstanceId);
         }
 
         return false;
@@ -131,8 +131,8 @@ public class EntityCard : Card
         {
             if (!embark)
             {
-                GameState.Logger.Warning("MOVE FAILED - EntityCard.Move - target CardStack not empty. CID-" +
-                                  target.PrimaryCard.InstanceId);
+                GameState.Logger.Warning("MOVE FAILED - EntityCard.Move - target CardStack not empty. ID {CardId}",
+                    target.PrimaryCard.InstanceId);
             }
 
             return false;

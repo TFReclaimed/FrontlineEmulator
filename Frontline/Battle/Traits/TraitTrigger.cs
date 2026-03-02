@@ -210,11 +210,11 @@ public class TraitTrigger : BaseTraitEffect
             {
                 if (trait.Targets.Scope == TraitTargetScope.TriggeringUnit && source == null)
                 {
-                    GameState.Logger.Warning("Trigger Activation Error: Trigging Unit is NULL");
+                    GameState.Logger.Warning("Trigger activation error: Triggering unit is NULL");
                 }
                 else if (trait.Targets.Scope == TraitTargetScope.TriggerTarget && target == null)
                 {
-                    GameState.Logger.Warning("Trigger Activation Error: Trigger Target is NULL");
+                    GameState.Logger.Warning("Trigger activation error: Trigger target is NULL");
                 }
 
                 trait.Activate(traitTarget, target2, traitActorRegion);

@@ -150,8 +150,8 @@ public class CcgGame
         var isCurrentRegion = area == TargetableArea.CurrentRegion;
         var isSlotSpecified = target != Region.NumRegions && slotIndex != -1;
         var canDeploy = GameState.CanDeploy(playerIndex, cardId, area, target, slotIndex, pushDir);
-        GameState.Logger.Debug("GAME DEPLOY - {0} {1} {2} {3} {4} {5} {6}", playerIndex, cardId, targetIndex, targetId, area,
-            target, slotIndex);
+        GameState.Logger.Debug("GAME DEPLOY - {0} {1} {2} {3} {4} {5} {6}",
+            playerIndex, cardId, targetIndex, targetId, area, target, slotIndex);
         if (isSpecificArea && (!isCurrentRegion || isSlotSpecified) && canDeploy)
         {
             GameState.GetCcgEventLog().Clear();

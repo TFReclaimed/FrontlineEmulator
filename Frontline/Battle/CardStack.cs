@@ -21,7 +21,7 @@ public class CardStack
     {
         if (card == null)
         {
-            _gameState.Logger.Warning("CARDSTACK ERROR - Trying to Find a NULL card");
+            _gameState.Logger.Warning("CARDSTACK ERROR - Trying to find a NULL card");
             return false;
         }
 

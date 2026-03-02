@@ -66,7 +66,7 @@ public class Card : Item
         var cardTemplate = RulesetParser.GetCardTemplate(TemplateId, Rank);
         if (cardTemplate == null)
         {
-            GameState.Logger.Warning("Invalid card (id {0:D} in player inventory for current ruleset (instance id {1:D})",
+            GameState.Logger.Warning("Invalid card {TemplateId} in player inventory for current ruleset (instance id {CardId})",
                 TemplateId, InstanceId);
             return this;
         }
@@ -94,7 +94,8 @@ public class Card : Item
             return this;
         }
 
-        GameState.Logger.Warning("Trying to init an invalid Card ID {0} for rank {1}", TemplateId, Rank);
+        GameState.Logger.Warning("Trying to init an invalid template ID {TemplateId} for rank {Rank}",
+            TemplateId, Rank);
         return null;
     }
 
@@ -147,7 +148,7 @@ public class Card : Item
             var traitTemplate = RulesetParser.GetTraitTemplate(traits[i]);
             if (traitTemplate == null)
             {
-                GameState.Logger.Warning("Could Not Load Valid Card Trait {0} for card {1}",
+                GameState.Logger.Warning("Could not load valid card trait {TraitId} for card {CardId}",
                     traits[i], GetTemplate().CardId);
                 traitTemplate = new BaseTrait
                 {
@@ -438,7 +439,8 @@ public class Card : Item
         {
             if (!activeTrait.GetTraitInfo().CanMove(target, ActiveData.Owner, activeTrait))
             {
-                GameState.Logger.Debug("Card.CanMove false - Move prevented by trait " + activeTrait.TraitEffectId);
+                GameState.Logger.Debug("Card.CanMove false - Move prevented by trait {TraitId}",
+                    activeTrait.TraitEffectId);
                 return false;
             }
         }
@@ -450,7 +452,8 @@ public class Card : Item
             {
                 if (!activeTrait2.GetTraitInfo().CanMove(target, embarkedPilot.ActiveData.Owner, activeTrait2))
                 {
-                    GameState.Logger.Debug("Card.CanMove false - Move prevented by trait " + activeTrait2.TraitEffectId);
+                    GameState.Logger.Debug("Card.CanMove false - Move prevented by trait {TraitId}",
+                        activeTrait2.TraitEffectId);
                     return false;
                 }
             }
@@ -478,7 +481,7 @@ public class Card : Item
             return true;
         }
 
-        GameState.Logger.Debug("Card.CanMove false -- template check failed");
+        GameState.Logger.Debug("Card.CanMove false - template check failed");
         return false;
     }
 
@@ -878,8 +881,8 @@ public class Card : Item
             var activeTrait = ActiveData.ActiveTraits[num];
             if (activeTrait == null || activeTrait.GetTraitInfo() == null)
             {
-                GameState.Logger.Warning(string.Concat("Card ", InstanceId, " has missing trait data on Active Trait index ",
-                    num, " !!!!!!!! ", activeTrait, " !!!!!!"));
+                GameState.Logger.Warning("Card {CardId} has missing trait data on Active Trait index {TraitIndex} ({ActiveTrait})",
+                    InstanceId, num, activeTrait);
             }
             else if (activeTrait.GetTraitInfo().IsStatusEffect(ApplyStatusTraitStatusType.Deter, activeTrait) ||
                      activeTrait.GetTraitInfo().IsStatusEffect(ApplyStatusTraitStatusType.Stun, activeTrait))

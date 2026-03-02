@@ -22,7 +22,8 @@ public class ActiveCardData
 
         if (ownerCard.TemplateId != 0 && TraitActivated.Length != ownerCard.GetNumTraits())
         {
-            game.Logger.Warning("Active Data Init for card " + ownerCard.InstanceId + " - traitActivated is invalid!");
+            game.Logger.Warning("Active Data Init for card {CardId} - traitActivated is invalid!",
+                ownerCard.InstanceId);
             TraitActivated = new bool[ownerCard.GetNumTraits()];
             for (var i = 0; i < TraitActivated.Length; i++)
             {

@@ -83,7 +83,7 @@ public class SupportDeck : Deck
                 card.ActiveData.Owner = Repeater.ActiveData.Owner;
                 card.Setup();
                 card.InitActiveData();
-                _gameState.Logger.Debug("**** SupportDeck.DrawCard - Spanwed New Card * " + card.InstanceId);
+                _gameState.Logger.Debug("**** SupportDeck.DrawCard - Spawned New Card * {CardId}", card.InstanceId);
                 Cards.Add(card);
             }
         }

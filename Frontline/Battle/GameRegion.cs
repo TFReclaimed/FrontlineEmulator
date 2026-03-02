@@ -78,7 +78,8 @@ public class GameRegion
 
             if (area != TargetableArea.AnyAreas)
             {
-                _gameState.Logger.Debug("GameRegion.CanDeploy false - invalid region {0} {1}", area, RegionLocation);
+                _gameState.Logger.Debug("GameRegion.CanDeploy false - invalid region {Area} {Region}",
+                    area, RegionLocation);
                 return false;
             }
         }
@@ -107,7 +108,7 @@ public class GameRegion
                     }
                 }
 
-                _gameState.Logger.Debug("GameRegion.CanDeploy false - No valid Titan Slots found");
+                _gameState.Logger.Debug("GameRegion.CanDeploy false - No valid titan slots found");
             }
             else
             {
@@ -126,7 +127,7 @@ public class GameRegion
                     }
                 }
 
-                _gameState.Logger.Debug("GameRegion.CanDeploy false - No valid deploy Slots found");
+                _gameState.Logger.Debug("GameRegion.CanDeploy false - No valid deploy slots found");
             }
         }
 
@@ -134,7 +135,7 @@ public class GameRegion
         {
             if (isTitan && !IsTitanSlotIndex(slotIndex))
             {
-                _gameState.Logger.Debug("GameRegion.CanDeploy false - Not a Titan Slot");
+                _gameState.Logger.Debug("GameRegion.CanDeploy false - Not a titan slot");
                 return false;
             }
 

@@ -359,13 +359,13 @@ public class UnitCard : EntityCard
             var primaryCard = target.PrimaryCard;
             if (primaryCard.ActiveData.Owner != ActiveData.Owner)
             {
-                GameState.Logger.Debug("UnitCard.CanDeploy false - invalid ebark owner");
+                GameState.Logger.Debug("UnitCard.CanDeploy false - invalid embark owner");
                 return false;
             }
 
             if (!CanEmbark() || !primaryCard.CanEmbark())
             {
-                GameState.Logger.Debug("UnitCard.CanDeploy false - ineligable ebark unit");
+                GameState.Logger.Debug("UnitCard.CanDeploy false - ineligible embark unit");
                 return false;
             }
 
@@ -375,8 +375,8 @@ public class UnitCard : EntityCard
                 {
                     if (!baseTraitEffect.CanEmbark())
                     {
-                        GameState.Logger.Debug("UnitCard.CanDeploy false - trait prevents embark " +
-                                               baseTraitEffect.EffectTraitId);
+                        GameState.Logger.Debug("UnitCard.CanDeploy false - trait prevents embark {TraitId}",
+                            baseTraitEffect.EffectTraitId);
                         return false;
                     }
                 }
@@ -394,8 +394,8 @@ public class UnitCard : EntityCard
             {
                 if (!baseTraitEffect2.CanDeploy(target, region))
                 {
-                    GameState.Logger.Debug("UnitCard.CanDeploy false - trait prevents deploy " +
-                                           baseTraitEffect2.EffectTraitId);
+                    GameState.Logger.Debug("UnitCard.CanDeploy false - trait prevents deploy {TraitId}",
+                        baseTraitEffect2.EffectTraitId);
                     return false;
                 }
             }
@@ -562,7 +562,8 @@ public class UnitCard : EntityCard
         {
             if (!activeTrait.GetTraitInfo().CanAttack(target, activeTrait))
             {
-                GameState.Logger.Debug("UnitCard.CanAttack false - trait prevetns attack " + activeTrait.TraitEffectId);
+                GameState.Logger.Debug("UnitCard.CanAttack false - trait prevents attack {TraitId}",
+                    activeTrait.TraitEffectId);
                 return false;
             }
         }

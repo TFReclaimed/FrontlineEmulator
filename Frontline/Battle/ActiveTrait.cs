@@ -65,7 +65,7 @@ public class ActiveTrait
         var traitEffectsList = RulesetParser.GetTraitEffectsList(TraitSourceId);
         if (traitEffectsList.Count == 0)
         {
-            _gameState.Logger.Warning(" INVALID TRAIT! No Trait effects found for trait #" + TraitSourceId);
+            _gameState.Logger.Warning("INVALID TRAIT! No Trait effects found for trait {TraitId}", TraitSourceId);
             return;
         }
 

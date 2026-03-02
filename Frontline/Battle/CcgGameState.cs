@@ -731,7 +731,7 @@ public class CcgGameState
         card.InstanceId = GetNextSummonInstanceId();
         card.ActiveData.Owner = playerIndex;
         card.Setup();
-        Logger.Debug("**** CCG.Summon - Spanwed New Card * " + card.InstanceId);
+        Logger.Debug("**** CCG.Summon - Spawned New Card * {CardId}", card.InstanceId);
         card.Deploy(cardStack, false, currentRegion, null);
         currentRegion = GetTraitActorRegion(playerIndex, card.InstanceId);
         var slots = Board.Regions[(uint) currentRegion].Slots;
@@ -906,7 +906,7 @@ public class CcgGameState
         card.Setup();
         card.ActiveData.Owner = playerIndex;
         player.Hand.Cards.Add(card);
-        Logger.Debug("**** CCG.GiveCardAndCmdPts - Spanwed New Card * " + card.InstanceId);
+        Logger.Debug("**** CCG.GiveCardAndCmdPts - Spawned New Card * {CardId}", card.InstanceId);
 
         return true;
     }

@@ -41,7 +41,8 @@ public class GameBoard
             case TargetableArea.FriendlyPerimeter:
                 if (target != region)
                 {
-                    _gameState.Logger.Debug("GameBoard.CanDeploy false - invalid region {0} {1}", area, target);
+                    _gameState.Logger.Debug("GameBoard.CanDeploy false - invalid region {Area} {Target}",
+                        area, target);
                     return false;
                 }
 
@@ -49,7 +50,8 @@ public class GameBoard
             case TargetableArea.EnemyPerimeter:
                 if (target == region || target == Region.Control)
                 {
-                    _gameState.Logger.Debug("GameBoard.CanDeploy false - invalid region {0} {1}", area, target);
+                    _gameState.Logger.Debug("GameBoard.CanDeploy false - invalid region {Area} {Target}",
+                        area, target);
                     return false;
                 }
 
@@ -60,7 +62,8 @@ public class GameBoard
                     return Regions[(uint) target].CanDeploy(card, area, slotIndex, pushDir);
                 }
 
-                _gameState.Logger.Debug("GameBoard.CanDeploy false - invalid region {0} {1}", area, target);
+                _gameState.Logger.Debug("GameBoard.CanDeploy false - invalid region {Area} {Target}",
+                    area, target);
                 return false;
             case TargetableArea.EnemyRegions:
                 if (target != region)
@@ -68,7 +71,8 @@ public class GameBoard
                     return Regions[(uint) target].CanDeploy(card, area, slotIndex, pushDir);
                 }
 
-                _gameState.Logger.Debug("GameBoard.CanDeploy false - invalid region {0} {1}", area, target);
+                _gameState.Logger.Debug("GameBoard.CanDeploy false - invalid region {Area} {Target}",
+                    area, target);
                 return false;
             case TargetableArea.Frontline:
                 if (target == Region.Control)
@@ -76,7 +80,8 @@ public class GameBoard
                     return Regions[(uint) target].CanDeploy(card, area, slotIndex, pushDir);
                 }
 
-                _gameState.Logger.Debug("GameBoard.CanDeploy false - invalid region {0} {1}", area, target);
+                _gameState.Logger.Debug("GameBoard.CanDeploy false - invalid region {Area} {Target}",
+                    area, target);
                 return false;
             case TargetableArea.CurrentRegion:
                 if (target != Region.NumRegions)
@@ -130,7 +135,7 @@ public class GameBoard
         var cardStack = FindCard(cardId, ownerId);
         if (cardStack == null)
         {
-            _gameState.Logger.Debug("GameBoard.CanMove false - cannot find card " + cardId);
+            _gameState.Logger.Debug("GameBoard.CanMove false - cannot find card {CardId}", cardId);
             return false;
         }
 
@@ -174,7 +179,7 @@ public class GameBoard
             return true;
         }
 
-        _gameState.Logger.Warning("MOVE FAILED - GameBoard.Move could not find Card ID-" + cardId);
+        _gameState.Logger.Warning("MOVE FAILED - GameBoard.Move could not find card ID {CardId}", cardId);
         return false;
     }
 
@@ -226,14 +231,14 @@ public class GameBoard
         var cardStack = FindCard(cardId, playerIndex);
         if (cardStack == null)
         {
-            _gameState.Logger.Debug("GameBoard.CanAttack false - cannot find card - " + cardId);
+            _gameState.Logger.Debug("GameBoard.CanAttack false - cannot find card {CardId}", cardId);
             return false;
         }
 
         var primaryCard = cardStack.PrimaryCard!;
         if (primaryCard.HasActed(EntityActionType.Attack))
         {
-            _gameState.Logger.Debug("GameBoard.CanAttack false - card attack flad set");
+            _gameState.Logger.Debug("GameBoard.CanAttack false - card attack flag set");
             return false;
         }
 
@@ -254,7 +259,7 @@ public class GameBoard
             return primaryCard.CanAttack(cardStack, cardStack2);
         }
 
-        _gameState.Logger.Debug("GameBoard.CanAttack false - cannot find target card - " + targetId);
+        _gameState.Logger.Debug("GameBoard.CanAttack false - cannot find target card {CardId}", targetId);
         return false;
     }
 
@@ -263,7 +268,8 @@ public class GameBoard
         var cardStack = FindCard(cardId, playerIndex);
         if (cardStack == null)
         {
-            _gameState.Logger.Warning("ATTACK FAILED - GameBoard.Attack count not find CardStack for ID" + cardId);
+            _gameState.Logger.Warning("ATTACK FAILED - GameBoard.Attack count not find CardStack for ID {CardId}",
+                cardId);
             return false;
         }
 
@@ -274,7 +280,8 @@ public class GameBoard
             : player.Commander;
         if (cardStack2 == null)
         {
-            _gameState.Logger.Warning("ATTACK FAILED - GameBoard.Attack count not find Target CardStack for ID" + targetId);
+            _gameState.Logger.Warning("ATTACK FAILED - GameBoard.Attack count not find target CardStack for ID {CardId}",
+                targetId);
             return false;
         }
 
