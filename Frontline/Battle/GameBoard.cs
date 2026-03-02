@@ -484,7 +484,7 @@ public class GameBoard
         }
     }
 
-    public void SecretTriggered(Card secret, Card source)
+    public void SecretTriggered(Card secret, Card? source)
     {
         for (var i = 0; i < 3; i++)
         {
@@ -508,7 +508,7 @@ public class GameBoard
         }
     }
 
-    public void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack target, Region region)
+    public void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack? target, Region region)
     {
         for (var i = 0; i < 3; i++)
         {

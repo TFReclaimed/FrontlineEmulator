@@ -24,6 +24,12 @@ public class TraitTrigger : BaseTraitEffect
     public void RunTriggerActivation(Card? source, Card? target, Region destination, ActiveTrait active)
     {
         var traitTemplate = RulesetParser.GetTraitTemplate(TraitParentId);
+        if (traitTemplate == null)
+        {
+            GameState.Logger.Warning("Unable to find trait template for TraitParentId {TraitParentId}", TraitParentId);
+            return;
+        }
+
         sbyte b = 0;
         if (DurationData.Charges > 0 && active.DurationData.Charges == 0)
         {
@@ -134,7 +140,7 @@ public class TraitTrigger : BaseTraitEffect
         var traitTarget = active.GetTraitTarget();
         if (secondaryTrigger)
         {
-            var triggerTarget = parent.GetPrimaryTargeting(trait.Priority).Targets;
+            var triggerTarget = parent.GetPrimaryTargeting(trait.Priority)!.Targets;
             list = GameState.FindCardStack(traitTarget);
             if (list.Count > 0)
             {
@@ -144,7 +150,7 @@ public class TraitTrigger : BaseTraitEffect
             if (trait.Targets.Scope == TraitTargetScope.TriggeringUnit)
             {
                 cardStack = null;
-                list = GameState.FindCardStack(source);
+                list = GameState.FindCardStack(source!);
                 if (list.Count > 0)
                 {
                     cardStack = list[0];
@@ -155,7 +161,7 @@ public class TraitTrigger : BaseTraitEffect
             else if (trait.Targets.Scope == TraitTargetScope.TriggerTarget)
             {
                 cardStack = null;
-                list = GameState.FindCardStack(target);
+                list = GameState.FindCardStack(target!);
                 if (list.Count > 0)
                 {
                     cardStack = list[0];
@@ -175,13 +181,9 @@ public class TraitTrigger : BaseTraitEffect
                 return;
             }
 
-            var traitActorRegion =
-                GameState.GetTraitActorRegion(traitTarget.ActiveData.Owner, traitTarget.InstanceId);
+            var traitActorRegion = GameState.GetTraitActorRegion(traitTarget.ActiveData.Owner, traitTarget.InstanceId);
             list = GameState.FindCardStack(traitTarget);
-            if (list.Count > 0)
-            {
-                target2 = list[0];
-            }
+            target2 = list[0];
 
             if (trait.Targets.Scope == TraitTargetScope.TriggeringUnit && source != null)
             {
@@ -449,7 +451,7 @@ public class TraitTrigger : BaseTraitEffect
         }
     }
 
-    public override void SecretTriggered(Card secret, Card source, ActiveTrait active)
+    public override void SecretTriggered(Card secret, Card? source, ActiveTrait active)
     {
     }
 
@@ -457,7 +459,7 @@ public class TraitTrigger : BaseTraitEffect
     {
     }
 
-    public override void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack target, Region region,
+    public override void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack? target, Region region,
         ActiveTrait active)
     {
         if (Type != TriggerType.ActivateDamageEffect && Type != TriggerType.ActivateHealEffect)
@@ -477,7 +479,7 @@ public class TraitTrigger : BaseTraitEffect
             return;
         }
 
-        var primaryCard = target.PrimaryCard;
+        var primaryCard = target!.PrimaryCard;
         if (Targets.CardTargetMatch(GameState, source, active.GetTraitTarget()) && (primaryCard == null ||
                 VersusInfo.CardTargetMatch(GameState, primaryCard,
                     active.GetTraitTarget())))

@@ -792,7 +792,7 @@ public class Card : Item
         }
     }
 
-    public virtual void SecretTriggered(Card secret, Card source)
+    public virtual void SecretTriggered(Card secret, Card? source)
     {
         for (var num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
         {
@@ -816,7 +816,7 @@ public class Card : Item
         }
     }
 
-    public virtual void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack target, Region region)
+    public virtual void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack? target, Region region)
     {
         for (var num = ActiveData.ActiveTraits.Count - 1; num >= 0; num--)
         {

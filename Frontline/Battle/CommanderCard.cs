@@ -347,7 +347,7 @@ public class CommanderCard : Card
         }
     }
 
-    public override void SecretTriggered(Card secret, Card source)
+    public override void SecretTriggered(Card secret, Card? source)
     {
         base.SecretTriggered(secret, source);
         for (var num = Secrets.Count - 1; num >= 0; num--)
@@ -365,7 +365,7 @@ public class CommanderCard : Card
         }
     }
 
-    public override void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack target, Region region)
+    public override void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack? target, Region region)
     {
         base.TraitEffectActivating(effect, source, target, region);
         for (var num = Secrets.Count - 1; num >= 0; num--)

@@ -4,7 +4,7 @@ public class SummonTrait : BaseTraitEffect
 {
     public sbyte Count { get; set; }
 
-    public override void Activate(Card card, CardStack target, Region region)
+    public override void Activate(Card card, CardStack? target, Region region)
     {
         var checkRange = false;
         var onDeploy = true;

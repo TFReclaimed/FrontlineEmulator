@@ -91,7 +91,7 @@ public class ActiveTrait
         }
         else
         {
-            _traitSource = _gameState.FindTraitActor(Source.Owner, Source.InstanceId);
+            _traitSource = _gameState.FindTraitActor(Source.Owner, Source.InstanceId)!;
         }
 
         if (Target.InstanceId == instanceId && Target.Owner == owner2)
@@ -100,7 +100,7 @@ public class ActiveTrait
         }
         else
         {
-            _traitTarget = _gameState.FindTraitActor(Target.Owner, Target.InstanceId);
+            _traitTarget = _gameState.FindTraitActor(Target.Owner, Target.InstanceId)!;
         }
 
         _trait.Init(_traitTarget, _traitSource, this);
@@ -231,7 +231,7 @@ public class ActiveTrait
         _trait.CardDiscardEffect(playerIndex, numberOfCards, this);
     }
 
-    public void SecretTriggered(Card secret, Card source)
+    public void SecretTriggered(Card secret, Card? source)
     {
         _trait.SecretTriggered(secret, source, this);
     }
@@ -241,7 +241,7 @@ public class ActiveTrait
         _trait.SecretDestroyed(secret, source, this);
     }
 
-    public void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack target, Region region)
+    public void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack? target, Region region)
     {
         _trait.TraitEffectActivating(effect, source, target, region, this);
     }

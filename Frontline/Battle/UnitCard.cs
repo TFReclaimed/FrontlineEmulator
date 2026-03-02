@@ -1030,7 +1030,7 @@ public class UnitCard : EntityCard
         }
     }
 
-    public override void SecretTriggered(Card secret, Card source)
+    public override void SecretTriggered(Card secret, Card? source)
     {
         base.SecretTriggered(secret, source);
         if (HasPilot())
@@ -1048,7 +1048,7 @@ public class UnitCard : EntityCard
         }
     }
 
-    public override void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack target, Region region)
+    public override void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack? target, Region region)
     {
         base.TraitEffectActivating(effect, source, target, region);
         if (HasPilot())

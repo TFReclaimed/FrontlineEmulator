@@ -1099,7 +1099,7 @@ public class CcgGameState
         }
     }
 
-    public void SecretTriggered(Card secret, Card source)
+    public void SecretTriggered(Card secret, Card? source)
     {
         Board.SecretTriggered(secret, source);
         foreach (var player in Players)
@@ -1117,7 +1117,7 @@ public class CcgGameState
         }
     }
 
-    public void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack target, Region region)
+    public void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack? target, Region region)
     {
         Board.TraitEffectActivating(effect, source, target, region);
         foreach (var player in Players)

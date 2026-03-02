@@ -66,7 +66,7 @@ public class BaseTraitEffect
         GameState = gameState;
     }
 
-    public virtual void Activate(Card card, CardStack target, Region region)
+    public virtual void Activate(Card card, CardStack? target, Region region)
     {
         if (IsTrigger())
         {
@@ -680,22 +680,13 @@ public class BaseTraitEffect
     public ActiveTrait GenerateActiveTrait(Card card, Card source)
     {
         var activeTrait = new ActiveTrait(GameState, this, card, source, DurationData);
-        for (var i = 0; i < card.ActiveData.ActiveTraits.Count; i++)
+        foreach (var activeTrait2 in card.ActiveData.ActiveTraits)
         {
-            var activeTrait2 = card.ActiveData.ActiveTraits[i];
-            if (activeTrait2.GetTraitInfo() == null)
+            var num = activeTrait2.GetTraitInfo().GetOverrideData(activeTrait2);
+            if (num != 0)
             {
-                GameState.Logger.Warning("Activated Trait is Missing Trait Data! effect:" + activeTrait2.TraitEffectId +
-                                  " trait:" + activeTrait2.TraitSourceId);
-            }
-            else
-            {
-                var num = activeTrait2.GetTraitInfo().GetOverrideData(activeTrait2);
-                if (num != 0)
-                {
-                    activeTrait.DataValue = num;
-                    break;
-                }
+                activeTrait.DataValue = num;
+                break;
             }
         }
 
@@ -894,7 +885,7 @@ public class BaseTraitEffect
     {
     }
 
-    public virtual void SecretTriggered(Card secret, Card source, ActiveTrait active)
+    public virtual void SecretTriggered(Card secret, Card? source, ActiveTrait active)
     {
     }
 
@@ -910,7 +901,7 @@ public class BaseTraitEffect
     {
     }
 
-    public virtual void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack target, Region region,
+    public virtual void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack? target, Region region,
         ActiveTrait active)
     {
     }

@@ -224,7 +224,7 @@ public class CardStack
         _ejectedCard?.CardDiscardEffect(playerIndex, numberOfCards);
     }
 
-    public void SecretTriggered(Card secret, Card source)
+    public void SecretTriggered(Card secret, Card? source)
     {
         PrimaryCard?.SecretTriggered(secret, source);
         _ejectedCard?.SecretTriggered(secret, source);
@@ -236,7 +236,7 @@ public class CardStack
         _ejectedCard?.SecretDestroyed(secret, source);
     }
 
-    public void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack target, Region region)
+    public void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack? target, Region region)
     {
         PrimaryCard?.TraitEffectActivating(effect, source, target, region);
         _ejectedCard?.TraitEffectActivating(effect, source, target, region);
