@@ -169,7 +169,7 @@ public class EntityCard : Card
             return false;
         }
 
-        var primaryTargeting = activationTrait.GetPrimaryTargeting(0);
+        var primaryTargeting = activationTrait.GetPrimaryTargeting(0)!;
         if (primaryTargeting.Targets.HasAreaTarget())
         {
             return activationTrait.CanActivate(region, ActiveData.Owner);

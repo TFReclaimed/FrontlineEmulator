@@ -52,7 +52,7 @@ public class ApplyStatus : BaseTraitEffect
                     activeTrait.Detered = !activeTrait.EmbarkedCheck();
                 }
 
-                activeTrait.GetTraitTarget().OnRemovedDeter();
+                activeTrait!.GetTraitTarget().OnRemovedDeter();
             }
         }
 

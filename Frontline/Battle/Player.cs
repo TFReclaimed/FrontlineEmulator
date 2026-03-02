@@ -178,6 +178,11 @@ public class Player
         else
         {
             card = _gameState.FindTraitActor(myIndex, cardId);
+            if (card == null)
+            {
+                return null;
+            }
+
             var list = _gameState.FindCardStack(card);
             if (list.Count > 0)
             {

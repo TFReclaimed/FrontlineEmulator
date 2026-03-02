@@ -95,7 +95,7 @@ public class UnitCardTemplate : EntityCardTemplate
 
         if (embark)
         {
-            var primaryCard = target.PrimaryCard;
+            var primaryCard = target.PrimaryCard!;
             if (Type == CardType.Titan && primaryCard.GetTemplate().Type == CardType.Pilot)
             {
                 return true;
@@ -119,11 +119,11 @@ public class UnitCardTemplate : EntityCardTemplate
 
         if (embark)
         {
-            var primaryCard = target.PrimaryCard;
-            var primaryCard2 = source.PrimaryCard;
+            var primaryCard = target.PrimaryCard!;
+            var primaryCard2 = source.PrimaryCard!;
             if (Type == CardType.Titan && primaryCard.GetTemplate().Type == CardType.Pilot)
             {
-                if (!source.PrimaryCard.HasPilot())
+                if (!primaryCard2.HasPilot())
                 {
                     var traitActorRegion = gameState.GetTraitActorRegion(primaryCard.ActiveData.Owner, primaryCard.InstanceId);
                     var traitActorRegion2 = gameState.GetTraitActorRegion(primaryCard2.ActiveData.Owner, primaryCard2.InstanceId);
@@ -141,7 +141,7 @@ public class UnitCardTemplate : EntityCardTemplate
             }
             else if (Type == CardType.Pilot && primaryCard.GetTemplate().Type == CardType.Titan)
             {
-                if (!target.PrimaryCard.HasPilot())
+                if (!primaryCard.HasPilot())
                 {
                     var traitActorRegion3 = gameState.GetTraitActorRegion(primaryCard.ActiveData.Owner, primaryCard.InstanceId);
                     var traitActorRegion4 = gameState.GetTraitActorRegion(primaryCard2.ActiveData.Owner, primaryCard2.InstanceId);
@@ -166,7 +166,7 @@ public class UnitCardTemplate : EntityCardTemplate
 
     public override bool CanAttack(CardStack source, CardStack target)
     {
-        var template = target.PrimaryCard.GetTemplate();
+        var template = target.PrimaryCard!.GetTemplate();
         return template.IsAttackable(source);
     }
 

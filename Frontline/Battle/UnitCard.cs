@@ -790,10 +790,10 @@ public class UnitCard : EntityCard
 
         if (list.Count > 0)
         {
-            var targetID = target != null ? target.InstanceId : -1;
-            var targetOwner = (sbyte) (target != null ? target.ActiveData.Owner : -1);
+            var targetId = target.InstanceId;
+            var targetOwner = target.ActiveData.Owner;
             var combatBuffsCCGEvent = new CombatBuffsCcgEvent(CcgEventType.CombatBuffsConversion,
-                InstanceId, ActiveData.Owner, targetID, targetOwner);
+                InstanceId, ActiveData.Owner, targetId, targetOwner);
             combatBuffsCCGEvent.BuffTraits = new EventLogTraitCardInfo[list.Count];
             for (var i = 0; i < list.Count; i++)
             {

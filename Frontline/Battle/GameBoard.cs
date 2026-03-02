@@ -133,7 +133,7 @@ public class GameBoard
             return false;
         }
 
-        var primaryCard = cardStack.PrimaryCard;
+        var primaryCard = cardStack.PrimaryCard!;
         if (primaryCard.HasActed(4))
         {
             _gameState.Logger.Debug("GameBoard.CanMove false - card Move flag is set");
@@ -154,7 +154,7 @@ public class GameBoard
             return false;
         }
 
-        if (_sourceRegion == target && pushDir != 0 && _sourceRegion != Region.Control && pushDir != 0)
+        if (_sourceRegion == target && pushDir != 0 && _sourceRegion != Region.Control)
         {
             _gameState.Logger.Debug("GameBoard.CanMove false - trying to move in the same region");
             return false;
@@ -229,7 +229,7 @@ public class GameBoard
             return false;
         }
 
-        var primaryCard = cardStack.PrimaryCard;
+        var primaryCard = cardStack.PrimaryCard!;
         if (primaryCard.HasActed(2))
         {
             _gameState.Logger.Debug("GameBoard.CanAttack false - card attack flad set");
@@ -266,7 +266,7 @@ public class GameBoard
             return false;
         }
 
-        var primaryCard = cardStack.PrimaryCard;
+        var primaryCard = cardStack.PrimaryCard!;
         var player = players[targetOwner];
         var cardStack2 = targetId != player.Commander.PrimaryCard!.InstanceId
             ? FindCard(targetId, targetOwner)

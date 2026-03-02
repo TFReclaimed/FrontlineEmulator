@@ -182,7 +182,7 @@ public class GameRegion
     {
         var b = GetCardStackIdx(titanCardId, indexOfPlayerOwner);
         var cardStack = Slots[b];
-        var unitCard = (UnitCard) cardStack.PrimaryCard;
+        var unitCard = (UnitCard) cardStack.PrimaryCard!;
         var embarkedPilot = unitCard.EmbarkedPilot;
         sbyte b2 = 0;
         if (embarkedPilot == null)
@@ -242,7 +242,7 @@ public class GameRegion
         var num = Slots.Length;
         var num2 = _titanSlots.Length;
         var emptyAvailable = _slotIndependent && pushDir != 0 && HasEmpty();
-        var primaryCard = stack.PrimaryCard;
+        var primaryCard = stack.PrimaryCard!;
         var template = primaryCard.GetTemplate();
         var flag = false;
         if (template.Type == CardType.Titan)
