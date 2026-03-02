@@ -111,7 +111,7 @@ public class BaseTraitEffect
             if (Targets.Area == TargetableArea.FriendlyCommander)
             {
                 var owner = card.ActiveData.Owner;
-                card2 = GameState.Players[owner].Commander.PrimaryCard;
+                card2 = GameState.Players[owner].Commander.PrimaryCard!;
                 if (CheckAndApplyTrait(card2, card, false, true))
                 {
                     list.Add(card2);

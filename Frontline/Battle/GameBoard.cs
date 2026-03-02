@@ -290,7 +290,7 @@ public class GameBoard
             return false;
         }
 
-        var entityCard = (EntityCard) cardStack.PrimaryCard;
+        var entityCard = (EntityCard) cardStack.PrimaryCard!;
         if (area == TargetableArea.UnitStack)
         {
             var player = players[targetOwner];

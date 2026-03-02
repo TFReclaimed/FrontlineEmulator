@@ -485,7 +485,7 @@ public class TraitTargeting
         var list = gameState.FindCards(this, region, active.GetTraitSource());
         foreach (var cardStack in list)
         {
-            var card = cardStack.PrimaryCard;
+            var card = cardStack.PrimaryCard!;
             if (DoesMatchType(card))
             {
                 num++;

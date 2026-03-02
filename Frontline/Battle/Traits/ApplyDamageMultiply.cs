@@ -14,7 +14,7 @@ public class ApplyDamageMultiply : ApplyDamage
             var list = GameState.FindCardStack(card);
             for (var i = 0; i < list.Count; i++)
             {
-                var secrets = list[i].PrimaryCard.GetSecrets();
+                var secrets = list[i].PrimaryCard!.GetSecrets();
 
                 for (var num = secrets.Count - 1; num >= 0; num--)
                 {

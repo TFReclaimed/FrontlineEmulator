@@ -257,7 +257,7 @@ public class Player
     {
         var b = attack;
         var b2 = bypass;
-        var primaryCard = Commander.PrimaryCard;
+        var primaryCard = Commander.PrimaryCard!;
         int num = Resources.Health;
         var num2 = b + b2;
         if (num2 <= 0)

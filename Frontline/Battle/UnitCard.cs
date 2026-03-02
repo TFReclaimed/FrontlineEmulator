@@ -408,7 +408,7 @@ public class UnitCard : EntityCard
 
         if (embark)
         {
-            var primaryCard = stack.PrimaryCard;
+            var primaryCard = stack.PrimaryCard!;
             var type = GetTemplate().Type;
             var flag = primaryCard.HasAnyActionsAvailable();
             if (type == CardType.Titan && primaryCard.GetTemplate().Type == CardType.Pilot)
@@ -490,7 +490,7 @@ public class UnitCard : EntityCard
         if (embark)
         {
             var type = GetTemplate().Type;
-            var unitCard = (UnitCard) target.PrimaryCard;
+            var unitCard = (UnitCard) target.PrimaryCard!;
             var type2 = unitCard.GetTemplate().Type;
             var flag = unitCard.HasAnyActionsAvailable();
             if (type == CardType.Titan && type2 == CardType.Pilot)
@@ -586,12 +586,12 @@ public class UnitCard : EntityCard
 
     public override void Attack(CardStack source, Card? target)
     {
-        var targetID = target != null ? target.InstanceId : -1;
+        var targetId = target?.InstanceId ?? -1;
         var targetOwner = (sbyte) (target != null ? target.ActiveData.Owner : -1);
-        CombatCcgEvent combatCCGEvent = null;
-        var combatCCGEvent2 = new CombatCcgEvent(CcgEventType.CombatStart, InstanceId, ActiveData.Owner,
-            targetID, targetOwner, 0, 0);
-        GameState.AddCcgEventLog(combatCCGEvent2);
+        CombatCcgEvent? combatCcgEvent;
+        var combatCcgEvent2 = new CombatCcgEvent(CcgEventType.CombatStart, InstanceId, ActiveData.Owner,
+            targetId, targetOwner, 0, 0);
+        GameState.AddCcgEventLog(combatCcgEvent2);
         if (target != null)
         {
             var traitActorRegion = GameState.GetTraitActorRegion(target.ActiveData.Owner, target.InstanceId);
@@ -617,16 +617,16 @@ public class UnitCard : EntityCard
             {
                 SetActed(EntityActionType.AnyButDeployMask);
                 ActiveData.AttackTraits(target);
-                combatCCGEvent = new CombatCcgEvent(CcgEventType.CombatEnd, InstanceId, ActiveData.Owner, targetID,
+                combatCcgEvent = new CombatCcgEvent(CcgEventType.CombatEnd, InstanceId, ActiveData.Owner, targetId,
                     targetOwner, 0, 0);
-                GameState.AddCcgEventLog(combatCCGEvent);
+                GameState.AddCcgEventLog(combatCcgEvent);
                 return;
             }
 
-            var combatCCGEvent3 = new CombatCcgEvent(CcgEventType.CombatAttack, InstanceId, ActiveData.Owner,
+            var combatCcgEvent3 = new CombatCcgEvent(CcgEventType.CombatAttack, InstanceId, ActiveData.Owner,
                 target.InstanceId, target.ActiveData.Owner, b, bypass);
-            combatCCGEvent3.Result = 0;
-            GameState.AddCcgEventLog(combatCCGEvent3);
+            combatCcgEvent3.Result = 0;
+            GameState.AddCcgEventLog(combatCcgEvent3);
             GameState.CardAttacked(this, target);
             b = GetCurrentAttack(target, true);
             bypass = GetCurrentBypassDefense(target, true);
@@ -672,44 +672,44 @@ public class UnitCard : EntityCard
 
             if (list2.Count > 0)
             {
-                var combatBuffsCCGEvent = new CombatBuffsCcgEvent(CcgEventType.CombatBuffsConversion,
-                    InstanceId, ActiveData.Owner, targetID, targetOwner);
-                combatBuffsCCGEvent.BuffTraits = new EventLogTraitCardInfo[list2.Count];
+                var combatBuffsCcgEvent = new CombatBuffsCcgEvent(CcgEventType.CombatBuffsConversion,
+                    InstanceId, ActiveData.Owner, targetId, targetOwner);
+                combatBuffsCcgEvent.BuffTraits = new EventLogTraitCardInfo[list2.Count];
                 for (var j = 0; j < list2.Count; j++)
                 {
-                    combatBuffsCCGEvent.BuffTraits[j] = list2[j];
+                    combatBuffsCcgEvent.BuffTraits[j] = list2[j];
                 }
 
-                GameState.AddCcgEventLog(combatBuffsCCGEvent);
+                GameState.AddCcgEventLog(combatBuffsCcgEvent);
             }
 
-            combatCCGEvent3.AttackTotal = b;
-            combatCCGEvent3.BypassTotal = bypass;
+            combatCcgEvent3.AttackTotal = b;
+            combatCcgEvent3.BypassTotal = bypass;
             if (!CanAttack(source, cardStack) || CanDiscard() || target.CanDiscard())
             {
                 SetActed(EntityActionType.AnyButDeployMask);
                 ActiveData.AttackTraits(target);
-                combatCCGEvent = new CombatCcgEvent(CcgEventType.CombatEnd, InstanceId, ActiveData.Owner, targetID,
+                combatCcgEvent = new CombatCcgEvent(CcgEventType.CombatEnd, InstanceId, ActiveData.Owner, targetId,
                     targetOwner, 0, 0);
-                GameState.AddCcgEventLog(combatCCGEvent);
+                GameState.AddCcgEventLog(combatCcgEvent);
                 return;
             }
 
             if (target.CanCounterAttack(cardStack, source, false))
             {
-                combatCCGEvent2.Result = 1;
+                combatCcgEvent2.Result = 1;
             }
 
-            if ((combatCCGEvent3.Result = ValidateAttackEffect(this, target)) == 0)
+            if ((combatCcgEvent3.Result = ValidateAttackEffect(this, target)) == 0)
             {
                 target.TakeDamage(b, bypass, this, false);
             }
         }
 
         base.Attack(source, target);
-        combatCCGEvent = new CombatCcgEvent(CcgEventType.CombatEnd, InstanceId, ActiveData.Owner, targetID, targetOwner,
+        combatCcgEvent = new CombatCcgEvent(CcgEventType.CombatEnd, InstanceId, ActiveData.Owner, targetId, targetOwner,
             0, 0);
-        GameState.AddCcgEventLog(combatCCGEvent);
+        GameState.AddCcgEventLog(combatCcgEvent);
         CheckForDeathEvent();
         target?.CheckForDeathEvent();
     }

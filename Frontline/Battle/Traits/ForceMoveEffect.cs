@@ -41,7 +41,7 @@ public class ForceMoveEffect : BaseTraitEffect
             var list = GameState.FindCardStack(card);
             for (var i = 0; i < list.Count; i++)
             {
-                if (list[i].PrimaryCard.EqualsTo(card))
+                if (list[i].PrimaryCard!.EqualsTo(card))
                 {
                     result = true;
                     break;

@@ -579,12 +579,12 @@ public class CcgGameState
         {
             if (flag)
             {
-                var card = Board.FindTraitActor(cardId, playerIndex);
+                var card = Board.FindTraitActor(cardId, playerIndex)!;
                 var list = FindCardStack(card);
                 if (list.Count > 0)
                 {
                     var cardStack = list[0];
-                    if (cardStack.PrimaryCard.HasPilot())
+                    if (cardStack.PrimaryCard!.HasPilot())
                     {
                         var unitCard2 = (UnitCard) cardStack.PrimaryCard;
                         var unitCard = unitCard2.EmbarkedPilot!;
@@ -629,9 +629,9 @@ public class CcgGameState
 
     public bool Disembark(sbyte playerIndex, int cardId, bool eject, BaseTraitEffect? traitCause)
     {
-        var card = Board.FindTraitActor(cardId, playerIndex);
+        var card = Board.FindTraitActor(cardId, playerIndex)!;
         var list = FindCardStack(card);
-        if (list.Count <= 0 || list[0].PrimaryCard == null || !list[0].PrimaryCard.HasPilot())
+        if (list.Count <= 0 || list[0].PrimaryCard == null || !list[0].PrimaryCard!.HasPilot())
         {
             return false;
         }
@@ -722,7 +722,7 @@ public class CcgGameState
             sbyte indexSlot = 0;
             for (var i = 0; i < slots.Length; i++)
             {
-                if (slots[i].PrimaryCard != null && slots[i].PrimaryCard.EqualsTo(card))
+                if (slots[i].PrimaryCard != null && slots[i].PrimaryCard!.EqualsTo(card))
                 {
                     indexSlot = (sbyte) i;
                 }
@@ -780,7 +780,7 @@ public class CcgGameState
         var array = new Card[cardIdsToSwap.Length];
         for (var i = 0; i < cardIdsToSwap.Length; i++)
         {
-            array[i] = hand.RemoveCard(cardIdsToSwap[i]);
+            array[i] = hand.RemoveCard(cardIdsToSwap[i])!;
         }
 
         if (cardIdsToSwap.Length > 0)

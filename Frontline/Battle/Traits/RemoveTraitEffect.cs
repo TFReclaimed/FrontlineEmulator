@@ -40,6 +40,13 @@ public class RemoveTraitEffect : BaseTraitEffect
                 else
                 {
                     var traitTemplate2 = RulesetParser.GetTraitTemplate(active.TraitSourceId);
+                    if (traitTemplate2 == null)
+                    {
+                        GameState.Logger.Warning("Trait template with ID {TraitSourceId} not found.",
+                            active.TraitSourceId);
+                        return false;
+                    }
+
                     if (traitTemplate2.TraitType == TraitType.BurnCard)
                     {
                         return true;
@@ -59,6 +66,13 @@ public class RemoveTraitEffect : BaseTraitEffect
                 else
                 {
                     var traitTemplate = RulesetParser.GetTraitTemplate(active.TraitSourceId);
+                    if (traitTemplate == null)
+                    {
+                        GameState.Logger.Warning("Trait template with ID {TraitSourceId} not found.",
+                            active.TraitSourceId);
+                        return false;
+                    }
+
                     if (traitTemplate.TraitType == TraitType.Secret)
                     {
                         return true;

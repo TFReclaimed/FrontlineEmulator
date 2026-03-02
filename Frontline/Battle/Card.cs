@@ -382,7 +382,7 @@ public class Card : Item
             {
                 if (cardTemplate.Type == CardType.BurnCard || cardTemplate.Type == CardType.Secret)
                 {
-                    if (cardTemplate.Type == CardType.Secret && target != null && target.PrimaryCard != null)
+                    if (cardTemplate.Type == CardType.Secret && target.PrimaryCard != null)
                     {
                         if (target.PrimaryCard.GetSecrets().Count >= 2)
                         {
