@@ -136,7 +136,7 @@ public class UnitCard : EntityCard
         if (combatLog && list.Count > 0)
         {
             var count = list.Count;
-            var targetId = target != null ? target.InstanceId : -1;
+            var targetId = target?.InstanceId ?? -1;
             var targetOwner = (sbyte) (target != null ? target.ActiveData.Owner : -1);
             var combatBuffsCCGEvent = new CombatBuffsCcgEvent(CcgEventType.CombatBuffsAttack,
                 InstanceId, ActiveData.Owner, targetId, targetOwner);
@@ -187,7 +187,7 @@ public class UnitCard : EntityCard
         if (combatLog && list.Count > 0)
         {
             var count = list.Count;
-            var targetId = target != null ? target.InstanceId : -1;
+            var targetId = target?.InstanceId ?? -1;
             var targetOwner = (sbyte) (target != null ? target.ActiveData.Owner : -1);
             var combatBuffsCCGEvent = new CombatBuffsCcgEvent(CcgEventType.CombatBuffsAttack,
                 InstanceId, ActiveData.Owner, targetId, targetOwner);
@@ -596,11 +596,7 @@ public class UnitCard : EntityCard
         {
             var traitActorRegion = GameState.GetTraitActorRegion(target.ActiveData.Owner, target.InstanceId);
             var list = GameState.FindCardStack(target);
-            CardStack cardStack = null;
-            if (list.Count > 0)
-            {
-                cardStack = list[0];
-            }
+            var cardStack = list[0];
 
             for (var i = 0; i < CardTraits.Length; i++)
             {

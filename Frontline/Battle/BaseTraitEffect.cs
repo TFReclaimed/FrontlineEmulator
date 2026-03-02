@@ -257,7 +257,7 @@ public class BaseTraitEffect
             var list2 = GameState.FindCards(triggerTarget, Region.NumRegions, card);
             for (var j = 0; j < list2.Count; j++)
             {
-                var primaryCard4 = list2[j].PrimaryCard;
+                var primaryCard4 = list2[j].PrimaryCard!;
                 if (triggerTarget.DoesMatchType(primaryCard4))
                 {
                     var active5 = GenerateActiveTrait(primaryCard4, card);
@@ -398,8 +398,8 @@ public class BaseTraitEffect
     public List<Card> CheckForAppliedTargets(Card card, CardStack? target, Region region)
     {
         var list = new List<Card>();
-        List<Card> list2 = null;
-        Card card2 = null;
+        List<Card> list2;
+        Card? card2;
         if (IsTrigger() || TargetTrait())
         {
             return list;
@@ -520,7 +520,7 @@ public class BaseTraitEffect
             for (var i = 0; i < list3.Count; i++)
             {
                 var cardStack2 = list3[i];
-                if (cardStack2 != null && cardStack2.PrimaryCard != null)
+                if (cardStack2.PrimaryCard != null)
                 {
                     card2 = cardStack2.PrimaryCard;
                     if (DoesApply(card2, card, false, true))
