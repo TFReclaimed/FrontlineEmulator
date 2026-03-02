@@ -52,7 +52,7 @@ public class GameResources
 
     public sbyte HealDamage(sbyte heal)
     {
-        var b = Health;
+        var oldHealth = Health;
         if (Health + heal > MaxHealth)
         {
             Health = MaxHealth;
@@ -62,6 +62,6 @@ public class GameResources
             Health += heal;
         }
 
-        return (sbyte) (Health - b);
+        return (sbyte) (Health - oldHealth);
     }
 }

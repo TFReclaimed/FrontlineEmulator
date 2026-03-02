@@ -13,9 +13,8 @@ public class ApplyStatus : BaseTraitEffect
     {
         if (IsDeterStatus(StatusType))
         {
-            for (var i = 0; i < card.ActiveData.ActiveTraits.Count; i++)
+            foreach (var activeTrait in card.ActiveData.ActiveTraits)
             {
-                var activeTrait = card.ActiveData.ActiveTraits[i];
                 if (activeTrait.GetTraitInfo().Deterable)
                 {
                     activeTrait.Detered = true;
@@ -34,9 +33,9 @@ public class ApplyStatus : BaseTraitEffect
             ActiveTrait? activeTrait = null;
             var activeData = active.GetTraitTarget().ActiveData;
             var flag = false;
-            for (var i = 0; i < activeData.ActiveTraits.Count; i++)
+            foreach (var trait in activeData.ActiveTraits)
             {
-                activeTrait = activeData.ActiveTraits[i];
+                activeTrait = trait;
                 if (activeTrait != active && (activeTrait.GetTraitInfo().IsStatusEffect(ApplyStatusTraitStatusType.Deter, activeTrait) ||
                                               activeTrait.GetTraitInfo().IsStatusEffect(ApplyStatusTraitStatusType.Stun, activeTrait)))
                 {
@@ -46,9 +45,9 @@ public class ApplyStatus : BaseTraitEffect
 
             if (!flag)
             {
-                for (var j = 0; j < active.GetTraitTarget().ActiveData.ActiveTraits.Count; j++)
+                foreach (var trait in active.GetTraitTarget().ActiveData.ActiveTraits)
                 {
-                    activeTrait = active.GetTraitTarget().ActiveData.ActiveTraits[j];
+                    activeTrait = trait;
                     activeTrait.Detered = !activeTrait.EmbarkedCheck();
                 }
 
@@ -61,12 +60,7 @@ public class ApplyStatus : BaseTraitEffect
 
     public override bool CanDeploy(CardStack target, Region region)
     {
-        if (StatusType == ApplyStatusTraitStatusType.Defender && region == Region.Control)
-        {
-            return false;
-        }
-
-        return true;
+        return StatusType != ApplyStatusTraitStatusType.Defender || region != Region.Control;
     }
 
     public override bool CanMove(Region target, sbyte cardOwner, ActiveTrait active)

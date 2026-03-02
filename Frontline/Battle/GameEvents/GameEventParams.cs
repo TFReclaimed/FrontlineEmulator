@@ -27,12 +27,12 @@ public class GameEventParams
     {
         if (GameEvent == GameEvent.Surrender)
         {
-            if (game.Surrender(PlayerIndex) != 1)
+            if (!game.Surrender(PlayerIndex))
             {
                 return null;
             }
         }
-        else if (GameEvent == GameEvent.TriggerEndTurnTraits && game.TriggerEndTurnTraits(PlayerIndex) != 1)
+        else if (GameEvent == GameEvent.TriggerEndTurnTraits && !game.TriggerEndTurnTraits(PlayerIndex))
         {
             return null;
         }

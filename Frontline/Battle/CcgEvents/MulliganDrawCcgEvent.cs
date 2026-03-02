@@ -15,13 +15,10 @@ public class MulliganDrawCcgEvent : CcgEventData
 
     public void AddDrawnCard(Card card)
     {
-        if (card != null)
-        {
-            AddDrawnCard(card.InstanceId, card.TemplateId, card.Rank);
-        }
+        AddDrawnCard(card.InstanceId, card.TemplateId, card.Rank);
     }
 
-    public void AddDrawnCard(int instanceId, int templateId, sbyte rank)
+    private void AddDrawnCard(int instanceId, int templateId, sbyte rank)
     {
         CardsData.Add(new MulliganDrawCcgEventCardData(instanceId, templateId, rank));
     }

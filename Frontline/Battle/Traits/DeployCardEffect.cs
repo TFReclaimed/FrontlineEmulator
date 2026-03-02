@@ -24,9 +24,9 @@ public class DeployCardEffect : BaseTraitEffect
         var secrets = card.GetSecrets();
         if (secrets.Count > 0)
         {
-            for (var i = 0; i < secrets.Count; i++)
+            foreach (var secret in secrets)
             {
-                secrets[i].Discard(GameState.Players);
+                secret.Discard(GameState.Players);
             }
 
             secrets.Clear();
@@ -39,12 +39,13 @@ public class DeployCardEffect : BaseTraitEffect
             unitCard.EmbarkedPilot = null;
         }
 
-        var b = (sbyte) GameState.Board.Regions[(uint) region]
+        var index = (sbyte) GameState.Board.Regions[(uint) region]
             .GetEmptyCardStackIndex(titanOnly, card.GetTemplate().IsSupportUnit());
         card.ResetCard();
-        if (b >= 0)
+        if (index >= 0)
         {
-            GameState.Deploy(owner2, card.InstanceId, 0, 0, TargetableArea.CurrentRegion, region, b, 1, this);
+            GameState.Deploy(owner2, card.InstanceId, 0, 0, TargetableArea.CurrentRegion,
+                region, index, 1, this);
         }
     }
 }

@@ -4,12 +4,7 @@ public class BlockEmbark : BaseTraitEffect
 {
     public override bool CanDeploy(CardStack target, Region region)
     {
-        if (target.PrimaryCard != null)
-        {
-            return false;
-        }
-
-        return true;
+        return target.PrimaryCard == null;
     }
 
     public override bool CanEmbark()

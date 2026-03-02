@@ -12,9 +12,9 @@ public class ApplyDamageMultiply : ApplyDamage
         {
             GameState.SecretDestroyed(card, source);
             var list = GameState.FindCardStack(card);
-            for (var i = 0; i < list.Count; i++)
+            foreach (var cardStack in list)
             {
-                var secrets = list[i].PrimaryCard!.GetSecrets();
+                var secrets = cardStack.PrimaryCard!.GetSecrets();
 
                 for (var num = secrets.Count - 1; num >= 0; num--)
                 {

@@ -20,7 +20,7 @@ internal class GameEventCheat_GiveCardAndCmdPts : GameEventParams
         };
 
         if (game.Cheat_GiveCardAndCommandPoints(PlayerIndex, result.CardTemplateId, result.CardRank,
-                result.CommandPoints) == 1)
+                result.CommandPoints))
         {
             CcgEventsLog = game.GameState.GetCcgEventLog();
             return result;

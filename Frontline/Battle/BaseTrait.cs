@@ -21,7 +21,7 @@ public class BaseTrait
 
     public bool ActivateOnDeploy()
     {
-        return TraitType == TraitType.Deployed || TraitType == TraitType.Passive || TraitType == TraitType.Secret ||
+        return TraitType is TraitType.Deployed or TraitType.Passive || TraitType == TraitType.Secret ||
                TraitType == TraitType.BurnCard || TraitType == TraitType.Gear || TraitType == TraitType.Basic;
     }
 
@@ -44,20 +44,15 @@ public class BaseTrait
 
         var targets = primaryTargeting.Targets;
 
-        if (!targets.HasAreaTarget())
+        if (targets.HasAreaTarget())
         {
-            if ((TraitType == TraitType.BurnCard || TraitType == TraitType.OneShot) &&
-                (targets.Area == TargetableArea.FriendlyDiscard || targets.Area == TargetableArea.EnemyDiscard ||
-                 targets.Area == TargetableArea.FriendlyHand || targets.Area == TargetableArea.EnemyHand ||
-                 targets.Area == TargetableArea.FriendlyCommander || targets.Area == TargetableArea.EnemyCommander))
-            {
-                return true;
-            }
-
-            return false;
+            return targets.CheckRegion(region, owner);
         }
 
-        return targets.CheckRegion(region, owner);
+        return (TraitType == TraitType.BurnCard || TraitType == TraitType.OneShot) &&
+               (targets.Area == TargetableArea.FriendlyDiscard || targets.Area == TargetableArea.EnemyDiscard ||
+                targets.Area == TargetableArea.FriendlyHand || targets.Area == TargetableArea.EnemyHand ||
+                targets.Area == TargetableArea.FriendlyCommander || targets.Area == TargetableArea.EnemyCommander);
     }
 
     public virtual bool CanActivate(CardStack target, Region region, sbyte owner)
@@ -85,80 +80,81 @@ public class BaseTrait
             return false;
         }
 
-        if (!targets.HasAreaTarget())
+        if (targets.HasAreaTarget())
         {
-            if (target.PrimaryCard == null)
-            {
-                return false;
-            }
-
-            var primaryCard = target.PrimaryCard;
-            var owner2 = primaryCard.ActiveData.Owner;
-            var flag = false;
-            if (targets.CheckFriendly() && owner2 == owner)
-            {
-                flag = true;
-            }
-
-            if (targets.CheckEnemy() && owner2 != owner)
-            {
-                flag = true;
-            }
-
-            if (!flag)
-            {
-                return false;
-            }
-
-            if (!targets.DoesMatchType(primaryCard))
-            {
-                return false;
-            }
-
-            if (!targets.CheckRegion(region, owner))
-            {
-                return false;
-            }
-
-            switch (area)
-            {
-                case TargetableArea.AnyCommander:
-                case TargetableArea.FriendlyCommander:
-                case TargetableArea.EnemyCommander:
-                    if (primaryCard.GetTemplate().Type != CardType.Commander)
-                    {
-                        return false;
-                    }
-
-                    break;
-                case TargetableArea.BattleFieldNc:
-                    if (primaryCard.GetTemplate().Type == CardType.Commander)
-                    {
-                        return false;
-                    }
-
-                    break;
-            }
-
-            if (TraitType == TraitType.BurnCard && primaryCard.HasStatusEffect(ApplyStatusTraitStatusType.CannotTargetBurn))
-            {
-                return false;
-            }
-
-            if (TraitType == TraitType.OneShot && primaryCard.HasStatusEffect(ApplyStatusTraitStatusType.CannotTargetTrait))
-            {
-                return false;
-            }
-
-            if (TraitType == TraitType.Secret && primaryCard.HasStatusEffect(ApplyStatusTraitStatusType.CannotTargetSecret))
-            {
-                return false;
-            }
-
-            return true;
+            return targets.CheckRegion(region, owner);
         }
 
-        return targets.CheckRegion(region, owner);
+        if (target.PrimaryCard == null)
+        {
+            return false;
+        }
+
+        var primaryCard = target.PrimaryCard;
+        var owner2 = primaryCard.ActiveData.Owner;
+        var flag = false;
+        if (targets.CheckFriendly() && owner2 == owner)
+        {
+            flag = true;
+        }
+
+        if (targets.CheckEnemy() && owner2 != owner)
+        {
+            flag = true;
+        }
+
+        if (!flag)
+        {
+            return false;
+        }
+
+        if (!targets.DoesMatchType(primaryCard))
+        {
+            return false;
+        }
+
+        if (!targets.CheckRegion(region, owner))
+        {
+            return false;
+        }
+
+        switch (area)
+        {
+            case TargetableArea.AnyCommander:
+            case TargetableArea.FriendlyCommander:
+            case TargetableArea.EnemyCommander:
+                if (primaryCard.GetTemplate().Type != CardType.Commander)
+                {
+                    return false;
+                }
+
+                break;
+            case TargetableArea.BattleFieldNc:
+                if (primaryCard.GetTemplate().Type == CardType.Commander)
+                {
+                    return false;
+                }
+
+                break;
+        }
+
+        if (TraitType == TraitType.BurnCard && primaryCard.HasStatusEffect(ApplyStatusTraitStatusType.CannotTargetBurn))
+        {
+            return false;
+        }
+
+        if (TraitType == TraitType.OneShot && primaryCard.HasStatusEffect(ApplyStatusTraitStatusType.CannotTargetTrait))
+        {
+            return false;
+        }
+
+        if (TraitType == TraitType.Secret && primaryCard.HasStatusEffect(ApplyStatusTraitStatusType.CannotTargetSecret))
+        {
+            return false;
+        }
+
+        return true;
+
     }
 
     public bool CanActivate(Card target, Card source, Region region, CcgGameState game)
@@ -169,9 +165,9 @@ public class BaseTrait
 
     public bool HasActiveTargets(Card card, CardStack? target, Region region, CcgGameState game)
     {
-        for (var i = 0; i < Effects.Count; i++)
+        foreach (var effect in Effects)
         {
-            if (Effects[i].CheckForAppliedTargets(card, target, region).Count > 0)
+            if (effect.CheckForAppliedTargets(card, target, region).Count > 0)
             {
                 return true;
             }
@@ -189,33 +185,33 @@ public class BaseTrait
         }
         else
         {
-            sbyte b = 0;
-            for (var i = 0; i < Effects.Count; i++)
+            sbyte priority = 0;
+            foreach (var effect in Effects)
             {
-                if (Effects[i].Priority > b)
+                if (effect.Priority > priority)
                 {
-                    b = Effects[i].Priority;
+                    priority = effect.Priority;
                 }
             }
 
-            if (b > 0)
+            if (priority > 0)
             {
-                for (var j = 0; j <= b; j++)
+                for (var j = 0; j <= priority; j++)
                 {
-                    for (var k = 0; k < Effects.Count; k++)
+                    foreach (var effect in Effects)
                     {
-                        if (Effects[k].Priority == j)
+                        if (effect.Priority == j)
                         {
-                            Effects[k].Activate(card, target, region);
+                            effect.Activate(card, target, region);
                         }
                     }
                 }
             }
             else
             {
-                for (var l = 0; l < Effects.Count; l++)
+                foreach (var effect in Effects)
                 {
-                    Effects[l].Activate(card, target, region);
+                    effect.Activate(card, target, region);
                 }
             }
         }
@@ -238,16 +234,16 @@ public class BaseTrait
     public BaseTraitEffect? GetPrimaryTargeting(sbyte priority)
     {
         BaseTraitEffect? baseTraitEffect = null;
-        for (var i = 0; i < Effects.Count; i++)
+        foreach (var effect in Effects)
         {
-            if (baseTraitEffect == null && Effects[i].TargetPrimary)
+            if (baseTraitEffect == null && effect.TargetPrimary)
             {
-                baseTraitEffect = Effects[i];
+                baseTraitEffect = effect;
             }
 
-            if (Effects[i].TargetTrait() && Effects[i].Priority == priority)
+            if (effect.TargetTrait() && effect.Priority == priority)
             {
-                return Effects[i];
+                return effect;
             }
         }
 
@@ -262,12 +258,12 @@ public class BaseTrait
     public BaseTraitEffect? GetTrigger(int limit)
     {
         BaseTraitEffect? baseTraitEffect = null;
-        for (var i = 0; i < Effects.Count; i++)
+        foreach (var effect in Effects)
         {
-            if (Effects[i].IsTrigger() && Effects[i].Priority >= limit &&
-                (baseTraitEffect == null || Effects[i].Priority < baseTraitEffect.Priority))
+            if (effect.IsTrigger() && effect.Priority >= limit &&
+                (baseTraitEffect == null || effect.Priority < baseTraitEffect.Priority))
             {
-                baseTraitEffect = Effects[i];
+                baseTraitEffect = effect;
             }
         }
 

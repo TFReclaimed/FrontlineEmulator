@@ -8,7 +8,7 @@ public class UnsummonEffect : BaseTraitEffect
     {
         var owner = card.ActiveData.Owner;
         var player = GameState.Players[owner];
-        if (Targets.Area == TargetableArea.EnemyDiscard || Targets.Area == TargetableArea.FriendlyDiscard)
+        if (Targets.Area is TargetableArea.EnemyDiscard or TargetableArea.FriendlyDiscard)
         {
             var discard = player.Discard;
             discard.RemoveCard(card.InstanceId);
@@ -41,7 +41,7 @@ public class UnsummonEffect : BaseTraitEffect
 
                 card2.ResetCard();
                 player.Hand.Cards.Add(card2);
-                var cardTransitionCcgEvent = new CardTransitionCcgEvent(CcgEventType.CardUnsummon, card2.InstanceId,
+                var unsummonEvent = new CardTransitionCcgEvent(CcgEventType.CardUnsummon, card2.InstanceId,
                     card2.ActiveData.Owner, 0, 0, false, Region.NumRegions, 0, 0)
                 {
                     TemplateId = card2.TemplateId,
@@ -49,13 +49,13 @@ public class UnsummonEffect : BaseTraitEffect
                     EffectId = EffectTraitId,
                     TraitId = TraitParentId
                 };
-                GameState.AddCcgEventLog(cardTransitionCcgEvent);
+                GameState.AddCcgEventLog(unsummonEvent);
             }
         }
 
         card.ResetCard();
         player.Hand.Cards.Add(card);
-        var cardTransitionCcgEvent2 = new CardTransitionCcgEvent(CcgEventType.CardUnsummon, card.InstanceId,
+        var unsummonEvent2 = new CardTransitionCcgEvent(CcgEventType.CardUnsummon, card.InstanceId,
             card.ActiveData.Owner, 0, 0, false, Region.NumRegions, 0, 0)
         {
             TemplateId = card.TemplateId,
@@ -63,6 +63,6 @@ public class UnsummonEffect : BaseTraitEffect
             EffectId = EffectTraitId,
             TraitId = TraitParentId
         };
-        GameState.AddCcgEventLog(cardTransitionCcgEvent2);
+        GameState.AddCcgEventLog(unsummonEvent2);
     }
 }

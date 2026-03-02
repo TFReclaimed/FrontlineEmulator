@@ -1,5 +1,4 @@
 using System.Text.Json.Serialization;
-using Frontline.Battle;
 
 namespace Frontline.Game.Card;
 

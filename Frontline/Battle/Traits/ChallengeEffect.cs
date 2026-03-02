@@ -11,12 +11,14 @@ public class ChallengeEffect : BaseTraitEffect
             cardStack = list[0];
         }
 
-        if (cardStack != null)
+        if (cardStack == null)
         {
-            while (card.GetCurrentHealth(false) > 0 && source.GetCurrentHealth(false) > 0)
-            {
-                source.Attack(cardStack, card);
-            }
+            return;
+        }
+
+        while (card.GetCurrentHealth(false) > 0 && source.GetCurrentHealth(false) > 0)
+        {
+            source.Attack(cardStack, card);
         }
     }
 }

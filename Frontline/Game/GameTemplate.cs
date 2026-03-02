@@ -26,38 +26,39 @@ public class GameTemplate
     [JsonPropertyName("lossRewardID")]
     public int LossRewardId { get; set; }
 
-    public void CheckEndGame(CcgGameState gameState)
+    public static void CheckEndGame(CcgGameState gameState)
     {
-        sbyte b = -127;
-        int num = -1;
-        Player[] players = gameState.Players;
-        for (int i = 0; i < players.Length; i++)
+        var mostHealth = sbyte.MinValue;
+        var winningPlayer = -1;
+        var players = gameState.Players;
+        for (var i = 0; i < players.Length; i++)
         {
-            GameResources resources = players[i].Resources;
-            sbyte health = resources.Health;
+            var resources = players[i].Resources;
+            var health = resources.Health;
             if (health <= 0)
             {
                 gameState.PlayerTurn = CcgGameState.GameOverIndicator;
             }
-            else if (health > b)
+            else if (health > mostHealth)
             {
-                b = health;
-                num = i;
+                mostHealth = health;
+                winningPlayer = i;
             }
-            else if (health == b)
+            else if (health == mostHealth)
             {
-                num = i;
+                winningPlayer = i;
             }
         }
+
         if (gameState.PlayerTurn == CcgGameState.GameOverIndicator)
         {
-            gameState.WinningPlayer = (sbyte)num;
+            gameState.WinningPlayer = (sbyte) winningPlayer;
             gameState.GenerateRewards();
             gameState.GetGame().EndGame();
         }
     }
 
-    public bool IsActive(sbyte playerIndex, CcgGameState gameState)
+    public static bool IsActive(sbyte playerIndex, CcgGameState gameState)
     {
         return gameState.Players[playerIndex].Resources.Health > 0;
     }

@@ -17,18 +17,20 @@ public class EjectEffect : BaseTraitEffect
         var cardStack = list[0];
         var unitCard = (UnitCard) cardStack.PrimaryCard!;
         var embarkedPilot = unitCard.EmbarkedPilot!;
-        if ((unitCard.EqualsTo(active.GetTraitTarget()) || embarkedPilot.EqualsTo(active.GetTraitTarget())) &&
-            unitCard.GetTemplate().Type == CardType.Titan && embarkedPilot.GetTemplate().Type == CardType.Pilot)
+        if ((!unitCard.EqualsTo(active.GetTraitTarget()) && !embarkedPilot.EqualsTo(active.GetTraitTarget())) ||
+            unitCard.GetTemplate().Type != CardType.Titan || embarkedPilot.GetTemplate().Type != CardType.Pilot)
         {
-            var logData = new TraitInfoCcgEvent(CcgEventType.TraitEvent, TraitParentId, EffectTraitId,
-                active.GetTraitTarget().InstanceId, active.GetTraitTarget().ActiveData.Owner,
-                active.GetTraitSource().InstanceId, active.GetTraitSource().ActiveData.Owner, 17);
-            GameState.AddCcgEventLog(logData);
-            GameState.Disembark(unitCard.ActiveData.Owner, unitCard.InstanceId, true, this);
-            if (active.HasCharges())
-            {
-                active.ExpendCharge();
-            }
+            return;
+        }
+
+        var traitEvent = new TraitInfoCcgEvent(CcgEventType.TraitEvent, TraitParentId, EffectTraitId,
+            active.GetTraitTarget().InstanceId, active.GetTraitTarget().ActiveData.Owner,
+            active.GetTraitSource().InstanceId, active.GetTraitSource().ActiveData.Owner, 17);
+        GameState.AddCcgEventLog(traitEvent);
+        GameState.Disembark(unitCard.ActiveData.Owner, unitCard.InstanceId, true, this);
+        if (active.HasCharges())
+        {
+            active.ExpendCharge();
         }
     }
 }

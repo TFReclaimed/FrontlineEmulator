@@ -69,11 +69,11 @@ public class ActiveTrait
             return;
         }
 
-        for (var i = 0; i < traitEffectsList.Count; i++)
+        foreach (var effect in traitEffectsList)
         {
-            if (traitEffectsList[i].EffectTraitId == TraitEffectId)
+            if (effect.EffectTraitId == TraitEffectId)
             {
-                Init(traitEffectsList[i], owner);
+                Init(effect, owner);
                 break;
             }
         }
@@ -253,10 +253,10 @@ public class ActiveTrait
             DurationData.Charges--;
         }
 
-        var logData = new TraitInfoCcgEvent(CcgEventType.TraitExpendCharge, _trait.TraitParentId,
+        var expendChargeEvent = new TraitInfoCcgEvent(CcgEventType.TraitExpendCharge, _trait.TraitParentId,
             _trait.EffectTraitId, _traitTarget.InstanceId, _traitTarget.ActiveData.Owner, _traitSource.InstanceId,
             _traitSource.ActiveData.Owner, DurationData.Charges);
-        _gameState.AddCcgEventLog(logData);
+        _gameState.AddCcgEventLog(expendChargeEvent);
         if (DurationData.Charges == 0 && DurationData.Type != TraitDurationType.Permanent)
         {
             Deactivate(true);
@@ -285,13 +285,15 @@ public class ActiveTrait
 
     public bool EmbarkedCheck()
     {
-        if (_traitTarget.GetTemplate().Type == CardType.Pilot)
+        if (_traitTarget.GetTemplate().Type != CardType.Pilot)
         {
-            var unitCard = (UnitCard) _traitTarget;
-            if (unitCard.IsEmbarked())
-            {
-                return _trait.EmbarkedInherit;
-            }
+            return true;
+        }
+
+        var unitCard = (UnitCard) _traitTarget;
+        if (unitCard.IsEmbarked())
+        {
+            return _trait.EmbarkedInherit;
         }
 
         return true;

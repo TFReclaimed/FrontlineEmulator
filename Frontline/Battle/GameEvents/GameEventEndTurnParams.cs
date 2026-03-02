@@ -13,7 +13,7 @@ public class GameEventEndTurnParams : GameEventParams
             CardIdsRemovedFromHand = HandCardIdsToDiscard
         };
 
-        if (game.EndTurn(PlayerIndex, HandCardIdsToDiscard) == 1)
+        if (game.EndTurn(PlayerIndex, HandCardIdsToDiscard))
         {
             CcgEventsLog = game.GameState.GetCcgEventLog();
             return result;

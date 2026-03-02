@@ -9,22 +9,24 @@ public class ApplyHealMultiply : ApplyHeal
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
         var num = CountInfo.CalculateCount(GameState, active);
-        var b = (sbyte) (Heal * num);
+        var delta = (sbyte) (Heal * num);
         if (active.DataValue > 0)
         {
-            b = (sbyte) (active.DataValue * num);
+            delta = (sbyte) (active.DataValue * num);
         }
 
         if (card.GetCurrentHealth(false) > 0)
         {
-            b = card.HealDamage(null, b);
+            delta = card.HealDamage(null, delta);
         }
 
-        if (b > 0)
+        if (delta <= 0)
         {
-            var logData = new CardTraumaCcgEvent(CcgEventType.CardHeal, b, source.InstanceId,
-                source.ActiveData.Owner, card.InstanceId, card.ActiveData.Owner);
-            GameState.AddCcgEventLog(logData);
+            return;
         }
+
+        var traumaEvent = new CardTraumaCcgEvent(CcgEventType.CardHeal, delta, source.InstanceId,
+            source.ActiveData.Owner, card.InstanceId, card.ActiveData.Owner);
+        GameState.AddCcgEventLog(traumaEvent);
     }
 }

@@ -50,6 +50,7 @@ public class CombatManipulationPassive : BaseTraitEffect
 
 public enum CombatManipulationPassiveType
 {
+    None = 0,
     Stealth = 1,
     IgnoreStealth = 2,
     Dodge = 3,

@@ -51,15 +51,17 @@ public class CardStack
 
     public void FindCards(TraitTargeting info, Card source, List<CardStack> found)
     {
-        if (PrimaryCard != null &&
-            ((info.Scope != TraitTargetScope.AllFriendlyNotSelf && info.Scope != TraitTargetScope.FriendlyUnitNotSelf &&
-              info.Scope != TraitTargetScope.RandomFriendlyNotSelf) || !source.EqualsTo(PrimaryCard)))
+        if (PrimaryCard == null ||
+            ((info.Scope is TraitTargetScope.AllFriendlyNotSelf or TraitTargetScope.FriendlyUnitNotSelf ||
+              info.Scope == TraitTargetScope.RandomFriendlyNotSelf) && source.EqualsTo(PrimaryCard)))
         {
-            if (PrimaryCard.DoesMatchTargetingInfo(info, source) ||
-                _ejectedCard != null && _ejectedCard.DoesMatchTargetingInfo(info, source))
-            {
-                found.Add(this);
-            }
+            return;
+        }
+
+        if (PrimaryCard.DoesMatchTargetingInfo(info, source) ||
+            _ejectedCard != null && _ejectedCard.DoesMatchTargetingInfo(info, source))
+        {
+            found.Add(this);
         }
     }
 
@@ -244,33 +246,35 @@ public class CardStack
 
     public bool CheckDiscard(Player[] players)
     {
-        if (PrimaryCard != null && PrimaryCard.CanDiscard())
+        if (PrimaryCard == null || !PrimaryCard.CanDiscard())
         {
-            PrimaryCard.Discard(players);
-            PrimaryCard = null;
-            if (_ejectedCard != null)
-            {
-                PrimaryCard = _ejectedCard;
-                _ejectedCard = null;
-            }
-
-            return true;
+            return false;
         }
 
-        return false;
+        PrimaryCard.Discard(players);
+        PrimaryCard = null;
+        if (_ejectedCard != null)
+        {
+            PrimaryCard = _ejectedCard;
+            _ejectedCard = null;
+        }
+
+        return true;
     }
 
     public void SetEjectedCard(Card card)
     {
-        if (PrimaryCard != null && PrimaryCard.HasPilot())
+        if (PrimaryCard == null || !PrimaryCard.HasPilot())
         {
-            var unitCard = (UnitCard) PrimaryCard;
-            if (unitCard.EmbarkedPilot!.EqualsTo(card))
-            {
-                unitCard.EmbarkedPilot.PilotEmbarked = false;
-                _ejectedCard = unitCard.EmbarkedPilot;
-                unitCard.EmbarkedPilot = null;
-            }
+            return;
+        }
+
+        var unitCard = (UnitCard) PrimaryCard;
+        if (unitCard.EmbarkedPilot!.EqualsTo(card))
+        {
+            unitCard.EmbarkedPilot.PilotEmbarked = false;
+            _ejectedCard = unitCard.EmbarkedPilot;
+            unitCard.EmbarkedPilot = null;
         }
     }
 

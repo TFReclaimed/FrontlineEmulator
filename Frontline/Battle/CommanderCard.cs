@@ -44,10 +44,7 @@ public class CommanderCard : Card
 
     public override void InitActiveData()
     {
-        if (ActiveData != null)
-        {
-            base.InitActiveData();
-        }
+        base.InitActiveData();
 
         foreach (var secret in Secrets)
         {
@@ -73,9 +70,9 @@ public class CommanderCard : Card
             return card;
         }
 
-        for (var i = 0; i < Secrets.Count; i++)
+        foreach (var secret in Secrets)
         {
-            card = Secrets[i];
+            card = secret;
             if (card.InstanceId == cardId && card.ActiveData.Owner == ownerId)
             {
                 return card;
@@ -110,102 +107,103 @@ public class CommanderCard : Card
 
     public override sbyte GetCurrentHealth(bool combatLog)
     {
-        var b = _player.Resources.Health;
+        var health = _player.Resources.Health;
         List<EventLogTraitCardInfo> list = [];
 
-        for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
+        foreach (var activeTrait in ActiveData.ActiveTraits)
         {
-            var activeTrait = ActiveData.ActiveTraits[i];
-            var b2 = activeTrait.GetTraitInfo().GetHealthBonus(activeTrait);
-            if (b2 != 0)
+            var bonus = activeTrait.GetTraitInfo().GetHealthBonus(activeTrait);
+            if (bonus == 0)
             {
-                if (combatLog)
-                {
-                    var eventLogTraitCardInfo = new EventLogTraitCardInfo
-                    {
-                        InstanceId = activeTrait.GetTraitSource().InstanceId,
-                        Owner = activeTrait.GetTraitSource().ActiveData.Owner,
-                        EffectId = activeTrait.GetTraitInfo().EffectTraitId,
-                        TraitId = activeTrait.GetTraitInfo().TraitParentId,
-                        Data = b2
-                    };
-                    list.Add(eventLogTraitCardInfo);
-                }
-
-                b += b2;
+                continue;
             }
+
+            if (combatLog)
+            {
+                var eventLogTraitCardInfo = new EventLogTraitCardInfo
+                {
+                    InstanceId = activeTrait.GetTraitSource().InstanceId,
+                    Owner = activeTrait.GetTraitSource().ActiveData.Owner,
+                    EffectId = activeTrait.GetTraitInfo().EffectTraitId,
+                    TraitId = activeTrait.GetTraitInfo().TraitParentId,
+                    Data = bonus
+                };
+                list.Add(eventLogTraitCardInfo);
+            }
+
+            health += bonus;
         }
 
         if (combatLog && list.Count > 0)
         {
             var count = list.Count;
-            var combatBuffsCCGEvent =
-                new CombatBuffsCcgEvent(CcgEventType.CombatBuffsAttack, InstanceId, ActiveData.Owner, 0, 0);
-            combatBuffsCCGEvent.BuffTraits = new EventLogTraitCardInfo[count];
+            var combatBuffsEvent = new CombatBuffsCcgEvent(CcgEventType.CombatBuffsAttack, InstanceId,
+                ActiveData.Owner, 0, 0);
+            combatBuffsEvent.BuffTraits = new EventLogTraitCardInfo[count];
             for (var j = 0; j < count; j++)
             {
-                combatBuffsCCGEvent.BuffTraits[j] = list[j];
+                combatBuffsEvent.BuffTraits[j] = list[j];
             }
 
-            GameState.AddCcgEventLog(combatBuffsCCGEvent);
+            GameState.AddCcgEventLog(combatBuffsEvent);
         }
 
-        return b;
+        return health;
     }
 
     public override sbyte GetCurrentDefense(bool combatLog)
     {
-        var b = Defense;
+        var defense = Defense;
         List<EventLogTraitCardInfo> list = [];
 
-        for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
+        foreach (var activeTrait in ActiveData.ActiveTraits)
         {
-            var activeTrait = ActiveData.ActiveTraits[i];
-            var b2 = activeTrait.GetTraitInfo().GetDefenseBonus(activeTrait);
-            if (b2 != 0)
+            var bonus = activeTrait.GetTraitInfo().GetDefenseBonus(activeTrait);
+            if (bonus == 0)
             {
-                if (combatLog)
-                {
-                    var eventLogTraitCardInfo = new EventLogTraitCardInfo();
-                    eventLogTraitCardInfo.InstanceId = activeTrait.GetTraitSource().InstanceId;
-                    eventLogTraitCardInfo.Owner = activeTrait.GetTraitSource().ActiveData.Owner;
-                    eventLogTraitCardInfo.EffectId = activeTrait.GetTraitInfo().EffectTraitId;
-                    eventLogTraitCardInfo.TraitId = activeTrait.GetTraitInfo().TraitParentId;
-                    eventLogTraitCardInfo.Data = b2;
-                    list.Add(eventLogTraitCardInfo);
-                }
-
-                b += b2;
+                continue;
             }
+
+            if (combatLog)
+            {
+                var eventLogTraitCardInfo = new EventLogTraitCardInfo();
+                eventLogTraitCardInfo.InstanceId = activeTrait.GetTraitSource().InstanceId;
+                eventLogTraitCardInfo.Owner = activeTrait.GetTraitSource().ActiveData.Owner;
+                eventLogTraitCardInfo.EffectId = activeTrait.GetTraitInfo().EffectTraitId;
+                eventLogTraitCardInfo.TraitId = activeTrait.GetTraitInfo().TraitParentId;
+                eventLogTraitCardInfo.Data = bonus;
+                list.Add(eventLogTraitCardInfo);
+            }
+
+            defense += bonus;
         }
 
         if (combatLog && list.Count > 0)
         {
             var count = list.Count;
-            var combatBuffsCCGEvent =
-                new CombatBuffsCcgEvent(CcgEventType.CombatBuffsAttack, InstanceId, ActiveData.Owner, 0, 0);
-            combatBuffsCCGEvent.BuffTraits = new EventLogTraitCardInfo[count];
+            var combatBuffsEvent = new CombatBuffsCcgEvent(CcgEventType.CombatBuffsAttack, InstanceId,
+                ActiveData.Owner, 0, 0);
+            combatBuffsEvent.BuffTraits = new EventLogTraitCardInfo[count];
             for (var j = 0; j < count; j++)
             {
-                combatBuffsCCGEvent.BuffTraits[j] = list[j];
+                combatBuffsEvent.BuffTraits[j] = list[j];
             }
 
-            GameState.AddCcgEventLog(combatBuffsCCGEvent);
+            GameState.AddCcgEventLog(combatBuffsEvent);
         }
 
-        return b;
+        return defense;
     }
 
     public override void TakeDamage(sbyte attack, sbyte bypass, Card source, bool checkDeath)
     {
-        var b = attack;
+        var attackDamage = attack;
         var bypass2 = bypass;
-        for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
+        foreach (var activeTrait in ActiveData.ActiveTraits)
         {
-            var activeTrait = ActiveData.ActiveTraits[i];
             if (activeTrait.GetTraitInfo().IsDamageImmunity(false, activeTrait))
             {
-                b = 0;
+                attackDamage = 0;
             }
 
             if (activeTrait.GetTraitInfo().IsDamageImmunity(true, activeTrait))
@@ -214,16 +212,16 @@ public class CommanderCard : Card
             }
         }
 
-        var b2 = GetCurrentDefense(false);
-        if (b2 < 0)
+        var currentDefense = GetCurrentDefense(false);
+        if (currentDefense < 0)
         {
-            b2 = 0;
+            currentDefense = 0;
         }
 
-        var b3 = b < b2 ? b : b2;
+        var b3 = attackDamage < currentDefense ? attackDamage : currentDefense;
         Defense -= b3;
-        b -= b3;
-        _player.TakeDamage(b, bypass2, source);
+        attackDamage -= b3;
+        _player.TakeDamage(attackDamage, bypass2, source);
     }
 
     public override sbyte HealDamage(CardStack? stack, sbyte heal)
@@ -233,18 +231,17 @@ public class CommanderCard : Card
 
     public override sbyte GetMaxModHealth()
     {
-        var b = _player.Resources.MaxHealth;
-        for (var i = 0; i < ActiveData.ActiveTraits.Count; i++)
+        var health = _player.Resources.MaxHealth;
+        foreach (var activeTrait in ActiveData.ActiveTraits)
         {
-            var activeTrait = ActiveData.ActiveTraits[i];
-            var b2 = activeTrait.GetTraitInfo().GetHealthBonus(activeTrait);
-            if (b2 != 0)
+            var bonus = activeTrait.GetTraitInfo().GetHealthBonus(activeTrait);
+            if (bonus != 0)
             {
-                b += b2;
+                health += bonus;
             }
         }
 
-        return b;
+        return health;
     }
 
     public override void CardDeployed(Card deployed)

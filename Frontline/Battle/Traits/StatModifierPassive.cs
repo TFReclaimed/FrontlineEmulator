@@ -24,18 +24,18 @@ public class StatModifierPassive : BaseTraitEffect
             return 0;
         }
 
-        if (TraitTargeting.DoesMatchType(TargetType, TargetTypeMod.NumMods, 0, target))
+        if (!TraitTargeting.DoesMatchType(TargetType, TargetTypeMod.NumMods, 0, target))
         {
-            var result = IsAttack;
-            if (IsAttack != 0 && active.DataValue != 0)
-            {
-                result = (sbyte) active.DataValue;
-            }
-
-            return result;
+            return 0;
         }
 
-        return 0;
+        var result = IsAttack;
+        if (IsAttack != 0 && active.DataValue != 0)
+        {
+            result = (sbyte) active.DataValue;
+        }
+
+        return result;
     }
 
     public override sbyte GetBypassDefenseBonus(Card? target, ActiveTrait active)
@@ -45,18 +45,18 @@ public class StatModifierPassive : BaseTraitEffect
             return 0;
         }
 
-        if (TraitTargeting.DoesMatchType(TargetType, TargetTypeMod.NumMods, 0, target))
+        if (!TraitTargeting.DoesMatchType(TargetType, TargetTypeMod.NumMods, 0, target))
         {
-            var result = BypassDefense;
-            if (BypassDefense != 0 && active.DataValue != 0)
-            {
-                result = (sbyte) active.DataValue;
-            }
-
-            return result;
+            return 0;
         }
 
-        return 0;
+        var result = BypassDefense;
+        if (BypassDefense != 0 && active.DataValue != 0)
+        {
+            result = (sbyte) active.DataValue;
+        }
+
+        return result;
     }
 
     public override sbyte GetDefenseBonus(ActiveTrait active)

@@ -10,35 +10,37 @@ public class ReactiveDamage : BaseTraitEffect
 
     public override void CardAttacked(Card attacker, Card target, ActiveTrait active)
     {
-        if (target.EqualsTo(active.GetTraitTarget()) && (!Deterable || !active.Detered) &&
-            (DurationData.Charges <= 0 || active.DurationData.Charges != 0) &&
-            TraitTargeting.DoesMatchType(AttackerType, TargetTypeMod.NumMods, 0, attacker))
+        if (!target.EqualsTo(active.GetTraitTarget()) || (Deterable && active.Detered) ||
+            (DurationData.Charges > 0 && active.DurationData.Charges == 0) ||
+            !TraitTargeting.DoesMatchType(AttackerType, TargetTypeMod.NumMods, 0, attacker))
         {
-            var attack = Damage;
-            var b = Bypass;
-            if (Damage == -1)
-            {
-                attack = attacker.GetCurrentHealth(false);
-            }
-            else if (Damage > 0 && active.DataValue > 0)
-            {
-                attack = (sbyte) active.DataValue;
-            }
+            return;
+        }
 
-            if (Bypass == -1)
-            {
-                b = attacker.GetCurrentHealth(false);
-            }
-            else if (Bypass > 0 && active.DataValue > 0)
-            {
-                b = (sbyte) active.DataValue;
-            }
+        var attack = Damage;
+        var bypass = Bypass;
+        if (Damage == -1)
+        {
+            attack = attacker.GetCurrentHealth(false);
+        }
+        else if (Damage > 0 && active.DataValue > 0)
+        {
+            attack = (sbyte) active.DataValue;
+        }
 
-            attacker.TakeDamage(attack, b, target, true);
-            if (active.HasCharges())
-            {
-                active.ExpendCharge();
-            }
+        if (Bypass == -1)
+        {
+            bypass = attacker.GetCurrentHealth(false);
+        }
+        else if (Bypass > 0 && active.DataValue > 0)
+        {
+            bypass = (sbyte) active.DataValue;
+        }
+
+        attacker.TakeDamage(attack, bypass, target, true);
+        if (active.HasCharges())
+        {
+            active.ExpendCharge();
         }
     }
 }

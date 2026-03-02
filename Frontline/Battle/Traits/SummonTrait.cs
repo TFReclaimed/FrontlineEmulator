@@ -14,38 +14,38 @@ public class SummonTrait : BaseTraitEffect
     public override bool DoesApply(Card card, Card source, bool checkRange, bool onDeploy)
     {
         var owner = source.ActiveData.Owner;
-        var targetID = Targets.TargetId;
+        var targetId = Targets.TargetId;
         var traitActorRegion = GameState.GetTraitActorRegion(owner, source.InstanceId);
         var area = Targets.Area;
-        return GameState.CanSummon(owner, targetID, traitActorRegion, area);
+        return GameState.CanSummon(owner, targetId, traitActorRegion, area);
     }
 
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
         var owner = source.ActiveData.Owner;
-        var targetID = Targets.TargetId;
+        var targetId = Targets.TargetId;
         var traitActorRegion = GameState.GetTraitActorRegion(owner, source.InstanceId);
         var area = Targets.Area;
-        var b = Count;
+        var count = Count;
         if (Count > 0 && active.DataValue > 0)
         {
-            b = (sbyte) active.DataValue;
+            count = (sbyte) active.DataValue;
         }
 
-        if (b > 1)
+        if (count > 1)
         {
-            while (b > 0)
+            while (count > 0)
             {
-                if (GameState.CanSummon(owner, targetID, traitActorRegion, area) &&
-                    !GameState.Summon(owner, targetID, traitActorRegion, area, this))
+                if (GameState.CanSummon(owner, targetId, traitActorRegion, area) &&
+                    !GameState.Summon(owner, targetId, traitActorRegion, area, this))
                 {
                     GameState.Logger.Warning("SummonTrait failed when it should have worked");
                 }
 
-                b--;
+                count--;
             }
         }
-        else if (!GameState.Summon(owner, targetID, traitActorRegion, area, this))
+        else if (!GameState.Summon(owner, targetId, traitActorRegion, area, this))
         {
             GameState.Logger.Warning("SummonTrait failed when it should have worked");
         }

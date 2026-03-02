@@ -153,7 +153,7 @@ public class Player
     public Card? RemoveCardForTrait(int cardId, sbyte myIndex, BaseTraitEffect effect)
     {
         Card? card;
-        if (effect.Targets.Area == TargetableArea.FriendlyDiscard || effect.Targets.Area == TargetableArea.EnemyDiscard)
+        if (effect.Targets.Area is TargetableArea.FriendlyDiscard or TargetableArea.EnemyDiscard)
         {
             card = Discard.RemoveCard(cardId);
             if (card != null)
@@ -161,7 +161,7 @@ public class Player
                 return card;
             }
         }
-        else if (effect.Targets.Area == TargetableArea.FriendlyHand || effect.Targets.Area == TargetableArea.EnemyHand)
+        else if (effect.Targets.Area is TargetableArea.FriendlyHand or TargetableArea.EnemyHand)
         {
             card = SupportDeck.DeployCard(cardId);
             if (card != null)
@@ -184,45 +184,49 @@ public class Player
             }
 
             var list = _gameState.FindCardStack(card);
-            if (list.Count > 0)
+            if (list.Count <= 0)
             {
-                var cardStack = list[0];
-                card = cardStack.PrimaryCard;
-                cardStack.PrimaryCard = null;
-                if (card != null)
-                {
-                    var list2 = card.GetSecrets();
-                    if (list2.Count > 0)
-                    {
-                        for (var i = 0; i < list2.Count; i++)
-                        {
-                            list2[i].Discard(_gameState.Players);
-                        }
-
-                        list2.Clear();
-                    }
-
-                    if (card.HasPilot())
-                    {
-                        var unitCard = (UnitCard) card;
-                        unitCard.EmbarkedPilot!.Discard(_gameState.Players);
-                        unitCard.EmbarkedPilot = null;
-                    }
-
-                    return card;
-                }
+                return null;
             }
+
+            var cardStack = list[0];
+            card = cardStack.PrimaryCard;
+            cardStack.PrimaryCard = null;
+            if (card == null)
+            {
+                return null;
+            }
+
+            var list2 = card.GetSecrets();
+            if (list2.Count > 0)
+            {
+                foreach (var secret in list2)
+                {
+                    secret.Discard(_gameState.Players);
+                }
+
+                list2.Clear();
+            }
+
+            if (card.HasPilot())
+            {
+                var unitCard = (UnitCard) card;
+                unitCard.EmbarkedPilot!.Discard(_gameState.Players);
+                unitCard.EmbarkedPilot = null;
+            }
+
+            return card;
         }
 
         return null;
     }
 
-    public bool CanTriggerEndTurnTraits(GameTemplate gameRule)
+    public bool CanTriggerEndTurnTraits()
     {
         return CanSubmitActions();
     }
 
-    public bool TriggerEndTurnTraits(GameTemplate gameRules, sbyte playerIndex)
+    public bool TriggerEndTurnTraits()
     {
         EndTurnTraitsTriggered = true;
         return true;
@@ -248,7 +252,7 @@ public class Player
         return true;
     }
 
-    public bool EndTurn(GameTemplate gameRules, sbyte playerIndex)
+    public bool EndTurn()
     {
         return true;
     }
@@ -260,35 +264,33 @@ public class Player
 
     public void TakeDamage(sbyte attack, sbyte bypass, Card source)
     {
-        var b = attack;
-        var b2 = bypass;
         var primaryCard = Commander.PrimaryCard!;
-        int num = Resources.Health;
-        var num2 = b + b2;
-        if (num2 <= 0)
+        int health = Resources.Health;
+        var totalDamage = attack + bypass;
+        if (totalDamage <= 0)
         {
             return;
         }
 
-        Resources.Health = (sbyte) (num - num2);
+        Resources.Health = (sbyte) (health - totalDamage);
         _gameState.CardDamaged(primaryCard, source);
-        var logData = new CardTraumaCcgEvent(CcgEventType.CardDamage, num2, source.InstanceId,
+        var cardDamageEvent = new CardTraumaCcgEvent(CcgEventType.CardDamage, totalDamage, source.InstanceId,
             source.ActiveData.Owner, primaryCard.InstanceId, primaryCard.ActiveData.Owner);
-        _gameState.AddCcgEventLog(logData);
+        _gameState.AddCcgEventLog(cardDamageEvent);
         if (Resources.Health > 0)
         {
             return;
         }
 
         _gameState.CardDied(primaryCard, source);
-        var logData2 = new CardTraumaCcgEvent(CcgEventType.CardDeath,
+        var cardDeathEvent = new CardTraumaCcgEvent(CcgEventType.CardDeath,
             primaryCard.GetCurrentHealth(false), source.InstanceId, source.ActiveData.Owner, primaryCard.InstanceId,
             primaryCard.ActiveData.Owner);
-        _gameState.AddCcgEventLog(logData2);
+        _gameState.AddCcgEventLog(cardDeathEvent);
         if (source.GetTemplate().IsCombatUnit())
         {
+            const string xpTrigger = "Destroy_Commander";
             var unitCard = (UnitCard) source;
-            var xpTrigger = "Destroy_Commander";
             unitCard.CheckAndUpdateXp(xpTrigger);
             if (unitCard.HasPilot())
             {
@@ -310,9 +312,9 @@ public class Player
             var card = Hand.DrawFromDeck(Deck, _gameState, playerIndex);
             if (card != null)
             {
-                var logData = new CardDrawCcgEvent(CcgEventType.DeckDraw, card.InstanceId, playerIndex,
+                var deckDrawEvent = new CardDrawCcgEvent(CcgEventType.DeckDraw, card.InstanceId, playerIndex,
                     card.TemplateId, card.Rank);
-                _gameState.AddCcgEventLog(logData);
+                _gameState.AddCcgEventLog(deckDrawEvent);
                 _gameState.CardDrawn(card, true, isNewTurn);
             }
         }

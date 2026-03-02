@@ -143,217 +143,164 @@ public class CcgGame
         OnBattleFinished?.Invoke(this);
     }
 
-    public int Deploy(sbyte playerIndex, int cardId, sbyte targetIndex, int targetId, TargetableArea area,
+    public bool Deploy(sbyte playerIndex, int cardId, sbyte targetIndex, int targetId, TargetableArea area,
         Region target, sbyte slotIndex, sbyte pushDir)
     {
-        var flag = area != TargetableArea.AnyAreas;
-        var flag2 = area == TargetableArea.CurrentRegion;
-        var flag3 = target != Region.NumRegions && slotIndex != -1;
-        var flag4 = GameState.CanDeploy(playerIndex, cardId, area, target, slotIndex, pushDir);
+        var isSpecificArea = area != TargetableArea.AnyAreas;
+        var isCurrentRegion = area == TargetableArea.CurrentRegion;
+        var isSlotSpecified = target != Region.NumRegions && slotIndex != -1;
+        var canDeploy = GameState.CanDeploy(playerIndex, cardId, area, target, slotIndex, pushDir);
         GameState.Logger.Debug("GAME DEPLOY - {0} {1} {2} {3} {4} {5} {6}", playerIndex, cardId, targetIndex, targetId, area,
             target, slotIndex);
-        if (flag && (!flag2 || flag3) && flag4)
+        if (isSpecificArea && (!isCurrentRegion || isSlotSpecified) && canDeploy)
         {
             GameState.GetCcgEventLog().Clear();
-            if (GameState.Deploy(playerIndex, cardId, targetIndex, targetId, area, target, slotIndex, pushDir,
-                    null))
-            {
-                return 1;
-            }
-
-            return 0;
+            return GameState.Deploy(playerIndex, cardId, targetIndex, targetId, area, target, slotIndex, pushDir,
+                null);
         }
 
         GameState.Logger.Warning(
             "DEPLOY FAILED - Game.Deploy isSpecificArea-{0} isCurrentRegion-{1} isSlotSpecified-{2} canDeploy-{3}",
-            flag, flag2, flag3, flag4);
-        return 0;
+            isSpecificArea, isCurrentRegion, isSlotSpecified, canDeploy);
+        return false;
     }
 
-    public int Move(sbyte playerIndex, int cardId, Region target, sbyte slotIndex, sbyte pushDir)
+    public bool Move(sbyte playerIndex, int cardId, Region target, sbyte slotIndex, sbyte pushDir)
     {
         GameState.Logger.Debug("GAME MOVE - {0} {1} {2} {3}", playerIndex, cardId, target, slotIndex);
         if (target != Region.NumRegions && slotIndex != -1 &&
             GameState.CanMove(playerIndex, cardId, target, slotIndex, pushDir))
         {
             GameState.GetCcgEventLog().Clear();
-            if (GameState.Move(playerIndex, cardId, target, slotIndex, pushDir, null))
-            {
-                return 1;
-            }
-
-            return 0;
+            return GameState.Move(playerIndex, cardId, target, slotIndex, pushDir, null);
         }
 
         GameState.Logger.Warning("MOVE FAILED - GameState.CanMove failed");
-        return 0;
+        return false;
     }
 
-    public int Attack(sbyte playerIndex, int cardId, sbyte ownerId, int targetId)
+    public bool Attack(sbyte playerIndex, int cardId, sbyte ownerId, int targetId)
     {
         GameState.Logger.Debug("GAME ATTACK - {0} {1} {2} {3}", playerIndex, cardId, ownerId, targetId);
         if (GameState.CanAttack(playerIndex, cardId, ownerId, targetId))
         {
             GameState.GetCcgEventLog().Clear();
-            if (GameState.Attack(playerIndex, cardId, ownerId, targetId))
-            {
-                return 1;
-            }
-
-            return 0;
+            return GameState.Attack(playerIndex, cardId, ownerId, targetId);
         }
 
         GameState.Logger.Warning("ATTACK FAILED - GameState.CanAttack failed");
-        return 0;
+        return false;
     }
 
-    public int ActivateTrait(sbyte playerIndex, int cardId, sbyte ownerId, int targetId, TargetableArea area,
+    public bool ActivateTrait(sbyte playerIndex, int cardId, sbyte ownerId, int targetId, TargetableArea area,
         Region region)
     {
-        if (GameState.CanActivate(playerIndex, cardId, ownerId, targetId, area, region))
+        if (!GameState.CanActivate(playerIndex, cardId, ownerId, targetId, area, region))
         {
-            GameState.GetCcgEventLog().Clear();
-            if (GameState.ActivateTrait(playerIndex, cardId, ownerId, targetId, area, region))
-            {
-                return 1;
-            }
+            return false;
         }
 
-        return 0;
+        GameState.GetCcgEventLog().Clear();
+        return GameState.ActivateTrait(playerIndex, cardId, ownerId, targetId, area, region);
     }
 
-    public int Disembark(sbyte playerIndex, int cardId)
+    public bool Disembark(sbyte playerIndex, int cardId)
     {
-        if (GameState.CanDisembark(playerIndex, cardId))
+        if (!GameState.CanDisembark(playerIndex, cardId))
         {
-            GameState.GetCcgEventLog().Clear();
-            if (GameState.Disembark(playerIndex, cardId, false, null))
-            {
-                return 1;
-            }
+            return false;
         }
 
-        return 0;
+        GameState.GetCcgEventLog().Clear();
+        return GameState.Disembark(playerIndex, cardId, false, null);
     }
 
-    public int TriggerEndTurnTraits(sbyte playerIndex)
+    public bool TriggerEndTurnTraits(sbyte playerIndex)
     {
         var player = GameState.GetPlayer(playerIndex);
-        if (player != null && player.EndTurnTraitsTriggered)
+        if (player is { EndTurnTraitsTriggered: true })
         {
-            return 1;
+            return true;
         }
 
-        if (GameState.CanTriggerEndTurnTraits(playerIndex))
+        if (!GameState.CanTriggerEndTurnTraits(playerIndex))
         {
-            GameState.GetCcgEventLog().Clear();
-            if (GameState.TriggerEndTurnTraits(playerIndex))
-            {
-                return 1;
-            }
+            return false;
         }
 
-        return 0;
+        GameState.GetCcgEventLog().Clear();
+        return GameState.TriggerEndTurnTraits(playerIndex);
     }
 
-    public int EndTurn(sbyte playerIndex, int[] cardsToDiscard)
+    public bool EndTurn(sbyte playerIndex, int[] cardsToDiscard)
     {
-        if (GameState.CanEndTurn(playerIndex, cardsToDiscard))
+        if (!GameState.CanEndTurn(playerIndex, cardsToDiscard))
         {
-            GameState.GetCcgEventLog().Clear();
-            if (GameState.EndTurn(playerIndex, cardsToDiscard))
-            {
-                return 1;
-            }
+            return false;
         }
 
-        return 0;
+        GameState.GetCcgEventLog().Clear();
+        return GameState.EndTurn(playerIndex, cardsToDiscard);
     }
 
-    public int Surrender(sbyte playerIndex)
+    public bool Surrender(sbyte playerIndex)
     {
-        if (GameState.CanSurrender(playerIndex))
+        if (!GameState.CanSurrender(playerIndex))
         {
-            GameState.GetCcgEventLog().Clear();
-            if (GameState.Surrender(playerIndex))
-            {
-                return 1;
-            }
+            return false;
         }
 
-        return 0;
+        GameState.GetCcgEventLog().Clear();
+        return GameState.Surrender(playerIndex);
     }
 
-    public int DoInitialSwap(sbyte playerIndex, int[] cardIdsToReshuffle, int[] deckSwapIndices)
+    public bool DoInitialSwap(sbyte playerIndex, int[] cardIdsToReshuffle, int[] deckSwapIndices)
     {
-        if (GameState.CanDoInitialSwap(playerIndex, cardIdsToReshuffle))
+        if (!GameState.CanDoInitialSwap(playerIndex, cardIdsToReshuffle))
         {
-            GameState.GetCcgEventLog().Clear();
-
-            if (GameState.DoInitialSwap(playerIndex, cardIdsToReshuffle, deckSwapIndices))
-            {
-                return 1;
-            }
+            return false;
         }
 
-        return 0;
+        GameState.GetCcgEventLog().Clear();
+
+        return GameState.DoInitialSwap(playerIndex, cardIdsToReshuffle, deckSwapIndices);
     }
 
-    public int DoCardDiscard(sbyte playerIndex, int[] cardIds)
+    public bool DoCardDiscard(sbyte playerIndex, int[] cardIds)
     {
-        if (GameState.CanDoDiscard(playerIndex, cardIds))
+        if (!GameState.CanDoDiscard(playerIndex, cardIds))
         {
-            if (GameState.DoCardDiscard(playerIndex, cardIds))
-            {
-                return 1;
-            }
+            return false;
         }
 
-        return 0;
+        return GameState.DoCardDiscard(playerIndex, cardIds);
     }
 
-    public int Cheat_GiveCardAndCommandPoints(sbyte playerIndex, int cardId, int rank, int commandPoints)
+    public bool Cheat_GiveCardAndCommandPoints(sbyte playerIndex, int cardId, int rank, int commandPoints)
     {
         GameState.GetCcgEventLog().Clear();
 
         if (_isProduction)
         {
-            return 0;
+            return false;
         }
 
-        if (GameState.GiveCardAndCmdPts(playerIndex, cardId, rank, commandPoints))
-        {
-            return 1;
-        }
-
-        return 0;
+        return GameState.GiveCardAndCmdPts(playerIndex, cardId, rank, commandPoints);
     }
 
-    public int SendMessage(sbyte playerIndex)
+    public bool SendMessage(sbyte playerIndex)
     {
         if (GameState.CanMessage(playerIndex))
         {
             GameState.GetCcgEventLog().Clear();
-            return 1;
+            return true;
         }
 
-        return 0;
+        return false;
     }
 
     public int GetServerIntValue(int min, int max)
     {
-        /*if (cachedIntValues != null && cachedIntValues.Count > 0)
-        {
-            int result = cachedIntValues[0];
-            cachedIntValues.RemoveAt(0);
-            return result;
-        }*/
-
-        if (min == max)
-        {
-            return min;
-        }
-
         return Random.Shared.Next(min, max);
     }
 }

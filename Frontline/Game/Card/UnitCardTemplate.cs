@@ -93,18 +93,20 @@ public class UnitCardTemplate : EntityCardTemplate
             return true;
         }
 
-        if (embark)
+        if (!embark)
         {
-            var primaryCard = target.PrimaryCard!;
-            if (Type == CardType.Titan && primaryCard.GetTemplate().Type == CardType.Pilot)
-            {
-                return true;
-            }
+            return false;
+        }
 
-            if (Type == CardType.Pilot && primaryCard.GetTemplate().Type == CardType.Titan && !primaryCard.HasPilot())
-            {
-                return true;
-            }
+        var primaryCard = target.PrimaryCard!;
+        if (Type == CardType.Titan && primaryCard.GetTemplate().Type == CardType.Pilot)
+        {
+            return true;
+        }
+
+        if (Type == CardType.Pilot && primaryCard.GetTemplate().Type == CardType.Titan && !primaryCard.HasPilot())
+        {
+            return true;
         }
 
         return false;
@@ -117,49 +119,51 @@ public class UnitCardTemplate : EntityCardTemplate
             return true;
         }
 
-        if (embark)
+        if (!embark)
         {
-            var primaryCard = target.PrimaryCard!;
-            var primaryCard2 = source.PrimaryCard!;
-            if (Type == CardType.Titan && primaryCard.GetTemplate().Type == CardType.Pilot)
-            {
-                if (!primaryCard2.HasPilot())
-                {
-                    var traitActorRegion = gameState.GetTraitActorRegion(primaryCard.ActiveData.Owner, primaryCard.InstanceId);
-                    var traitActorRegion2 = gameState.GetTraitActorRegion(primaryCard2.ActiveData.Owner, primaryCard2.InstanceId);
-
-                    if (traitActorRegion != traitActorRegion2)
-                    {
-                        gameState.Logger.Debug("UnitTemplate.CanMove false - not in the same region");
-                        return false;
-                    }
-
-                    return true;
-                }
-
-                gameState.Logger.Debug("UnitTemplate.CanMove false - titan already piloted");
-            }
-            else if (Type == CardType.Pilot && primaryCard.GetTemplate().Type == CardType.Titan)
-            {
-                if (!primaryCard.HasPilot())
-                {
-                    var traitActorRegion3 = gameState.GetTraitActorRegion(primaryCard.ActiveData.Owner, primaryCard.InstanceId);
-                    var traitActorRegion4 = gameState.GetTraitActorRegion(primaryCard2.ActiveData.Owner, primaryCard2.InstanceId);
-
-                    if (traitActorRegion3 != traitActorRegion4)
-                    {
-                        gameState.Logger.Debug("UnitTemplate.CanMove false - not in the same region");
-                        return false;
-                    }
-
-                    return true;
-                }
-
-                gameState.Logger.Debug("UnitTemplate.CanMove false - titan already piloted");
-            }
-
-            gameState.Logger.Debug("UnitTemplate.CanMove false - invalid pilot titan combo");
+            return false;
         }
+
+        var primaryCard = target.PrimaryCard!;
+        var primaryCard2 = source.PrimaryCard!;
+        if (Type == CardType.Titan && primaryCard.GetTemplate().Type == CardType.Pilot)
+        {
+            if (!primaryCard2.HasPilot())
+            {
+                var traitActorRegion = gameState.GetTraitActorRegion(primaryCard.ActiveData.Owner, primaryCard.InstanceId);
+                var traitActorRegion2 = gameState.GetTraitActorRegion(primaryCard2.ActiveData.Owner, primaryCard2.InstanceId);
+
+                if (traitActorRegion != traitActorRegion2)
+                {
+                    gameState.Logger.Debug("UnitTemplate.CanMove false - not in the same region");
+                    return false;
+                }
+
+                return true;
+            }
+
+            gameState.Logger.Debug("UnitTemplate.CanMove false - titan already piloted");
+        }
+        else if (Type == CardType.Pilot && primaryCard.GetTemplate().Type == CardType.Titan)
+        {
+            if (!primaryCard.HasPilot())
+            {
+                var traitActorRegion3 = gameState.GetTraitActorRegion(primaryCard.ActiveData.Owner, primaryCard.InstanceId);
+                var traitActorRegion4 = gameState.GetTraitActorRegion(primaryCard2.ActiveData.Owner, primaryCard2.InstanceId);
+
+                if (traitActorRegion3 != traitActorRegion4)
+                {
+                    gameState.Logger.Debug("UnitTemplate.CanMove false - not in the same region");
+                    return false;
+                }
+
+                return true;
+            }
+
+            gameState.Logger.Debug("UnitTemplate.CanMove false - titan already piloted");
+        }
+
+        gameState.Logger.Debug("UnitTemplate.CanMove false - invalid pilot titan combo");
 
         return false;
     }

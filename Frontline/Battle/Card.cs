@@ -194,13 +194,13 @@ public class Card : Item
 
     public sbyte GetCurrentCost()
     {
-        var b = CurrentCost;
+        var totalCost = CurrentCost;
         foreach (var activeTrait in ActiveData.ActiveTraits)
         {
-            b += activeTrait.GetTraitInfo().GetCommandMod(activeTrait);
+            totalCost += activeTrait.GetTraitInfo().GetCommandMod(activeTrait);
         }
 
-        return b;
+        return totalCost;
     }
 
     public int GetNumTraits()
@@ -325,15 +325,15 @@ public class Card : Item
     public bool CanDeploy(Region target, TargetableArea area)
     {
         var cardTemplate = GetTemplate();
-        var flag = cardTemplate.CanDeploy(target, ActiveData.Owner);
-        if (!flag)
+        var canDeploy = cardTemplate.CanDeploy(target, ActiveData.Owner);
+        if (!canDeploy)
         {
-            flag = CanOverrideDeploy(target);
+            canDeploy = CanOverrideDeploy(target);
         }
 
-        if (flag)
+        if (canDeploy)
         {
-            if (cardTemplate.Type == CardType.BurnCard || cardTemplate.Type == CardType.Secret)
+            if (cardTemplate.Type is CardType.BurnCard or CardType.Secret)
             {
                 foreach (var baseTrait in CardTraits)
                 {
@@ -370,17 +370,17 @@ public class Card : Item
     public virtual bool CanDeploy(CardStack target, Region region, bool emptyAvailable, bool embark)
     {
         var cardTemplate = GetTemplate();
-        var flag = cardTemplate.CanDeploy(region, ActiveData.Owner);
-        if (!flag)
+        var canDeploy = cardTemplate.CanDeploy(region, ActiveData.Owner);
+        if (!canDeploy)
         {
-            flag = CanOverrideDeploy(region);
+            canDeploy = CanOverrideDeploy(region);
         }
 
-        if (flag)
+        if (canDeploy)
         {
             if (cardTemplate.CanDeploy(target, emptyAvailable, embark))
             {
-                if (cardTemplate.Type == CardType.BurnCard || cardTemplate.Type == CardType.Secret)
+                if (cardTemplate.Type is CardType.BurnCard or CardType.Secret)
                 {
                     if (cardTemplate.Type == CardType.Secret && target.PrimaryCard != null)
                     {

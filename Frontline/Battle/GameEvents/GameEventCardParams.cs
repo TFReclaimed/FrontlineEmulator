@@ -10,7 +10,7 @@ public class GameEventCardParams : GameEventParams
     {
         if (GameEvent == GameEvent.Disembark)
         {
-            if (game.Disembark(PlayerIndex, ActingCardId) != 1)
+            if (!game.Disembark(PlayerIndex, ActingCardId))
             {
                 return null;
             }

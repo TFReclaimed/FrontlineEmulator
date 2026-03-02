@@ -11,19 +11,19 @@ public class StatModifierMultiply : StatModifierPassive
             return 0;
         }
 
-        if (TraitTargeting.DoesMatchType(TargetType, TargetTypeMod.NumMods, 0, target))
+        if (!TraitTargeting.DoesMatchType(TargetType, TargetTypeMod.NumMods, 0, target))
         {
-            var num = CountInfo.CalculateCount(GameState, active);
-            var result = (sbyte) (IsAttack * num);
-            if (IsAttack != 0 && active.DataValue != 0)
-            {
-                result = (sbyte) (active.DataValue * num);
-            }
-
-            return result;
+            return 0;
         }
 
-        return 0;
+        var num = CountInfo.CalculateCount(GameState, active);
+        var result = (sbyte) (IsAttack * num);
+        if (IsAttack != 0 && active.DataValue != 0)
+        {
+            result = (sbyte) (active.DataValue * num);
+        }
+
+        return result;
     }
 
     public override sbyte GetBypassDefenseBonus(Card? target, ActiveTrait active)
@@ -33,19 +33,19 @@ public class StatModifierMultiply : StatModifierPassive
             return 0;
         }
 
-        if (TraitTargeting.DoesMatchType(TargetType, TargetTypeMod.NumMods, 0, target))
+        if (!TraitTargeting.DoesMatchType(TargetType, TargetTypeMod.NumMods, 0, target))
         {
-            var num = CountInfo.CalculateCount(GameState, active);
-            var result = (sbyte) (BypassDefense * num);
-            if (BypassDefense != 0 && active.DataValue != 0)
-            {
-                result = (sbyte) (active.DataValue * num);
-            }
-
-            return result;
+            return 0;
         }
 
-        return 0;
+        var num = CountInfo.CalculateCount(GameState, active);
+        var result = (sbyte) (BypassDefense * num);
+        if (BypassDefense != 0 && active.DataValue != 0)
+        {
+            result = (sbyte) (active.DataValue * num);
+        }
+
+        return result;
     }
 
     public override sbyte GetDefenseBonus(ActiveTrait active)

@@ -52,7 +52,7 @@ public class EntityCardTemplate : CardTemplate
 
         if (target == Region.Control)
         {
-            return Type == CardType.Pilot || Type == CardType.Titan;
+            return Type is CardType.Pilot or CardType.Titan;
         }
 
         return false;

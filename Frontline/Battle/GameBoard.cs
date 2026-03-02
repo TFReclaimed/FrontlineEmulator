@@ -1,6 +1,5 @@
 using Frontline.Battle.CcgEvents;
 using Frontline.Battle.Traits;
-using Frontline.Game;
 using Frontline.Game.Card;
 
 namespace Frontline.Battle;
@@ -13,13 +12,14 @@ public class GameBoard
 
     private readonly CcgGameState _gameState;
 
+    private const int NumRegions = (int) Region.NumRegions;
+
     public GameBoard(CcgGameState gameState)
     {
         _gameState = gameState;
 
-        var num = 3;
-        Regions = new GameRegion[num];
-        for (var i = 0; i < num; i++)
+        Regions = new GameRegion[NumRegions];
+        for (var i = 0; i < NumRegions; i++)
         {
             Regions[i] = new GameRegion(_gameState, (Region) i);
         }
@@ -27,9 +27,9 @@ public class GameBoard
 
     public void NewTurn(sbyte playerTurn)
     {
-        for (var i = 0; i < Regions.Length; i++)
+        foreach (var region in Regions)
         {
-            Regions[i].NewTurn(playerTurn);
+            region.NewTurn(playerTurn);
         }
     }
 
@@ -94,9 +94,9 @@ public class GameBoard
                 break;
         }
 
-        for (var i = 0; i < 3; i++)
+        foreach (var loopRegion in Regions)
         {
-            if (Regions[i].CanDeploy(card, area, slotIndex, pushDir))
+            if (loopRegion.CanDeploy(card, area, slotIndex, pushDir))
             {
                 return true;
             }
@@ -109,22 +109,23 @@ public class GameBoard
         CardTransitionCcgEvent deployEvent)
     {
         var cardStack = Regions[(uint) target].Deploy(card, slotIndex, pushDir, target, deployEvent);
-        if (cardStack != null)
+        if (cardStack == null)
         {
-            for (var i = 0; i < Regions.Length; i++)
+            return cardStack;
+        }
+
+        foreach (var region in Regions)
+        {
+            foreach (var slot in region.Slots)
             {
-                for (var j = 0; j < Regions[i].Slots.Length; j++)
-                {
-                    Regions[i].Slots[j].CardDeployed(card);
-                }
+                slot.CardDeployed(card);
             }
         }
 
         return cardStack;
     }
 
-    public bool CanMove(int cardId, sbyte ownerId, Region target, sbyte slotIndex, sbyte pushDir,
-        GameTemplate gameRules)
+    public bool CanMove(int cardId, sbyte ownerId, Region target, sbyte slotIndex, sbyte pushDir)
     {
         var cardStack = FindCard(cardId, ownerId);
         if (cardStack == null)
@@ -142,7 +143,7 @@ public class GameBoard
 
         if (target == Region.NumRegions)
         {
-            for (var i = 0; i < 3; i++)
+            for (var i = 0; i < NumRegions; i++)
             {
                 if (((int) _sourceRegion != i || _sourceRegion == Region.Control || pushDir == 0) &&
                     primaryCard.CanMove((Region) i) && Regions[i].CanMove(cardStack, slotIndex, pushDir))
@@ -180,7 +181,7 @@ public class GameBoard
     public bool CanDisembark(int cardId, sbyte ownerId)
     {
         var cardStack = FindCard(cardId, ownerId);
-        if (cardStack == null || cardStack.PrimaryCard == null || !cardStack.PrimaryCard.HasPilot())
+        if (cardStack?.PrimaryCard == null || !cardStack.PrimaryCard.HasPilot())
         {
             return false;
         }
@@ -202,21 +203,21 @@ public class GameBoard
 
     public bool Disembark(int cardId, sbyte ownerId, bool eject, BaseTraitEffect? traitCause)
     {
-        if (Regions[(uint) _sourceRegion].HasEmpty() || eject)
+        if (!Regions[(uint) _sourceRegion].HasEmpty() && !eject)
         {
-            Regions[(uint) _sourceRegion]
-                .Disembark(cardId, ownerId, _sourceRegion == Region.Control, eject, traitCause);
-            return true;
+            return false;
         }
 
-        return false;
+        Regions[(uint) _sourceRegion]
+            .Disembark(cardId, ownerId, _sourceRegion == Region.Control, eject, traitCause);
+        return true;
     }
 
     public void EndTurn(sbyte playerIndex)
     {
-        for (var i = 0; i < 3; i++)
+        foreach (var region in Regions)
         {
-            Regions[i].EndTurn(playerIndex);
+            region.EndTurn(playerIndex);
         }
     }
 
@@ -319,7 +320,7 @@ public class GameBoard
     public Card? FindTraitActor(int cardId, sbyte ownerId)
     {
         _sourceRegion = Region.NumRegions;
-        for (var i = 0; i < 3; i++)
+        for (var i = 0; i < NumRegions; i++)
         {
             var card = Regions[i].FindTraitActor(cardId, ownerId);
             if (card != null)
@@ -335,7 +336,7 @@ public class GameBoard
     public Region GetTraitActorRegion(int cardId, sbyte ownerId)
     {
         _sourceRegion = Region.NumRegions;
-        for (var i = 0; i < 3; i++)
+        for (var i = 0; i < NumRegions; i++)
         {
             var card = Regions[i].FindTraitActor(cardId, ownerId);
             if (card != null)
@@ -356,7 +357,7 @@ public class GameBoard
             return;
         }
 
-        for (var i = 0; i < Regions.Length; i++)
+        for (var i = 0; i < NumRegions; i++)
         {
             if (info.CheckRegion((Region) i, source.ActiveData.Owner))
             {
@@ -367,7 +368,7 @@ public class GameBoard
 
     public void FindCardStack(Card card, List<CardStack> found)
     {
-        for (var i = 0; i < Regions.Length && !Regions[i].FindCardStack(card, found); i++)
+        for (var i = 0; i < NumRegions && !Regions[i].FindCardStack(card, found); i++)
         {
         }
     }
@@ -378,9 +379,9 @@ public class GameBoard
         do
         {
             flag = false;
-            for (var i = 0; i < 3; i++)
+            foreach (var region in Regions)
             {
-                if (Regions[i].CheckDiscards(players))
+                if (region.CheckDiscards(players))
                 {
                     flag = true;
                 }
@@ -390,132 +391,121 @@ public class GameBoard
 
     public void CardMoved(Card card, CardStack target, Region destination, Region origin)
     {
-        for (var i = 0; i < 3; i++)
+        foreach (var region in Regions)
         {
-            var gameRegion = Regions[i];
-            for (var j = 0; j < gameRegion.Slots.Length; j++)
+            foreach (var slot in region.Slots)
             {
-                gameRegion.Slots[j].CardMoved(card, target, destination, origin);
+                slot.CardMoved(card, target, destination, origin);
             }
         }
     }
 
     public void CardAttacked(Card attacker, Card target)
     {
-        for (var i = 0; i < 3; i++)
+        foreach (var region in Regions)
         {
-            var gameRegion = Regions[i];
-            for (var j = 0; j < gameRegion.Slots.Length; j++)
+            foreach (var slot in region.Slots)
             {
-                gameRegion.Slots[j].CardAttacked(attacker, target);
+                slot.CardAttacked(attacker, target);
             }
         }
     }
 
     public void CardCounterAttacked(Card attacker, Card target)
     {
-        for (var i = 0; i < 3; i++)
+        foreach (var region in Regions)
         {
-            var gameRegion = Regions[i];
-            for (var j = 0; j < gameRegion.Slots.Length; j++)
+            foreach (var slot in region.Slots)
             {
-                gameRegion.Slots[j].CardCounterAttacked(attacker, target);
+                slot.CardCounterAttacked(attacker, target);
             }
         }
     }
 
     public void CardGainedStatus(Card theCard, Card source, ApplyStatusTraitStatusType statusType)
     {
-        for (var i = 0; i < 3; i++)
+        foreach (var region in Regions)
         {
-            var gameRegion = Regions[i];
-            for (var j = 0; j < gameRegion.Slots.Length; j++)
+            foreach (var slot in region.Slots)
             {
-                gameRegion.Slots[j].CardGainedStatus(theCard, source, statusType);
+                slot.CardGainedStatus(theCard, source, statusType);
             }
         }
     }
 
     public void CardDamaged(Card damagedCard, Card source)
     {
-        for (var i = 0; i < 3; i++)
+        foreach (var region in Regions)
         {
-            var gameRegion = Regions[i];
-            for (var j = 0; j < gameRegion.Slots.Length; j++)
+            foreach (var slot in region.Slots)
             {
-                gameRegion.Slots[j].CardDamaged(damagedCard, source);
+                slot.CardDamaged(damagedCard, source);
             }
         }
     }
 
     public void CardDied(Card deadCard, Card source)
     {
-        for (var i = 0; i < 3; i++)
+        foreach (var region in Regions)
         {
-            var gameRegion = Regions[i];
-            for (var j = 0; j < gameRegion.Slots.Length; j++)
+            foreach (var slot in region.Slots)
             {
-                gameRegion.Slots[j].CardDied(deadCard, source);
+                slot.CardDied(deadCard, source);
             }
         }
     }
 
     public void CardDrawn(Card drawnCard, bool regularDraw, bool isNewTurn)
     {
-        for (var i = 0; i < 3; i++)
+        foreach (var region in Regions)
         {
-            var gameRegion = Regions[i];
-            for (var j = 0; j < gameRegion.Slots.Length; j++)
+            foreach (var slot in region.Slots)
             {
-                gameRegion.Slots[j].CardDrawn(drawnCard, regularDraw, isNewTurn);
+                slot.CardDrawn(drawnCard, regularDraw, isNewTurn);
             }
         }
     }
 
     public void CardDiscardEffect(sbyte playerIndex, int numberOfCards)
     {
-        for (var i = 0; i < 3; i++)
+        foreach (var region in Regions)
         {
-            var gameRegion = Regions[i];
-            for (var j = 0; j < gameRegion.Slots.Length; j++)
+            foreach (var slot in region.Slots)
             {
-                gameRegion.Slots[j].CardDiscardEffect(playerIndex, numberOfCards);
+                slot.CardDiscardEffect(playerIndex, numberOfCards);
             }
         }
     }
 
     public void SecretTriggered(Card secret, Card? source)
     {
-        for (var i = 0; i < 3; i++)
+        foreach (var region in Regions)
         {
-            var gameRegion = Regions[i];
-            for (var j = 0; j < gameRegion.Slots.Length; j++)
+            foreach (var slot in region.Slots)
             {
-                gameRegion.Slots[j].SecretTriggered(secret, source);
+                slot.SecretTriggered(secret, source);
             }
         }
     }
 
     public void SecretDestroyed(Card secret, Card source)
     {
-        for (var i = 0; i < 3; i++)
+        foreach (var region in Regions)
         {
-            var gameRegion = Regions[i];
-            for (var j = 0; j < gameRegion.Slots.Length; j++)
+            foreach (var slot in region.Slots)
             {
-                gameRegion.Slots[j].SecretDestroyed(secret, source);
+                slot.SecretDestroyed(secret, source);
             }
         }
     }
 
     public void TraitEffectActivating(BaseTraitEffect effect, Card source, CardStack? target, Region region)
     {
-        for (var i = 0; i < 3; i++)
+        foreach (var loopRegion in Regions)
         {
-            var gameRegion = Regions[i];
-            for (var j = 0; j < gameRegion.Slots.Length; j++)
+            foreach (var slot in loopRegion.Slots)
             {
-                gameRegion.Slots[j].TraitEffectActivating(effect, source, target, region);
+                slot.TraitEffectActivating(effect, source, target, region);
             }
         }
     }
@@ -523,7 +513,7 @@ public class GameBoard
     private CardStack? FindCard(int cardId, sbyte ownerId)
     {
         _sourceRegion = Region.NumRegions;
-        for (var i = 0; i < 3; i++)
+        for (var i = 0; i < NumRegions; i++)
         {
             var cardStack = Regions[i].FindCard(cardId, ownerId);
             if (cardStack != null)
@@ -538,9 +528,9 @@ public class GameBoard
 
     private Card? RemoveCard(int cardId, sbyte ownerId)
     {
-        for (var i = 0; i < 3; i++)
+        foreach (var region in Regions)
         {
-            var card = Regions[i].RemoveCard(cardId, ownerId);
+            var card = region.RemoveCard(cardId, ownerId);
             if (card != null)
             {
                 return card;

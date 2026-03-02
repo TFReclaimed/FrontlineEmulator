@@ -10,70 +10,69 @@ public class DiscardEffect : BaseTraitEffect
     {
         var owner = card.ActiveData.Owner;
         var player = GameState.Players[owner];
-        var num = player.Hand.Cards.Count;
-        int[] array;
-        Card card2;
-        MulliganDrawCcgEventCardData[] array2;
-        if (num == 0)
+        var cardsInHand = player.Hand.Cards.Count;
+        int[] cardsToDiscard;
+        MulliganDrawCcgEventCardData[] cardDatas;
+        if (cardsInHand == 0)
         {
             return;
         }
 
-        var b = NumberOfCards;
+        var discardCount = NumberOfCards;
         if (NumberOfCards > 0 && active.DataValue > 0)
         {
-            b = (sbyte) active.DataValue;
+            discardCount = (sbyte) active.DataValue;
         }
 
-        if (b > num)
+        if (discardCount > cardsInHand)
         {
-            array = new int[num];
-            array2 = new MulliganDrawCcgEventCardData[num];
-            for (var i = 0; i < num; i++)
+            cardsToDiscard = new int[cardsInHand];
+            cardDatas = new MulliganDrawCcgEventCardData[cardsInHand];
+            for (var i = 0; i < cardsInHand; i++)
             {
-                card2 = player.Hand.Cards[i];
-                array[i] = card2.InstanceId;
-                array2[i] = new MulliganDrawCcgEventCardData(card2.InstanceId, card2.TemplateId, card2.Rank);
+                var card2 = player.Hand.Cards[i];
+                cardsToDiscard[i] = card2.InstanceId;
+                cardDatas[i] = new MulliganDrawCcgEventCardData(card2.InstanceId, card2.TemplateId, card2.Rank);
             }
         }
         else
         {
-            var num2 = 0;
-            array = new int[b];
-            array2 = new MulliganDrawCcgEventCardData[b];
-            while (num2 < b)
+            var discardedCount = 0;
+            cardsToDiscard = new int[discardCount];
+            cardDatas = new MulliganDrawCcgEventCardData[discardCount];
+            while (discardedCount < discardCount)
             {
-                var flag = false;
-                var num3 = GameState.GetGame().GetServerIntValue(0, num);
-                card2 = player.Hand.Cards[num3];
-                num3 = card2.InstanceId;
-                for (var j = 0; j < num2; j++)
+                var alreadyDiscarded = false;
+                var index = GameState.GetGame().GetServerIntValue(0, cardsInHand);
+                var card2 = player.Hand.Cards[index];
+                var cardId = card2.InstanceId;
+                for (var j = 0; j < discardedCount; j++)
                 {
-                    if (array[j] == num3)
+                    if (cardsToDiscard[j] == cardId)
                     {
-                        flag = true;
+                        alreadyDiscarded = true;
                     }
                 }
 
-                if (!flag)
+                if (!alreadyDiscarded)
                 {
-                    array[num2] = num3;
-                    array2[num2] = new MulliganDrawCcgEventCardData(card2.InstanceId, card2.TemplateId, card2.Rank);
-                    num2++;
+                    cardsToDiscard[discardedCount] = cardId;
+                    cardDatas[discardedCount] = new MulliganDrawCcgEventCardData(card2.InstanceId, card2.TemplateId, card2.Rank);
+                    discardedCount++;
                 }
             }
 
-            num = b;
+            cardsInHand = discardCount;
         }
 
-        var discardEffectCCGEvent = new DiscardEffectCcgEvent(owner, array2)
+        var discardEvent = new DiscardEffectCcgEvent(owner, cardDatas)
         {
             EffectId = EffectTraitId,
             TraitId = TraitParentId
         };
 
-        GameState.AddCcgEventLog(discardEffectCCGEvent);
-        GameState.DoCardDiscard(owner, array);
-        GameState.CardDiscardEffect(owner, num);
+        GameState.AddCcgEventLog(discardEvent);
+        GameState.DoCardDiscard(owner, cardsToDiscard);
+        GameState.CardDiscardEffect(owner, cardsInHand);
     }
 }

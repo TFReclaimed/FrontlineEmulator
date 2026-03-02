@@ -7,12 +7,12 @@ public class DrawCardMultiply : DrawCardEffect
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
         var player = GameState.Players[source.ActiveData.Owner];
-        var b = (sbyte) CountInfo.CalculateCount(GameState, active);
-        if (b > 0 && active.DataValue > 0)
+        var drawCount = (sbyte) CountInfo.CalculateCount(GameState, active);
+        if (drawCount > 0 && active.DataValue > 0)
         {
-            b = (sbyte) (active.DataValue * b);
+            drawCount = (sbyte) (active.DataValue * drawCount);
         }
 
-        player.DrawFromDeck(source.ActiveData.Owner, b, false);
+        player.DrawFromDeck(source.ActiveData.Owner, drawCount, false);
     }
 }

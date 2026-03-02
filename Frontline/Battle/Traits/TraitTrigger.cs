@@ -30,7 +30,6 @@ public class TraitTrigger : BaseTraitEffect
             return;
         }
 
-        sbyte b = 0;
         if (DurationData.Charges > 0 && active.DurationData.Charges == 0)
         {
             return;
@@ -41,10 +40,10 @@ public class TraitTrigger : BaseTraitEffect
         {
             var traitSource = active.GetTraitSource();
             var traitTarget = active.GetTraitTarget();
-            var logData = new TraitInfoCcgEvent(CcgEventType.SecretTriggered, TraitParentId,
+            var secretEvent = new TraitInfoCcgEvent(CcgEventType.SecretTriggered, TraitParentId,
                 EffectTraitId, traitTarget.InstanceId, traitTarget.ActiveData.Owner, traitSource.InstanceId,
                 traitSource.ActiveData.Owner, 0);
-            GameState.AddCcgEventLog(logData);
+            GameState.AddCcgEventLog(secretEvent);
             GameState.SecretTriggered(traitSource, source);
             var flag = false;
             var activeTrait = CheckEffectNegation(traitSource);
@@ -59,9 +58,9 @@ public class TraitTrigger : BaseTraitEffect
             }
 
             var list = GameState.FindCardStack(traitSource);
-            for (var i = 0; i < list.Count; i++)
+            foreach (var cardStack in list)
             {
-                list[i].RemoveCard(traitSource);
+                cardStack.RemoveCard(traitSource);
             }
 
             traitSource.Discard(GameState.Players);
@@ -71,18 +70,19 @@ public class TraitTrigger : BaseTraitEffect
             }
         }
 
-        for (var j = 0; j < traitTemplate.Effects.Count; j++)
+        sbyte priority = 0;
+        foreach (var effect in traitTemplate.Effects)
         {
-            if (traitTemplate.Effects[j].Priority > b)
+            if (effect.Priority > priority)
             {
-                b = traitTemplate.Effects[j].Priority;
+                priority = effect.Priority;
             }
         }
 
-        if (b > 0)
+        if (priority > 0)
         {
             BaseTraitEffect? baseTraitEffect = null;
-            for (int k = Priority; k < b; k++)
+            for (int k = Priority; k < priority; k++)
             {
                 if (baseTraitEffect != null)
                 {
@@ -100,11 +100,11 @@ public class TraitTrigger : BaseTraitEffect
                     break;
                 }
 
-                for (var l = 0; l < traitTemplate.Effects.Count; l++)
+                foreach (var effect in traitTemplate.Effects)
                 {
-                    if (traitTemplate.Effects[l].Priority == k)
+                    if (effect.Priority == k)
                     {
-                        ActivateParentEffect(traitTemplate, traitTemplate.Effects[l], source, target, destination,
+                        ActivateParentEffect(traitTemplate, effect, source, target, destination,
                             active, false);
                     }
                 }
@@ -112,10 +112,9 @@ public class TraitTrigger : BaseTraitEffect
         }
         else
         {
-            for (var m = 0; m < traitTemplate.Effects.Count; m++)
+            foreach (var effect in traitTemplate.Effects)
             {
-                ActivateParentEffect(traitTemplate, traitTemplate.Effects[m], source, target, destination, active,
-                    false);
+                ActivateParentEffect(traitTemplate, effect, source, target, destination, active, false);
             }
         }
 
@@ -225,28 +224,28 @@ public class TraitTrigger : BaseTraitEffect
 
     public override void NewTurn(ActiveTrait active, sbyte playerIndex)
     {
-        var flag = false;
+        var triggered = false;
         if (DelayActivation && active.Triggered)
         {
             var owner = active.GetTraitTarget().ActiveData.Owner;
             if (ActivationDelayType == TraitDurationType.StartOfTurn)
             {
                 RunTriggerActivation(null, null, Region.NumRegions, active);
-                flag = true;
+                triggered = true;
             }
             else if (ActivationDelayType == TraitDurationType.StartOfMyTurn && owner == playerIndex)
             {
                 RunTriggerActivation(null, null, Region.NumRegions, active);
-                flag = true;
+                triggered = true;
             }
             else if (ActivationDelayType == TraitDurationType.StartOfEnemyTurn && owner != playerIndex)
             {
                 RunTriggerActivation(null, null, Region.NumRegions, active);
-                flag = true;
+                triggered = true;
             }
         }
 
-        if (!flag && Type == TriggerType.NewTurn)
+        if (!triggered && Type == TriggerType.NewTurn)
         {
             if (DelayActivation)
             {
@@ -261,28 +260,28 @@ public class TraitTrigger : BaseTraitEffect
 
     public override void EndTurn(ActiveTrait active, sbyte playerIndex)
     {
-        var flag = false;
+        var triggered = false;
         if (DelayActivation && active.Triggered)
         {
             var owner = active.GetTraitTarget().ActiveData.Owner;
             if (ActivationDelayType == TraitDurationType.EndOfTurn)
             {
                 RunTriggerActivation(null, null, Region.NumRegions, active);
-                flag = true;
+                triggered = true;
             }
             else if (ActivationDelayType == TraitDurationType.EndOfMyTurn && owner == playerIndex)
             {
                 RunTriggerActivation(null, null, Region.NumRegions, active);
-                flag = true;
+                triggered = true;
             }
             else if (ActivationDelayType == TraitDurationType.EndOfEnemyTurn && owner != playerIndex)
             {
                 RunTriggerActivation(null, null, Region.NumRegions, active);
-                flag = true;
+                triggered = true;
             }
         }
 
-        if (!flag && Type == TriggerType.EndTurn)
+        if (!triggered && Type == TriggerType.EndTurn)
         {
             if (DelayActivation)
             {
@@ -297,70 +296,78 @@ public class TraitTrigger : BaseTraitEffect
 
     public override void CardDeployed(Card deployed, ActiveTrait active)
     {
-        if (Type == TriggerType.Deploy && Targets.CardTargetMatch(GameState, deployed, active.GetTraitTarget()))
+        if (Type != TriggerType.Deploy || !Targets.CardTargetMatch(GameState, deployed, active.GetTraitTarget()))
         {
-            int num = deployed.ActiveData.Owner;
-            var commander = GameState.Players[num].Commander;
-            if (DelayActivation)
-            {
-                active.Triggered = true;
-            }
-            else
-            {
-                RunTriggerActivation(commander.PrimaryCard, deployed, Region.NumRegions, active);
-            }
+            return;
+        }
+
+        int owner = deployed.ActiveData.Owner;
+        var commander = GameState.Players[owner].Commander;
+        if (DelayActivation)
+        {
+            active.Triggered = true;
+        }
+        else
+        {
+            RunTriggerActivation(commander.PrimaryCard, deployed, Region.NumRegions, active);
         }
     }
 
     public override void CardMoved(Card theCard, CardStack target, Region destination, Region origin,
         ActiveTrait active)
     {
-        if (Type == TriggerType.Move && Targets.CardTargetMatch(GameState, theCard, active.GetTraitTarget()) &&
-            VersusInfo.CheckRegion(destination, active.GetTraitTarget().ActiveData.Owner) &&
-            (destination != origin || AllowSameRegion))
+        if (Type != TriggerType.Move || !Targets.CardTargetMatch(GameState, theCard, active.GetTraitTarget()) ||
+            !VersusInfo.CheckRegion(destination, active.GetTraitTarget().ActiveData.Owner) ||
+            (destination == origin && !AllowSameRegion))
         {
-            var primaryCard = target.PrimaryCard;
-            if (DelayActivation)
-            {
-                active.Triggered = true;
-            }
-            else
-            {
-                RunTriggerActivation(theCard, primaryCard, destination, active);
-            }
+            return;
+        }
+
+        var primaryCard = target.PrimaryCard;
+        if (DelayActivation)
+        {
+            active.Triggered = true;
+        }
+        else
+        {
+            RunTriggerActivation(theCard, primaryCard, destination, active);
         }
     }
 
     public override void CardAttacked(Card attacker, Card target, ActiveTrait active)
     {
-        if (Type == TriggerType.Attack && Targets.CardTargetMatch(GameState, attacker, active.GetTraitTarget()) &&
-            VersusInfo.CardTargetMatch(GameState, target, active.GetTraitTarget()))
+        if (Type != TriggerType.Attack || !Targets.CardTargetMatch(GameState, attacker, active.GetTraitTarget()) ||
+            !VersusInfo.CardTargetMatch(GameState, target, active.GetTraitTarget()))
         {
-            if (DelayActivation)
-            {
-                active.Triggered = true;
-            }
-            else
-            {
-                RunTriggerActivation(attacker, target, Region.NumRegions, active);
-            }
+            return;
+        }
+
+        if (DelayActivation)
+        {
+            active.Triggered = true;
+        }
+        else
+        {
+            RunTriggerActivation(attacker, target, Region.NumRegions, active);
         }
     }
 
     public override void CardCounterAttacked(Card attacker, Card target, ActiveTrait active)
     {
-        if (Type == TriggerType.CounterAttack &&
-            Targets.CardTargetMatch(GameState, attacker, active.GetTraitTarget()) &&
-            VersusInfo.CardTargetMatch(GameState, target, active.GetTraitTarget()))
+        if (Type != TriggerType.CounterAttack ||
+            !Targets.CardTargetMatch(GameState, attacker, active.GetTraitTarget()) ||
+            !VersusInfo.CardTargetMatch(GameState, target, active.GetTraitTarget()))
         {
-            if (DelayActivation)
-            {
-                active.Triggered = true;
-            }
-            else
-            {
-                RunTriggerActivation(attacker, target, Region.NumRegions, active);
-            }
+            return;
+        }
+
+        if (DelayActivation)
+        {
+            active.Triggered = true;
+        }
+        else
+        {
+            RunTriggerActivation(attacker, target, Region.NumRegions, active);
         }
     }
 
@@ -370,33 +377,37 @@ public class TraitTrigger : BaseTraitEffect
 
     public override void CardDamaged(Card damagedCard, Card source, ActiveTrait active)
     {
-        if (Type == TriggerType.TakeDamage && Targets.CardTargetMatch(GameState, source, active.GetTraitTarget()) &&
-            VersusInfo.CardTargetMatch(GameState, damagedCard, active.GetTraitTarget()))
+        if (Type != TriggerType.TakeDamage || !Targets.CardTargetMatch(GameState, source, active.GetTraitTarget()) ||
+            !VersusInfo.CardTargetMatch(GameState, damagedCard, active.GetTraitTarget()))
         {
-            if (DelayActivation)
-            {
-                active.Triggered = true;
-            }
-            else
-            {
-                RunTriggerActivation(source, damagedCard, Region.NumRegions, active);
-            }
+            return;
+        }
+
+        if (DelayActivation)
+        {
+            active.Triggered = true;
+        }
+        else
+        {
+            RunTriggerActivation(source, damagedCard, Region.NumRegions, active);
         }
     }
 
     public override void CardDied(Card deadCard, Card source, ActiveTrait active)
     {
-        if (Type == TriggerType.Destroy && Targets.CardTargetMatch(GameState, source, active.GetTraitTarget()) &&
-            VersusInfo.CardTargetMatch(GameState, deadCard, active.GetTraitTarget()))
+        if (Type != TriggerType.Destroy || !Targets.CardTargetMatch(GameState, source, active.GetTraitTarget()) ||
+            !VersusInfo.CardTargetMatch(GameState, deadCard, active.GetTraitTarget()))
         {
-            if (DelayActivation)
-            {
-                active.Triggered = true;
-            }
-            else
-            {
-                RunTriggerActivation(source, deadCard, Region.NumRegions, active);
-            }
+            return;
+        }
+
+        if (DelayActivation)
+        {
+            active.Triggered = true;
+        }
+        else
+        {
+            RunTriggerActivation(source, deadCard, Region.NumRegions, active);
         }
     }
 

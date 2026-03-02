@@ -42,68 +42,68 @@ public class TraitTargeting
 
     public bool CheckRegion(Region checkRegion, sbyte owner)
     {
-        if (checkRegion != Region.NumRegions)
+        if (checkRegion == Region.NumRegions)
         {
-            var region = (Region) (0 + (byte) owner);
-            switch (Area)
-            {
-                case TargetableArea.AnyAreas:
-                    return true;
-                case TargetableArea.AnyRegion:
-                    return true;
-                case TargetableArea.BattleField:
-                    return true;
-                case TargetableArea.BattleFieldNc:
-                    return true;
-                case TargetableArea.FriendlyHand:
-                    return true;
-                case TargetableArea.FriendlyDiscard:
-                    return true;
-                case TargetableArea.EnemyHand:
-                    return true;
-                case TargetableArea.EnemyDiscard:
-                    return true;
-                case TargetableArea.Frontline:
-                    if (checkRegion == Region.Control)
-                    {
-                        return true;
-                    }
-
-                    break;
-                case TargetableArea.FriendlyPerimeter:
-                    if (checkRegion == region)
-                    {
-                        return true;
-                    }
-
-                    break;
-                case TargetableArea.EnemyPerimeter:
-                    if (checkRegion != Region.Control && checkRegion != region)
-                    {
-                        return true;
-                    }
-
-                    break;
-                case TargetableArea.FriendlyRegions:
-                    if (checkRegion == region || checkRegion == Region.Control)
-                    {
-                        return true;
-                    }
-
-                    break;
-                case TargetableArea.EnemyRegions:
-                    if (checkRegion == Region.Control || checkRegion != region)
-                    {
-                        return true;
-                    }
-
-                    break;
-            }
-
-            return false;
+            return true;
         }
 
-        return true;
+        var region = (Region) (0 + (byte) owner);
+        switch (Area)
+        {
+            case TargetableArea.AnyAreas:
+                return true;
+            case TargetableArea.AnyRegion:
+                return true;
+            case TargetableArea.BattleField:
+                return true;
+            case TargetableArea.BattleFieldNc:
+                return true;
+            case TargetableArea.FriendlyHand:
+                return true;
+            case TargetableArea.FriendlyDiscard:
+                return true;
+            case TargetableArea.EnemyHand:
+                return true;
+            case TargetableArea.EnemyDiscard:
+                return true;
+            case TargetableArea.Frontline:
+                if (checkRegion == Region.Control)
+                {
+                    return true;
+                }
+
+                break;
+            case TargetableArea.FriendlyPerimeter:
+                if (checkRegion == region)
+                {
+                    return true;
+                }
+
+                break;
+            case TargetableArea.EnemyPerimeter:
+                if (checkRegion != Region.Control && checkRegion != region)
+                {
+                    return true;
+                }
+
+                break;
+            case TargetableArea.FriendlyRegions:
+                if (checkRegion == region || checkRegion == Region.Control)
+                {
+                    return true;
+                }
+
+                break;
+            case TargetableArea.EnemyRegions:
+                if (checkRegion == Region.Control || checkRegion != region)
+                {
+                    return true;
+                }
+
+                break;
+        }
+
+        return false;
     }
 
     public bool CardTargetMatch(CcgGameState gameState, Card card, Card source)
@@ -474,7 +474,7 @@ public class TraitTargeting
 
     public int CalculateCount(CcgGameState gameState, ActiveTrait active)
     {
-        var num = 0;
+        var count = 0;
         var region = Region.NumRegions;
         if (Area == TargetableArea.CurrentRegion)
         {
@@ -488,7 +488,7 @@ public class TraitTargeting
             var card = cardStack.PrimaryCard!;
             if (DoesMatchType(card))
             {
-                num++;
+                count++;
             }
 
             var secrets = card.GetSecrets();
@@ -496,16 +496,16 @@ public class TraitTargeting
             {
                 if (DoesMatchType(secret))
                 {
-                    num++;
+                    count++;
                 }
             }
 
             if (card.HasPilot() && DoesMatchType(card.GetEmbarkedPilot()!))
             {
-                num++;
+                count++;
             }
         }
 
-        return num;
+        return count;
     }
 }

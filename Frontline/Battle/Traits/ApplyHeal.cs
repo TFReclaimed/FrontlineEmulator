@@ -13,38 +13,42 @@ public class ApplyHeal : BaseTraitEffect
 
     public override void Apply(Card card, Card source, ActiveTrait active)
     {
-        var b = Heal;
+        var delta = Heal;
         if (active.DataValue > 0)
         {
-            b = (sbyte) active.DataValue;
+            delta = (sbyte) active.DataValue;
         }
 
         if (card.GetCurrentHealth(false) > 0)
         {
-            b = card.HealDamage(null, b);
+            delta = card.HealDamage(null, delta);
         }
 
-        if (b > 0)
+        if (delta <= 0)
         {
-            var logData = new CardTraumaCcgEvent(CcgEventType.CardHeal, b, source.InstanceId,
-                source.ActiveData.Owner, card.InstanceId, card.ActiveData.Owner);
-            GameState.AddCcgEventLog(logData);
+            return;
         }
+
+        var traumaEvent = new CardTraumaCcgEvent(CcgEventType.CardHeal, delta, source.InstanceId,
+            source.ActiveData.Owner, card.InstanceId, card.ActiveData.Owner);
+        GameState.AddCcgEventLog(traumaEvent);
     }
 
     public override void OnNewTurnEvent(Card owner, sbyte playerIndex)
     {
-        if (!owner.IsCardTraitsDetered() && DurationData.Type == TraitDurationType.Permanent &&
-            owner.ActiveData.Owner == playerIndex)
+        if (owner.IsCardTraitsDetered() || DurationData.Type != TraitDurationType.Permanent ||
+            owner.ActiveData.Owner != playerIndex)
         {
-            var region = Region.NumRegions;
-            var target = GameState.FindCardStack(owner)[0];
-            if (Targets.Area == TargetableArea.CurrentRegion)
-            {
-                region = GameState.GetTraitActorRegion(playerIndex, owner.InstanceId);
-            }
-
-            Activate(owner, target, region);
+            return;
         }
+
+        var region = Region.NumRegions;
+        var target = GameState.FindCardStack(owner)[0];
+        if (Targets.Area == TargetableArea.CurrentRegion)
+        {
+            region = GameState.GetTraitActorRegion(playerIndex, owner.InstanceId);
+        }
+
+        Activate(owner, target, region);
     }
 }

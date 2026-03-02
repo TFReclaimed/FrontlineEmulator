@@ -19,9 +19,9 @@ public class ApplyDamage : BaseTraitEffect
         {
             GameState.SecretDestroyed(card, source);
             var list = GameState.FindCardStack(card);
-            for (var i = 0; i < list.Count; i++)
+            foreach (var cardStack in list)
             {
-                var secrets = list[i].PrimaryCard!.GetSecrets();
+                var secrets = cardStack.PrimaryCard!.GetSecrets();
 
                 for (var num = secrets.Count - 1; num >= 0; num--)
                 {
@@ -74,17 +74,19 @@ public class ApplyDamage : BaseTraitEffect
 
     public override void OnNewTurnEvent(Card owner, sbyte playerIndex)
     {
-        if (!owner.IsCardTraitsDetered() && DurationData.Type == TraitDurationType.Permanent &&
-            owner.ActiveData.Owner == playerIndex)
+        if (owner.IsCardTraitsDetered() || DurationData.Type != TraitDurationType.Permanent ||
+            owner.ActiveData.Owner != playerIndex)
         {
-            var region = Region.NumRegions;
-            var target = GameState.FindCardStack(owner)[0];
-            if (Targets.Area == TargetableArea.CurrentRegion)
-            {
-                region = GameState.GetTraitActorRegion(playerIndex, owner.InstanceId);
-            }
-
-            Activate(owner, target, region);
+            return;
         }
+
+        var region = Region.NumRegions;
+        var target = GameState.FindCardStack(owner)[0];
+        if (Targets.Area == TargetableArea.CurrentRegion)
+        {
+            region = GameState.GetTraitActorRegion(playerIndex, owner.InstanceId);
+        }
+
+        Activate(owner, target, region);
     }
 }

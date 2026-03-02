@@ -202,19 +202,19 @@ public class EntityCard : Card
             return true;
         }
 
-        var flag = false;
-        var flag2 = GameState.HasInterceptBattleEffect(ActiveData.Owner);
-        if (flag2)
+        var targetHasIntercept = false;
+        var battleHasIntercept = GameState.HasInterceptBattleEffect(ActiveData.Owner);
+        if (battleHasIntercept)
         {
-            flag = target.PrimaryCard.HasIntercept();
+            targetHasIntercept = target.PrimaryCard.HasIntercept();
         }
 
-        if (flag2 && !flag)
+        if (battleHasIntercept && !targetHasIntercept)
         {
             GameState.Logger.Debug("EntityCard.CanAttack false - target card is not intercept");
         }
 
-        return !flag2 || flag;
+        return !battleHasIntercept || targetHasIntercept;
     }
 
     public override void Attack(CardStack source, Card? target)
@@ -261,38 +261,40 @@ public class EntityCard : Card
     {
         var activeEntityCardData = (ActiveEntityCardData) ActiveData;
         var currentHealth = activeEntityCardData.CurrentHealth;
-        var b = attack;
-        var b2 = bypass;
+        var attackDamage = attack;
+        var bypassDamage = bypass;
         foreach (var activeTrait in ActiveData.ActiveTraits)
         {
             if (activeTrait.GetTraitInfo().IsDamageImmunity(false, activeTrait))
             {
-                b = 0;
+                attackDamage = 0;
             }
 
             if (activeTrait.GetTraitInfo().IsDamageImmunity(true, activeTrait))
             {
-                b2 = 0;
+                bypassDamage = 0;
             }
         }
 
-        var b3 = (sbyte) (b + b2);
-        if (b3 > 0)
+        var totalDamage = (sbyte) (attackDamage + bypassDamage);
+        if (totalDamage <= 0)
         {
-            SetCurrentHealth((sbyte) (currentHealth - b3));
-            GameState.CardDamaged(this, source);
-            var logData = new CardTraumaCcgEvent(CcgEventType.CardDamage, b3, source.InstanceId,
-                source.ActiveData.Owner, InstanceId, ActiveData.Owner);
-            GameState.AddCcgEventLog(logData);
-            if (_myDeathCard == null && CanDiscard())
-            {
-                _myDeathCard = source;
-            }
+            return;
+        }
 
-            if (checkDeath)
-            {
-                CheckForDeathEvent();
-            }
+        SetCurrentHealth((sbyte) (currentHealth - totalDamage));
+        GameState.CardDamaged(this, source);
+        var cardTraumaEvent = new CardTraumaCcgEvent(CcgEventType.CardDamage, totalDamage, source.InstanceId,
+            source.ActiveData.Owner, InstanceId, ActiveData.Owner);
+        GameState.AddCcgEventLog(cardTraumaEvent);
+        if (_myDeathCard == null && CanDiscard())
+        {
+            _myDeathCard = source;
+        }
+
+        if (checkDeath)
+        {
+            CheckForDeathEvent();
         }
     }
 
@@ -322,9 +324,9 @@ public class EntityCard : Card
         }
 
         GameState.CardDied(this, _myDeathCard);
-        var logData = new CardTraumaCcgEvent(CcgEventType.CardDeath, GetCurrentHealth(false),
+        var cardDeathEvent = new CardTraumaCcgEvent(CcgEventType.CardDeath, GetCurrentHealth(false),
             _myDeathCard.InstanceId, _myDeathCard.ActiveData.Owner, InstanceId, ActiveData.Owner);
-        GameState.AddCcgEventLog(logData);
+        GameState.AddCcgEventLog(cardDeathEvent);
         if (_myDeathCard.GetTemplate().IsCombatUnit())
         {
             var unitCard = (UnitCard) _myDeathCard;
@@ -353,13 +355,13 @@ public class EntityCard : Card
         }
 
         GameState.CardDied(embarkedPilot, _myDeathCard);
-        logData = new CardTraumaCcgEvent(CcgEventType.CardDeath, GetCurrentHealth(false), _myDeathCard.InstanceId,
+        cardDeathEvent = new CardTraumaCcgEvent(CcgEventType.CardDeath, GetCurrentHealth(false), _myDeathCard.InstanceId,
             _myDeathCard.ActiveData.Owner, embarkedPilot.InstanceId, embarkedPilot.ActiveData.Owner);
-        GameState.AddCcgEventLog(logData);
+        GameState.AddCcgEventLog(cardDeathEvent);
         if (_myDeathCard.GetTemplate().IsCombatUnit())
         {
+            const string xpTrigger2 = "Destroy_Pilot";
             var unitCard2 = (UnitCard) _myDeathCard;
-            var xpTrigger2 = "Destroy_Pilot";
             unitCard2.CheckAndUpdateXp(xpTrigger2);
             if (unitCard2.HasPilot())
             {
@@ -385,10 +387,10 @@ public class EntityCard : Card
     {
         var activeEntityCardData = (ActiveEntityCardData) ActiveData;
         var currentHealth = activeEntityCardData.CurrentHealth;
-        var b = currentHealth;
+        var oldHealth = currentHealth;
         currentHealth = currentHealth + heal <= _maxHealth ? (sbyte) (currentHealth + heal) : _maxHealth;
         SetCurrentHealth(currentHealth);
-        return (sbyte) (currentHealth - b);
+        return (sbyte) (currentHealth - oldHealth);
     }
 
     public override bool CanDiscard()
@@ -399,46 +401,48 @@ public class EntityCard : Card
     public override sbyte GetCurrentHealth(bool combatLog)
     {
         var activeEntityCardData = (ActiveEntityCardData) ActiveData;
-        var b = activeEntityCardData.CurrentHealth;
+        var health = activeEntityCardData.CurrentHealth;
         List<EventLogTraitCardInfo> list = [];
 
         foreach (var activeTrait in ActiveData.ActiveTraits)
         {
-            var b2 = activeTrait.GetTraitInfo().GetHealthBonus(activeTrait);
-            if (b2 != 0)
+            var bonus = activeTrait.GetTraitInfo().GetHealthBonus(activeTrait);
+            if (bonus == 0)
             {
-                if (combatLog)
-                {
-                    var eventLogTraitCardInfo = new EventLogTraitCardInfo
-                    {
-                        InstanceId = activeTrait.GetTraitSource().InstanceId,
-                        Owner = activeTrait.GetTraitSource().ActiveData.Owner,
-                        EffectId = activeTrait.GetTraitInfo().EffectTraitId,
-                        TraitId = activeTrait.GetTraitInfo().TraitParentId,
-                        Data = b2
-                    };
-                    list.Add(eventLogTraitCardInfo);
-                }
-
-                b += b2;
+                continue;
             }
+
+            if (combatLog)
+            {
+                var eventLogTraitCardInfo = new EventLogTraitCardInfo
+                {
+                    InstanceId = activeTrait.GetTraitSource().InstanceId,
+                    Owner = activeTrait.GetTraitSource().ActiveData.Owner,
+                    EffectId = activeTrait.GetTraitInfo().EffectTraitId,
+                    TraitId = activeTrait.GetTraitInfo().TraitParentId,
+                    Data = bonus
+                };
+                list.Add(eventLogTraitCardInfo);
+            }
+
+            health += bonus;
         }
 
         if (combatLog && list.Count > 0)
         {
             var count = list.Count;
-            var combatBuffsCCGEvent =
-                new CombatBuffsCcgEvent(CcgEventType.CombatBuffsAttack, InstanceId, ActiveData.Owner, 0, 0);
-            combatBuffsCCGEvent.BuffTraits = new EventLogTraitCardInfo[count];
+            var combatBuffsEvent = new CombatBuffsCcgEvent(CcgEventType.CombatBuffsAttack, InstanceId,
+                ActiveData.Owner, 0, 0);
+            combatBuffsEvent.BuffTraits = new EventLogTraitCardInfo[count];
             for (var j = 0; j < count; j++)
             {
-                combatBuffsCCGEvent.BuffTraits[j] = list[j];
+                combatBuffsEvent.BuffTraits[j] = list[j];
             }
 
-            GameState.AddCcgEventLog(combatBuffsCCGEvent);
+            GameState.AddCcgEventLog(combatBuffsEvent);
         }
 
-        return b;
+        return health;
     }
 
     public void SetCurrentHealth(sbyte health)
@@ -459,17 +463,17 @@ public class EntityCard : Card
 
     public override sbyte GetMaxModHealth()
     {
-        var b = _maxHealth;
+        var health = _maxHealth;
         foreach (var activeTrait in ActiveData.ActiveTraits)
         {
-            var b2 = activeTrait.GetTraitInfo().GetHealthBonus(activeTrait);
-            if (b2 != 0)
+            var bonus = activeTrait.GetTraitInfo().GetHealthBonus(activeTrait);
+            if (bonus != 0)
             {
-                b += b2;
+                health += bonus;
             }
         }
 
-        return b;
+        return health;
     }
 
     public override void CreateActiveData()
