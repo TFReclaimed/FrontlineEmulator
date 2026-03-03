@@ -19,7 +19,7 @@ public class LoginParams
     public Platform DeviceType { get; set; }
 }
 
-[JsonConverter(typeof(JsonStringEnumConverter))]
+[JsonConverter(typeof(JsonStringEnumConverter<LoginType>))]
 public enum LoginType
 {
     Facebook,
@@ -32,7 +32,7 @@ public enum LoginType
     NumTypes
 }
 
-[JsonConverter(typeof(JsonStringEnumConverter))]
+[JsonConverter(typeof(JsonStringEnumConverter<Platform>))]
 public enum Platform
 {
     [JsonStringEnumMemberName("iOS")]

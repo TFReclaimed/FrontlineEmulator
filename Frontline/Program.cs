@@ -1,5 +1,6 @@
 using FastEndpoints;
 using FastEndpoints.Swagger;
+using Frontline;
 using Frontline.Auth;
 using Frontline.Battle;
 using Frontline.Battle.Matchmaking;
@@ -95,7 +96,10 @@ app.UseHttpLogging();
 
 app.UseAuthorization();
 
-app.UseFastEndpoints();
+app.UseFastEndpoints(c =>
+{
+    c.Serializer.Options.AddSerializerContextsFromFrontline();
+});
 
 app.UseSwaggerGen();
 

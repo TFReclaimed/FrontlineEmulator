@@ -35,7 +35,7 @@ public class GuildMemberEntity
     public MemberRank Rank { get; set; }
 }
 
-[JsonConverter(typeof(JsonStringEnumConverter))]
+[JsonConverter(typeof(JsonStringEnumConverter<GuildMode>))]
 public enum GuildMode
 {
     [JsonStringEnumMemberName("PUBLIC")]
@@ -44,7 +44,7 @@ public enum GuildMode
     Private
 }
 
-[JsonConverter(typeof(JsonStringEnumConverter))]
+[JsonConverter(typeof(JsonStringEnumConverter<GuildLocale>))]
 public enum GuildLocale
 {
     NONE = 0,
@@ -61,7 +61,7 @@ public enum GuildLocale
     THA = 11
 }
 
-[JsonConverter(typeof(JsonStringEnumConverter))]
+[JsonConverter(typeof(JsonStringEnumConverter<MemberRank>))]
 public enum MemberRank
 {
     [JsonStringEnumMemberName("INVALID")]

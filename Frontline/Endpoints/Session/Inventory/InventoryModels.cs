@@ -14,7 +14,7 @@ public class InventoryRequest
     public InventoryType Type { get; set; }
 }
 
-[JsonConverter(typeof(JsonStringEnumConverter))]
+[JsonConverter(typeof(JsonStringEnumConverter<InventoryType>))]
 public enum InventoryType
 {
     Card,

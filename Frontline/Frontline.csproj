@@ -7,8 +7,17 @@
         <NoWarn>CA2016</NoWarn>
     </PropertyGroup>
 
+    <PropertyGroup>
+        <GenerateSerializerContexts>true</GenerateSerializerContexts>
+        <SerializerContextOutputPath>Generated/SerializerCtx</SerializerContextOutputPath>
+    </PropertyGroup>
+
     <ItemGroup>
         <PackageReference Include="FastEndpoints" Version="8.0.1" />
+        <PackageReference Include="FastEndpoints.Generator" Version="8.0.1">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="FastEndpoints.Security" Version="8.0.1" />
         <PackageReference Include="FastEndpoints.Swagger" Version="8.0.1" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.3" />

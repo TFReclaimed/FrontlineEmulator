@@ -13,19 +13,19 @@ public class LeaderboardPveResponse
 public class LeaderboardPveEntry
 {
     public Territory Territory { get; set; }
-    public Faction Faction { get; set; }
+    public LeaderboardFaction Faction { get; set; }
     public int Rank { get; set; }
 }
 
-[JsonConverter(typeof(JsonStringEnumConverter))]
+[JsonConverter(typeof(JsonStringEnumConverter<Territory>))]
 public enum Territory
 {
     Harmony,
     Kraken
 }
 
-[JsonConverter(typeof(JsonStringEnumConverter))]
-public enum Faction
+[JsonConverter(typeof(JsonStringEnumConverter<LeaderboardFaction>))]
+public enum LeaderboardFaction
 {
     [JsonStringEnumMemberName("IMC")]
     Imc,

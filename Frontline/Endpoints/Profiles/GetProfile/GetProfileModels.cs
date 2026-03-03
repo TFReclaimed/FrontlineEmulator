@@ -8,7 +8,7 @@ public class GetProfileRequest
     public ProfileType ProfileType { get; set; }
 }
 
-[JsonConverter(typeof(JsonStringEnumConverter))]
+[JsonConverter(typeof(JsonStringEnumConverter<ProfileType>))]
 public enum ProfileType
 {
     Public,

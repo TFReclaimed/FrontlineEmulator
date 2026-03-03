@@ -146,7 +146,7 @@ public class CardData
 public class CardAvailability
 {
     [JsonPropertyName("PvECardState")]
-    [JsonConverter(typeof(JsonStringEnumConverter))]
+    [JsonConverter(typeof(JsonStringEnumConverter<CardState>))]
     public CardState CardState { get; set; }
     [JsonPropertyName("pve_region")]
     public PveRegion Region { get; set; }

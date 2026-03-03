@@ -9,7 +9,7 @@ public class ConsumeRequest
     public int? TargetId { get; set; }
 }
 
-[JsonConverter(typeof(JsonStringEnumConverter))]
+[JsonConverter(typeof(JsonStringEnumConverter<RetireFor>))]
 public enum RetireFor
 {
     [JsonStringEnumMemberName("CREDITS")]

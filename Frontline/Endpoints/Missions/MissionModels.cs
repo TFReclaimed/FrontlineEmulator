@@ -7,10 +7,10 @@ namespace Frontline.Endpoints.Missions;
 public class MissionKey
 {
     [JsonPropertyName("Region")]
-    [JsonConverter(typeof(JsonStringEnumConverter))]
+    [JsonConverter(typeof(JsonStringEnumConverter<PveRegion>))]
     public PveRegion Region { get; set; }
     [JsonPropertyName("MyFaction")]
-    [JsonConverter(typeof(JsonStringEnumConverter))]
+    [JsonConverter(typeof(JsonStringEnumConverter<Faction>))]
     public Faction Faction { get; set; }
     [JsonPropertyName("MissionID")]
     public int MissionId { get; set; }
