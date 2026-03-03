@@ -42,7 +42,7 @@ Use AssetRipper to extract these files from the Unity project.
   - ✅ Frontier
   - ✅ Guild
   - ✅ Private messages (Challenges)
-  - ⛔ Persistence
+  - ✅ Persistence
 - ✅ Hangar
   - ✅ Booster packs 
     - ✅ Get booster packs

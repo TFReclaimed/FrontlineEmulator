@@ -18,7 +18,9 @@ public class AppDb : DbContext
     public DbSet<FinishedMissionEntity> FinishedMissions { get; set; }
     
     public DbSet<ActiveMissionEntity> ActiveMissions { get; set; }
-    
+
+    public DbSet<ChatMessageEntity> ChatMessages { get; set; }
+
     public AppDb(DbContextOptions<AppDb> options) : base(options)
     {
     }

@@ -153,7 +153,9 @@ public class XmppServer : BackgroundService
         
         if (!_chatRooms.TryGetValue(room, out var chatRoom))
         {
-            chatRoom = new ChatRoom(_chatOptions, room);
+            using var scope = _serviceScopeFactory.CreateScope();
+            var chatMessageRepository = scope.ServiceProvider.GetRequiredService<IChatMessageRepository>();
+            chatRoom = await ChatRoom.CreateAsync(_chatOptions, room, chatMessageRepository);
             _chatRooms.Add(room, chatRoom);
         }
         
@@ -182,7 +184,9 @@ public class XmppServer : BackgroundService
     {
         if (_chatRooms.TryGetValue(room, out var chatRoom))
         {
-            await chatRoom.BroadcastMessage(client, message);
+            using var scope = _serviceScopeFactory.CreateScope();
+            var chatMessageRepository = scope.ServiceProvider.GetRequiredService<IChatMessageRepository>();
+            await chatRoom.BroadcastMessage(client, message, chatMessageRepository);
         }
     }
     

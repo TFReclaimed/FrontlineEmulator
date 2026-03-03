@@ -50,6 +50,7 @@ builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 builder.Services.AddScoped<IDropshipRepository, DropshipRepository>();
 builder.Services.AddScoped<IActiveMissionRepository, ActiveMissionRepository>();
 builder.Services.AddScoped<IFinishedMissionRepository, FinishedMissionRepository>();
+builder.Services.AddScoped<IChatMessageRepository, ChatMessageRepository>();
 
 builder.Services.AddSingleton<IToyService, ToyService>();
 builder.Services.AddSingleton<IUserService, UserService>();
@@ -59,6 +60,7 @@ builder.Services.AddSingleton<IMatchmakingService, MatchmakingService>();
 builder.Services.AddHostedService<MatchmakingWorker>();
 builder.Services.AddHostedService<BattleCleanupWorker>();
 builder.Services.AddHostedService<XmppServer>();
+builder.Services.AddHostedService<ChatHistoryTrimWorker>();
 
 builder.Services.AddHttpLogging(_ => { });
 

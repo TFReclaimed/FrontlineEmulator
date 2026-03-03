@@ -12,10 +12,14 @@ public class KickLeaveGuildEndpoint : Endpoint<KickLeaveGuildRequest, Ok>
 
     private readonly IGuildMemberRepository _guildMemberRepository;
 
-    public KickLeaveGuildEndpoint(IGuildRepository guildRepository, IGuildMemberRepository guildMemberRepository)
+    private readonly IChatMessageRepository _chatMessageRepository;
+
+    public KickLeaveGuildEndpoint(IGuildRepository guildRepository, IGuildMemberRepository guildMemberRepository,
+        IChatMessageRepository chatMessageRepository)
     {
         _guildRepository = guildRepository;
         _guildMemberRepository = guildMemberRepository;
+        _chatMessageRepository = chatMessageRepository;
     }
 
     public override void Configure()
@@ -52,6 +56,7 @@ public class KickLeaveGuildEndpoint : Endpoint<KickLeaveGuildRequest, Ok>
                 Logger.LogInformation("Player {UserId} left their guild '{GuildName}' ({GuildId}), causing it to be deleted",
                     userId, guild.Name, req.GuildId);
                 await _guildRepository.DeleteAsync(guild);
+                await _chatMessageRepository.DeleteByRoomAsync($"guild{req.GuildId}");
             }
             else
             {
