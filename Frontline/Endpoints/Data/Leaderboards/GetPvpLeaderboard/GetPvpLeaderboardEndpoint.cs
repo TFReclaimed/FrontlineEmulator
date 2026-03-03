@@ -16,6 +16,10 @@ public class GetPvpLeaderboardEndpoint : EndpointWithoutRequest<LeaderboardPvpRe
     {
         Get("pvp/leaderboard.json");
         AllowAnonymous();
+        Options(b =>
+        {
+            b.CacheOutput(p => p.Expire(TimeSpan.FromMinutes(1)));
+        });
     }
 
     public override async Task HandleAsync(CancellationToken ct)
