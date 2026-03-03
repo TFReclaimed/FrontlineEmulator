@@ -138,6 +138,17 @@ public static class MissionsParser
         return Data?.Rewards.TryGetValue(name, out var reward) == true ? reward : null;
     }
 
+    public static MissionRegion? GetRegion(PveRegion pveRegion)
+    {
+        var name = pveRegion.ToString();
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return null;
+        }
+
+        return Data?.Regions.TryGetValue(name, out var region) == true ? region : null;
+    }
+
     public static MissionConditional? GetConditional(string name)
     {
         return Data?.Conditionals.TryGetValue(name, out var conditional) == true ? conditional : null;

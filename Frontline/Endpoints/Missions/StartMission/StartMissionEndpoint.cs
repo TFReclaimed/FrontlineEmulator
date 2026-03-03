@@ -55,6 +55,15 @@ public class StartMissionEndpoint : Endpoint<StartMissionRequest, List<MissionSt
             return;
         }
 
+        var missionRegion = MissionsParser.GetRegion(missionData.Region);
+        if (missionRegion is null || missionRegion.Locked)
+        {
+            Logger.LogWarning("Player {UserId} attempted to start mission {Key} but region is locked.",
+                userId, key);
+            await Send.ResultAsync(TypedResults.BadRequest());
+            return;
+        }
+
         if (player.Supply < missionData.SupplyCost
             || player.Credits < missionData.CreditCost
             || player.Tokens < missionData.TokenCost)

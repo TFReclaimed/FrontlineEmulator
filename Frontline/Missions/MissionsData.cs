@@ -1,5 +1,4 @@
 using System.Text.Json.Serialization;
-using Frontline.Game;
 using Frontline.Game.Card;
 using Frontline.Missions.Json;
 
