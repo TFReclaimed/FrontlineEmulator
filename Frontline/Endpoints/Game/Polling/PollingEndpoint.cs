@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.HttpLogging;
 
 namespace Frontline.Endpoints.Game.Polling;
 
-public class PollingEndpoint : Endpoint<PollingRequest, PollingResponse>
+public class PollingEndpoint : EndpointWithoutRequest<PollingResponse>
 {
     private readonly IBattleService _battleService;
 
@@ -23,11 +23,12 @@ public class PollingEndpoint : Endpoint<PollingRequest, PollingResponse>
         });
     }
 
-    public override async Task HandleAsync(PollingRequest req, CancellationToken ct)
+    public override async Task HandleAsync(CancellationToken ct)
     {
         var userId = this.GetUserId();
 
-        var battle = _battleService.GetBattle(req.GameId);
+        var gameId = Route<Guid>("GameId");
+        var battle = _battleService.GetBattle(gameId);
         if (battle is null || !battle.IsPlayerInGame(userId))
         {
             await Send.NotFoundAsync();
