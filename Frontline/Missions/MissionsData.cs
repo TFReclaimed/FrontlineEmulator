@@ -321,6 +321,8 @@ public class MissionConditional
     public string Comparison { get; set; } = string.Empty;
     [JsonPropertyName("Conjunction:S")]
     public Conjunction Conjunction { get; set; }
+
+    public int Group => (int) Math.Floor(GroupPriority);
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter))]

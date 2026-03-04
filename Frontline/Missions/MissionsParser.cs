@@ -7,7 +7,9 @@ namespace Frontline.Missions;
 public static class MissionsParser
 {
     public static MissionsData? Data { get; private set; }
-    
+
+    private static readonly Dictionary<string, ConditionalGroup> ConditionalGroups = [];
+
     public static void Initialize()
     {
         var pvePath = Path.Combine(AppContext.BaseDirectory, "PvEData.json");
@@ -24,8 +26,24 @@ public static class MissionsParser
         options.Converters.Add(new ConditionalConjunctionConverter());
 
         Data = JsonSerializer.Deserialize<MissionsData>(json, options);
+
+        InitializeConditionalGroups();
     }
-    
+
+    private static void InitializeConditionalGroups()
+    {
+        foreach (var conditional in Data!.Conditionals.Values)
+        {
+            if (!ConditionalGroups.TryGetValue(conditional.NameId, out var group))
+            {
+                group = new ConditionalGroup();
+                ConditionalGroups.Add(conditional.NameId, group);
+            }
+
+            group.AddConditional(conditional);
+        }
+    }
+
     public static string GetMissionKey(PveRegion region, Faction faction, int missionId)
     {
         var factionStr = faction switch
@@ -148,14 +166,19 @@ public static class MissionsParser
 
         return Data?.Regions.TryGetValue(name, out var region) == true ? region : null;
     }
-
-    public static MissionConditional? GetConditional(string name)
-    {
-        return Data?.Conditionals.TryGetValue(name, out var conditional) == true ? conditional : null;
-    }
     
     public static MissionNameMapping? GetMissionNameMapping(string name)
     {
         return Data?.NameMap.TryGetValue(name, out var mapping) == true ? mapping : null;
+    }
+
+    public static ConditionalGroup? GetConditionalGroup(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return null;
+        }
+
+        return ConditionalGroups.GetValueOrDefault(name);
     }
 }

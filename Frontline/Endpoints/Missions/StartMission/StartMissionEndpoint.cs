@@ -267,7 +267,7 @@ public class StartMissionEndpoint : Endpoint<StartMissionRequest, List<MissionSt
             return (true, null);
         }
 
-        var conditional = MissionsParser.GetConditional(slotCondition);
+        var conditional = MissionsParser.GetConditionalGroup(slotCondition);
         if (conditional is null)
         {
             return (true, null);
@@ -350,125 +350,8 @@ public class StartMissionEndpoint : Endpoint<StartMissionRequest, List<MissionSt
             return (false, null);
         }
 
-        var isValid = CheckConditional(item, template, conditional);
+        var isValid = conditional.Resolve(item, template);
         return (isValid, item);
-    }
-
-    private bool CheckConditional(ItemEntity item, CardTemplate template, MissionConditional conditional)
-    {
-        switch (conditional.Attribute)
-        {
-            case ConditionalAttribute.IsType:
-                if (Enum.TryParse<CardType>(conditional.Comparison, out var type))
-                {
-                    return CompareValues(conditional.Operator, template.Type, type);
-                }
-
-                Logger.LogWarning("Unknown card type: {Type}", conditional.Comparison);
-                return false;
-
-            case ConditionalAttribute.IsUnitType:
-                if (Enum.TryParse<UnitType>(conditional.Comparison, out var unitType))
-                {
-                    if (template is UnitCardTemplate unitCardTemplate)
-                    {
-                        return CompareValues(conditional.Operator, unitCardTemplate.UnitType, unitType);
-                    }
-
-                    Logger.LogWarning("Card is not a unit card: {TemplateId}", item.TemplateId);
-                    return false;
-                }
-
-                Logger.LogWarning("Unknown unit type: {UnitType}", conditional.Comparison);
-                break;
-
-            case ConditionalAttribute.HasTrait:
-                // TODO: implement this
-                break;
-
-            case ConditionalAttribute.HasFlag:
-                switch (conditional.Comparison)
-                {
-                    case "Hard":
-                        return CompareValues(conditional.Operator, template.IsHard, true);
-
-                    case "Soft":
-                        if (template.Type is not (CardType.Pilot or CardType.Support))
-                        {
-                            return false;
-                        }
-
-                        return CompareValues(conditional.Operator, template.IsHard, false);
-
-                    case "Casualty":
-                        return item.Casualty;
-                }
-
-                return false;
-
-            case ConditionalAttribute.IsName:
-                var nameMapping = MissionsParser.GetMissionNameMapping(conditional.Comparison);
-                if (nameMapping is not null)
-                {
-                    return CompareValues(conditional.Operator, item.TemplateId, nameMapping.TemplateId);
-                }
-
-                Logger.LogWarning("Unknown name mapping: {Name}", conditional.Comparison);
-                return false;
-
-            case ConditionalAttribute.Command:
-                // TODO: implement this
-                break;
-
-            case ConditionalAttribute.IsRarity:
-                if (Enum.TryParse<CardRarity>(conditional.Comparison, out var rarity))
-                {
-                    return CompareValues(conditional.Operator, template.Rarity, rarity);
-                }
-
-                Logger.LogWarning("Unknown rarity: {Rarity}", conditional.Comparison);
-                return false;
-
-            case ConditionalAttribute.Rank:
-                if (int.TryParse(conditional.Comparison, out var rank))
-                {
-                    return CompareValues(conditional.Operator, item.Rank, rank);
-                }
-
-                Logger.LogWarning("Invalid rank: {Rank}", conditional.Comparison);
-                return false;
-        }
-
-        Logger.LogWarning("Unimplemented conditional attribute: {Attribute}", conditional.Attribute);
-        return false;
-    }
-
-    private bool CompareValues(Operator @operator, object obj1, object obj2)
-    {
-        switch (@operator)
-        {
-            case Operator.IsEqual:
-                return obj1.Equals(obj2);
-
-            case Operator.IsNotEqual:
-                return !obj1.Equals(obj2);
-
-            case Operator.IsGreaterThan:
-                return (double) obj1 > (double) obj2;
-
-            case Operator.IsLessThan:
-                return (double) obj1 < (double) obj2;
-
-            case Operator.IsGreaterThanOrEqual:
-                return (double) obj1 >= (double) obj2;
-
-            case Operator.IsLessThanOrEqual:
-                return (double) obj1 <= (double) obj2;
-
-            default:
-                Logger.LogWarning("Unknown operator: {Operator}", @operator);
-                return false;
-        }
     }
 
     private async Task<bool> RequirementsMet(int userId, MissionStage missionData)
