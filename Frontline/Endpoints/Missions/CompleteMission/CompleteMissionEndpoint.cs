@@ -175,14 +175,58 @@ public class CompleteMissionEndpoint : Endpoint<CompleteMissionRequest, List<Mis
                 continue;
             }
 
-            GivePlayerReward(player, items, rewardSet.Reward1, out var playerUpdated1);
-            GivePlayerReward(player, items, rewardSet.Reward2, out var playerUpdated2);
-            GivePlayerReward(player, items, rewardSet.Reward3, out var playerUpdated3);
-            GivePlayerReward(player, items, rewardSet.Reward4, out var playerUpdated4);
-            GivePlayerReward(player, items, rewardSet.Reward5, out var playerUpdated5);
+            var rewardsToGive = new List<string>();
+            if (rewardSet.Type == RewardSetType.All)
+            {
+                rewardsToGive.Add(rewardSet.Reward1);
+                rewardsToGive.Add(rewardSet.Reward2);
+                rewardsToGive.Add(rewardSet.Reward3);
+                rewardsToGive.Add(rewardSet.Reward4);
+                rewardsToGive.Add(rewardSet.Reward5);
+            }
+            else if (rewardSet.Type == RewardSetType.Pick)
+            {
+                var rewardOptions = new List<string>();
+                if (!string.IsNullOrEmpty(rewardSet.Reward1))
+                {
+                    rewardOptions.Add(rewardSet.Reward1);
+                }
 
-            playerUpdated = playerUpdated || playerUpdated1 || playerUpdated2 || playerUpdated3
-                            || playerUpdated4 || playerUpdated5;
+                if (!string.IsNullOrEmpty(rewardSet.Reward2))
+                {
+                    rewardOptions.Add(rewardSet.Reward2);
+                }
+
+                if (!string.IsNullOrEmpty(rewardSet.Reward3))
+                {
+                    rewardOptions.Add(rewardSet.Reward3);
+                }
+
+                if (!string.IsNullOrEmpty(rewardSet.Reward4))
+                {
+                    rewardOptions.Add(rewardSet.Reward4);
+                }
+
+                if (!string.IsNullOrEmpty(rewardSet.Reward5))
+                {
+                    rewardOptions.Add(rewardSet.Reward5);
+                }
+
+                if (rewardOptions.Count > 0)
+                {
+                    var selectedReward = rewardOptions[Random.Shared.Next(rewardOptions.Count)];
+                    rewardsToGive.Add(selectedReward);
+                }
+            }
+
+            foreach (var rewardName in rewardsToGive)
+            {
+                var rewardGiven = await GivePlayerReward(player, items, rewardName);
+                if (rewardGiven)
+                {
+                    playerUpdated = true;
+                }
+            }
         }
 
         if (playerUpdated)
@@ -196,37 +240,57 @@ public class CompleteMissionEndpoint : Endpoint<CompleteMissionRequest, List<Mis
         }
     }
 
-    private void GivePlayerReward(PlayerEntity player, List<ItemEntity> items, string rewardName,
-        out bool playerUpdated)
+    private async Task<bool> GivePlayerReward(PlayerEntity player, List<ItemEntity> items, string rewardName)
     {
-        playerUpdated = false;
-
         var reward = MissionsParser.GetReward(rewardName);
         if (reward is null)
         {
-            return;
+            return false;
         }
 
         var element = reward.Element;
         if (string.IsNullOrEmpty(element) || element == "Null")
         {
-            return;
+            return false;
         }
 
         var elementParts = element.Split(':');
         if (elementParts.Length != 2)
         {
             Logger.LogWarning("Invalid reward element: {Element}", element);
-            return;
+            return false;
         }
 
-        if (elementParts[0] != "Card")
+        var rewardType = elementParts[0];
+        if (rewardType == "Card")
         {
-            Logger.LogWarning("Invalid reward element type: {Type}", elementParts[0]);
-            return;
+            var name = elementParts[1];
+            GiveCardReward(player, items, out var playerUpdated, name, reward);
+            return playerUpdated;
         }
 
-        var name = elementParts[1];
+        if (rewardType == "RewardSet")
+        {
+            var name = elementParts[1];
+            var rewardSet = MissionsParser.GetRewardSet(name);
+            if (rewardSet is null)
+            {
+                Logger.LogWarning("Reward set not found: {Name}", name);
+                return false;
+            }
+
+            await GivePlayerRewards(player, rewardSet);
+            return true;
+        }
+
+        return false;
+    }
+
+    private void GiveCardReward(PlayerEntity player, List<ItemEntity> items, out bool playerUpdated, string name,
+        MissionReward reward)
+    {
+        playerUpdated = false;
+
         var nameMapping = MissionsParser.GetMissionNameMapping(name);
         if (nameMapping is null)
         {
