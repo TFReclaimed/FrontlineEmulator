@@ -88,6 +88,11 @@ public class XmppClient
         _sessionState = SessionState.Connected;
     }
 
+    static XmppClient()
+    {
+        InteractionEventJsonOptions.AddSerializerContextsFromFrontline();
+    }
+
     public void StartReceiverTask()
     {
         _ = Task.Run(ReceiveAsync, _stoppingToken);

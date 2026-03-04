@@ -9,9 +9,16 @@ public class GetGameEndpoint : Endpoint<GetGameRequest, CcgGame>
 {
     private readonly IBattleService _battleService;
 
+    private static readonly JsonSerializerOptions JsonOptions;
+
     public GetGameEndpoint(IBattleService battleService)
     {
         _battleService = battleService;
+    }
+
+    static GetGameEndpoint()
+    {
+        JsonOptions = new JsonSerializerOptions().AddSerializerContextsFromFrontline();
     }
 
     public override void Configure()
@@ -30,7 +37,7 @@ public class GetGameEndpoint : Endpoint<GetGameRequest, CcgGame>
             return;
         }
 
-        var rootNode = JsonSerializer.SerializeToNode(game);
+        var rootNode = JsonSerializer.SerializeToNode(game, JsonOptions);
         rootNode?["GameState"]?["LocalPlayer"] = game.Player1Id == userId ? 0 : 1;
         var json = rootNode!.ToJsonString();
 
