@@ -126,6 +126,7 @@ public class XmppServer : BackgroundService
         
         client.Username = player.Name;
         client.Avatar = player.AvatarId;
+        client.ChatBanEnd = player.ChatBanEnd;
     }
 
     private void OnClientEnteredRoom(XmppClient client, string room)

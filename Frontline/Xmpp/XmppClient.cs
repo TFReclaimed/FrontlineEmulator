@@ -49,7 +49,9 @@ public class XmppClient
     public string Username { get; set; } = string.Empty;
 
     public string Avatar { get; set; } = "avatar001";
-    
+
+    public DateTime? ChatBanEnd { get; set; }
+
     public Jid? Jid { get; private set; }
     
     public event Action<XmppClient>? OnDisconnected;
@@ -385,14 +387,20 @@ public class XmppClient
         _logger.LogInformation("{Client} Entering room: {Room}", this, room);
         OnEnteredRoom?.Invoke(this, room);
     }
-    
+
     private async Task HandleMessage(Message message)
     {
         if (string.IsNullOrEmpty(message.Body) && string.IsNullOrEmpty(message.Subject))
         {
             return;
         }
-        
+
+        if (string.IsNullOrEmpty(Username))
+        {
+            _logger.LogWarning("{Client} Attempted to send message before profile was loaded.", this);
+            return;
+        }
+
         var body = message.Body.Trim();
 
         if (message.Type == MessageType.Chat)
@@ -406,7 +414,7 @@ public class XmppClient
                 await SendPrivateMessage(Jid!, $":::CHALLENGE_REJECTED:::{to}");
                 return;
             }
-            
+
             if (subject == ":::CHALLENGED:::" && to == -1)
             {
                 _logger.LogWarning("{Client} Attempted to challenge system.", this);
@@ -441,7 +449,7 @@ public class XmppClient
             {
                 body = body[..40];
             }
-            
+
             _logger.LogInformation("{Client} [MUC #{To}]: {Message}", this, message.To.Local, body);
             OnMucMessageSent?.Invoke(this, message.To.Local, body);
         }

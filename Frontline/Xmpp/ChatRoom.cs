@@ -96,6 +96,13 @@ public class ChatRoom
             return;
         }
 
+        if (sender.ChatBanEnd.HasValue && sender.ChatBanEnd.Value > DateTime.UtcNow)
+        {
+            var remainingSeconds = (int) (sender.ChatBanEnd.Value - DateTime.UtcNow).TotalSeconds;
+            await SendSystemMessage(sender, $"You are banned from chatting for another {remainingSeconds} seconds.");
+            return;
+        }
+
         if (string.IsNullOrWhiteSpace(message))
         {
             await SendSystemMessage(sender, "Cannot send an empty message.");
