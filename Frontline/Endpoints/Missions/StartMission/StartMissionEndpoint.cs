@@ -267,6 +267,12 @@ public class StartMissionEndpoint : Endpoint<StartMissionRequest, List<MissionSt
             return (true, null);
         }
 
+        var conditional = MissionsParser.GetConditional(slotCondition);
+        if (conditional is null)
+        {
+            return (true, null);
+        }
+
         var item = await _inventoryRepository.GetItemAsync(userId, itemId);
         if (item is null)
         {
@@ -344,12 +350,6 @@ public class StartMissionEndpoint : Endpoint<StartMissionRequest, List<MissionSt
             return (false, null);
         }
 
-        var conditional = MissionsParser.GetConditional(slotCondition);
-        if (conditional is null)
-        {
-            return (false, null);
-        }
-
         var isValid = CheckConditional(item, template, conditional);
         return (isValid, item);
     }
@@ -387,8 +387,24 @@ public class StartMissionEndpoint : Endpoint<StartMissionRequest, List<MissionSt
                 break;
 
             case ConditionalAttribute.HasFlag:
-                // TODO: implement this
-                break;
+                switch (conditional.Comparison)
+                {
+                    case "Hard":
+                        return CompareValues(conditional.Operator, template.IsHard, true);
+
+                    case "Soft":
+                        if (template.Type is not (CardType.Pilot or CardType.Support))
+                        {
+                            return false;
+                        }
+
+                        return CompareValues(conditional.Operator, template.IsHard, false);
+
+                    case "Casualty":
+                        return item.Casualty;
+                }
+
+                return false;
 
             case ConditionalAttribute.IsName:
                 var nameMapping = MissionsParser.GetMissionNameMapping(conditional.Comparison);
