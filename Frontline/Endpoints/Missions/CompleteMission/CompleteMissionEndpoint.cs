@@ -109,6 +109,32 @@ public class CompleteMissionEndpoint : Endpoint<CompleteMissionRequest, List<Mis
             await _inventoryRepository.UpdateAsync(mission.BonusCard2Item);
         }
 
+        if (mission.Synergy1Success)
+        {
+            var synergy = MissionsParser.GetSynergy(missionData.Synergy1);
+            if (synergy is not null)
+            {
+                var synergyReward = MissionsParser.GetRewardSet(synergy.Reward);
+                if (synergyReward is not null)
+                {
+                    await GivePlayerRewards(player, synergyReward);
+                }
+            }
+        }
+
+        if (mission.Synergy2Success)
+        {
+            var synergy = MissionsParser.GetSynergy(missionData.Synergy2);
+            if (synergy is not null)
+            {
+                var synergyReward = MissionsParser.GetRewardSet(synergy.Reward);
+                if (synergyReward is not null)
+                {
+                    await GivePlayerRewards(player, synergyReward);
+                }
+            }
+        }
+
         if (mission.Success)
         {
             var requiredRewardSet = MissionsParser.GetRewardSet(missionData.SuccessReward);

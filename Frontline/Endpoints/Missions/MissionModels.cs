@@ -50,6 +50,18 @@ public class MissionStageStatus
     public string Card2Reward3 { get; set; } = string.Empty;
     public string Card2Reward4 { get; set; } = string.Empty;
     public CardState Card2State { get; set; }
+    public string Synergy0Reward0 { get; set; } = string.Empty;
+    public string Synergy0Reward1 { get; set; } = string.Empty;
+    public string Synergy0Reward2 { get; set; } = string.Empty;
+    public string Synergy0Reward3 { get; set; } = string.Empty;
+    public string Synergy0Reward4 { get; set; } = string.Empty;
+    public string Synergy1Reward0 { get; set; } = string.Empty;
+    public string Synergy1Reward1 { get; set; } = string.Empty;
+    public string Synergy1Reward2 { get; set; } = string.Empty;
+    public string Synergy1Reward3 { get; set; } = string.Empty;
+    public string Synergy1Reward4 { get; set; } = string.Empty;
+    public string Synergy0Effect { get; set; } = string.Empty;
+    public string Synergy1Effect { get; set; } = string.Empty;
 }
 
 public enum MissionStageState

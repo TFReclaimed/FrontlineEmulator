@@ -159,11 +159,54 @@ public class StartMissionEndpoint : Endpoint<StartMissionRequest, List<MissionSt
             bonus2Successful = false;
         }
 
-        var casualty = Random.Shared.NextDouble() <= GetCasualtyChance(missionData, MissionSlotId.Required);
+        var synergy1Success = false;
+        var synergy2Success = false;
+
+        var synergyCasualty = 1f;
+
+        if (missionSuccessful)
+        {
+            synergy1Success = CheckSynergy(missionData.Synergy1, requiredItem!, bonus1Item, bonus2Item);
+            synergy2Success = CheckSynergy(missionData.Synergy2, requiredItem!, bonus1Item, bonus2Item);
+
+            if (synergy1Success)
+            {
+                var synergy = MissionsParser.GetSynergy(missionData.Synergy1);
+                if (synergy is not null && !string.IsNullOrWhiteSpace(synergy.Effect))
+                {
+                    var parts = synergy.Effect.Split('-');
+                    if (parts.Length == 2 && parts[0] == "Casualty")
+                    {
+                        if (float.TryParse(parts[1], out var parsedCasualty))
+                        {
+                            synergyCasualty = parsedCasualty;
+                        }
+                    }
+                }
+            }
+
+            if (synergy2Success)
+            {
+                var synergy = MissionsParser.GetSynergy(missionData.Synergy2);
+                if (synergy is not null && !string.IsNullOrWhiteSpace(synergy.Effect))
+                {
+                    var parts = synergy.Effect.Split('-');
+                    if (parts.Length == 2 && parts[0] == "Casualty")
+                    {
+                        if (float.TryParse(parts[1], out var parsedCasualty))
+                        {
+                            synergyCasualty = parsedCasualty;
+                        }
+                    }
+                }
+            }
+        }
+
+        var casualty = Random.Shared.NextDouble() <= GetCasualtyChance(missionData, MissionSlotId.Required) * synergyCasualty;
         var bonus1Casualty = bonus1Item != null && Random.Shared.NextDouble() <= GetCasualtyChance(missionData,
-            MissionSlotId.Bonus1);
+            MissionSlotId.Bonus1) * synergyCasualty;
         var bonus2Casualty = bonus2Item != null && Random.Shared.NextDouble() <= GetCasualtyChance(missionData,
-            MissionSlotId.Bonus2);
+            MissionSlotId.Bonus2) * synergyCasualty;
 
         var mission = new ActiveMissionEntity
         {
@@ -178,7 +221,9 @@ public class StartMissionEndpoint : Endpoint<StartMissionRequest, List<MissionSt
             Bonus2Success = bonus2Successful,
             Casualty = casualty,
             Bonus1Casualty = bonus1Casualty,
-            Bonus2Casualty = bonus2Casualty
+            Bonus2Casualty = bonus2Casualty,
+            Synergy1Success = synergy1Success,
+            Synergy2Success = synergy2Success
         };
 
         await _activeMissionRepository.AddAsync(mission);
@@ -195,6 +240,12 @@ public class StartMissionEndpoint : Endpoint<StartMissionRequest, List<MissionSt
         var requiredRewardSet = MissionsParser.GetRewardSet(missionData.SuccessReward);
         var bonus1RewardSet = MissionsParser.GetBonusRewardSet(missionData.Bonus1SlotCondition);
         var bonus2RewardSet = MissionsParser.GetBonusRewardSet(missionData.Bonus2SlotCondition);
+
+        var synergy1 = MissionsParser.GetSynergy(missionData.Synergy1);
+        var synergy2 = MissionsParser.GetSynergy(missionData.Synergy2);
+
+        var synergy1RewardSet = synergy1 != null ? MissionsParser.GetRewardSet(synergy1.Reward) : null;
+        var synergy2RewardSet = synergy2 != null ? MissionsParser.GetRewardSet(synergy2.Reward) : null;
 
         var response = new List<MissionStageStatus>
         {
@@ -233,7 +284,19 @@ public class StartMissionEndpoint : Endpoint<StartMissionRequest, List<MissionSt
                 Card2Reward2 = bonus2RewardSet != null && bonus2Successful ? bonus2RewardSet.Reward3 : "",
                 Card2Reward3 = bonus2RewardSet != null && bonus2Successful ? bonus2RewardSet.Reward4 : "",
                 Card2Reward4 = bonus2RewardSet != null && bonus2Successful ? bonus2RewardSet.Reward5 : "",
-                Card2State = bonus2Casualty ? CardState.Casualty : CardState.OnMission
+                Card2State = bonus2Casualty ? CardState.Casualty : CardState.OnMission,
+                Synergy0Reward0 = synergy1RewardSet != null && synergy1Success ? synergy1RewardSet.Reward1 : "",
+                Synergy0Reward1 = synergy1RewardSet != null && synergy1Success ? synergy1RewardSet.Reward2 : "",
+                Synergy0Reward2 = synergy1RewardSet != null && synergy1Success ? synergy1RewardSet.Reward3 : "",
+                Synergy0Reward3 = synergy1RewardSet != null && synergy1Success ? synergy1RewardSet.Reward4 : "",
+                Synergy0Reward4 = synergy1RewardSet != null && synergy1Success ? synergy1RewardSet.Reward5 : "",
+                Synergy1Reward0 = synergy2RewardSet != null && synergy2Success ? synergy2RewardSet.Reward1 : "",
+                Synergy1Reward1 = synergy2RewardSet != null && synergy2Success ? synergy2RewardSet.Reward2 : "",
+                Synergy1Reward2 = synergy2RewardSet != null && synergy2Success ? synergy2RewardSet.Reward3 : "",
+                Synergy1Reward3 = synergy2RewardSet != null && synergy2Success ? synergy2RewardSet.Reward4 : "",
+                Synergy1Reward4 = synergy2RewardSet != null && synergy2Success ? synergy2RewardSet.Reward5 : "",
+                Synergy0Effect = synergy1 != null && synergy1Success ? synergy1.Effect : "",
+                Synergy1Effect = synergy2 != null && synergy2Success ? synergy2.Effect : ""
             }
         };
 
@@ -654,6 +717,83 @@ public class StartMissionEndpoint : Endpoint<StartMissionRequest, List<MissionSt
 
         casualty = 0f;
         return false;
+    }
+
+    private static bool CheckSynergy(string synergyName, ItemEntity req, ItemEntity? bonus1, ItemEntity? bonus2)
+    {
+        var synergy = MissionsParser.GetSynergy(synergyName);
+        if (synergy is null)
+        {
+            return false;
+        }
+
+        var isValid = SynergyCheckCard(synergy, req);
+        if (isValid && synergy.NeedsOne)
+        {
+            return true;
+        }
+
+        if (!isValid && synergy.NeedsAll)
+        {
+            return false;
+        }
+
+        if (bonus1 != null)
+        {
+            isValid = SynergyCheckCard(synergy, bonus1);
+            if (isValid && synergy.NeedsOne)
+            {
+                return true;
+            }
+
+            if (!isValid && synergy.NeedsAll)
+            {
+                return false;
+            }
+        }
+
+        if (bonus2 != null)
+        {
+            isValid = SynergyCheckCard(synergy, bonus2);
+            if (isValid && synergy.NeedsOne)
+            {
+                return true;
+            }
+
+            if (!isValid && synergy.NeedsAll)
+            {
+                return false;
+            }
+        }
+
+        if (synergy.NeedsOne)
+        {
+            return false;
+        }
+
+        if (synergy.NeedsAll)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    private static bool SynergyCheckCard(MissionSynergy synergy, ItemEntity card)
+    {
+        var conditional = MissionsParser.GetConditionalGroup(synergy.Id);
+        if (conditional is null)
+        {
+            return false;
+        }
+
+        var template = RulesetParser.GetCardTemplate(card.TemplateId);
+        if (template is null)
+        {
+            return false;
+        }
+
+        return conditional.Resolve(card, template);
     }
 
     private enum MissionSlotId

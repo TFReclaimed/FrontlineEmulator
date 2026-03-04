@@ -72,8 +72,7 @@ Use AssetRipper to extract these files from the Unity project.
   - 🚧 Start mission
     - Missing various checks with some likely being incorrect
   - ✅ Cancel mission
-  - 🚧 Complete mission
-    - What is a synergy?
+  - ✅ Complete mission
   - ✅ Revive card
   - ⛔ Reputation
     - I have no idea how this mechanic is supposed to work

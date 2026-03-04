@@ -156,6 +156,16 @@ public static class MissionsParser
         return Data?.Rewards.TryGetValue(name, out var reward) == true ? reward : null;
     }
 
+    public static MissionSynergy? GetSynergy(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return null;
+        }
+
+        return Data?.Synergies.TryGetValue(name, out var synergy) == true ? synergy : null;
+    }
+
     public static MissionRegion? GetRegion(PveRegion pveRegion)
     {
         var name = pveRegion.ToString();

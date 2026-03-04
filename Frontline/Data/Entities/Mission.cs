@@ -38,4 +38,6 @@ public class ActiveMissionEntity
     public bool Casualty { get; set; }
     public bool Bonus1Casualty { get; set; }
     public bool Bonus2Casualty { get; set; }
+    public bool Synergy1Success { get; set; }
+    public bool Synergy2Success { get; set; }
 }

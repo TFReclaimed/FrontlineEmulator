@@ -56,6 +56,12 @@ public class GetActiveMissionsEndpoint : EndpointWithoutRequest<List<MissionStag
                 var bonus1RewardSet = MissionsParser.GetBonusRewardSet(mission.Bonus1SlotCondition);
                 var bonus2RewardSet = MissionsParser.GetBonusRewardSet(mission.Bonus2SlotCondition);
 
+                var synergy1 = MissionsParser.GetSynergy(mission.Synergy1);
+                var synergy2 = MissionsParser.GetSynergy(mission.Synergy2);
+
+                var synergy1RewardSet = synergy1 != null ? MissionsParser.GetRewardSet(synergy1.Reward) : null;
+                var synergy2RewardSet = synergy2 != null ? MissionsParser.GetRewardSet(synergy2.Reward) : null;
+
                 response.Add(new MissionStageStatus
                 {
                     Region = mission.Region,
@@ -93,7 +99,19 @@ public class GetActiveMissionsEndpoint : EndpointWithoutRequest<List<MissionStag
                     Card2Reward2 = bonus2RewardSet != null && missionEntity.Bonus2Success ? bonus2RewardSet.Reward3 : "",
                     Card2Reward3 = bonus2RewardSet != null && missionEntity.Bonus2Success ? bonus2RewardSet.Reward4 : "",
                     Card2Reward4 = bonus2RewardSet != null && missionEntity.Bonus2Success ? bonus2RewardSet.Reward5 : "",
-                    Card2State = missionEntity.Bonus2Casualty ? CardState.Casualty : CardState.OnMission
+                    Card2State = missionEntity.Bonus2Casualty ? CardState.Casualty : CardState.OnMission,
+                    Synergy0Reward0 = synergy1RewardSet != null && missionEntity.Synergy1Success ? synergy1RewardSet.Reward1 : "",
+                    Synergy0Reward1 = synergy1RewardSet != null && missionEntity.Synergy1Success ? synergy1RewardSet.Reward2 : "",
+                    Synergy0Reward2 = synergy1RewardSet != null && missionEntity.Synergy1Success ? synergy1RewardSet.Reward3 : "",
+                    Synergy0Reward3 = synergy1RewardSet != null && missionEntity.Synergy1Success ? synergy1RewardSet.Reward4 : "",
+                    Synergy0Reward4 = synergy1RewardSet != null && missionEntity.Synergy1Success ? synergy1RewardSet.Reward5 : "",
+                    Synergy1Reward0 = synergy2RewardSet != null && missionEntity.Synergy2Success ? synergy2RewardSet.Reward1 : "",
+                    Synergy1Reward1 = synergy2RewardSet != null && missionEntity.Synergy2Success ? synergy2RewardSet.Reward2 : "",
+                    Synergy1Reward2 = synergy2RewardSet != null && missionEntity.Synergy2Success ? synergy2RewardSet.Reward3 : "",
+                    Synergy1Reward3 = synergy2RewardSet != null && missionEntity.Synergy2Success ? synergy2RewardSet.Reward4 : "",
+                    Synergy1Reward4 = synergy2RewardSet != null && missionEntity.Synergy2Success ? synergy2RewardSet.Reward5 : "",
+                    Synergy0Effect = synergy1 != null && missionEntity.Synergy1Success ? synergy1.Effect : "",
+                    Synergy1Effect = synergy2 != null && missionEntity.Synergy2Success ? synergy2.Effect : ""
                 });
             }
         }

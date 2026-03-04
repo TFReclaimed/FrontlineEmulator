@@ -134,7 +134,11 @@ public class MissionStage
     // Yes, this is a typo in the original data.
     [JsonPropertyName("B2MaxRank:I")]
     public int Bonus2SlotMinRank { get; set; }
-    
+    [JsonPropertyName("Synergy1:X")]
+    public string Synergy1 { get; set; } = string.Empty;
+    [JsonPropertyName("Synergy2:X")]
+    public string Synergy2 { get; set; } = string.Empty;
+
     public bool IsCalculated => MissionType is MissionType.Elective or MissionType.Once;
     
     public VisibilityRarity VisibilityRarity
@@ -267,6 +271,9 @@ public class MissionSynergy
     public string Effect { get; set; } = string.Empty;
     [JsonPropertyName("Reward:X")]
     public string Reward { get; set; } = string.Empty;
+
+    public bool NeedsOne => Grouping == MissionSynergyGrouping.One;
+    public bool NeedsAll => Grouping == MissionSynergyGrouping.All;
 }
 
 public enum MissionSynergyGrouping
