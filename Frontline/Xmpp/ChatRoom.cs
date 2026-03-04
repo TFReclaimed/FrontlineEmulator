@@ -23,6 +23,8 @@ public class ChatRoom
 
     private readonly List<XmppClient> _clients;
 
+    private readonly Dictionary<XmppClient, DateTime> _lastMessageTimes;
+
     private readonly List<Message> _messages;
 
     private ChatRoom(IOptions<ChatOptions> chatOptions, string name, List<Message> history)
@@ -31,6 +33,7 @@ public class ChatRoom
         _name = name;
         _systemJid = new Jid(_name, Globals.XmppMucAddress, "-1");
         _clients = [];
+        _lastMessageTimes = [];
         _messages = history;
     }
 
@@ -91,6 +94,25 @@ public class ChatRoom
         if (sender.Jid is null)
         {
             return;
+        }
+
+        if (string.IsNullOrWhiteSpace(message))
+        {
+            await SendSystemMessage(sender, "Cannot send an empty message.");
+            return;
+        }
+
+        var cooldown = _chatOptions.Value.MessageCooldownMilliseconds;
+        if (cooldown > 0)
+        {
+            if (_lastMessageTimes.TryGetValue(sender, out var lastMessageTime)
+                && (DateTime.UtcNow - lastMessageTime).TotalMilliseconds < cooldown)
+            {
+                await SendSystemMessage(sender, "Please wait before sending another message.");
+                return;
+            }
+
+            _lastMessageTimes[sender] = DateTime.UtcNow;
         }
 
         var messageEntity = new ChatMessageEntity
@@ -184,7 +206,7 @@ public class ChatRoom
             return;
         }
 
-        var welcomeMessage = new Message
+        var messageElement = new Message
         {
             From = _systemJid,
             Body = message,
@@ -192,9 +214,9 @@ public class ChatRoom
             Delay = new Delay(DateTime.UtcNow)
         };
 
-        welcomeMessage.SetAttribute("nck", "<color=red>SYSTEM</color>");
-        welcomeMessage.SetAttribute("img", "avatar006");
+        messageElement.SetAttribute("nck", "<color=red>SYSTEM</color>");
+        messageElement.SetAttribute("img", "avatar006");
 
-        await client.SendAsync(welcomeMessage);
+        await client.SendAsync(messageElement);
     }
 }
