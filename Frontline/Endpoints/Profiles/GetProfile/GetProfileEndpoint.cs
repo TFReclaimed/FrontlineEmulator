@@ -1,17 +1,22 @@
 using FastEndpoints;
 using Frontline.Data.Repositories;
 using Frontline.Extensions;
+using Frontline.Services;
 
 namespace Frontline.Endpoints.Profiles.GetProfile;
 
 public class GetProfileEndpoint : Endpoint<GetProfileRequest, ProfileDetails>
 {
+    private readonly ISupplyService _supplyService;
+
     private readonly IPlayerRepository _playerRepository;
 
     private readonly IInventoryRepository _inventoryRepository;
 
-    public GetProfileEndpoint(IPlayerRepository playerRepository, IInventoryRepository inventoryRepository)
+    public GetProfileEndpoint(ISupplyService supplyService, IPlayerRepository playerRepository,
+        IInventoryRepository inventoryRepository)
     {
+        _supplyService = supplyService;
         _playerRepository = playerRepository;
         _inventoryRepository = inventoryRepository;
     }
@@ -47,6 +52,11 @@ public class GetProfileEndpoint : Endpoint<GetProfileRequest, ProfileDetails>
         {
             await Send.NotFoundAsync();
             return;
+        }
+
+        if (req.ProfileType == ProfileType.Private)
+        {
+            await _supplyService.UpdateSupplyAsync(player);
         }
 
         var profile = ProfileDetails.FromEntity(player);

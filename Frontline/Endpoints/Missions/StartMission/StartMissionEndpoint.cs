@@ -5,11 +5,14 @@ using Frontline.Extensions;
 using Frontline.Game;
 using Frontline.Game.Card;
 using Frontline.Missions;
+using Frontline.Services;
 
 namespace Frontline.Endpoints.Missions.StartMission;
 
 public class StartMissionEndpoint : Endpoint<StartMissionRequest, List<MissionStageStatus>>
 {
+    private readonly ISupplyService _supplyService;
+
     private readonly IPlayerRepository _playerRepository;
 
     private readonly IActiveMissionRepository _activeMissionRepository;
@@ -18,9 +21,11 @@ public class StartMissionEndpoint : Endpoint<StartMissionRequest, List<MissionSt
 
     private readonly IInventoryRepository _inventoryRepository;
 
-    public StartMissionEndpoint(IPlayerRepository playerRepository, IActiveMissionRepository activeMissionRepository,
-        IFinishedMissionRepository finishedMissionRepository, IInventoryRepository inventoryRepository)
+    public StartMissionEndpoint(ISupplyService supplyService, IPlayerRepository playerRepository,
+        IActiveMissionRepository activeMissionRepository, IFinishedMissionRepository finishedMissionRepository,
+        IInventoryRepository inventoryRepository)
     {
+        _supplyService = supplyService;
         _playerRepository = playerRepository;
         _activeMissionRepository = activeMissionRepository;
         _finishedMissionRepository = finishedMissionRepository;
@@ -43,6 +48,8 @@ public class StartMissionEndpoint : Endpoint<StartMissionRequest, List<MissionSt
             await Send.NotFoundAsync();
             return;
         }
+
+        await _supplyService.UpdateSupplyAsync(player);
 
         var key = MissionsParser.GetMissionKey(req.Key.Region, req.Key.Faction, req.Key.MissionId);
 

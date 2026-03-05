@@ -76,11 +76,9 @@ Use AssetRipper to extract these files from the Unity project.
   - ✅ Revive card
   - ⛔ Reputation
     - I have no idea how this mechanic is supposed to work
-  - ⛔ Supply auto generation
+  - ✅ Supply auto gain
 - ✅ Leaderboards
   - ✅ PvP
-  - ⛔ PvE
-    - I don't think you can even access this in the game
 - ✅ Guilds
   - ✅ Search guilds
   - ✅ Create guild

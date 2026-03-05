@@ -31,7 +31,8 @@ public class PlayerRepository : RepositoryBase<PlayerEntity>, IPlayerRepository
             Trophies = 25,
             Tokens = 25,
             HighestTrophies = 25,
-            Xp = 325
+            Xp = 325,
+            LastSupplySync = DateTime.UtcNow
         };
 
         await AddAsync(player);

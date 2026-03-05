@@ -13,6 +13,8 @@ public class LoginEndpoint : Endpoint<LoginRequest, PlayerProfile>
 {
     private readonly IToyService _toyService;
 
+    private readonly ISupplyService _supplyService;
+
     private readonly IPlayerRepository _playerRepository;
 
     private readonly IInventoryRepository _inventoryRepository;
@@ -23,11 +25,12 @@ public class LoginEndpoint : Endpoint<LoginRequest, PlayerProfile>
 
     private readonly IOptions<JwtOptions> _jwtOptions;
 
-    public LoginEndpoint(IToyService toyService, IPlayerRepository playerRepository,
+    public LoginEndpoint(IToyService toyService, ISupplyService supplyService, IPlayerRepository playerRepository,
         IInventoryRepository inventoryRepository, IDropshipRepository dropshipRepository,
         IOptions<StarterItemOptions> starterItemOptions, IOptions<JwtOptions> jwtOptions)
     {
         _toyService = toyService;
+        _supplyService = supplyService;
         _playerRepository = playerRepository;
         _inventoryRepository = inventoryRepository;
         _dropshipRepository = dropshipRepository;
@@ -72,6 +75,8 @@ public class LoginEndpoint : Endpoint<LoginRequest, PlayerProfile>
         {
             await CreateStarterItems(userId);
         }
+
+        await _supplyService.UpdateSupplyAsync(player);
 
         var jwtToken = JwtBearer.CreateToken(o =>
         {

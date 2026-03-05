@@ -56,6 +56,7 @@ builder.Services.AddSingleton<IToyService, ToyService>();
 builder.Services.AddSingleton<IUserService, UserService>();
 builder.Services.AddSingleton<IBattleService, BattleService>();
 builder.Services.AddSingleton<IMatchmakingService, MatchmakingService>();
+builder.Services.AddScoped<ISupplyService, SupplyService>();
 
 builder.Services.AddHostedService<MatchmakingWorker>();
 builder.Services.AddHostedService<BattleCleanupWorker>();

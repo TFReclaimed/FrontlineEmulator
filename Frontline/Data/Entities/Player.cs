@@ -25,6 +25,7 @@ public class PlayerEntity
     public int BoosterPackCount { get; set; }
     public DateTime LastGiftSent { get; set; }
     public DateTime? ChatBanEnd { get; set; }
+    public DateTime LastSupplySync { get; set; }
 
     [NotMapped]
     public string GuildName { get; set; } = string.Empty;
