@@ -67,15 +67,14 @@ Use AssetRipper to extract these files from the Unity project.
   - ✅ Surrender
   - ✅ Emote
   - ✅ Match results
-- 🚧 Missions
+- ✅ Missions
   - ✅ Get mission list
-  - 🚧 Start mission
-    - Missing various checks with some likely being incorrect
+  - ✅ Start mission
   - ✅ Cancel mission
   - ✅ Complete mission
   - ✅ Revive card
   - ⛔ Reputation
-    - I have no idea how this mechanic is supposed to work
+    - Not enough clues in the game code on how to implement this
   - ✅ Supply auto gain
 - ✅ Leaderboards
   - ✅ PvP

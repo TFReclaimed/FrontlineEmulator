@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Frontline.Battle;
+using Frontline.Missions;
 
 namespace Frontline.Game.Card;
 
@@ -15,6 +16,8 @@ public class CardTemplate
     public CardRarity Rarity { get; set; }
     public CardType Type { get; set; }
     public bool IsHard { get; set; }
+    [JsonConverter(typeof(JsonStringEnumConverter<Faction>))]
+    public Faction Faction { get; set; }
     public sbyte Cost { get; set; }
     [JsonPropertyName("rank")]
     public byte MinimumRank { get; set; }

@@ -324,25 +324,6 @@ public class StartMissionEndpoint : Endpoint<StartMissionRequest, List<MissionSt
             return (true, null);
         }
 
-        var slotCondition = slot switch
-        {
-            MissionSlotId.Required => missionData.RequiredSlotCondition,
-            MissionSlotId.Bonus1 => missionData.Bonus1SlotCondition,
-            MissionSlotId.Bonus2 => missionData.Bonus2SlotCondition,
-            _ => null
-        };
-
-        if (string.IsNullOrWhiteSpace(slotCondition))
-        {
-            return (true, null);
-        }
-
-        var conditional = MissionsParser.GetConditionalGroup(slotCondition);
-        if (conditional is null)
-        {
-            return (true, null);
-        }
-
         var item = await _inventoryRepository.GetItemAsync(userId, itemId);
         if (item is null)
         {
@@ -357,6 +338,18 @@ public class StartMissionEndpoint : Endpoint<StartMissionRequest, List<MissionSt
             return (false, null);
         }
 
+        if (item.IsInDropship && item.DropshipId != 0 && item.DropshipId != 1)
+        {
+            Logger.LogWarning("Card {ItemId} is in dropship {DropshipId}", item.ItemId, item.DropshipId);
+            return (false, null);
+        }
+
+        if (item.Casualty)
+        {
+            Logger.LogWarning("Card {ItemId} is a casualty", item.ItemId);
+            return (false, null);
+        }
+
         var minCommand = slot switch
         {
             MissionSlotId.Required => missionData.RequiredSlotMinCommand,
@@ -364,6 +357,13 @@ public class StartMissionEndpoint : Endpoint<StartMissionRequest, List<MissionSt
             MissionSlotId.Bonus2 => missionData.Bonus2SlotMinCommand,
             _ => 0
         };
+
+        if (minCommand != 0 && template.Cost < minCommand)
+        {
+            Logger.LogWarning("Card command cost too low. ID: {ItemId}, Cost: {Cost}, MinCost: {MinCost}",
+                item.ItemId, template.Cost, minCommand);
+            return (false, null);
+        }
 
         var maxCommand = slot switch
         {
@@ -373,6 +373,13 @@ public class StartMissionEndpoint : Endpoint<StartMissionRequest, List<MissionSt
             _ => 0
         };
 
+        if (maxCommand != 0 && template.Cost > maxCommand)
+        {
+            Logger.LogWarning("Card command cost too high. ID: {ItemId}, Cost: {Cost}, MaxCost: {MaxCost}",
+                item.ItemId, template.Cost, maxCommand);
+            return (false, null);
+        }
+
         var minRarity = slot switch
         {
             MissionSlotId.Required => missionData.RequiredSlotMinRarity,
@@ -380,6 +387,21 @@ public class StartMissionEndpoint : Endpoint<StartMissionRequest, List<MissionSt
             MissionSlotId.Bonus2 => missionData.Bonus2SlotMinRarity,
             _ => CardRarity.Common
         };
+
+        if (minRarity != CardRarity.NumRarities && template.Rarity < minRarity)
+        {
+            Logger.LogWarning("Card rarity too low. ID: {ItemId}, Rarity: {Rarity}, MinRarity: {MinRarity}",
+                item.ItemId, template.Rarity, minRarity);
+            return (false, null);
+        }
+
+        if (slot == MissionSlotId.Required && missionData.RequiredSlotMaxRarity != CardRarity.NumRarities &&
+            template.Rarity > missionData.RequiredSlotMaxRarity)
+        {
+            Logger.LogWarning("Card rarity too high. ID: {ItemId}, Rarity: {Rarity}, MaxRarity: {MaxRarity}",
+                item.ItemId, template.Rarity, missionData.RequiredSlotMaxRarity);
+            return (false, null);
+        }
 
         var minRank = slot switch
         {
@@ -389,35 +411,38 @@ public class StartMissionEndpoint : Endpoint<StartMissionRequest, List<MissionSt
             _ => 0
         };
 
-        // TODO: add command check
-
-        if (template.Rarity < minRarity && minRarity != CardRarity.NumRarities)
-        {
-            Logger.LogWarning("Card rarity too low. ID: {ItemId}, Rarity: {Rarity}, MinRarity: {MinRarity}",
-                item.ItemId, template.Rarity, minRarity);
-            return (false, null);
-        }
-
-        if (slot == MissionSlotId.Required
-            && missionData.RequiredSlotMaxRarity != CardRarity.Common
-            && template.Rarity > missionData.RequiredSlotMaxRarity)
-        {
-            Logger.LogWarning("Card rarity too high. ID: {ItemId}, Rarity: {Rarity}, MaxRarity: {MaxRarity}",
-                item.ItemId, template.Rarity, missionData.RequiredSlotMaxRarity);
-            return (false, null);
-        }
-
-        if (item.Rank < minRank)
+        if (minRank != 0 && item.Rank < minRank)
         {
             Logger.LogWarning("Card rank too low. ID: {ItemId}, Rank: {Rank}, MinRank: {MinRank}",
                 item.ItemId, item.Rank, minRank);
             return (false, null);
         }
 
-        if (item.IsInDropship && item.DropshipId != 0 && item.DropshipId != 1)
+        if (missionData.Faction != Faction.Neutral && template.Faction != Faction.Neutral &&
+            missionData.Faction != template.Faction)
         {
-            Logger.LogWarning("Card {ItemId} is in dropship {DropshipId}", item.ItemId, item.DropshipId);
+            Logger.LogWarning("Card faction mismatch. ID: {ItemId}, CardFaction: {CardFaction}, MissionFaction: {MissionFaction}",
+                item.ItemId, template.Faction, missionData.Faction);
             return (false, null);
+        }
+
+        var slotCondition = slot switch
+        {
+            MissionSlotId.Required => missionData.RequiredSlotCondition,
+            MissionSlotId.Bonus1 => missionData.Bonus1SlotCondition,
+            MissionSlotId.Bonus2 => missionData.Bonus2SlotCondition,
+            _ => null
+        };
+
+        if (string.IsNullOrWhiteSpace(slotCondition))
+        {
+            return (true, item);
+        }
+
+        var conditional = MissionsParser.GetConditionalGroup(slotCondition);
+        if (conditional is null)
+        {
+            return (true, item);
         }
 
         var isValid = conditional.Resolve(item, template);
