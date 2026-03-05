@@ -80,18 +80,7 @@ public class ConditionalStatement
             }
         }
 
-        if (conjunction == Conjunction.And)
-        {
-            conjunction = GetFinalConjunction();
-            return true;
-        }
-
-        if (conjunction == Conjunction.Or)
-        {
-            conjunction = GetFinalConjunction();
-            return false;
-        }
-
+        conjunction = GetFinalConjunction();
         return result;
     }
 
@@ -130,7 +119,11 @@ public class ConditionalStatement
 
     private static bool HasTrait(MissionConditional conditional, ItemEntity item, CardTemplate template)
     {
-        // TODO: Implement this
+        if (int.TryParse(conditional.Comparison, out var traitId))
+        {
+            return template.Traits.Contains(traitId);
+        }
+
         return false;
     }
 
@@ -169,7 +162,11 @@ public class ConditionalStatement
 
     private static bool CompareCommand(MissionConditional conditional, ItemEntity item, CardTemplate template)
     {
-        // TODO: Implement this
+        if (float.TryParse(conditional.Comparison, out var cost))
+        {
+            return CompareValues(conditional.Operator, template.Cost, cost);
+        }
+
         return false;
     }
 
@@ -204,16 +201,16 @@ public class ConditionalStatement
                 return !obj1.Equals(obj2);
 
             case Operator.IsGreaterThan:
-                return (double) obj1 > (double) obj2;
+                return Convert.ToDouble(obj1) > Convert.ToDouble(obj2);
 
             case Operator.IsLessThan:
-                return (double) obj1 < (double) obj2;
+                return Convert.ToDouble(obj1) < Convert.ToDouble(obj2);
 
             case Operator.IsGreaterThanOrEqual:
-                return (double) obj1 >= (double) obj2;
+                return Convert.ToDouble(obj1) >= Convert.ToDouble(obj2);
 
             case Operator.IsLessThanOrEqual:
-                return (double) obj1 <= (double) obj2;
+                return Convert.ToDouble(obj1) <= Convert.ToDouble(obj2);
 
             default:
                 return false;

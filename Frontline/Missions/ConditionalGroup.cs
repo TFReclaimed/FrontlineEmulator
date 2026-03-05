@@ -21,12 +21,12 @@ public class ConditionalGroup
 
     public bool Resolve(ItemEntity itemEntity, CardTemplate template)
     {
-        var conjunction = Conjunction.Invalid;
         var result = false;
 
         foreach (var statement in _statements.Values)
         {
-            result = statement.Resolve(itemEntity, template, out conjunction);
+            result = statement.Resolve(itemEntity, template, out var conjunction);
+
             if (conjunction == Conjunction.And && !result)
             {
                 return false;
@@ -36,16 +36,6 @@ public class ConditionalGroup
             {
                 return true;
             }
-        }
-
-        if (conjunction == Conjunction.And)
-        {
-            return true;
-        }
-
-        if (conjunction == Conjunction.Or)
-        {
-            return false;
         }
 
         return result;
