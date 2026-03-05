@@ -164,7 +164,13 @@ public class ConditionalStatement
     {
         if (float.TryParse(conditional.Comparison, out var cost))
         {
-            return CompareValues(conditional.Operator, template.Cost, cost);
+            var cardCost = template.Cost;
+            if (template is UnitCardTemplate unitCardTemplate)
+            {
+                cardCost = unitCardTemplate.GetRankedTemplate(item.Rank).Cost;
+            }
+
+            return CompareValues(conditional.Operator, cardCost, cost);
         }
 
         return false;

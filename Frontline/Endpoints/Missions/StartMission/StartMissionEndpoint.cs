@@ -358,10 +358,16 @@ public class StartMissionEndpoint : Endpoint<StartMissionRequest, List<MissionSt
             _ => 0
         };
 
-        if (minCommand != 0 && template.Cost < minCommand)
+        var cardCost = template.Cost;
+        if (template is UnitCardTemplate unitCardTemplate)
+        {
+            cardCost = unitCardTemplate.GetRankedTemplate(item.Rank).Cost;
+        }
+
+        if (minCommand != 0 && cardCost < minCommand)
         {
             Logger.LogWarning("Card command cost too low. ID: {ItemId}, Cost: {Cost}, MinCost: {MinCost}",
-                item.ItemId, template.Cost, minCommand);
+                item.ItemId, cardCost, minCommand);
             return (false, null);
         }
 
@@ -373,10 +379,10 @@ public class StartMissionEndpoint : Endpoint<StartMissionRequest, List<MissionSt
             _ => 0
         };
 
-        if (maxCommand != 0 && template.Cost > maxCommand)
+        if (maxCommand != 0 && cardCost > maxCommand)
         {
             Logger.LogWarning("Card command cost too high. ID: {ItemId}, Cost: {Cost}, MaxCost: {MaxCost}",
-                item.ItemId, template.Cost, maxCommand);
+                item.ItemId, cardCost, maxCommand);
             return (false, null);
         }
 
