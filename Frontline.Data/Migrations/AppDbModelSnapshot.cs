@@ -3,20 +3,17 @@ using System;
 using Frontline.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Frontline.Migrations
+namespace Frontline.Data.Migrations
 {
     [DbContext(typeof(AppDb))]
-    [Migration("20260304154037_ChatMuting")]
-    partial class ChatMuting
+    partial class AppDbModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -64,6 +61,12 @@ namespace Frontline.Migrations
                     b.Property<bool>("Success")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("Synergy1Success")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("Synergy2Success")
+                        .HasColumnType("boolean");
+
                     b.HasKey("UserId", "MissionKey");
 
                     b.HasIndex("UserId", "BonusCard1ItemId");
@@ -72,7 +75,7 @@ namespace Frontline.Migrations
 
                     b.HasIndex("UserId", "RequiredCardItemId");
 
-                    b.ToTable("ActiveMissions");
+                    b.ToTable("ActiveMissions", (string)null);
                 });
 
             modelBuilder.Entity("Frontline.Data.Entities.ChatMessageEntity", b =>
@@ -103,7 +106,7 @@ namespace Frontline.Migrations
 
                     b.HasIndex("SenderId");
 
-                    b.ToTable("ChatMessages");
+                    b.ToTable("ChatMessages", (string)null);
                 });
 
             modelBuilder.Entity("Frontline.Data.Entities.DropshipEntity", b =>
@@ -124,7 +127,7 @@ namespace Frontline.Migrations
 
                     b.HasIndex("UserId", "ItemId");
 
-                    b.ToTable("Dropships");
+                    b.ToTable("Dropships", (string)null);
                 });
 
             modelBuilder.Entity("Frontline.Data.Entities.FinishedMissionEntity", b =>
@@ -138,7 +141,7 @@ namespace Frontline.Migrations
 
                     b.HasKey("UserId", "MissionKey");
 
-                    b.ToTable("FinishedMissions");
+                    b.ToTable("FinishedMissions", (string)null);
                 });
 
             modelBuilder.Entity("Frontline.Data.Entities.GuildEntity", b =>
@@ -173,7 +176,7 @@ namespace Frontline.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Guilds");
+                    b.ToTable("Guilds", (string)null);
                 });
 
             modelBuilder.Entity("Frontline.Data.Entities.GuildMemberEntity", b =>
@@ -193,7 +196,7 @@ namespace Frontline.Migrations
 
                     b.HasIndex("GuildId");
 
-                    b.ToTable("GuildMembers");
+                    b.ToTable("GuildMembers", (string)null);
                 });
 
             modelBuilder.Entity("Frontline.Data.Entities.ItemEntity", b =>
@@ -218,7 +221,7 @@ namespace Frontline.Migrations
 
                     b.HasKey("UserId", "ItemId");
 
-                    b.ToTable("Items");
+                    b.ToTable("Items", (string)null);
                 });
 
             modelBuilder.Entity("Frontline.Data.Entities.PlayerEntity", b =>
@@ -249,6 +252,9 @@ namespace Frontline.Migrations
                     b.Property<DateTime>("LastGiftSent")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<DateTime>("LastSupplySync")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("MatchesPlayed")
                         .HasColumnType("integer");
 
@@ -277,7 +283,7 @@ namespace Frontline.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Players");
+                    b.ToTable("Players", (string)null);
                 });
 
             modelBuilder.Entity("Frontline.Data.Entities.ActiveMissionEntity", b =>

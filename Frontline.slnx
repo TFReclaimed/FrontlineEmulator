@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="Frontline.Data/Frontline.Data.csproj" />
   <Project Path="Frontline/Frontline.csproj" />
 </Solution>

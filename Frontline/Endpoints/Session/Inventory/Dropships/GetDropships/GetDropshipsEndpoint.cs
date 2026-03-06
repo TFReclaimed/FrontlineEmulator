@@ -1,5 +1,4 @@
 using FastEndpoints;
-using Frontline.Data.Entities;
 using Frontline.Data.Repositories;
 using Frontline.Extensions;
 using Frontline.Game;

@@ -9,18 +9,18 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Frontline.Migrations
+namespace Frontline.Data.Migrations
 {
     [DbContext(typeof(AppDb))]
-    [Migration("20250723194655_Initial")]
-    partial class Initial
+    [Migration("20260304222312_MissionSynergies")]
+    partial class MissionSynergies
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.7")
+                .HasAnnotation("ProductVersion", "10.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -64,6 +64,12 @@ namespace Frontline.Migrations
                     b.Property<bool>("Success")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("Synergy1Success")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("Synergy2Success")
+                        .HasColumnType("boolean");
+
                     b.HasKey("UserId", "MissionKey");
 
                     b.HasIndex("UserId", "BonusCard1ItemId");
@@ -73,6 +79,37 @@ namespace Frontline.Migrations
                     b.HasIndex("UserId", "RequiredCardItemId");
 
                     b.ToTable("ActiveMissions");
+                });
+
+            modelBuilder.Entity("Frontline.Data.Entities.ChatMessageEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
+
+                    b.Property<string>("Room")
+                        .IsRequired()
+                        .HasMaxLength(41)
+                        .HasColumnType("character varying(41)");
+
+                    b.Property<int>("SenderId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("SentAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("ChatMessages");
                 });
 
             modelBuilder.Entity("Frontline.Data.Entities.DropshipEntity", b =>
@@ -203,6 +240,9 @@ namespace Frontline.Migrations
                     b.Property<int>("BoosterPackCount")
                         .HasColumnType("integer");
 
+                    b.Property<DateTime?>("ChatBanEnd")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("Credits")
                         .HasColumnType("integer");
 
@@ -275,6 +315,17 @@ namespace Frontline.Migrations
                     b.Navigation("Player");
 
                     b.Navigation("RequiredCardItem");
+                });
+
+            modelBuilder.Entity("Frontline.Data.Entities.ChatMessageEntity", b =>
+                {
+                    b.HasOne("Frontline.Data.Entities.PlayerEntity", "Player")
+                        .WithMany()
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Player");
                 });
 
             modelBuilder.Entity("Frontline.Data.Entities.DropshipEntity", b =>

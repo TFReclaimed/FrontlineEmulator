@@ -3,17 +3,20 @@ using System;
 using Frontline.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Frontline.Migrations
+namespace Frontline.Data.Migrations
 {
     [DbContext(typeof(AppDb))]
-    partial class AppDbModelSnapshot : ModelSnapshot
+    [Migration("20260303145824_ChatHistory")]
+    partial class ChatHistory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -59,12 +62,6 @@ namespace Frontline.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("Success")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("Synergy1Success")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("Synergy2Success")
                         .HasColumnType("boolean");
 
                     b.HasKey("UserId", "MissionKey");
@@ -237,9 +234,6 @@ namespace Frontline.Migrations
                     b.Property<int>("BoosterPackCount")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime?>("ChatBanEnd")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<int>("Credits")
                         .HasColumnType("integer");
 
@@ -250,9 +244,6 @@ namespace Frontline.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("LastGiftSent")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("LastSupplySync")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("MatchesPlayed")

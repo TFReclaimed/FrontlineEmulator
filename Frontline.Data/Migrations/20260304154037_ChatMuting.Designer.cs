@@ -9,11 +9,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Frontline.Migrations
+namespace Frontline.Data.Migrations
 {
     [DbContext(typeof(AppDb))]
-    [Migration("20260305025949_AutoSupply")]
-    partial class AutoSupply
+    [Migration("20260304154037_ChatMuting")]
+    partial class ChatMuting
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -62,12 +62,6 @@ namespace Frontline.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("Success")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("Synergy1Success")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("Synergy2Success")
                         .HasColumnType("boolean");
 
                     b.HasKey("UserId", "MissionKey");
@@ -253,9 +247,6 @@ namespace Frontline.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("LastGiftSent")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("LastSupplySync")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("MatchesPlayed")

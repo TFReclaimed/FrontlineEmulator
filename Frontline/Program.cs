@@ -38,7 +38,10 @@ var connectionString = config.GetConnectionString("connection");
 
 builder.Services.AddDbContext<AppDb>(o =>
 {
-    o.UseNpgsql(connectionString);
+    o.UseNpgsql(connectionString, b =>
+    {
+        b.MigrationsAssembly(typeof(AppDb).Assembly.FullName);
+    });
 });
 
 builder.Services.AddHttpClient<IToyService>();

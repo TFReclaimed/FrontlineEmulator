@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Frontline.Migrations
+namespace Frontline.Data.Migrations
 {
     /// <inheritdoc />
     public partial class ChatHistory : Migration
