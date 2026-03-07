@@ -24,9 +24,6 @@ This is to prevent users with the game still installed from overwriting their fi
 You will need to create your own patched APK with [FrontlinePatcher](https://github.com/TFInternal/FrontlinePatcher).
 Use the `--frontline-url` and `--opentoy-url` options to point to your server's URL.
 
-The server requires `ruleset.json` and `PvEData.json` files to be present in the root directory.
-Use AssetRipper to extract these files from the Unity project.
-
 ## Features
 
 - ✅ FUE (Tutorial)

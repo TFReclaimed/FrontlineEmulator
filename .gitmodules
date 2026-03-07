@@ -1,0 +1,3 @@
+[submodule "FrontlineData"]
+	path = FrontlineData
+	url = https://github.com/TFInternal/FrontlineData

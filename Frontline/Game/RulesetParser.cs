@@ -14,7 +14,7 @@ public static class RulesetParser
 
     public static void Initialize()
     {
-        var rulesetPath = Path.Combine(AppContext.BaseDirectory, "ruleset.json");
+        var rulesetPath = Path.Combine(AppContext.BaseDirectory, "Ruleset.json");
         RulesetJson = File.ReadAllText(rulesetPath);
 
         var options = new JsonSerializerOptions

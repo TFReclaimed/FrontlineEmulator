@@ -44,7 +44,3 @@ msbuild.wrn
 
 # Certificates
 *.pem
-
-# Game files
-PvEData.json
-ruleset.json
