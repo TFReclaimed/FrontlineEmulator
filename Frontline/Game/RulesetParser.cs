@@ -109,6 +109,11 @@ public static class RulesetParser
         return trigger?.Xp ?? 0;
     }
 
+    public static CardSetEntry? GetCardSetEntry(int setId)
+    {
+        return Ruleset?.CardSet.Sets.GetValueOrDefault(setId.ToString());
+    }
+
     public static bool IsCommandDeckCard(int templateId)
     {
         return CommandDeckCardIds.Contains(templateId);

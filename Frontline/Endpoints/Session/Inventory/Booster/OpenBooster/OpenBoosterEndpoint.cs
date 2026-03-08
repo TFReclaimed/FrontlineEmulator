@@ -57,8 +57,17 @@ public class OpenBoosterEndpoint : Endpoint<OpenBoosterPackRequest, BoosterPackR
         player.BoosterPackCount--;
         await _playerRepository.UpdateAsync(player);
 
+        var cardSet = RulesetParser.GetCardSetEntry(1);
+        if (cardSet is null)
+        {
+            Logger.LogWarning("Player {UserId} tried to open a booster pack but card set 1 is null!", userId);
+            await Send.ResultAsync(TypedResults.InternalServerError());
+            return;
+        }
+
         var isUltraRare = Random.Shared.Next(0, 2) == 0;
         var potentialRareCards = RulesetParser.Ruleset.CardsRuleset.Cards.Values
+            .Where(x => cardSet.CardIds.Contains(x.CardId))
             .Where(x => x.Type != CardType.Resource &&
                         x.Rarity == (isUltraRare ? CardRarity.UltraRare : CardRarity.Rare))
             .ToList();
@@ -93,6 +102,7 @@ public class OpenBoosterEndpoint : Endpoint<OpenBoosterPackRequest, BoosterPackR
             .ToList();
 
         var potentialCommonCards = RulesetParser.Ruleset.CardsRuleset.Cards.Values
+            .Where(x => cardSet.CardIds.Contains(x.CardId))
             .Where(x => x.Type != CardType.Resource && x.Rarity == CardRarity.Common)
             .ToList();
 

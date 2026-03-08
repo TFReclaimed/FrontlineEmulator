@@ -12,6 +12,7 @@ public class Ruleset
     public required CardXpRanks TitanXpRanksRuleset { get; set; }
     public required FusionUpgrades FusionUpgrades { get; set; }
     public required XpTriggers XpTriggers { get; set; }
+    public required CardSetData CardSet { get; set; }
 }
 
 public class CardsRuleset
@@ -61,4 +62,14 @@ public class XpTrigger
     [JsonPropertyName("Trigger")]
     public string Trigger { get; set; } = string.Empty;
     public int Xp { get; set; }
+}
+
+public class CardSetData
+{
+    public required Dictionary<string, CardSetEntry> Sets { get; set; }
+}
+
+public class CardSetEntry
+{
+    public required List<int> CardIds { get; set; }
 }
