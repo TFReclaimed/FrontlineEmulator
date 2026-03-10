@@ -20,9 +20,9 @@
         </PackageReference>
         <PackageReference Include="FastEndpoints.Security" Version="8.0.1" />
         <PackageReference Include="FastEndpoints.Swagger" Version="8.0.1" />
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.3" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.3" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.3">
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.4" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.4" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.4">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
