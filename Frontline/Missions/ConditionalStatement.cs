@@ -1,5 +1,5 @@
+using Frontline.Battle.Data.Card;
 using Frontline.Data.Entities;
-using Frontline.Game.Card;
 
 namespace Frontline.Missions;
 

@@ -1,6 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Frontline.Game.Card;
+using Frontline.Battle.Data.Card;
 
 namespace Frontline.Missions.Json;
 

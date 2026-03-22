@@ -1,5 +1,5 @@
 using FastEndpoints;
-using Frontline.Game;
+using Frontline.Battle.Data;
 
 namespace Frontline.Endpoints.Data.GetRulesets;
 

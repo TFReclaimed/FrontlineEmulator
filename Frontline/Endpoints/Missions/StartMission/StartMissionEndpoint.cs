@@ -1,9 +1,9 @@
 using FastEndpoints;
+using Frontline.Battle.Data;
+using Frontline.Battle.Data.Card;
 using Frontline.Data.Entities;
 using Frontline.Data.Repositories;
 using Frontline.Extensions;
-using Frontline.Game;
-using Frontline.Game.Card;
 using Frontline.Missions;
 using Frontline.Services;
 
@@ -424,7 +424,7 @@ public class StartMissionEndpoint : Endpoint<StartMissionRequest, List<MissionSt
             return (false, null);
         }
 
-        if (missionData.Faction != Faction.Neutral && template.Faction != Faction.Neutral &&
+        if (missionData.Faction != CardFaction.Neutral && template.Faction != CardFaction.Neutral &&
             missionData.Faction != template.Faction)
         {
             Logger.LogWarning("Card faction mismatch. ID: {ItemId}, CardFaction: {CardFaction}, MissionFaction: {MissionFaction}",

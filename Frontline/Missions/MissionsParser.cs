@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Frontline.Battle.Data.Card;
 using Frontline.Endpoints.Missions;
 using Frontline.Missions.Json;
 
@@ -44,13 +45,13 @@ public static class MissionsParser
         }
     }
 
-    public static string GetMissionKey(PveRegion region, Faction faction, int missionId)
+    public static string GetMissionKey(PveRegion region, CardFaction faction, int missionId)
     {
         var factionStr = faction switch
         {
-            Faction.IMC => "IMC",
-            Faction.Militia => "MIL",
-            Faction.Neutral => "NEU",
+            CardFaction.Imc => "IMC",
+            CardFaction.Militia => "MIL",
+            CardFaction.Neutral => "NEU",
             _ => "NEU"
         };
         
@@ -74,10 +75,10 @@ public static class MissionsParser
         
         var faction = parts[1] switch
         {
-            "IMC" => Faction.IMC,
-            "MIL" => Faction.Militia,
-            "NEU" => Faction.Neutral,
-            _ => Faction.Neutral
+            "IMC" => CardFaction.Imc,
+            "MIL" => CardFaction.Militia,
+            "NEU" => CardFaction.Neutral,
+            _ => CardFaction.Neutral
         };
         
         var missionId = int.Parse(parts[2]);

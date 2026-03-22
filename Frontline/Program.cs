@@ -3,11 +3,11 @@ using FastEndpoints.Swagger;
 using Frontline;
 using Frontline.Auth;
 using Frontline.Battle;
+using Frontline.Battle.Data;
 using Frontline.Battle.Matchmaking;
 using Frontline.Data;
 using Frontline.Data.Repositories;
 using Frontline.Extensions;
-using Frontline.Game;
 using Frontline.Missions;
 using Frontline.Options;
 using Frontline.Services;
@@ -38,7 +38,10 @@ var connectionString = config.GetConnectionString("connection");
 
 builder.Services.AddDbContext<AppDb>(o =>
 {
-    o.UseNpgsql(connectionString);
+    o.UseNpgsql(connectionString, b =>
+    {
+        b.MigrationsAssembly(typeof(AppDb).Assembly.FullName);
+    });
 });
 
 builder.Services.AddHttpClient<IToyService>();

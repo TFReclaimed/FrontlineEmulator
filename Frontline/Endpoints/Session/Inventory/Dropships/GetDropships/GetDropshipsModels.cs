@@ -1,5 +1,3 @@
-using Frontline.Data.Entities;
-
 namespace Frontline.Endpoints.Session.Inventory.Dropships.GetDropships;
 
 public class DropshipInfo

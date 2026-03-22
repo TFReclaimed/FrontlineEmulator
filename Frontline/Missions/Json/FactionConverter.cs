@@ -1,28 +1,29 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Frontline.Battle.Data.Card;
 
 namespace Frontline.Missions.Json;
 
-public class FactionConverter : JsonConverter<Faction>
+public class FactionConverter : JsonConverter<CardFaction>
 {
-    public override Faction Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public override CardFaction Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         return reader.GetString() switch
         {
-            "IMC" => Faction.IMC,
-            "MIL" => Faction.Militia,
-            "NEU" => Faction.Neutral,
-            _ => Faction.Neutral
+            "IMC" => CardFaction.Imc,
+            "MIL" => CardFaction.Militia,
+            "NEU" => CardFaction.Neutral,
+            _ => CardFaction.Neutral
         };
     }
 
-    public override void Write(Utf8JsonWriter writer, Faction value, JsonSerializerOptions options)
+    public override void Write(Utf8JsonWriter writer, CardFaction value, JsonSerializerOptions options)
     {
         writer.WriteStringValue(value switch
         {
-            Faction.IMC => "IMC",
-            Faction.Militia => "MIL",
-            Faction.Neutral => "NEU",
+            CardFaction.Imc => "IMC",
+            CardFaction.Militia => "MIL",
+            CardFaction.Neutral => "NEU",
             _ => "NEU"
         });
     }
