@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using Frontline.Data.Entities;
+using Frontline.Battle.Data.Card;
 using Frontline.Missions;
 
 namespace Frontline.Endpoints.Missions;
@@ -10,8 +10,8 @@ public class MissionKey
     [JsonConverter(typeof(JsonStringEnumConverter<PveRegion>))]
     public PveRegion Region { get; set; }
     [JsonPropertyName("MyFaction")]
-    [JsonConverter(typeof(JsonStringEnumConverter<Faction>))]
-    public Faction Faction { get; set; }
+    [JsonConverter(typeof(JsonStringEnumConverter<CardFaction>))]
+    public CardFaction Faction { get; set; }
     [JsonPropertyName("MissionID")]
     public int MissionId { get; set; }
 }
@@ -19,7 +19,7 @@ public class MissionKey
 public class MissionStageStatus
 {
     public PveRegion Region { get; set; }
-    public Faction Faction { get; set; }
+    public CardFaction Faction { get; set; }
     public int MissionId { get; set; }
     public MissionStageState CurrentState { get; set; }
     public string MissionStageStart { get; set; } = string.Empty;

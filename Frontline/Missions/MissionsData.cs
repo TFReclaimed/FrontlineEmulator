@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using Frontline.Game.Card;
+using Frontline.Battle.Data.Card;
 using Frontline.Missions.Json;
 
 namespace Frontline.Missions;
@@ -57,7 +57,7 @@ public class MissionStage
     [JsonPropertyName("SubRegion:S")]
     public string SubRegion { get; set; } = string.Empty;
     [JsonPropertyName("Faction:S")]
-    public Faction Faction { get; set; }
+    public CardFaction Faction { get; set; }
     [JsonPropertyName("Guild:B")]
     public bool IsGuild { get; set; }
     [JsonPropertyName("Set:X")]
@@ -372,7 +372,7 @@ public class MissionReputation
     [JsonPropertyName("Region:S")]
     public PveRegion Region { get; set; }
     [JsonPropertyName("Faction:S")]
-    public Faction Faction { get; set; }
+    public CardFaction Faction { get; set; }
     [JsonPropertyName("ResetPeriod:I")]
     public int ResetPeriod { get; set; }
     [JsonPropertyName("Tier1Pct:F")]
@@ -415,14 +415,6 @@ public class MissionReputation
     public float Tier5BonusSuccess { get; set; }
     [JsonPropertyName("Tier5Reward:X")]
     public string Tier5Reward { get; set; } = string.Empty;
-}
-
-public enum Faction
-{
-    Neutral,
-    IMC,
-    Militia,
-    NumFactions
 }
 
 public enum PveRegion

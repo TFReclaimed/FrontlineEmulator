@@ -1,10 +1,11 @@
 using FastEndpoints;
+using Frontline.Battle;
 using Frontline.Options;
 using Microsoft.Extensions.Options;
 
 namespace Frontline.Endpoints.Session.Rulesets;
 
-public class RulesetsEndpoint : EndpointWithoutRequest<RulesetPathResponse>
+public class RulesetsEndpoint : EndpointWithoutRequest<RulesetPath>
 {
     private readonly IOptions<UrlOptions> _urlOptions;
 
@@ -21,7 +22,7 @@ public class RulesetsEndpoint : EndpointWithoutRequest<RulesetPathResponse>
     
     public override async Task HandleAsync(CancellationToken ct)
     {
-        var response = new RulesetPathResponse
+        var response = new RulesetPath
         {
             Uri = _urlOptions.Value.RulesetsUrl,
             Version = 0

@@ -1,9 +1,9 @@
 using FastEndpoints;
+using Frontline.Battle.Data;
+using Frontline.Battle.Data.Card;
 using Frontline.Data.Entities;
 using Frontline.Data.Repositories;
 using Frontline.Extensions;
-using Frontline.Game;
-using Frontline.Game.Card;
 using Frontline.Services;
 
 namespace Frontline.Endpoints.Session.Inventory.Booster.OpenBooster;

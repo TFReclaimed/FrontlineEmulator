@@ -1,8 +1,8 @@
 using FastEndpoints;
+using Frontline.Battle.Data;
+using Frontline.Battle.Data.Card;
 using Frontline.Data.Repositories;
 using Frontline.Extensions;
-using Frontline.Game;
-using Frontline.Game.Card;
 
 namespace Frontline.Endpoints.Session.Inventory.Dropships.GetDropships;
 

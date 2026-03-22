@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
+using Frontline.Battle.Data;
+using Frontline.Battle.Data.Card;
 using Frontline.Data.Entities;
-using Frontline.Game;
-using Frontline.Game.Card;
 using Frontline.Missions;
 using Frontline.Utils;
 
@@ -108,7 +108,7 @@ public class CardAvailability
     [JsonPropertyName("pve_region")]
     public PveRegion Region { get; set; }
     [JsonPropertyName("pve_faction")]
-    public Faction Faction { get; set; }
+    public CardFaction Faction { get; set; }
     [JsonPropertyName("pve_missionid")]
     public int MissionId { get; set; }
 }

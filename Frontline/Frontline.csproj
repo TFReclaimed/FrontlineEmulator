@@ -25,6 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\Frontline.Battle\Frontline.Battle.csproj" />
         <ProjectReference Include="..\Frontline.Data\Frontline.Data.csproj" />
     </ItemGroup>
 

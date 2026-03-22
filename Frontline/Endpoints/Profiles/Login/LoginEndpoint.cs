@@ -1,8 +1,8 @@
 using FastEndpoints;
 using FastEndpoints.Security;
+using Frontline.Battle.Data;
 using Frontline.Data.Entities;
 using Frontline.Data.Repositories;
-using Frontline.Game;
 using Frontline.Options;
 using Frontline.Services;
 using Microsoft.Extensions.Options;
