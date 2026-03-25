@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 
 namespace Frontline.Endpoints.GameConfig;
 
-public class GetGameConfigEndpoint : EndpointWithoutRequest<GameConfigResponse>
+public class GetGameConfigEndpoint : Endpoint<GameConfigRequest, GameConfigResponse>
 {
     private readonly IOptions<UrlOptions> _urlOptions;
 
@@ -18,10 +18,10 @@ public class GetGameConfigEndpoint : EndpointWithoutRequest<GameConfigResponse>
         Get("/init");
         AllowAnonymous();
     }
-    
-    public override async Task HandleAsync(CancellationToken ct)
+
+    public override async Task HandleAsync(GameConfigRequest req, CancellationToken ct)
     {
-        var assetBundleUrl = _urlOptions.Value.AssetBundleUrl;
+        var assetBundleUrl = string.Format(_urlOptions.Value.AssetBundleUrl, req.Param.Platform.ToString());
         if (!assetBundleUrl.Contains("cdn"))
         {
             // url has to go two levels deep

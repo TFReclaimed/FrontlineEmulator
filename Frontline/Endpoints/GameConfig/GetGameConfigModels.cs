@@ -1,5 +1,15 @@
 namespace Frontline.Endpoints.GameConfig;
 
+public class GameConfigRequest
+{
+    public required GameConfigParams Param { get; set; }
+}
+
+public class GameConfigParams
+{
+    public Platform Platform { get; set; }
+}
+
 public class GameConfigResponse
 {
     public required List<AssetBundleInfo> AssetBundleInfo { get; set; }

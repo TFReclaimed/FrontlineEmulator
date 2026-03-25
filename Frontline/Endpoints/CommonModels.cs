@@ -120,3 +120,13 @@ public enum CardState
     InDropship,
     Casualty
 }
+
+[JsonConverter(typeof(JsonStringEnumConverter<Platform>))]
+public enum Platform
+{
+    [JsonStringEnumMemberName("iOS")]
+    Ios,
+    Android,
+    Computer,
+    NumPlatforms
+}

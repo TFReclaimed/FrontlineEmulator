@@ -31,13 +31,3 @@ public enum LoginType
     Toy,
     NumTypes
 }
-
-[JsonConverter(typeof(JsonStringEnumConverter<Platform>))]
-public enum Platform
-{
-    [JsonStringEnumMemberName("iOS")]
-    Ios,
-    Android,
-    Computer,
-    NumPlatforms
-}
