@@ -124,9 +124,11 @@ public enum CardState
 [JsonConverter(typeof(JsonStringEnumConverter<Platform>))]
 public enum Platform
 {
-    [JsonStringEnumMemberName("iOS")]
-    Ios,
+    iOS,
     Android,
-    Computer,
+    Linux,
+    Windows,
+    Mac,
+    WebGL,
     NumPlatforms
 }
