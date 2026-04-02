@@ -75,6 +75,17 @@ builder.Services
     .AddAuthentication(SessionAuth.SchemeName)
     .AddScheme<AuthenticationSchemeOptions, SessionAuth>(SessionAuth.SchemeName, null);
 
+builder.Services.AddCors(o =>
+{
+    o.AddDefaultPolicy(p =>
+    {
+        p.SetIsOriginAllowed(_ => true)
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials();
+    });
+});
+
 builder.Services.SwaggerDocument(o =>
 {
     o.EnableJWTBearerAuth = false;
@@ -96,6 +107,8 @@ if (app.Environment.IsProduction())
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<AppDb>();
     db.Database.Migrate();
+
+    app.UseCors();
 }
 
 app.UseHttpLogging();
