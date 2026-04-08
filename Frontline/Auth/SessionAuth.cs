@@ -23,6 +23,11 @@ public class SessionAuth : AuthenticationHandler<AuthenticationSchemeOptions>
 
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
+        if (Request.Method.Equals("OPTIONS", StringComparison.OrdinalIgnoreCase))
+        {
+            return Task.FromResult(AuthenticateResult.NoResult());
+        }
+
         if (IsPublicEndpoint())
         {
             return Task.FromResult(AuthenticateResult.NoResult());
