@@ -2,27 +2,17 @@
 
 This is a server emulator for the cancelled Titanfall card collection game, Frontline.
 Versions 1.0.15816, 1.0.16585 and 1.0.17334 are supported with later versions requiring newer asset bundles and API changes.
-(If you still have the game installed, please contact me so we can back them up!)
-This project is a work in progress and is not yet feature complete.
 
 ## How to play
 
 ### Unofficial official server
 
-1. Download a supported version of the game. (Latest one recommended)
-   - [1.0.17334](https://apkpure.com/titanfall-frontline/com.nexonm.tffl/download/1.0.17334)
-   - [1.0.16585](https://apkpure.com/titanfall-frontline/com.nexonm.tffl/download/1.0.16585)
-   - [1.0.15816](https://www.apkmirror.com/apk/nexon-m-inc/titanfall-frontline/titanfall-frontline-1-0-15816-release/)
-2. Create a patched APK with the default options using [FrontlinePatcher](https://github.com/TFInternal/FrontlinePatcher).
-3. Install the APK on your device.
-
-Note: The official server is currently only accessible to whitelisted users.
-This is to prevent users with the game still installed from overwriting their files.
+Download a pre-patched version of Frontline from [our website](https://tfflinternal.com/download).
 
 ### Your own server
 
 You will need to create your own patched APK with [FrontlinePatcher](https://github.com/TFInternal/FrontlinePatcher).
-Use the `--frontline-url` and `--opentoy-url` options to point to your server's URL.
+Modify the StreamingAssets/serverAddresses.json file with your own address.
 
 ## Features
 
