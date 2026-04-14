@@ -11,7 +11,7 @@ Download a pre-patched version of Frontline from [our website](https://tfflinter
 
 ### Your own server
 
-You will need to create your own patched APK with [FrontlinePatcher](https://github.com/TFInternal/FrontlinePatcher).
+You will need to create your own patched APK with [FrontlinePatcher](https://github.com/TFReclaimed/FrontlinePatcher).
 Modify the StreamingAssets/serverAddresses.json file with your own address.
 
 ## Features
