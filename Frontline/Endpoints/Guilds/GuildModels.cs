@@ -10,6 +10,7 @@ public class GuildProfileDto
     public string AvatarId { get; set; } = string.Empty;
     public GuildMode Mode { get; set; }
     public GuildLocale Locale { get; set; }
+    public required GuildDetails Details { get; set; }
     public int MemberCount { get; set; }
     public int MaxNumberOfMembers { get; set; }
     public required List<GuildMemberDto> Members { get; set; }
@@ -24,11 +25,31 @@ public class GuildProfileDto
             AvatarId = entity.AvatarId,
             Mode = entity.Mode,
             Locale = entity.Locale,
+            Details = new GuildDetails
+            {
+                GameProfiles =
+                [
+                    new GuildData
+                    {
+                        Trophies = entity.Members.Sum(m => m.Player?.Trophies ?? 0)
+                    }
+                ]
+            },
             MemberCount = entity.Members.Count,
             MaxNumberOfMembers = entity.MaxNumberOfMembers,
             Members = entity.Members.Select(GuildMemberDto.FromEntity).ToList()
         };
     }
+}
+
+public class GuildDetails
+{
+    public required List<GuildData> GameProfiles { get; set; }
+}
+
+public class GuildData
+{
+    public int Trophies { get; set; }
 }
 
 public class GuildMemberDto

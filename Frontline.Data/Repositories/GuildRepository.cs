@@ -37,6 +37,8 @@ public class GuildRepository : RepositoryBase<GuildEntity>, IGuildRepository
     {
         return await Db.Guilds
             .Where(g => g.Name.Contains(search))
+            .Include(g => g.Members)
+            .ThenInclude(m => m.Player)
             .OrderBy(g => g.Name)
             .Skip(page * maxCount)
             .Take(maxCount)
