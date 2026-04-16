@@ -400,7 +400,8 @@ public class XmppClient
             return;
         }
 
-        if (string.IsNullOrEmpty(Username))
+        // Profile loading is not requested if the client loads directly into a game
+        if (string.IsNullOrEmpty(Username) && message is not { Type: MessageType.Chat, Subject: ":::INTERACTIONEVENT" })
         {
             _logger.LogWarning("{Client} Attempted to send message before profile was loaded.", this);
             return;
