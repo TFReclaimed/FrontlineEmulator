@@ -128,6 +128,11 @@ public class CcgGame
     {
         var result = gameEventParams.ReplayEvent(this);
         gameEventParams.EventResult = result;
+        if (gameEventParams.CcgEventsLog != null)
+        {
+            gameEventParams.CcgEventsLog = [..gameEventParams.CcgEventsLog];
+        }
+
         GameEvents.Add(gameEventParams);
         GameChangeCounter++;
         CurrentEventCount++;
