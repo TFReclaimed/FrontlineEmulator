@@ -47,18 +47,43 @@ public enum GuildMode
 [JsonConverter(typeof(JsonStringEnumConverter<GuildLocale>))]
 public enum GuildLocale
 {
-    NONE = 0,
-    USA = 1,
-    DEU = 2,
-    FRA = 3,
-    ESP = 4,
-    ITA = 5,
-    PRT = 6,
-    RUS = 7,
-    KOR = 8,
-    JPN = 9,
-    CHN = 10,
-    THA = 11
+    None,
+    [JsonStringEnumMemberName("USA")]
+    UnitedStates,
+    [JsonStringEnumMemberName("DEU")]
+    Germany,
+    [JsonStringEnumMemberName("FRA")]
+    France,
+    [JsonStringEnumMemberName("ESP")]
+    Spain,
+    [JsonStringEnumMemberName("ITA")]
+    Italy,
+    [JsonStringEnumMemberName("PRT")]
+    Portugal,
+    [JsonStringEnumMemberName("RUS")]
+    Russia,
+    [JsonStringEnumMemberName("KOR")]
+    Korea,
+    [JsonStringEnumMemberName("JPN")]
+    Japan,
+    [JsonStringEnumMemberName("CHN")]
+    China,
+    [JsonStringEnumMemberName("THA")]
+    Thailand,
+    [JsonStringEnumMemberName("afghanistan")]
+    Afghanistan,
+    [JsonStringEnumMemberName("brazil")]
+    Brazil,
+    [JsonStringEnumMemberName("canada")]
+    Canada,
+    [JsonStringEnumMemberName("england")]
+    UnitedKingdom,
+    [JsonStringEnumMemberName("finland")]
+    Finland,
+    [JsonStringEnumMemberName("mexico")]
+    Mexico,
+    [JsonStringEnumMemberName("sweden")]
+    Sweden
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter<MemberRank>))]
