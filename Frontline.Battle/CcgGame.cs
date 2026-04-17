@@ -126,9 +126,16 @@ public class CcgGame
 
     public void PlayGameEvent(GameEventParams gameEventParams)
     {
+        GameState.GetCcgEventLog().Clear();
+
         var result = gameEventParams.ReplayEvent(this);
         gameEventParams.EventResult = result;
-        if (gameEventParams.CcgEventsLog != null)
+
+        if (result == null)
+        {
+            gameEventParams.CcgEventsLog = null;
+        }
+        else if (gameEventParams.CcgEventsLog != null)
         {
             gameEventParams.CcgEventsLog = [..gameEventParams.CcgEventsLog];
         }

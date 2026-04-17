@@ -51,7 +51,7 @@ public class GameEventRegionTarget : GameEventCardParams
             }
         }
 
-        CcgEventsLog = game.GameState.GetCcgEventLog();
+        CcgEventsLog = success ? game.GameState.GetCcgEventLog() : null;
         return success ? GameEventResult.OkResult : null;
     }
 }

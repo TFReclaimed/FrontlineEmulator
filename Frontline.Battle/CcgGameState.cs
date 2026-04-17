@@ -746,13 +746,15 @@ public class CcgGameState
 
         var cardSummonEvent = new CardTransitionCcgEvent(CcgEventType.CardSummon,
             card.InstanceId, playerIndex, 0, 0, false, currentRegion, indexSlot, 1);
-        AddCcgEventLog(cardSummonEvent);
+        cardSummonEvent.TemplateId = card.TemplateId;
+        cardSummonEvent.Rank = card.Rank;
         if (traitCause != null)
         {
             cardSummonEvent.EffectId = traitCause.EffectTraitId;
             cardSummonEvent.TraitId = traitCause.TraitParentId;
         }
 
+        AddCcgEventLog(cardSummonEvent);
         return true;
     }
 

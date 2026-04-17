@@ -79,11 +79,9 @@ public class SupportDeck : Deck
                 }
 
                 var card = cardTemplate.GenerateCard(_gameState);
-                card.InstanceId = _gameState.GetNextSummonInstanceId();
                 card.ActiveData.Owner = Repeater.ActiveData.Owner;
                 card.Setup();
                 card.InitActiveData();
-                _gameState.Logger.Debug("**** SupportDeck.DrawCard - Spawned New Card * {CardId}", card.InstanceId);
                 Cards.Add(card);
             }
         }
@@ -116,6 +114,12 @@ public class SupportDeck : Deck
         }
 
         var card2 = Cards[CurrentSupport];
+        if (card2.InstanceId == 0)
+        {
+            card2.InstanceId = _gameState.GetNextSummonInstanceId();
+            _gameState.Logger.Debug("**** SupportDeck.DrawCard - Assigned Card ID * {CardId}", card2.InstanceId);
+        }
+
         var cardDrawEvent = new CardDrawCcgEvent(CcgEventType.SupportDraw, card2.InstanceId,
             card2.ActiveData.Owner, card2.TemplateId, card2.Rank);
         _gameState.AddCcgEventLog(cardDrawEvent);
