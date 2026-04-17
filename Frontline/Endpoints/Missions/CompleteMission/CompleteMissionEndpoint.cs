@@ -184,7 +184,10 @@ public class CompleteMissionEndpoint : Endpoint<CompleteMissionRequest, List<Mis
             }
         };
 
-        response.AddRange(await GetNextMissions(userId, key));
+        if (mission.Success)
+        {
+            response.AddRange(await GetNextMissions(userId, key));
+        }
 
         await Send.OkAsync(response);
     }
