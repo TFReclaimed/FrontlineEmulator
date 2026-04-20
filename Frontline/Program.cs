@@ -86,6 +86,8 @@ builder.Services.AddCors(o =>
     });
 });
 
+builder.Services.AddOutputCache();
+
 builder.Services.SwaggerDocument(o =>
 {
     o.EnableJWTBearerAuth = false;
@@ -110,6 +112,8 @@ if (app.Environment.IsProduction())
 }
 
 app.UseCors();
+
+app.UseOutputCache();
 
 app.UseHttpLogging();
 
