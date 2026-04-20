@@ -44,6 +44,8 @@ public class XmppClient
 
     private SessionState _sessionState;
 
+    private int _disposed;
+
     public int UserId { get; private set; }
     
     public string Username { get; set; } = string.Empty;
@@ -95,8 +97,8 @@ public class XmppClient
 
     public void StartReceiverTask()
     {
-        _ = Task.Run(ReceiveAsync, _stoppingToken);
         _timeoutTimer.Start();
+        _ = Task.Run(ReceiveAsync, _stoppingToken);
     }
 
     private async Task ReceiveAsync()
@@ -147,6 +149,11 @@ public class XmppClient
 
     public void Disconnect(string? reason = null)
     {
+        if (Interlocked.Exchange(ref _disposed, 1) != 0)
+        {
+            return;
+        }
+
         if (UserId != 0)
         {
             if (reason != null)
