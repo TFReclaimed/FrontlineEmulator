@@ -42,7 +42,7 @@ public class BattleService : IBattleService
     {
         lock (_lock)
         {
-            return _battles.Count;
+            return _battles.Values.Count(b => !b.GameState.IsGameOver());
         }
     }
 
