@@ -29,6 +29,7 @@ namespace Frontline;
 [JsonSerializable(typeof(Frontline.Endpoints.Game.GetGameEvents.GameEventsRequestParams), TypeInfoPropertyName = "TI_GameEventsRequestParams_3C93C366")]
 [JsonSerializable(typeof(Frontline.Endpoints.Game.GetGameEvents.GetGameEventsRequest), TypeInfoPropertyName = "TI_GetGameEventsRequest_6C9DF4E4")]
 [JsonSerializable(typeof(Frontline.Endpoints.Game.GetGameEvents.GetGameEventsResponse), TypeInfoPropertyName = "TI_GetGameEventsResponse_0C354F47")]
+[JsonSerializable(typeof(Frontline.Endpoints.Game.GetStats.GetStatsResponse), TypeInfoPropertyName = "TI_GetStatsResponse_25CC131F")]
 [JsonSerializable(typeof(Frontline.Endpoints.Game.LogGameEvent.LogGameEventRequest), TypeInfoPropertyName = "TI_LogGameEventRequest_9CF00536")]
 [JsonSerializable(typeof(Frontline.Endpoints.Game.Polling.PollingResponse), TypeInfoPropertyName = "TI_PollingResponse_004BC1CD")]
 [JsonSerializable(typeof(Frontline.Endpoints.GameConfig.AssetBundleInfo), TypeInfoPropertyName = "TI_AssetBundleInfo_7FB4B9F1")]

@@ -8,6 +8,7 @@ namespace Frontline.Battle;
 
 public interface IBattleService
 {
+    int GetBattleCount();
     CcgGame? GetBattle(Guid gameId);
     Task CreateBattle(int player1Id, int player2Id, VersusType versusType);
     bool IsPlayerInGame(int userId, [NotNullWhen(true)] out CcgGame? game);
@@ -35,6 +36,14 @@ public class BattleService : IBattleService
         _loggerFactory = loggerFactory;
         _serviceScopeFactory = serviceScopeFactory;
         _environment = environment;
+    }
+
+    public int GetBattleCount()
+    {
+        lock (_lock)
+        {
+            return _battles.Count;
+        }
     }
 
     public CcgGame? GetBattle(Guid gameId)

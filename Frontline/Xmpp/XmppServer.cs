@@ -7,7 +7,12 @@ using Microsoft.Extensions.Options;
 
 namespace Frontline.Xmpp;
 
-public class XmppServer : BackgroundService
+public interface IXmppServer : IHostedService
+{
+    int GetClientCount();
+}
+
+public class XmppServer : BackgroundService, IXmppServer
 {
     private readonly ILogger<XmppServer> _logger;
     
@@ -24,6 +29,8 @@ public class XmppServer : BackgroundService
     private readonly List<XmppClient> _xmppClients;
     
     private readonly Dictionary<string, ChatRoom> _chatRooms;
+
+    private readonly Lock _lock = new();
 
     public XmppServer(ILogger<XmppServer> logger, IOptions<ChatOptions> chatOptions, ILoggerFactory loggerFactory,
         ITokenValidator tokenValidator, IServiceScopeFactory serviceScopeFactory)
@@ -64,8 +71,11 @@ public class XmppServer : BackgroundService
                 xmppClient.OnMucMessageSent += OnClientMucMessageSent;
                 xmppClient.OnPrivateMessageSent += OnClientPrivateMessageSent;
                 xmppClient.StartReceiverTask();
-                
-                _xmppClients.Add(xmppClient);
+
+                lock (_lock)
+                {
+                    _xmppClients.Add(xmppClient);
+                }
             }
             catch (OperationCanceledException)
             {
@@ -89,6 +99,14 @@ public class XmppServer : BackgroundService
         _tcpListener.Stop();
     }
 
+    public int GetClientCount()
+    {
+        lock (_lock)
+        {
+            return _xmppClients.Count;
+        }
+    }
+
     private void OnClientDisconnected(XmppClient client)
     {
         _ = ProcessOnClientDisconnected(client);
@@ -96,11 +114,17 @@ public class XmppServer : BackgroundService
 
     private async Task ProcessOnClientDisconnected(XmppClient client)
     {
-        if (!_xmppClients.Remove(client))
+        bool removed;
+        lock (_lock)
+        {
+            removed = _xmppClients.Remove(client);
+        }
+
+        if (!removed)
         {
             return;
         }
-        
+
         foreach (var chatRoom in _chatRooms.Values)
         {
             await chatRoom.RemoveClient(client);
@@ -193,7 +217,12 @@ public class XmppServer : BackgroundService
     
     private void OnClientPrivateMessageSent(XmppClient client, int id, string subject, string body)
     {
-        var recipient = _xmppClients.FirstOrDefault(x => x.UserId == id);
+        XmppClient? recipient;
+        lock (_lock)
+        {
+            recipient = _xmppClients.FirstOrDefault(x => x.UserId == id);
+        }
+
         recipient?.SendPrivateMessage(client.Jid!, subject, body);
     }
 }
