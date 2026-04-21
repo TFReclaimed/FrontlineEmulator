@@ -55,12 +55,12 @@ public class ChatRoom
 
         foreach (var xmppClient in _clients)
         {
-            await client.SendAsync(MakePresence(xmppClient.Jid!));
+            await client.SendAsync(MakePresence(xmppClient.Jid!, xmppClient.Username));
         }
 
         _clients.Add(client);
 
-        await Broadcast(MakePresence(client.Jid!));
+        await Broadcast(MakePresence(client.Jid!, client.Username));
 
         foreach (var message in _messages)
         {
@@ -168,11 +168,12 @@ public class ChatRoom
         return messageElement;
     }
 
-    private Presence MakePresence(Jid jid)
+    private Presence MakePresence(Jid jid, string nickname)
     {
         return new Presence
         {
             From = new Jid(_name, Globals.XmppMucAddress, jid.Local),
+            Nick = nickname,
             MucUser = new X
             {
                 Item = new Item
@@ -186,7 +187,7 @@ public class ChatRoom
 
     private async Task SendSystemPresence(XmppClient client)
     {
-        await client.SendAsync(MakePresence(_systemJid));
+        await client.SendAsync(MakePresence(_systemJid, "<color=red>SYSTEM</color>"));
     }
 
     private async Task SendWelcomeMessage(XmppClient client)

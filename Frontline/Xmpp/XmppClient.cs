@@ -182,7 +182,9 @@ public class XmppClient
             Subject = subject,
             Body = body
         };
-        
+
+        message.SetAttribute("nck", Username);
+
         await SendAsync(message);
     }
 
