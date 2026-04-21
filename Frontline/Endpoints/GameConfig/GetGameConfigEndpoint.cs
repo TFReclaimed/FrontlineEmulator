@@ -8,9 +8,12 @@ public class GetGameConfigEndpoint : Endpoint<GameConfigRequest, GameConfigRespo
 {
     private readonly IOptions<UrlOptions> _urlOptions;
 
-    public GetGameConfigEndpoint(IOptions<UrlOptions> urlOptions)
+    private readonly IOptions<GameOptions> _gameOptions;
+
+    public GetGameConfigEndpoint(IOptions<UrlOptions> urlOptions, IOptions<GameOptions> gameOptions)
     {
         _urlOptions = urlOptions;
+        _gameOptions = gameOptions;
     }
 
     public override void Configure()
@@ -41,8 +44,7 @@ public class GetGameConfigEndpoint : Endpoint<GameConfigRequest, GameConfigRespo
                 Uri = _urlOptions.Value.PveRulesetUrl,
                 Version = 1
             },
-            //MinClientVersion = "1.0"
-            MinClientVersion = "1.0.15816"
+            MinClientVersion = _gameOptions.Value.MinClientVersion
         };
 
         await Send.OkAsync(response);

@@ -26,6 +26,7 @@ config.AddJsonFile("Products.json", false, true);
 config.AddJsonFile("StarterItems.json", false, true);
 
 builder.Services
+    .AddConfiguredOptions<GameOptions>(config)
     .AddConfiguredOptions<JwtOptions>(config)
     .AddConfiguredOptions<ChatOptions>(config)
     .AddConfiguredOptions<UrlOptions>(config)
