@@ -373,6 +373,12 @@ public class XmppClient
     
     private void HandlePresence(Presence presence)
     {
+        if (UserId == 0)
+        {
+            Disconnect();
+            return;
+        }
+
         var to = presence.To;
         if (to is null)
         {
@@ -404,6 +410,12 @@ public class XmppClient
 
     private async Task HandleMessage(Message message)
     {
+        if (UserId == 0)
+        {
+            Disconnect();
+            return;
+        }
+
         if (string.IsNullOrEmpty(message.Body) && string.IsNullOrEmpty(message.Subject))
         {
             return;
