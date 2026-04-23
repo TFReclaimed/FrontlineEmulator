@@ -1,10 +1,10 @@
-using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Frontline.Auth;
 using Frontline.Battle.GameEvents;
 using Frontline.Options;
+using Frontline.Xmpp.Transport;
 using Microsoft.Extensions.Options;
 using XmppDotNet;
 using XmppDotNet.Xml;
@@ -22,8 +22,8 @@ namespace Frontline.Xmpp;
 
 public class XmppClient
 {
-    private readonly TcpClient _tcpClient;
-    
+    private readonly IXmppTransport _transport;
+
     private readonly System.Timers.Timer _timeoutTimer;
 
     private readonly CancellationToken _stoppingToken;
@@ -67,11 +67,11 @@ public class XmppClient
     public event Action<XmppClient, string, string>? OnMucMessageSent;
     
     public event Action<XmppClient, int, string, string>? OnPrivateMessageSent;
-    
-    public XmppClient(TcpClient tcpClient, CancellationToken stoppingToken, ILoggerFactory loggerFactory,
+
+    public XmppClient(IXmppTransport transport, CancellationToken stoppingToken, ILoggerFactory loggerFactory,
         ITokenValidator tokenValidator, IOptions<ChatOptions> chatOptions)
     {
-        _tcpClient = tcpClient;
+        _transport = transport;
         _timeoutTimer = new System.Timers.Timer(5000);
         _stoppingToken = stoppingToken;
         _logger = loggerFactory.CreateLogger<XmppClient>();
@@ -104,13 +104,12 @@ public class XmppClient
     private async Task ReceiveAsync()
     {
         var buffer = new byte[4096];
-        var stream = _tcpClient.GetStream();
 
         try
         {
             while (!_stoppingToken.IsCancellationRequested)
             {
-                var bytesRead = await stream.ReadAsync(buffer, _stoppingToken);
+                var bytesRead = await _transport.ReceiveAsync(buffer, _stoppingToken);
                 if (bytesRead == 0)
                 {
                     Disconnect();
@@ -137,8 +136,8 @@ public class XmppClient
         {
             var xml = element.ToString();
             var buffer = Encoding.UTF8.GetBytes(xml);
-            await _tcpClient.GetStream().WriteAsync(buffer, _stoppingToken);
-            
+            await _transport.SendAsync(buffer, _stoppingToken);
+
             LogXml(element, false);
         }
         catch (Exception e)
@@ -166,7 +165,7 @@ public class XmppClient
             }
         }
 
-        _tcpClient.Close();
+        _transport.Close();
         _timeoutTimer.Stop();
         _timeoutTimer.Dispose();
 
@@ -495,7 +494,13 @@ public class XmppClient
 
     public override string ToString()
     {
+        var transportName = _transport switch
+        {
+            TcpXmppTransport => "TCP",
+            WebSocketXmppTransport => "WS",
+            _ => throw new ArgumentOutOfRangeException()
+        };
         var user = UserId == 0 ? "Not authenticated" : UserId.ToString();
-        return $"[{_tcpClient.Client.RemoteEndPoint}/{user}]";
+        return $"[{transportName} {_transport.GetRemoteEndpoint()}/{user}]";
     }
 }

@@ -121,6 +121,8 @@ app.UseHttpLogging();
 
 app.UseAuthorization();
 
+app.UseWebSockets();
+
 app.UseFastEndpoints(c =>
 {
     c.Serializer.Options.AddSerializerContextsFromFrontline();

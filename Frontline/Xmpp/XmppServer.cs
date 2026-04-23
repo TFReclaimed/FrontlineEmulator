@@ -3,6 +3,7 @@ using System.Net.Sockets;
 using Frontline.Auth;
 using Frontline.Data.Repositories;
 using Frontline.Options;
+using Frontline.Xmpp.Transport;
 using Microsoft.Extensions.Options;
 
 namespace Frontline.Xmpp;
@@ -10,6 +11,7 @@ namespace Frontline.Xmpp;
 public interface IXmppServer : IHostedService
 {
     int GetClientCount();
+    void InitializeClient(IXmppTransport transport, CancellationToken ct);
 }
 
 public class XmppServer : BackgroundService, IXmppServer
@@ -61,21 +63,7 @@ public class XmppServer : BackgroundService, IXmppServer
             try
             {
                 var tcpClient = await _tcpListener.AcceptTcpClientAsync(stoppingToken);
-                _logger.LogDebug("Accepted XMPP client {Client}.", tcpClient.Client.RemoteEndPoint);
-                
-                var xmppClient = new XmppClient(tcpClient, stoppingToken, _loggerFactory, _tokenValidator, _chatOptions);
-                xmppClient.OnDisconnected += OnClientDisconnected;
-                xmppClient.OnRequestProfileUpdate += OnClientRequestProfileUpdate;
-                xmppClient.OnEnteredRoom += OnClientEnteredRoom;
-                xmppClient.OnExitedRoom += OnClientExitedRoom;
-                xmppClient.OnMucMessageSent += OnClientMucMessageSent;
-                xmppClient.OnPrivateMessageSent += OnClientPrivateMessageSent;
-                xmppClient.StartReceiverTask();
-
-                lock (_lock)
-                {
-                    _xmppClients.Add(xmppClient);
-                }
+                InitializeClient(new TcpXmppTransport(tcpClient), stoppingToken);
             }
             catch (OperationCanceledException)
             {
@@ -104,6 +92,25 @@ public class XmppServer : BackgroundService, IXmppServer
         lock (_lock)
         {
             return _xmppClients.Count;
+        }
+    }
+
+    public void InitializeClient(IXmppTransport transport, CancellationToken ct)
+    {
+        _logger.LogDebug("Accepted XMPP client {Client}.", transport.GetRemoteEndpoint());
+
+        var xmppClient = new XmppClient(transport, ct, _loggerFactory, _tokenValidator, _chatOptions);
+        xmppClient.OnDisconnected += OnClientDisconnected;
+        xmppClient.OnRequestProfileUpdate += OnClientRequestProfileUpdate;
+        xmppClient.OnEnteredRoom += OnClientEnteredRoom;
+        xmppClient.OnExitedRoom += OnClientExitedRoom;
+        xmppClient.OnMucMessageSent += OnClientMucMessageSent;
+        xmppClient.OnPrivateMessageSent += OnClientPrivateMessageSent;
+        xmppClient.StartReceiverTask();
+
+        lock (_lock)
+        {
+            _xmppClients.Add(xmppClient);
         }
     }
 
