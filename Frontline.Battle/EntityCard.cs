@@ -131,7 +131,7 @@ public class EntityCard : Card
         {
             if (!embark)
             {
-                GameState.Logger.Warning("MOVE FAILED - EntityCard.Move - target CardStack not empty. ID {CardId}",
+                GameState.Logger.Debug("MOVE FAILED - EntityCard.Move - target CardStack not empty. ID {CardId}",
                     target.PrimaryCard.InstanceId);
             }
 
