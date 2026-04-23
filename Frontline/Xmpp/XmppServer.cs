@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Sockets;
 using Frontline.Auth;
@@ -29,8 +30,8 @@ public class XmppServer : BackgroundService, IXmppServer
     private readonly TcpListener _tcpListener;
 
     private readonly List<XmppClient> _xmppClients;
-    
-    private readonly Dictionary<string, ChatRoom> _chatRooms;
+
+    private readonly ConcurrentDictionary<string, ChatRoom> _chatRooms;
 
     private readonly Lock _lock = new();
 
@@ -44,7 +45,7 @@ public class XmppServer : BackgroundService, IXmppServer
         _serviceScopeFactory = serviceScopeFactory;
         _tcpListener = new TcpListener(IPAddress.Any, _chatOptions.Value.Port);
         _xmppClients = [];
-        _chatRooms = new Dictionary<string, ChatRoom>();
+        _chatRooms = new ConcurrentDictionary<string, ChatRoom>();
     }
 
     public override Task StartAsync(CancellationToken cancellationToken)
@@ -182,15 +183,17 @@ public class XmppServer : BackgroundService, IXmppServer
                 return;
             }
         }
-        
+
         if (!_chatRooms.TryGetValue(room, out var chatRoom))
         {
             using var scope = _serviceScopeFactory.CreateScope();
             var chatMessageRepository = scope.ServiceProvider.GetRequiredService<IChatMessageRepository>();
-            chatRoom = await ChatRoom.CreateAsync(_chatOptions, room, chatMessageRepository);
-            _chatRooms.Add(room, chatRoom);
+
+            var newRoom = await ChatRoom.CreateAsync(_chatOptions, room, chatMessageRepository);
+            _chatRooms.TryAdd(room, newRoom);
+            chatRoom = _chatRooms[room];
         }
-        
+
         await chatRoom.AddClient(client);
     }
     
