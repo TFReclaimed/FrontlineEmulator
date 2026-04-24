@@ -1,4 +1,6 @@
+using Frontline.Options;
 using Frontline.Services;
+using Microsoft.Extensions.Options;
 
 namespace Frontline.Battle.Matchmaking;
 
@@ -19,6 +21,8 @@ public class MatchmakingService : IMatchmakingService
 
     private readonly IUserService _userService;
 
+    private readonly IOptionsMonitor<GameOptions> _gameOptions;
+
     private readonly Dictionary<int, MatchmakingTicket> _matchmakingQueue = new();
 
     private readonly Lock _queueLock = new();
@@ -26,11 +30,12 @@ public class MatchmakingService : IMatchmakingService
     private readonly TimeSpan _ticketTimeout = TimeSpan.FromSeconds(20);
 
     public MatchmakingService(ILogger<MatchmakingService> logger, IBattleService battleService,
-        IUserService userService)
+        IUserService userService, IOptionsMonitor<GameOptions> gameOptions)
     {
         _logger = logger;
         _battleService = battleService;
         _userService = userService;
+        _gameOptions = gameOptions;
     }
 
     public void Enqueue(int userId, VersusType versusType, int? opponentId = null)
@@ -52,6 +57,11 @@ public class MatchmakingService : IMatchmakingService
 
     private void TryMatchTargetedCasual(MatchmakingTicket ticket)
     {
+        if (!_gameOptions.CurrentValue.EnableMatchmaking)
+        {
+            return;
+        }
+
         lock (_queueLock)
         {
             if (ticket.OpponentId != null &&
@@ -89,6 +99,11 @@ public class MatchmakingService : IMatchmakingService
 
     public void ProcessQueue()
     {
+        if (!_gameOptions.CurrentValue.EnableMatchmaking)
+        {
+            return;
+        }
+
         lock (_queueLock)
         {
             var rankedTickets = _matchmakingQueue.Values

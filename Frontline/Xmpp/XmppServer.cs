@@ -20,7 +20,9 @@ public class XmppServer : BackgroundService, IXmppServer
     private readonly ILogger<XmppServer> _logger;
     
     private readonly IOptions<ChatOptions> _chatOptions;
-    
+
+    private readonly IOptionsMonitor<GameOptions> _gameOptions;
+
     private readonly ILoggerFactory _loggerFactory;
 
     private readonly ITokenValidator _tokenValidator;
@@ -35,11 +37,13 @@ public class XmppServer : BackgroundService, IXmppServer
 
     private readonly Lock _lock = new();
 
-    public XmppServer(ILogger<XmppServer> logger, IOptions<ChatOptions> chatOptions, ILoggerFactory loggerFactory,
-        ITokenValidator tokenValidator, IServiceScopeFactory serviceScopeFactory)
+    public XmppServer(ILogger<XmppServer> logger, IOptions<ChatOptions> chatOptions,
+        IOptionsMonitor<GameOptions> gameOptions, ILoggerFactory loggerFactory, ITokenValidator tokenValidator,
+        IServiceScopeFactory serviceScopeFactory)
     {
         _logger = logger;
         _chatOptions = chatOptions;
+        _gameOptions = gameOptions;
         _loggerFactory = loggerFactory;
         _tokenValidator = tokenValidator;
         _serviceScopeFactory = serviceScopeFactory;
@@ -98,6 +102,12 @@ public class XmppServer : BackgroundService, IXmppServer
 
     public void InitializeClient(IXmppTransport transport, CancellationToken ct)
     {
+        if (!_gameOptions.CurrentValue.EnableChat)
+        {
+            transport.Close();
+            return;
+        }
+
         _logger.LogDebug("Accepted XMPP client {Client}.", transport.GetRemoteEndpoint());
 
         var xmppClient = new XmppClient(transport, ct, _loggerFactory, _tokenValidator, _chatOptions);
