@@ -96,7 +96,10 @@ public class XmppServer : BackgroundService, IXmppServer
     {
         lock (_lock)
         {
-            return _xmppClients.Count;
+            return _xmppClients.Where(x => x.UserId != 0)
+                .Select(x => x.UserId)
+                .Distinct()
+                .Count();
         }
     }
 
