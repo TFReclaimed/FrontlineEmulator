@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Frontline.Battle.Data;
 using Frontline.Battle.Data.Card;
 using Frontline.Battle.GameEvents;
@@ -122,6 +123,12 @@ public class CcgGame
 
         var playerTurnStart = DateTimeOffset.FromUnixTimeMilliseconds(GameState.PlayerTurnStart);
         return (now - playerTurnStart).TotalMinutes > 4;
+    }
+
+    public void LogGameState()
+    {
+        GameState.Logger.Debug(JsonSerializer.Serialize(this));
+        GameState.Logger.Debug(JsonSerializer.Serialize(GameEvents));
     }
 
     public void PlayGameEvent(GameEventParams gameEventParams)

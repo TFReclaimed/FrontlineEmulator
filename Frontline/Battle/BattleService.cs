@@ -127,22 +127,22 @@ public class BattleService : IBattleService
                 return;
             }
 
-            var staleBattleIds = _battles.Values
+            var staleBattles = _battles.Values
                 .Where(b => b.IsStale())
-                .Select(b => b.Id)
                 .ToList();
 
-            if (staleBattleIds.Count == 0)
+            if (staleBattles.Count == 0)
             {
                 return;
             }
 
-            foreach (var battleId in staleBattleIds)
+            foreach (var battle in staleBattles)
             {
-                _battles.Remove(battleId);
+                battle.LogGameState();
+                _battles.Remove(battle.Id);
             }
 
-            _logger.LogInformation("Cleaned up {Count} stale battles.", staleBattleIds.Count);
+            _logger.LogInformation("Cleaned up {Count} stale battles.", staleBattles.Count);
         }
     }
 
