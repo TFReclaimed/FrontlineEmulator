@@ -171,8 +171,8 @@ public class XmppClient
 
         OnDisconnected?.Invoke(this);
     }
-    
-    public async Task SendPrivateMessage(Jid from, string subject = "", string body = "")
+
+    public async Task SendPrivateMessage(Jid from, string subject = "", string body = "", string username = "")
     {
         var message = new Message
         {
@@ -182,7 +182,10 @@ public class XmppClient
             Body = body
         };
 
-        message.SetAttribute("nck", Username);
+        if (!string.IsNullOrEmpty(username))
+        {
+            message.SetAttribute("nck", username);
+        }
 
         await SendAsync(message);
     }

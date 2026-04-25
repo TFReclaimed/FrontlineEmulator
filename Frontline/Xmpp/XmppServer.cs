@@ -243,6 +243,6 @@ public class XmppServer : BackgroundService, IXmppServer
             recipient = _xmppClients.FirstOrDefault(x => x.UserId == id);
         }
 
-        recipient?.SendPrivateMessage(client.Jid!, subject, body);
+        recipient?.SendPrivateMessage(client.Jid!, subject, body, client.Username);
     }
 }
