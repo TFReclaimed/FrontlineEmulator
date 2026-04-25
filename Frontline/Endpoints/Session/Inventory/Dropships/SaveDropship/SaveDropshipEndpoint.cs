@@ -40,7 +40,7 @@ public class SaveDropshipEndpoint : Endpoint<SaveDropshipRequest>
             return;
         }
 
-        if (req.DropshipId != 10 && req.DropshipId != 11 && player.Level < 3)
+        if ((req.DropshipId != 10 && req.DropshipId != 11) || player.Level < 3)
         {
             Logger.LogWarning("Player {UserId} attempted to save invalid dropship {DropshipId}",
                 userId, req.DropshipId);
