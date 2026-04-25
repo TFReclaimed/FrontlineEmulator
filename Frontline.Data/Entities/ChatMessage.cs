@@ -13,7 +13,7 @@ public class ChatMessageEntity
     public int SenderId { get; set; }
     [ForeignKey("SenderId")]
     public PlayerEntity? Player { get; set; }
-    [MaxLength(40)]
+    [MaxLength(140)]
     public string Body { get; set; } = string.Empty;
     public DateTime SentAt { get; set; }
 }

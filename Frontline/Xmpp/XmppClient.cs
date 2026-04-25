@@ -471,9 +471,9 @@ public class XmppClient
         }
         else if (message.Type == MessageType.GroupChat)
         {
-            if (body.Length > 40)
+            if (body.Length > 140)
             {
-                body = body[..40];
+                body = body[..140];
             }
 
             _logger.LogInformation("{Client} [MUC #{To}]: {Message}", this, message.To.Local, body);
