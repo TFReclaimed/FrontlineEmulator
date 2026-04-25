@@ -8,7 +8,9 @@ public static class RulesetParser
     public static Ruleset? Ruleset { get; private set; }
     
     public static string? RulesetJson { get; private set; }
-    
+
+    private static readonly JsonSerializerOptions CloneOptions = new();
+
     private static readonly HashSet<int> CommandDeckCardIds = [];
 
     public static void Initialize()
@@ -70,14 +72,51 @@ public static class RulesetParser
 
     public static BaseTrait? GetTraitTemplate(int traitId)
     {
-        var trait = Ruleset?.CardsRuleset.Traits.GetValueOrDefault(traitId.ToString());
-        trait?.Effects = GetTraitEffectsList(traitId);
-        return trait;
+        var template = Ruleset?.CardsRuleset.Traits.GetValueOrDefault(traitId.ToString());
+        if (template == null)
+        {
+            return null;
+        }
+
+        return new BaseTrait
+        {
+            TraitId = template.TraitId,
+            TraitType = template.TraitType,
+            Effects = GetTraitEffectsList(traitId)
+        };
     }
 
     public static List<BaseTraitEffect> GetTraitEffectsList(int traitId)
     {
-        return Ruleset?.CardsRuleset.Effects.GetValueOrDefault(traitId.ToString()) ?? [];
+        var templateEffects = Ruleset?.CardsRuleset.Effects.GetValueOrDefault(traitId.ToString());
+        if (templateEffects == null || templateEffects.Count == 0)
+        {
+            return [];
+        }
+
+        var clonedEffects = new List<BaseTraitEffect>(templateEffects.Count);
+        foreach (var templateEffect in templateEffects)
+        {
+            clonedEffects.Add(CloneTraitEffect(templateEffect));
+        }
+
+        return clonedEffects;
+    }
+
+    private static BaseTraitEffect CloneTraitEffect(BaseTraitEffect templateEffect)
+    {
+        var clone = JsonSerializer.Deserialize(
+            JsonSerializer.Serialize(templateEffect, templateEffect.GetType(), CloneOptions),
+            templateEffect.GetType(),
+            CloneOptions
+        );
+
+        if (clone is not BaseTraitEffect traitEffect)
+        {
+            throw new InvalidOperationException($"Failed to clone trait effect template {templateEffect.GetType().Name}");
+        }
+
+        return traitEffect;
     }
 
     public static GameTemplate? GetGameTemplate(int id)

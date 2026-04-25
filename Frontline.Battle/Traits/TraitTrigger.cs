@@ -30,6 +30,8 @@ public class TraitTrigger : BaseTraitEffect
             return;
         }
 
+        traitTemplate.Init(GameState);
+
         if (DurationData.Charges > 0 && active.DurationData.Charges == 0)
         {
             return;

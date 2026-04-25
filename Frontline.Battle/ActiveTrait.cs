@@ -82,6 +82,7 @@ public class ActiveTrait
     public void Init(BaseTraitEffect newTrait, Card owner)
     {
         _trait = newTrait;
+        _trait.Init(_gameState);
 
         var owner2 = owner.ActiveData.Owner;
         var instanceId = owner.InstanceId;
