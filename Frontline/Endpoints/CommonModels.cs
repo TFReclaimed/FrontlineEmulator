@@ -40,7 +40,13 @@ public class CardDto
 
         var template = RulesetParser.Ruleset.CardsRuleset.Cards.Values
             .FirstOrDefault(x => x.CardId == templateId);
-        return template is ResourceCardTemplate ? "ResourceCard" : "Card";
+        return template switch
+        {
+            null => "Card",
+            CommanderCardTemplate => "CommanderCard",
+            ResourceCardTemplate => "ResourceCard",
+            _ => "Card"
+        };
     }
 
     private static CardData? GetCardData(ItemEntity item)

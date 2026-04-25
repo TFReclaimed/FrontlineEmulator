@@ -1,6 +1,4 @@
 using FastEndpoints;
-using Frontline.Battle.Data;
-using Frontline.Battle.Data.Card;
 using Frontline.Data.Repositories;
 using Frontline.Extensions;
 
@@ -47,18 +45,7 @@ public class GetDropshipsEndpoint : Endpoint<GetInventoryRequest, List<DropshipI
             foreach (var dropshipEntity in dropshipEntities)
             {
                 var item = dropshipEntity.Item!;
-
-                var cardTemplate = RulesetParser.GetCardTemplate(item.TemplateId);
-                var isCommander = cardTemplate!.Type == CardType.Commander;
-
-                slottedCards[dropshipEntity.SlotIndex] = new CardDto
-                {
-                    Type = isCommander ? "CommanderCard" : "Card",
-                    InstanceId = item.ItemId,
-                    TemplateId = item.TemplateId,
-                    Rank = item.Rank,
-                    Xp = item.Xp
-                };
+                slottedCards[dropshipEntity.SlotIndex] = CardDto.FromEntity(item);
             }
 
             for (var i = 0; i < 41; i++)
