@@ -22,4 +22,5 @@ public class Product
     public string SkuApple { get; set; } = string.Empty;
     public string SkuGoogle { get; set; } = string.Empty;
     public int BoosterCount { get; set; }
+    public int TokenCount { get; set; }
 }

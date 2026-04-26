@@ -65,6 +65,19 @@
         "SkuApple": "REL_BOOSTER_60X_REAL",
         "SkuGoogle": "rel_booster_60x_real",
         "BoosterCount": 60
+      },
+      {
+        "ProductId": "TOKEN_10X",
+        "Title": "10 Tokens",
+        "RealPrice": 6.7,
+        "RealCurrencyCode": "USD",
+        "SoftVirtualPrice": 1000,
+        "HardVirtualPrice": -1,
+        "IsAvailableReal": false,
+        "IsConsumable": true,
+        "SkuApple": "",
+        "SkuGoogle": "",
+        "TokenCount": 10
       }
     ]
   }
