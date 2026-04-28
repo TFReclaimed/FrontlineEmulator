@@ -115,14 +115,15 @@ public class CcgGame
     public bool IsStale()
     {
         var now = DateTime.UtcNow;
+        var playerReconnectPeriod = GameState.GetGameTemplate().EndTurnTimer * 1.5f;
 
         if (GameState.PlayerTurnStart == 0)
         {
-            return (now - _creationTime).TotalMinutes > 2;
+            return (now - _creationTime).TotalSeconds > playerReconnectPeriod || GameState.IsGameOver();
         }
 
         var playerTurnStart = DateTimeOffset.FromUnixTimeMilliseconds(GameState.PlayerTurnStart);
-        return (now - playerTurnStart).TotalMinutes > 4;
+        return (now - playerTurnStart).TotalSeconds > playerReconnectPeriod || GameState.IsGameOver();
     }
 
     public void LogGameState()

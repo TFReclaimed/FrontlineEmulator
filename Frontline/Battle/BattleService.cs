@@ -1,8 +1,10 @@
 using System.Diagnostics.CodeAnalysis;
 using Frontline.Battle.CcgEvents;
+using Frontline.Battle.GameEvents;
 using Frontline.Data.Entities;
 using Frontline.Data.Repositories;
 using Frontline.Services;
+using Frontline.Xmpp;
 
 namespace Frontline.Battle;
 
@@ -24,18 +26,23 @@ public class BattleService : IBattleService
     private readonly IServiceScopeFactory _serviceScopeFactory;
 
     private readonly IWebHostEnvironment _environment;
+    
+    private readonly IXmppServer _xmppServer;
 
     private readonly Dictionary<Guid, CcgGame> _battles = new();
+    
+    private readonly Dictionary<Guid, DateTime> _toRemove = new();
 
     private readonly Lock _lock = new();
 
     public BattleService(ILogger<BattleService> logger, ILoggerFactory loggerFactory,
-        IServiceScopeFactory serviceScopeFactory, IWebHostEnvironment environment)
+        IServiceScopeFactory serviceScopeFactory, IWebHostEnvironment environment, IXmppServer xmppServer)
     {
         _logger = logger;
         _loggerFactory = loggerFactory;
         _serviceScopeFactory = serviceScopeFactory;
         _environment = environment;
+        _xmppServer = xmppServer;
     }
 
     public int GetBattleCount()
@@ -126,9 +133,26 @@ public class BattleService : IBattleService
             {
                 return;
             }
+            
+            var now = DateTime.Now;
+            var emptyBattles = _toRemove
+                .Where(kvp => kvp.Value < now)
+                .Select(kvp => kvp.Key)
+                .ToList();
 
+            if (emptyBattles.Count > 0)
+            {
+                foreach (var key in emptyBattles)
+                {
+                    _battles.Remove(key);
+                    _toRemove.Remove(key);
+                }
+                
+                _logger.LogInformation("Cleaned up {Count} empty battles", emptyBattles.Count);
+            }
+            
             var staleBattles = _battles.Values
-                .Where(b => b.IsStale())
+                .Where(b => b.IsStale() && !_toRemove.ContainsKey(b.Id))
                 .ToList();
 
             if (staleBattles.Count == 0)
@@ -138,11 +162,27 @@ public class BattleService : IBattleService
 
             foreach (var battle in staleBattles)
             {
-                battle.LogGameState();
-                _battles.Remove(battle.Id);
-            }
+                var player1Connected = _xmppServer.IsClientConnected(battle.Player1Id);
+                var player2Connected = _xmppServer.IsClientConnected(battle.Player2Id);
 
-            _logger.LogInformation("Cleaned up {Count} stale battles.", staleBattles.Count);
+                if (player1Connected != player2Connected && !battle.GameState.IsGameOver())
+                {
+                    battle.PlayGameEvent(new GameEventParams
+                    {
+                        PlayerIndex = (sbyte) (player1Connected ? 1 : 0),
+                        GameEvent = GameEvent.Surrender
+                    });
+                }
+
+                if (!_toRemove.ContainsKey(battle.Id))
+                {
+                    _toRemove.Add(battle.Id, DateTime.Now.AddSeconds(30));
+                
+                    battle.LogGameState();
+                }
+            }
+            
+            _logger.LogInformation("Cleaned up {Count} stale battles", staleBattles.Count);
         }
     }
 

@@ -12,6 +12,7 @@ namespace Frontline.Xmpp;
 public interface IXmppServer : IHostedService
 {
     int GetClientCount();
+    bool IsClientConnected(int clientId);
     void InitializeClient(IXmppTransport transport, CancellationToken ct);
 }
 
@@ -100,6 +101,14 @@ public class XmppServer : BackgroundService, IXmppServer
                 .Select(x => x.UserId)
                 .Distinct()
                 .Count();
+        }
+    }
+
+    public bool IsClientConnected(int clientId)
+    {
+        lock (_lock)
+        {
+            return _xmppClients.Any(x => x.UserId == clientId);
         }
     }
 
