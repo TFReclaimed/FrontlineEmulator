@@ -149,7 +149,7 @@ public class BattleService : IBattleService
                     _toRemove.Remove(key);
                 }
                 
-                _logger.LogInformation("Cleaned up {Count} empty battles", emptyBattles.Count);
+                _logger.LogInformation("Cleaned up {Count} empty battles.", emptyBattles.Count);
             }
             
             var staleBattles = _battles.Values
@@ -161,8 +161,13 @@ public class BattleService : IBattleService
                 return;
             }
 
+            var toRemoveInitialSize = _toRemove.Count;
+            
             foreach (var battle in staleBattles)
             {
+                battle.LogGameState();
+                _toRemove.Add(battle.Id, DateTime.Now.AddSeconds(30));
+                
                 var player1Connected = _xmppServer.IsClientConnected(battle.Player1Id);
                 var player2Connected = _xmppServer.IsClientConnected(battle.Player2Id);
 
@@ -174,16 +179,9 @@ public class BattleService : IBattleService
                         GameEvent = GameEvent.Surrender
                     });
                 }
-
-                if (!_toRemove.ContainsKey(battle.Id))
-                {
-                    _toRemove.Add(battle.Id, DateTime.Now.AddSeconds(30));
-                
-                    battle.LogGameState();
-                }
             }
             
-            _logger.LogInformation("Cleaned up {Count} stale battles", staleBattles.Count);
+            _logger.LogInformation("Marked {Count} stale battles for deletion.", _toRemove.Count - toRemoveInitialSize);
         }
     }
 
