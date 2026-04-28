@@ -10,7 +10,7 @@ public sealed class GameLogger
 
     private readonly string _logFilePath;
 
-    public static readonly string LogFolder = "logs";
+    public const string LogFolder = "logs";
 
     public GameLogger(ILogger logger, Guid gameId)
     {
@@ -32,7 +32,8 @@ public sealed class GameLogger
         }
         catch (Exception ex)
         {
-            _logger.LogError("An error occured while creating log for {Game}: {Message}", _prefix, ex.Message);
+            _logger.LogError("An error occured while creating log for {Game}: {Message}",
+                _prefix, ex.Message);
         }
     }
 

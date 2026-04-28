@@ -11,7 +11,6 @@ using Frontline.Extensions;
 using Frontline.Missions;
 using Frontline.Options;
 using Frontline.Services;
-using Frontline.Utils;
 using Frontline.Xmpp;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
@@ -61,7 +60,6 @@ builder.Services.AddSingleton<IToyService, ToyService>();
 builder.Services.AddSingleton<IUserService, UserService>();
 builder.Services.AddSingleton<IBattleService, BattleService>();
 builder.Services.AddSingleton<IMatchmakingService, MatchmakingService>();
-builder.Services.AddSingleton<ILogsCleanupService, LogsCleanupService>();
 builder.Services.AddScoped<ISupplyService, SupplyService>();
 
 builder.Services.AddHostedService<MatchmakingWorker>();
