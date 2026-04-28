@@ -2,9 +2,9 @@
 
 public class LogsCleanupWorker : BackgroundService
 {
-    private readonly TimeSpan _tickRate =  TimeSpan.FromMinutes(30);
-    
     private readonly ILogger<LogsCleanupWorker> _logger;
+    
+    private readonly TimeSpan _tickRate =  TimeSpan.FromMinutes(30);
     
     private readonly TimeSpan _daysToKeepSpan = TimeSpan.FromDays(7);
 
