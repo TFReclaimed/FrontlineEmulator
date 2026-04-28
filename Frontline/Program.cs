@@ -64,6 +64,7 @@ builder.Services.AddScoped<ISupplyService, SupplyService>();
 
 builder.Services.AddHostedService<MatchmakingWorker>();
 builder.Services.AddHostedService<BattleCleanupWorker>();
+builder.Services.AddHostedService<LogsCleanupWorker>();
 builder.Services.AddSingleton<IXmppServer, XmppServer>();
 builder.Services.AddHostedService(sp => sp.GetRequiredService<IXmppServer>());
 builder.Services.AddHostedService<ChatHistoryTrimWorker>();

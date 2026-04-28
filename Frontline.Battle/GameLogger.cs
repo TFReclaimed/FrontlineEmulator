@@ -10,17 +10,31 @@ public sealed class GameLogger
 
     private readonly string _logFilePath;
 
+    public const string LogFolder = "logs";
+
     public GameLogger(ILogger logger, Guid gameId)
     {
         _logger = logger;
         _prefix = $"[Game {gameId}] ";
-        Directory.CreateDirectory("logs");
-        _logFilePath = $"logs/game-{gameId}.log";
+        _logFilePath = $"{LogFolder}/game-{gameId}.log";
     }
 
     public void LogToFile(string level, string message)
     {
-        File.AppendAllText(_logFilePath, $"[{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss}] [{level}] {message}{Environment.NewLine}");
+        try
+        {
+            if (!Directory.Exists(LogFolder))
+            {
+                Directory.CreateDirectory(LogFolder);
+            }
+
+            File.AppendAllText(_logFilePath, $"[{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss}] [{level}] {message}{Environment.NewLine}");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occured while creating log for {Game}: {Message}",
+                _prefix, ex.Message);
+        }
     }
 
     public void Debug(string message)
