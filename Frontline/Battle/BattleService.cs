@@ -36,7 +36,8 @@ public class BattleService : IBattleService
     private readonly Lock _lock = new();
 
     public BattleService(ILogger<BattleService> logger, ILoggerFactory loggerFactory,
-        IServiceScopeFactory serviceScopeFactory, IWebHostEnvironment environment, IXmppServer xmppServer)
+        IServiceScopeFactory serviceScopeFactory, IWebHostEnvironment environment,
+        IXmppServer xmppServer)
     {
         _logger = logger;
         _loggerFactory = loggerFactory;
