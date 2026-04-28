@@ -15,6 +15,7 @@ public class GameTemplate
     public sbyte NewTurnCommand { get; set; }
     public sbyte MaxCommandAccum { get; set; }
     public sbyte InitialPlayerHealth { get; set; }
+    public sbyte EndTurnTimer { get; set; }
     public sbyte FirstPlayerRegionSize { get; set; }
     public sbyte OtherPlayerRegionSize { get; set; }
     public sbyte ControlRegionSize { get; set; }
