@@ -16,7 +16,8 @@ public class OpenBoosterEndpoint : Endpoint<OpenBoosterPackRequest, BoosterPackR
 
     private readonly IUserService _userService;
 
-    public OpenBoosterEndpoint(IPlayerRepository playerRepository, IInventoryRepository inventoryRepository, IUserService userService)
+    public OpenBoosterEndpoint(IPlayerRepository playerRepository, IInventoryRepository inventoryRepository,
+        IUserService userService)
     {
         _playerRepository = playerRepository;
         _inventoryRepository = inventoryRepository;
@@ -65,12 +66,30 @@ public class OpenBoosterEndpoint : Endpoint<OpenBoosterPackRequest, BoosterPackR
             return;
         }
 
-        var isUltraRare = Random.Shared.Next(0, 2) == 0;
-        var potentialRareCards = RulesetParser.Ruleset.CardsRuleset.Cards.Values
-            .Where(x => cardSet.CardIds.Contains(x.CardId))
-            .Where(x => x.Type != CardType.Resource &&
-                        x.Rarity == (isUltraRare ? CardRarity.UltraRare : CardRarity.Rare))
-            .ToList();
+        var userObtainedItems = (await _inventoryRepository.GetUserItemsAsync(userId))
+            .Where(x => cardSet.CardIds.Contains(x.TemplateId))
+            .GroupBy(item => item.TemplateId)
+            .Select(items => items.First())
+            .ToList()
+            .ConvertAll(cardEntity => RulesetParser.GetCardTemplate(cardEntity.TemplateId))
+            .FindAll(template => template is not null);
+        
+        var userObtainedItemIds = userObtainedItems.Select(obtainedItem => obtainedItem?.CardId);
+
+        var userUnObtainedItems = cardSet.CardIds
+            .FindAll(cardId => !userObtainedItemIds.Contains(cardId))
+            .ConvertAll(RulesetParser.GetCardTemplate)
+            .FindAll(template => template is not null);
+
+        List<CardRarity> pickedCardRarities = [
+            GetCardRarity(13),
+            GetCardRarity(),
+            GetCardRarity(),
+            GetCardRarity()
+        ];
+
+        var pickedCardTemplates = pickedCardRarities
+            .ConvertAll(rarity => GetCardTemplate(userUnObtainedItems!, userObtainedItems!, rarity));
 
         var potentialResourceCards = RulesetParser.Ruleset.CardsRuleset.Cards.Values
             .Where(x =>
@@ -101,17 +120,7 @@ public class OpenBoosterEndpoint : Endpoint<OpenBoosterPackRequest, BoosterPackR
             })
             .ToList();
 
-        var potentialCommonCards = RulesetParser.Ruleset.CardsRuleset.Cards.Values
-            .Where(x => cardSet.CardIds.Contains(x.CardId))
-            .Where(x => x.Type != CardType.Resource && x.Rarity == CardRarity.Common)
-            .ToList();
-
-        var rareCardTemplate = potentialRareCards[Random.Shared.Next(0, potentialRareCards.Count)];
         var resourceCardTemplate = (ResourceCardTemplate) potentialResourceCards[Random.Shared.Next(0, potentialResourceCards.Count)];
-        var commonCards = potentialCommonCards
-            .OrderBy(_ => Random.Shared.Next())
-            .Take(3)
-            .ToList();
 
         var addResourceCard = true;
         if (resourceCardTemplate.ResourceType == ResourceType.Credit)
@@ -135,18 +144,13 @@ public class OpenBoosterEndpoint : Endpoint<OpenBoosterPackRequest, BoosterPackR
                 userId, resourceCardTemplate.ResourceValue);
         }
 
-        List<CardTemplate> cardTemplates = [
-            rareCardTemplate,
-            ..commonCards
-        ];
-
         if (addResourceCard)
         {
-            cardTemplates.Add(resourceCardTemplate);
+            pickedCardTemplates.Add(resourceCardTemplate);
         }
 
         List<ItemEntity> cardEntities = [];
-        foreach (var template in cardTemplates)
+        foreach (var template in pickedCardTemplates)
         {
             cardEntities.Add(ItemEntity.FromTemplate(template));
         }
@@ -171,5 +175,35 @@ public class OpenBoosterEndpoint : Endpoint<OpenBoosterPackRequest, BoosterPackR
         };
 
         await Send.OkAsync(response);
+    }
+
+    private static CardTemplate GetCardTemplate(List<CardTemplate> unObtainedCards, List<CardTemplate> obtainedCards,
+        CardRarity rarity)
+    {
+        var fromUnObtained = Random.Shared.Next(0, 2) == 0;
+
+        if (unObtainedCards.Count != 0 && fromUnObtained)
+        {
+            return unObtainedCards
+                .Where(card => card.Rarity == rarity)
+                .OrderBy(_ => Random.Shared.Next()).First();
+        }
+        
+        return obtainedCards
+            .Where(card => card.Rarity == rarity)
+            .OrderBy(_ => Random.Shared.Next()).First();
+    }
+
+    private static CardRarity GetCardRarity(int lowerBoundary = 1)
+    {
+        var cardRarityRng = Random.Shared.Next(lowerBoundary, 16);
+
+        return cardRarityRng switch
+        {
+            15 => CardRarity.UltraRare,
+            > 12 => CardRarity.Rare,
+            > 8 => CardRarity.Uncommon,
+            _ => CardRarity.Common
+        };
     }
 }

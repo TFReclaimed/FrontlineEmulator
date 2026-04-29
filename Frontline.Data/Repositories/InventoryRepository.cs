@@ -12,6 +12,7 @@ public interface IInventoryRepository : IRepository<ItemEntity>
     Task AddItemAsync(int userId, ItemEntity item);
     Task AddItemsAsync(int userId, List<ItemEntity> items);
     Task<bool> HasItemsAsync(int userId, List<int> itemIds);
+    Task<List<ItemEntity>> GetUserItemsAsync(int userId);
 }
 
 public class InventoryRepository : RepositoryBase<ItemEntity>, IInventoryRepository
@@ -148,6 +149,13 @@ public class InventoryRepository : RepositoryBase<ItemEntity>, IInventoryReposit
         return await Db.Items
             .Where(item => item.UserId == userId && itemIds.Contains(item.ItemId))
             .CountAsync() == itemIds.Count;
+    }
+
+    public async Task<List<ItemEntity>> GetUserItemsAsync(int userId)
+    {
+        return await Db.Items
+            .Where(item => item.UserId == userId)
+            .ToListAsync();
     }
 
     private async Task<int> GetNextItemIdForUser(int userId)
