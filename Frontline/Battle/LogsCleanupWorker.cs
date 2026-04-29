@@ -40,6 +40,11 @@ public class LogsCleanupWorker : BackgroundService
                 .ToList()
                 .FindAll(file => File.GetCreationTime(file) < staleLogsDateTime);
 
+            if (staleLogs.Count == 0)
+            {
+                return;
+            }
+
             _logger.LogInformation("Cleaning {Counter} stale logs.", staleLogs.Count);
             
             staleLogs.ForEach(File.Delete);
