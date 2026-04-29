@@ -23,6 +23,6 @@ internal sealed class HelpCommand : ChatCommand
             return;
         }
 
-        await context.SendSystemMessage(command.Usage);
+        await context.SendSystemMessage(command.Usage + " - " + command.Description);
     }
 }
