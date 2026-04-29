@@ -29,11 +29,19 @@ public class ChatRoom
 
     private readonly List<Message> _messages;
 
+    private readonly IXmppServer _xmppServer;
+
     private readonly Lock _lock = new();
 
-    private static readonly IReadOnlyList<ChatCommand> Commands = [new HelpCommand()];
+    private static readonly IReadOnlyList<ChatCommand> Commands =
+    [
+        new HelpCommand(),
+        new MuteCommand(),
+        new OnlineCountCommand(),
+        new OnlineUsersCommand()
+    ];
 
-    private ChatRoom(IOptions<ChatOptions> chatOptions, string name, List<Message> history)
+    private ChatRoom(IOptions<ChatOptions> chatOptions, string name, List<Message> history, IXmppServer xmppServer)
     {
         _chatOptions = chatOptions;
         _name = name;
@@ -41,15 +49,16 @@ public class ChatRoom
         _clients = [];
         _lastMessageTimes = [];
         _messages = history;
+        _xmppServer = xmppServer;
     }
 
     public static async Task<ChatRoom> CreateAsync(IOptions<ChatOptions> chatOptions, string name,
-        IChatMessageRepository chatMessageRepository)
+        IChatMessageRepository chatMessageRepository, IXmppServer xmppServer)
     {
         var messageEntities = await chatMessageRepository.GetRecentAsync(name, Globals.MaxMessages);
         var history = messageEntities.Select(entity => BuildMessageElement(entity, name)).ToList();
 
-        return new ChatRoom(chatOptions, name, history);
+        return new ChatRoom(chatOptions, name, history, xmppServer);
     }
 
     public async Task AddClient(XmppClient client)
@@ -209,7 +218,7 @@ public class ChatRoom
         }
 
         var context = new ChatCommandContext(_name, sender, Commands,
-            systemMessage => SendSystemMessageSafely(sender, systemMessage));
+            systemMessage => SendSystemMessageSafely(sender, systemMessage), _xmppServer);
         await chatCommand.ExecuteAsync(context, arguments);
         return true;
     }
