@@ -180,15 +180,13 @@ public class OpenBoosterEndpoint : Endpoint<OpenBoosterPackRequest, BoosterPackR
     private static CardTemplate GetCardTemplate(List<CardTemplate> unObtainedCards, List<CardTemplate> obtainedCards,
         CardRarity rarity)
     {
-        var unObtainedCardsWithRarity = unObtainedCards
-            .Where(card => card.Rarity == rarity);
-        
         var fromUnObtained = Random.Shared.Next(0, 2) == 0;
 
-        var obtainedCardsWithRarity = unObtainedCardsWithRarity.ToList();
-        if (obtainedCardsWithRarity.Count != 0 && fromUnObtained)
+        if (unObtainedCards.Count != 0 && fromUnObtained)
         {
-            return obtainedCardsWithRarity.OrderBy(_ => Random.Shared.Next()).First();
+            return unObtainedCards
+                .Where(card => card.Rarity == rarity)
+                .OrderBy(_ => Random.Shared.Next()).First();
         }
         
         return obtainedCards
