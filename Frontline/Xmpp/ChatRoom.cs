@@ -38,7 +38,8 @@ public class ChatRoom
         new HelpCommand(),
         new MuteCommand(),
         new OnlineCountCommand(),
-        new OnlineUsersCommand()
+        new OnlineUsersCommand(),
+        new AlertCommand()
     ];
 
     private ChatRoom(IOptions<ChatOptions> chatOptions, string name, List<Message> history, IXmppServer xmppServer)

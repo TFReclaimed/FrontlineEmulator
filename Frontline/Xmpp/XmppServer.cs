@@ -6,6 +6,7 @@ using Frontline.Data.Repositories;
 using Frontline.Options;
 using Frontline.Xmpp.Transport;
 using Microsoft.Extensions.Options;
+using XmppDotNet;
 
 namespace Frontline.Xmpp;
 
@@ -16,6 +17,7 @@ public interface IXmppServer : IHostedService
     void InitializeClient(IXmppTransport transport, CancellationToken ct);
     IReadOnlyList<string> GetOnlineUsernames();
     Task<bool> MuteUserAsync(int userId, TimeSpan duration);
+    Task BroadcastSystemMessageAsync(string subject, string body);
 }
 
 public class XmppServer : BackgroundService, IXmppServer
@@ -188,6 +190,26 @@ public class XmppServer : BackgroundService, IXmppServer
         }
 
         return true;
+    }
+
+    public async Task BroadcastSystemMessageAsync(string subject, string body)
+    {
+        XmppClient[] targets;
+        lock (_lock)
+        {
+            targets = _xmppClients
+                .Where(client => client.UserId != 0)
+                .ToArray();
+        }
+
+        if (targets.Length == 0)
+        {
+            return;
+        }
+
+        var systemJid = new Jid("-1", Globals.XmppServerAddress, "-1");
+        var tasks = targets.Select(client => client.SendPrivateMessage(systemJid, subject, body));
+        await Task.WhenAll(tasks);
     }
 
     private void OnClientDisconnected(XmppClient client)
