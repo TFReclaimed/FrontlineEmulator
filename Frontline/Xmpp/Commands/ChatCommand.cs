@@ -8,13 +8,21 @@ internal abstract class ChatCommand
 
     public string Usage { get; }
 
+    public bool IsAdminOnly { get; }
+
     public IReadOnlyList<string> Aliases { get; }
 
     protected ChatCommand(string name, string description, string usage, params string[] aliases)
+        : this(name, description, usage, false, aliases)
+    {
+    }
+
+    protected ChatCommand(string name, string description, string usage, bool isAdminOnly, params string[] aliases)
     {
         Name = name;
         Description = description;
         Usage = usage;
+        IsAdminOnly = isAdminOnly;
         Aliases = aliases;
     }
 

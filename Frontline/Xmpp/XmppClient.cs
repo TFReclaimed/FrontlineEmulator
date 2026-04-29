@@ -52,6 +52,8 @@ public class XmppClient
 
     public string Avatar { get; set; } = "avatar001";
 
+    public bool IsAdmin { get; set; }
+
     public DateTime? ChatBanEnd { get; set; }
 
     public Jid? Jid { get; private set; }

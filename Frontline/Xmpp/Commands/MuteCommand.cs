@@ -4,7 +4,7 @@ internal sealed class MuteCommand : ChatCommand
 {
     private const int DefaultMuteMinutes = 10;
 
-    public MuteCommand() : base("mute", "Mutes a user by id.", "/mute <userId> [minutes]")
+    public MuteCommand() : base("mute", "Mutes a user by id.", "/mute <userId> [minutes]", true)
     {
     }
 

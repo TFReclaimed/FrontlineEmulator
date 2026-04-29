@@ -26,6 +26,7 @@ public class PlayerEntity
     public DateTime LastGiftSent { get; set; }
     public DateTime? ChatBanEnd { get; set; }
     public DateTime LastSupplySync { get; set; }
+    public bool IsAdmin { get; set; }
 
     [NotMapped]
     public string GuildName { get; set; } = string.Empty;

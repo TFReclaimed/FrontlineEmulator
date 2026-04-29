@@ -10,7 +10,10 @@ internal sealed class HelpCommand : ChatCommand
     {
         if (string.IsNullOrWhiteSpace(arguments))
         {
-            var commandList = string.Join(", ", context.Commands.Select(command => $"/{command.Name}"));
+            var commands = context.Commands
+                .Where(command => !command.IsAdminOnly || context.Sender.IsAdmin)
+                .Select(command => command.Name);
+            var commandList = string.Join(", ", commands);
             await context.SendSystemMessage($"Available commands: {commandList}.");
             return;
         }

@@ -234,6 +234,7 @@ public class XmppServer : BackgroundService, IXmppServer
         client.Username = player.Name;
         client.Avatar = player.AvatarId;
         client.ChatBanEnd = player.ChatBanEnd;
+        client.IsAdmin = player.IsAdmin;
     }
 
     private void OnClientEnteredRoom(XmppClient client, string room)

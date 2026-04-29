@@ -217,6 +217,12 @@ public class ChatRoom
             return true;
         }
 
+        if (chatCommand.IsAdminOnly && !sender.IsAdmin)
+        {
+            await SendSystemMessage(sender, "You do not have permission to use this command.");
+            return true;
+        }
+
         var context = new ChatCommandContext(_name, sender, Commands,
             systemMessage => SendSystemMessageSafely(sender, systemMessage), _xmppServer);
         await chatCommand.ExecuteAsync(context, arguments);
