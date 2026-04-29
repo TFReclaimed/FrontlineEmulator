@@ -144,18 +144,18 @@ public class InventoryRepository : RepositoryBase<ItemEntity>, IInventoryReposit
         await AddRangeAsync(items);
     }
 
-    public async Task<List<ItemEntity>> GetUserItemsAsync(int userId)
-    {
-        return await Db.Items
-            .Where(item => item.UserId == userId)
-            .ToListAsync();
-    }
-
     public async Task<bool> HasItemsAsync(int userId, List<int> itemIds)
     {
         return await Db.Items
             .Where(item => item.UserId == userId && itemIds.Contains(item.ItemId))
             .CountAsync() == itemIds.Count;
+    }
+
+    public async Task<List<ItemEntity>> GetUserItemsAsync(int userId)
+    {
+        return await Db.Items
+            .Where(item => item.UserId == userId)
+            .ToListAsync();
     }
 
     private async Task<int> GetNextItemIdForUser(int userId)
