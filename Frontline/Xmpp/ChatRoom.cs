@@ -1,6 +1,8 @@
 using Frontline.Data.Entities;
 using Frontline.Data.Repositories;
+using Frontline.Extensions;
 using Frontline.Options;
+using Frontline.Xmpp.Commands;
 using Microsoft.Extensions.Options;
 using XmppDotNet;
 using XmppDotNet.Xml;
@@ -27,9 +29,19 @@ public class ChatRoom
 
     private readonly List<Message> _messages;
 
+    private readonly IXmppServer _xmppServer;
+
     private readonly Lock _lock = new();
 
-    private ChatRoom(IOptions<ChatOptions> chatOptions, string name, List<Message> history)
+    private static readonly IReadOnlyList<ChatCommand> Commands =
+    [
+        new HelpCommand(),
+        new MuteCommand(),
+        new OnlineCountCommand(),
+        new OnlineUsersCommand()
+    ];
+
+    private ChatRoom(IOptions<ChatOptions> chatOptions, string name, List<Message> history, IXmppServer xmppServer)
     {
         _chatOptions = chatOptions;
         _name = name;
@@ -37,15 +49,16 @@ public class ChatRoom
         _clients = [];
         _lastMessageTimes = [];
         _messages = history;
+        _xmppServer = xmppServer;
     }
 
     public static async Task<ChatRoom> CreateAsync(IOptions<ChatOptions> chatOptions, string name,
-        IChatMessageRepository chatMessageRepository)
+        IChatMessageRepository chatMessageRepository, IXmppServer xmppServer)
     {
         var messageEntities = await chatMessageRepository.GetRecentAsync(name, Globals.MaxMessages);
         var history = messageEntities.Select(entity => BuildMessageElement(entity, name)).ToList();
 
-        return new ChatRoom(chatOptions, name, history);
+        return new ChatRoom(chatOptions, name, history, xmppServer);
     }
 
     public async Task AddClient(XmppClient client)
@@ -107,6 +120,11 @@ public class ChatRoom
     public async Task BroadcastMessage(XmppClient sender, string message, IChatMessageRepository chatMessageRepository)
     {
         if (sender.Jid is null)
+        {
+            return;
+        }
+
+        if (await TryHandleCommand(sender, message))
         {
             return;
         }
@@ -174,6 +192,43 @@ public class ChatRoom
         await Broadcast(messageElement);
     }
 
+    private async Task<bool> TryHandleCommand(XmppClient sender, string message)
+    {
+        if (string.IsNullOrWhiteSpace(message) || message[0] != '/')
+        {
+            return false;
+        }
+
+        var commandLine = message[1..].Trim();
+        if (commandLine.Length == 0)
+        {
+            await SendSystemMessage(sender, "Unknown command. Type /help for a list of commands.");
+            return true;
+        }
+
+        var separatorIndex = commandLine.IndexOf(' ');
+        var command = separatorIndex < 0 ? commandLine : commandLine[..separatorIndex];
+        var arguments = separatorIndex < 0 ? string.Empty : commandLine[(separatorIndex + 1)..].Trim();
+
+        var chatCommand = Commands.FirstOrDefault(candidate => candidate.Matches(command));
+        if (chatCommand is null)
+        {
+            await SendSystemMessage(sender, "Unknown command. Type /help for a list of commands.");
+            return true;
+        }
+
+        if (chatCommand.IsAdminOnly && !sender.IsAdmin)
+        {
+            await SendSystemMessage(sender, "You do not have permission to use this command.");
+            return true;
+        }
+
+        var context = new ChatCommandContext(_name, sender, Commands,
+            systemMessage => SendSystemMessageSafely(sender, systemMessage), _xmppServer);
+        await chatCommand.ExecuteAsync(context, arguments);
+        return true;
+    }
+
     public async Task Broadcast(XmppXElement element)
     {
         XmppClient[] targets;
@@ -239,6 +294,15 @@ public class ChatRoom
         else
         {
             await SendSystemMessage(client, "Welcome to the global chat!");
+        }
+    }
+
+    private async Task SendSystemMessageSafely(XmppClient client, string message)
+    {
+        var messages = message.SplitForChat(Globals.MaxMessageLength);
+        foreach (var msg in messages)
+        {
+            await SendSystemMessage(client, msg);
         }
     }
 

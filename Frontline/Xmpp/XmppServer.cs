@@ -14,6 +14,8 @@ public interface IXmppServer : IHostedService
     int GetClientCount();
     bool IsClientConnected(int clientId);
     void InitializeClient(IXmppTransport transport, CancellationToken ct);
+    IReadOnlyList<string> GetOnlineUsernames();
+    Task<bool> MuteUserAsync(int userId, TimeSpan duration);
 }
 
 public class XmppServer : BackgroundService, IXmppServer
@@ -137,6 +139,57 @@ public class XmppServer : BackgroundService, IXmppServer
         }
     }
 
+    public IReadOnlyList<string> GetOnlineUsernames()
+    {
+        lock (_lock)
+        {
+            return _xmppClients
+                .Where(client => client.UserId != 0)
+                .GroupBy(client => client.UserId)
+                .Select(group =>
+                {
+                    var username = group.Select(client => client.Username)
+                        .FirstOrDefault(name => !string.IsNullOrWhiteSpace(name));
+                    return username ?? $"User {group.Key}";
+                })
+                .OrderBy(name => name, StringComparer.OrdinalIgnoreCase)
+                .ToList();
+        }
+    }
+
+    public async Task<bool> MuteUserAsync(int userId, TimeSpan duration)
+    {
+        if (userId <= 0 || duration <= TimeSpan.Zero)
+        {
+            return false;
+        }
+
+        var muteEnd = DateTime.UtcNow.Add(duration);
+
+        using (var scope = _serviceScopeFactory.CreateScope())
+        {
+            var playerRepository = scope.ServiceProvider.GetRequiredService<IPlayerRepository>();
+            var player = await playerRepository.GetByIdAsync(userId);
+            if (player is null)
+            {
+                return false;
+            }
+
+            player.ChatBanEnd = muteEnd;
+            await playerRepository.UpdateAsync(player);
+        }
+
+        lock (_lock)
+        {
+            foreach (var client in _xmppClients.Where(client => client.UserId == userId))
+            {
+                client.ChatBanEnd = muteEnd;
+            }
+        }
+
+        return true;
+    }
+
     private void OnClientDisconnected(XmppClient client)
     {
         _ = ProcessOnClientDisconnected(client);
@@ -181,6 +234,7 @@ public class XmppServer : BackgroundService, IXmppServer
         client.Username = player.Name;
         client.Avatar = player.AvatarId;
         client.ChatBanEnd = player.ChatBanEnd;
+        client.IsAdmin = player.IsAdmin;
     }
 
     private void OnClientEnteredRoom(XmppClient client, string room)
@@ -211,7 +265,7 @@ public class XmppServer : BackgroundService, IXmppServer
             using var scope = _serviceScopeFactory.CreateScope();
             var chatMessageRepository = scope.ServiceProvider.GetRequiredService<IChatMessageRepository>();
 
-            var newRoom = await ChatRoom.CreateAsync(_chatOptions, room, chatMessageRepository);
+            var newRoom = await ChatRoom.CreateAsync(_chatOptions, room, chatMessageRepository, this);
             _chatRooms.TryAdd(room, newRoom);
             chatRoom = _chatRooms[room];
         }
