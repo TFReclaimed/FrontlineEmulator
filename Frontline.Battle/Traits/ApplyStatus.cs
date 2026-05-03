@@ -30,14 +30,12 @@ public class ApplyStatus : BaseTraitEffect
     {
         if (IsDeterStatus(StatusType))
         {
-            ActiveTrait? activeTrait = null;
             var activeData = active.GetTraitTarget().ActiveData;
             var flag = false;
             foreach (var trait in activeData.ActiveTraits)
             {
-                activeTrait = trait;
-                if (activeTrait != active && (activeTrait.GetTraitInfo().IsStatusEffect(ApplyStatusTraitStatusType.Deter, activeTrait) ||
-                                              activeTrait.GetTraitInfo().IsStatusEffect(ApplyStatusTraitStatusType.Stun, activeTrait)))
+                if (trait != active && (trait.GetTraitInfo().IsStatusEffect(ApplyStatusTraitStatusType.Deter, trait) ||
+                                        trait.GetTraitInfo().IsStatusEffect(ApplyStatusTraitStatusType.Stun, trait)))
                 {
                     flag = true;
                 }
@@ -47,11 +45,10 @@ public class ApplyStatus : BaseTraitEffect
             {
                 foreach (var trait in active.GetTraitTarget().ActiveData.ActiveTraits)
                 {
-                    activeTrait = trait;
-                    activeTrait.Detered = !activeTrait.EmbarkedCheck();
+                    trait.Detered = !trait.EmbarkedCheck();
                 }
 
-                activeTrait!.GetTraitTarget().OnRemovedDeter();
+                active.GetTraitTarget().OnRemovedDeter();
             }
         }
 

@@ -296,7 +296,7 @@ public class BaseTraitEffect
                     if (cardStack.PrimaryCard.HasPilot())
                     {
                         card2 = cardStack.PrimaryCard.GetEmbarkedPilot()!;
-                        if (DoesApply(card2, card, false, true))
+                        if (!(ignoreSelf && card2.EqualsTo(card)) && DoesApply(card2, card, false, true))
                         {
                             list2.Add(card2);
                         }
@@ -306,21 +306,21 @@ public class BaseTraitEffect
                     for (var num = secrets.Count - 1; num >= 0; num--)
                     {
                         card2 = secrets[num];
-                        if (DoesApply(card2, card, false, true))
+                        if (!(ignoreSelf && card2.EqualsTo(card)) && DoesApply(card2, card, false, true))
                         {
                             list2.Add(card2);
                         }
                     }
 
                     card2 = cardStack.PrimaryCard;
-                    if (DoesApply(card2, card, false, true))
+                    if (!(ignoreSelf && card2.EqualsTo(card)) && DoesApply(card2, card, false, true))
                     {
                         list2.Add(card2);
                     }
                 }
 
                 card2 = cardStack.GetEjectedCard();
-                if (card2 != null && DoesApply(card2, card, false, true))
+                if (card2 != null && !(ignoreSelf && card2.EqualsTo(card)) && DoesApply(card2, card, false, true))
                 {
                     list2.Add(card2);
                 }
@@ -348,7 +348,7 @@ public class BaseTraitEffect
                 if (cardStack.PrimaryCard.HasPilot())
                 {
                     card2 = cardStack.PrimaryCard.GetEmbarkedPilot()!;
-                    if (CheckAndApplyTrait(card2, card, false, true) && appliedTo != null)
+                    if (!(ignoreSelf && card2.EqualsTo(card)) && CheckAndApplyTrait(card2, card, false, true) && appliedTo != null)
                     {
                         appliedTo.Add(card2);
                     }
@@ -358,21 +358,21 @@ public class BaseTraitEffect
                 for (var num2 = secrets2.Count - 1; num2 >= 0; num2--)
                 {
                     card2 = secrets2[num2];
-                    if (CheckAndApplyTrait(card2, card, false, true) && appliedTo != null)
+                    if (!(ignoreSelf && card2.EqualsTo(card)) && CheckAndApplyTrait(card2, card, false, true) && appliedTo != null)
                     {
                         appliedTo.Add(card2);
                     }
                 }
 
                 card2 = cardStack.PrimaryCard;
-                if (CheckAndApplyTrait(card2, card, false, true) && appliedTo != null)
+                if (!(ignoreSelf && card2.EqualsTo(card)) && CheckAndApplyTrait(card2, card, false, true) && appliedTo != null)
                 {
                     appliedTo.Add(card2);
                 }
             }
 
             card2 = cardStack.GetEjectedCard();
-            if (card2 != null && CheckAndApplyTrait(card2, card, false, true) && appliedTo != null)
+            if (card2 != null && !(ignoreSelf && card2.EqualsTo(card)) && CheckAndApplyTrait(card2, card, false, true) && appliedTo != null)
             {
                 appliedTo.Add(card2);
             }
