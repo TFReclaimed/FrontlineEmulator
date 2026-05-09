@@ -254,6 +254,18 @@
           {
             "DropshipId": 10,
             "SlotIndex": 30
+          },
+          {
+            "DropshipId": 12,
+            "SlotIndex": 30
+          },
+          {
+            "DropshipId": 14,
+            "SlotIndex": 30
+          },
+          {
+            "DropshipId": 16,
+            "SlotIndex": 30
           }
         ]
       },
@@ -509,6 +521,18 @@
           },
           {
             "DropshipId": 11,
+            "SlotIndex": 30
+          },
+          {
+            "DropshipId": 13,
+            "SlotIndex": 30
+          },
+          {
+            "DropshipId": 15,
+            "SlotIndex": 30
+          },
+          {
+            "DropshipId": 17,
             "SlotIndex": 30
           }
         ]

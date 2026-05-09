@@ -40,7 +40,7 @@ public class SaveDropshipEndpoint : Endpoint<SaveDropshipRequest>
             return;
         }
 
-        if ((req.DropshipId != 10 && req.DropshipId != 11) || player.Level < 3)
+        if (!CanSaveDropship(req.DropshipId, player.Level))
         {
             Logger.LogWarning("Player {UserId} attempted to save invalid dropship {DropshipId}",
                 userId, req.DropshipId);
@@ -163,5 +163,20 @@ public class SaveDropshipEndpoint : Endpoint<SaveDropshipRequest>
         Logger.LogInformation("Player {UserId} updated dropship {DropshipId}", userId, req.DropshipId);
 
         await Send.OkAsync();
+    }
+
+    private static bool CanSaveDropship(int dropshipId, int playerLevel)
+    {
+        return dropshipId switch
+        {
+            10 or 11 => playerLevel >= 3,
+            12 => playerLevel >= 4,
+            13 => playerLevel >= 5,
+            14 => playerLevel >= 6,
+            15 => playerLevel >= 7,
+            16 => playerLevel >= 8,
+            17 => playerLevel >= 9,
+            _ => false
+        };
     }
 }
