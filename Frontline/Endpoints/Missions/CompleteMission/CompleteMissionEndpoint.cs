@@ -79,7 +79,7 @@ public class CompleteMissionEndpoint : Endpoint<CompleteMissionRequest, List<Mis
 
         await _activeMissionRepository.DeleteAsync(mission);
 
-        if (missionData.RequiredSlotConsume && mission.RequiredCardItem is not null)
+        if (missionData.RequiredSlotConsume && mission.Success && mission.RequiredCardItem is not null)
         {
             await _inventoryRepository.DeleteAsync(mission.RequiredCardItem);
         }
@@ -89,7 +89,7 @@ public class CompleteMissionEndpoint : Endpoint<CompleteMissionRequest, List<Mis
             await _inventoryRepository.UpdateAsync(mission.RequiredCardItem);
         }
 
-        if (missionData.Bonus1SlotConsume && mission.BonusCard1Item is not null)
+        if (missionData.Bonus1SlotConsume && mission.Bonus1Success && mission.BonusCard1Item is not null)
         {
             await _inventoryRepository.DeleteAsync(mission.BonusCard1Item);
         }
@@ -99,7 +99,7 @@ public class CompleteMissionEndpoint : Endpoint<CompleteMissionRequest, List<Mis
             await _inventoryRepository.UpdateAsync(mission.BonusCard1Item);
         }
 
-        if (missionData.Bonus2SlotConsume && mission.BonusCard2Item is not null)
+        if (missionData.Bonus2SlotConsume && mission.Bonus2Success && mission.BonusCard2Item is not null)
         {
             await _inventoryRepository.DeleteAsync(mission.BonusCard2Item);
         }
