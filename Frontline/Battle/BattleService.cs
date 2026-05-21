@@ -4,7 +4,6 @@ using Frontline.Battle.GameEvents;
 using Frontline.Data.Entities;
 using Frontline.Data.Repositories;
 using Frontline.Services;
-using Frontline.Xmpp;
 
 namespace Frontline.Battle;
 
@@ -26,8 +25,6 @@ public class BattleService : IBattleService
     private readonly IServiceScopeFactory _serviceScopeFactory;
 
     private readonly IWebHostEnvironment _environment;
-    
-    private readonly IXmppServer _xmppServer;
 
     private readonly Dictionary<Guid, CcgGame> _battles = new();
     
@@ -36,14 +33,12 @@ public class BattleService : IBattleService
     private readonly Lock _lock = new();
 
     public BattleService(ILogger<BattleService> logger, ILoggerFactory loggerFactory,
-        IServiceScopeFactory serviceScopeFactory, IWebHostEnvironment environment,
-        IXmppServer xmppServer)
+        IServiceScopeFactory serviceScopeFactory, IWebHostEnvironment environment)
     {
         _logger = logger;
         _loggerFactory = loggerFactory;
         _serviceScopeFactory = serviceScopeFactory;
         _environment = environment;
-        _xmppServer = xmppServer;
     }
 
     public int GetBattleCount()
@@ -134,79 +129,114 @@ public class BattleService : IBattleService
             {
                 return;
             }
-            
-            var now = DateTime.Now;
-            var emptyBattles = _toRemove
-                .Where(kvp => kvp.Value < now)
-                .Select(kvp => kvp.Key)
-                .ToList();
 
-            if (emptyBattles.Count > 0)
-            {
-                foreach (var key in emptyBattles)
-                {
-                    _battles.Remove(key);
-                    _toRemove.Remove(key);
-                }
-                
-                _logger.LogInformation("Cleaned up {Count} empty battles.", emptyBattles.Count);
-            }
-            
-            var staleBattles = _battles.Values
-                .Where(b => b.IsStale() && !_toRemove.ContainsKey(b.Id))
-                .ToList();
-
-            if (staleBattles.Count == 0)
-            {
-                return;
-            }
-
+            var now = DateTime.UtcNow;
             var markedCount = 0;
-            var removedCount = 0;
-
-            foreach (var battle in staleBattles)
+            foreach (var battle in _battles.Values)
             {
-                battle.LogGameState();
-
-                var player1Connected = _xmppServer.IsClientConnected(battle.Player1Id);
-                var player2Connected = _xmppServer.IsClientConnected(battle.Player2Id);
-
-                if (!player2Connected && !player1Connected)
+                if (!battle.GameState.IsGameOver() || _toRemove.ContainsKey(battle.Id))
                 {
-                    _battles.Remove(battle.Id);
-                    removedCount++;
                     continue;
                 }
 
-                _toRemove.Add(battle.Id, DateTime.Now.AddSeconds(30));
+                _toRemove.Add(battle.Id, now.AddSeconds(30));
                 markedCount++;
-
-                if (player1Connected != player2Connected && !battle.GameState.IsGameOver())
-                {
-                    battle.PlayGameEvent(new GameEventParams
-                    {
-                        PlayerIndex = (sbyte) (player1Connected ? 1 : 0),
-                        GameEvent = GameEvent.Surrender
-                    });
-                }
             }
 
             if (markedCount > 0)
             {
-                _logger.LogInformation("Marked {Count} stale battles for deletion.",
+                _logger.LogInformation("Marked {Count} finished battles for deletion.",
                     markedCount);
             }
 
-            if (removedCount > 0)
+            var oldBattles = _toRemove
+                .Where(kvp => kvp.Value < now)
+                .Select(kvp => kvp.Key)
+                .ToList();
+
+            if (oldBattles.Count > 0)
             {
-                _logger.LogInformation("Cleaned up {Count} empty battles.",
-                    removedCount);
+                foreach (var key in oldBattles)
+                {
+                    _battles[key].LogGameState();
+                    _battles.Remove(key);
+                    _toRemove.Remove(key);
+                }
+
+                _logger.LogInformation("Cleaned up {Count} old battles.",
+                    oldBattles.Count);
+            }
+
+            var staleTurnBattles = _battles.Values
+                .Where(b => b.IsStaleTurn() && !_toRemove.ContainsKey(b.Id))
+                .ToList();
+
+            if (staleTurnBattles.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var battle in staleTurnBattles)
+            {
+                var inactivePlayerIndex = battle.GetInactivePlayerIndex();
+                if (inactivePlayerIndex == -1)
+                {
+                    continue;
+                }
+
+                var inactivePlayer = battle.GameState.GetPlayer(inactivePlayerIndex)!;
+
+                if (battle.GameState.PlayerTurnStart == 0)
+                {
+                    battle.PlayGameEvent(new GameEventMulliganParams
+                    {
+                        PlayerIndex = inactivePlayerIndex,
+                        GameEvent = GameEvent.DoInitialSwap
+                    });
+
+                    _logger.LogInformation("Auto-mulliganed player {Player} in game {GameId} due to inactivity.",
+                        inactivePlayer.UserId, battle.Id);
+                }
+                else
+                {
+                    battle.PlayGameEvent(new GameEventParams
+                    {
+                        PlayerIndex = inactivePlayerIndex,
+                        GameEvent = GameEvent.TriggerEndTurnTraits
+                    });
+
+                    var maxCardsInHand = battle.GameState.GetGameTemplate().MaxCardsInHand;
+                    if (inactivePlayer.Hand.Cards.Count > maxCardsInHand)
+                    {
+                        var discardCount = inactivePlayer.Hand.Cards.Count - maxCardsInHand;
+                        var discardCardIds = inactivePlayer
+                            .GetAutoDiscardCards(discardCount)
+                            .Select(c => c.InstanceId)
+                            .ToArray();
+
+                        battle.PlayGameEvent(new GameEventDiscardParams
+                        {
+                            PlayerIndex = inactivePlayerIndex,
+                            HandCardIdsToDiscard = discardCardIds,
+                            GameEvent = GameEvent.DiscardCard
+                        });
+                    }
+
+                    battle.PlayGameEvent(new GameEventEndTurnParams
+                    {
+                        PlayerIndex = inactivePlayerIndex,
+                        GameEvent = GameEvent.EndTurn
+                    });
+
+                    _logger.LogInformation("Auto-ended turn for player {Player} in game {GameId} due to inactivity.",
+                        inactivePlayer.UserId, battle.Id);
+                }
             }
         }
     }
 
-    private void GetCardSets(List<DropshipEntity> dropship, out List<ItemEntity> deck, out List<ItemEntity> support,
-        out ItemEntity commander)
+    private static void GetCardSets(List<DropshipEntity> dropship, out List<ItemEntity> deck,
+        out List<ItemEntity> support, out ItemEntity commander)
     {
         deck = [];
         support = [];
@@ -282,8 +312,8 @@ public class BattleService : IBattleService
         _logger.LogInformation("Processed battle rewards for game {GameId}.", battle.Id);
     }
 
-    private async Task ProcessUserRewards(PlayerEntity player, Rewards rewards, IPlayerRepository playerRepository,
-        IUserService userService)
+    private static async Task ProcessUserRewards(PlayerEntity player, Rewards rewards,
+        IPlayerRepository playerRepository, IUserService userService)
     {
         player.Xp += rewards.PlayerXp;
         player.Trophies += rewards.Trophies;

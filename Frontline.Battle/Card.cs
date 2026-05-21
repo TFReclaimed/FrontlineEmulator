@@ -909,4 +909,9 @@ public class Card : Item
             activeTrait.Detered = detered;
         }
     }
+
+    public static int SortByCommandCostDescending(Card card1, Card card2)
+    {
+        return card2.GetCurrentCost().CompareTo(card1.GetCurrentCost());
+    }
 }

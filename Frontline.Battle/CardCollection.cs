@@ -50,4 +50,25 @@ public class CardCollection
 
         return null;
     }
+
+    public List<Card> GetHighestCostCards(int numCards)
+    {
+        if (numCards > Cards.Count)
+        {
+            return Cards;
+        }
+
+        var cards = new List<Card>();
+        cards.AddRange(Cards);
+        cards.Sort(Card.SortByCommandCostDescending);
+
+        var finalCards = new List<Card>();
+        for (var i = 0; i < numCards; i++)
+        {
+            var card = cards[i];
+            finalCards.Add(card);
+        }
+
+        return finalCards;
+    }
 }

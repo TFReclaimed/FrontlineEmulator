@@ -320,6 +320,11 @@ public class Player
         }
     }
 
+    public List<Card> GetAutoDiscardCards(int numCards)
+    {
+        return Hand.GetHighestCostCards(numCards);
+    }
+
     public bool CanSubmitActions()
     {
         return !EndTurnTraitsTriggered && !Surrender;

@@ -113,18 +113,47 @@ public class CcgGame
         return Player1Id == userId || Player2Id == userId;
     }
 
-    public bool IsStale()
+    public bool IsStaleTurn()
     {
         var now = DateTime.UtcNow;
         var playerReconnectPeriod = GameState.GetGameTemplate().EndTurnTimer * 1.5f;
 
         if (GameState.PlayerTurnStart == 0)
         {
+            playerReconnectPeriod = GameState.GetGameTemplate().MulliganTimer * 2f;
             return (now - _creationTime).TotalSeconds > playerReconnectPeriod || GameState.IsGameOver();
         }
 
         var playerTurnStart = DateTimeOffset.FromUnixTimeMilliseconds(GameState.PlayerTurnStart);
         return (now - playerTurnStart).TotalSeconds > playerReconnectPeriod || GameState.IsGameOver();
+    }
+
+    public sbyte GetInactivePlayerIndex()
+    {
+        if (GameState.IsGameOver())
+        {
+            return -1;
+        }
+
+        var player0 = GameState.GetPlayer(0)!;
+        var player1 = GameState.GetPlayer(1)!;
+
+        if (GameState.PlayerTurnStart == 0)
+        {
+            if (!player0.InitialCardsSwapped)
+            {
+                return 0;
+            }
+
+            if (!player1.InitialCardsSwapped)
+            {
+                return 1;
+            }
+
+            return -1;
+        }
+
+        return GameState.PlayerTurn == 0 ? (sbyte) 0 : (sbyte) 1;
     }
 
     public void LogGameState()

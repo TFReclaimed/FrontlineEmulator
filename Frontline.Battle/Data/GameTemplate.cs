@@ -9,6 +9,7 @@ public class GameTemplate
     public int PilotTitanEmbarkedTrait { get; set; }
     public sbyte InitialDraw { get; set; }
     public sbyte MulliganDiscard { get; set; }
+    public sbyte MulliganTimer { get; set; }
     public sbyte FirstTurnDrawFirstPlayer { get; set; }
     public sbyte FirstTurnDrawOtherPlayer { get; set; }
     public sbyte NewTurnDraw { get; set; }
