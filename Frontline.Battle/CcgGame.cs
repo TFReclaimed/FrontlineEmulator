@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Frontline.Battle.CcgEvents;
 using Frontline.Battle.Data;
 using Frontline.Battle.Data.Card;
 using Frontline.Battle.GameEvents;
@@ -321,6 +322,16 @@ public class CcgGame
 
     public int GetServerIntValue(int min, int max)
     {
-        return Random.Shared.Next(min, max);
+        var value = Random.Shared.Next(min, max);
+
+        var serverDataEvent = new ServerDataEvent
+        {
+            DataType = CcgEventType.ServerRandomInt,
+            DataValue = value
+        };
+
+        GameState.GetCcgEventLog().Add(serverDataEvent);
+
+        return value;
     }
 }
