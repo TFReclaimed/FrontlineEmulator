@@ -166,20 +166,14 @@ public class BattleService : IBattleService
                     continue;
                 }
 
-                battle.PlayGameEvent(action);
-
                 if (action.GameEvent != GameEvent.TriggerEndTurnTraits)
                 {
+                    battle.PlayGameEvent(action);
                     continue;
                 }
 
-                // todo: discard cards
-
-                battle.PlayGameEvent(new GameEventEndTurnParams
-                {
-                    PlayerIndex = action.PlayerIndex,
-                    GameEvent = GameEvent.EndTurn
-                });
+                var player = battle.GameState.GetPlayer(action.PlayerIndex)!;
+                EndBattleTurn(battle, action.PlayerIndex, player);
             }
         }
     }
@@ -262,40 +256,45 @@ public class BattleService : IBattleService
                 }
                 else
                 {
-                    battle.PlayGameEvent(new GameEventParams
-                    {
-                        PlayerIndex = inactivePlayerIndex,
-                        GameEvent = GameEvent.TriggerEndTurnTraits
-                    });
-
-                    var maxCardsInHand = battle.GameState.GetGameTemplate().MaxCardsInHand;
-                    if (inactivePlayer.Hand.Cards.Count > maxCardsInHand)
-                    {
-                        var discardCount = inactivePlayer.Hand.Cards.Count - maxCardsInHand;
-                        var discardCardIds = inactivePlayer
-                            .GetAutoDiscardCards(discardCount)
-                            .Select(c => c.InstanceId)
-                            .ToArray();
-
-                        battle.PlayGameEvent(new GameEventDiscardParams
-                        {
-                            PlayerIndex = inactivePlayerIndex,
-                            HandCardIdsToDiscard = discardCardIds,
-                            GameEvent = GameEvent.DiscardCard
-                        });
-                    }
-
-                    battle.PlayGameEvent(new GameEventEndTurnParams
-                    {
-                        PlayerIndex = inactivePlayerIndex,
-                        GameEvent = GameEvent.EndTurn
-                    });
+                    EndBattleTurn(battle, inactivePlayerIndex, inactivePlayer);
 
                     _logger.LogInformation("Auto-ended turn for player {Player} in game {GameId} due to inactivity.",
                         inactivePlayer.UserId, battle.Id);
                 }
             }
         }
+    }
+
+    private static void EndBattleTurn(CcgGame battle, sbyte playerIndex, Player player)
+    {
+        battle.PlayGameEvent(new GameEventParams
+        {
+            PlayerIndex = playerIndex,
+            GameEvent = GameEvent.TriggerEndTurnTraits
+        });
+
+        var maxCardsInHand = battle.GameState.GetGameTemplate().MaxCardsInHand;
+        if (player.Hand.Cards.Count > maxCardsInHand)
+        {
+            var discardCount = player.Hand.Cards.Count - maxCardsInHand;
+            var discardCardIds = player
+                .GetAutoDiscardCards(discardCount)
+                .Select(c => c.InstanceId)
+                .ToArray();
+
+            battle.PlayGameEvent(new GameEventDiscardParams
+            {
+                PlayerIndex = playerIndex,
+                HandCardIdsToDiscard = discardCardIds,
+                GameEvent = GameEvent.DiscardCard
+            });
+        }
+
+        battle.PlayGameEvent(new GameEventEndTurnParams
+        {
+            PlayerIndex = playerIndex,
+            GameEvent = GameEvent.EndTurn
+        });
     }
 
     private static void GetCardSets(List<DropshipEntity> dropship, out List<ItemEntity> deck,
