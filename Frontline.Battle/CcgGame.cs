@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Frontline.Battle.Ai;
 using Frontline.Battle.CcgEvents;
 using Frontline.Battle.Data;
 using Frontline.Battle.Data.Card;
@@ -95,8 +96,14 @@ public class CcgGame
             commanders.Add(card);
         }
 
+        var aiProfiles = new List<AiProfile?>
+        {
+            player1Id == -1 ? new AiProfile() : null,
+            player2Id == -1 ? new AiProfile() : null
+        };
+
         GameState.CreatePlayers([player1Id, player2Id], [player1Name, player2Name],
-            deckCards, supportCards, commanders);
+            deckCards, supportCards, commanders, aiProfiles);
 
         RulesetPath = new RulesetPath
         {
@@ -191,6 +198,71 @@ public class CcgGame
         }
 
         OnBattleFinished?.Invoke(this);
+    }
+
+    public GameEventParams? GenerateNextAiAction()
+    {
+        if (GameState.GameType != VersusType.PvpAiRemote)
+        {
+            return null;
+        }
+
+        var playerTurn = GameState.PlayerTurn;
+        var opponentPlayerIndex = GameState.GetOpponentPlayerIndex(playerTurn);
+        var player = GameState.Players[playerTurn];
+        if (player.AiBrain == null)
+        {
+            return null;
+        }
+
+        var aiGameAction = player.AiBrain.CalculateNextAction(GameState);
+        var gameEventParams = aiGameAction.ActionType switch
+        {
+            GameEvent.Deploy => new GameEventRegionTarget
+            {
+                PlayerIndex = playerTurn,
+                GameEvent = GameEvent.Deploy,
+                ActingCardId = aiGameAction.SourceCardId,
+                TargetId = aiGameAction.TargetCardId,
+                TargetOwnerId = aiGameAction.Hostile ? opponentPlayerIndex : playerTurn,
+                Area = aiGameAction.Area,
+                Target = aiGameAction.Region,
+                SlotIndex = aiGameAction.SlotIndex,
+                PushDir = aiGameAction.PushDir
+            },
+            GameEvent.Move => new GameEventRegionTarget
+            {
+                PlayerIndex = playerTurn,
+                GameEvent = GameEvent.Move,
+                ActingCardId = aiGameAction.SourceCardId,
+                TargetId = 0,
+                TargetOwnerId = 0,
+                Area = TargetableArea.CurrentRegion,
+                Target = aiGameAction.Region,
+                SlotIndex = aiGameAction.SlotIndex,
+                PushDir = aiGameAction.PushDir
+            },
+            GameEvent.Attack => new GameEventRegionTarget
+            {
+                PlayerIndex = playerTurn,
+                GameEvent = GameEvent.Attack,
+                ActingCardId = aiGameAction.SourceCardId,
+                TargetId = aiGameAction.TargetCardId,
+                TargetOwnerId = opponentPlayerIndex,
+                Area = TargetableArea.AnyAreas,
+                Target = Region.NumRegions,
+                SlotIndex = -1,
+                PushDir = 0
+            },
+            GameEvent.TriggerEndTurnTraits => new GameEventParams
+            {
+                PlayerIndex = playerTurn,
+                GameEvent = GameEvent.TriggerEndTurnTraits
+            },
+            _ => null
+        };
+
+        return gameEventParams;
     }
 
     public bool Deploy(sbyte playerIndex, int cardId, sbyte targetIndex, int targetId, TargetableArea area,

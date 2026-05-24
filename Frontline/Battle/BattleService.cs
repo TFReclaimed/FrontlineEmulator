@@ -13,6 +13,7 @@ public interface IBattleService
     CcgGame? GetBattle(Guid gameId);
     Task CreateBattle(int player1Id, int player2Id, VersusType versusType);
     bool IsPlayerInGame(int userId, [NotNullWhen(true)] out CcgGame? game);
+    void ProcessAiTurns();
     void CleanupStaleBattles();
 }
 
@@ -64,15 +65,22 @@ public class BattleService : IBattleService
         var dropshipRepository = scope.ServiceProvider.GetRequiredService<IDropshipRepository>();
 
         var player1Entity = await playerRepository.GetByIdAsync(player1Id);
-        var player2Entity = await playerRepository.GetByIdAsync(player2Id);
+        PlayerEntity? player2Entity = null;
 
-        if (player1Entity == null || player2Entity == null)
+        if (player2Id != -1)
+        {
+            player2Entity = await playerRepository.GetByIdAsync(player2Id);
+        }
+
+        if (player1Entity == null || (player2Id != -1 && player2Entity == null))
         {
             throw new Exception("Player 1 or 2 not found.");
         }
 
         var player1Dropship = await dropshipRepository.GetDropshipItems(player1Entity.Id, player1Entity.DropshipId);
-        var player2Dropship = await dropshipRepository.GetDropshipItems(player2Entity.Id, player2Entity.DropshipId);
+        var player2Dropship = player2Id == -1
+            ? player1Dropship
+            : await dropshipRepository.GetDropshipItems(player2Entity!.Id, player2Entity.DropshipId);
 
         GetCardSets(player1Dropship, out var player1Deck,
             out var player1Support, out var player1Commander);
@@ -85,7 +93,8 @@ public class BattleService : IBattleService
             throw new Exception("Player 1 or 2 has an invalid deck.");
         }
 
-        var battle = new CcgGame(player1Id, player2Id, player1Entity.Name, player2Entity.Name, versusType,
+        var battle = new CcgGame(player1Id, player2Id, player1Entity.Name,
+            player2Id == -1 ? "CLANKER" : player2Entity!.Name, versusType,
             [player1Deck, player2Deck], [player1Support, player2Support],
             [player1Commander, player2Commander], _environment.IsProduction(), _loggerFactory);
         battle.OnBattleFinished += OnBattleFinished;
@@ -118,6 +127,58 @@ public class BattleService : IBattleService
 
             game = potentialGame;
             return game is not null;
+        }
+    }
+
+    public void ProcessAiTurns()
+    {
+        lock (_lock)
+        {
+            if (_battles.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var battle in _battles.Values)
+            {
+                if (battle.GameState.GameType != VersusType.PvpAiRemote)
+                {
+                    continue;
+                }
+
+                if (battle.GameState.IsGameOver())
+                {
+                    continue;
+                }
+
+                if (battle.GameState.PlayerTurn != 1)
+                {
+                    continue;
+                }
+
+                var action = battle.GenerateNextAiAction();
+                if (action == null)
+                {
+                    _logger.LogWarning("AI failed to generate action for game {GameId}.",
+                        battle.Id);
+                    continue;
+                }
+
+                battle.PlayGameEvent(action);
+
+                if (action.GameEvent != GameEvent.TriggerEndTurnTraits)
+                {
+                    continue;
+                }
+
+                // todo: discard cards
+
+                battle.PlayGameEvent(new GameEventEndTurnParams
+                {
+                    PlayerIndex = action.PlayerIndex,
+                    GameEvent = GameEvent.EndTurn
+                });
+            }
         }
     }
 
@@ -273,8 +334,9 @@ public class BattleService : IBattleService
         var inventoryRepository = scope.ServiceProvider.GetRequiredService<IInventoryRepository>();
         var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
 
+        var player2IsBot = battle.Player2Id == -1;
         var player1Entity = await playerRepository.GetByIdAsync(battle.Player1Id);
-        var player2Entity = await playerRepository.GetByIdAsync(battle.Player2Id);
+        var player2Entity = player2IsBot ? player1Entity : await playerRepository.GetByIdAsync(battle.Player2Id);
 
         if (player1Entity == null || player2Entity == null)
         {
@@ -283,7 +345,11 @@ public class BattleService : IBattleService
         }
 
         await ProcessUserRewards(player1Entity, battle.GameState.Rewards[0], playerRepository, userService);
-        await ProcessUserRewards(player2Entity, battle.GameState.Rewards[1], playerRepository, userService);
+
+        if (!player2IsBot)
+        {
+            await ProcessUserRewards(player2Entity, battle.GameState.Rewards[1], playerRepository, userService);
+        }
 
         foreach (var ccgEvent in battle.GameState.GetCcgEventLog())
         {
@@ -297,7 +363,7 @@ public class BattleService : IBattleService
                 continue;
             }
 
-            var playerId = cardInfoEvent.Owner == 0 ? battle.Player1Id : battle.Player2Id;
+            var playerId = cardInfoEvent.Owner == 0 ? battle.Player1Id : (player2IsBot ? battle.Player1Id : battle.Player2Id);
 
             var itemEntity = await inventoryRepository.GetItemAsync(playerId, cardInfoEvent.InstanceId);
             if (itemEntity == null)

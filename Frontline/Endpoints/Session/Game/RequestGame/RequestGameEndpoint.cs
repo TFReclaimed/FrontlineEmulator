@@ -34,10 +34,18 @@ public class RequestGameEndpoint : Endpoint<RequestGameRequest>
             return;
         }
 
-        Logger.LogInformation("User {UserId} requested a game of {GameType} against {OpponentId}.",
-            userId, req.Param.GameType, req.Param.OpponentId);
+        var gameType = req.Param.GameType;
+        var opponentId = req.Param.OpponentId;
 
-        _matchmakingService.Enqueue(userId, req.Param.GameType, req.Param.OpponentId);
+        if (opponentId == -1)
+        {
+            gameType = VersusType.PvpAiRemote;
+        }
+
+        Logger.LogInformation("User {UserId} requested a game of {GameType} against {OpponentId}.",
+            userId, gameType, opponentId);
+
+        _matchmakingService.Enqueue(userId, gameType, opponentId);
         await Send.OkAsync();
     }
 }

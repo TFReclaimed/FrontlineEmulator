@@ -450,7 +450,7 @@ public class XmppClient
             {
                 _logger.LogWarning("{Client} Attempted to challenge system.", this);
                 var systemJid = new Jid("-1", Globals.XmppServerAddress, "-1");
-                await SendPrivateMessage(systemJid, $":::CHALLENGE_REJECTED:::{to}");
+                await SendPrivateMessage(systemJid, $":::CHALLENGE_ACCEPTED:::{to}");
                 return;
             }
 

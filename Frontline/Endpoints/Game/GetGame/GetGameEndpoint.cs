@@ -39,6 +39,7 @@ public class GetGameEndpoint : Endpoint<GetGameRequest, CcgGame>
 
         var rootNode = JsonSerializer.SerializeToNode(game, JsonOptions);
         rootNode?["GameState"]?["LocalPlayer"] = game.Player1Id == userId ? 0 : 1;
+        rootNode?["GameState"]?["GameType"] = "PVP_RANKED";
         var json = rootNode!.ToJsonString();
 
         await Send.StringAsync(json, 200, "application/json");
