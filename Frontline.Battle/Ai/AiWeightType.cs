@@ -6,19 +6,6 @@ public enum AiWeightType
     AttackValueWeight,
     HealthValueWeight,
     ArmorValueWeight,
-    AttackGainWeight,
-    HealthGainWeight,
-    ArmorGainWeight,
     DestroyCommanderWeight,
-    DestroyTitanWeight,
-    DestroyPilotWeight,
-    DestroyInstallationWeight,
-    DestroySupportWeight,
-    DrawCardWeight,
-    DiscardCardWeight,
-    DirectDamageWeight,
-    EmbarkWeight,
-    DeployEmbarkWeight,
-    DisembarkWeight,
-    NumTypes
+    DeployEmbarkWeight
 }
