@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Frontline.Battle.Ai;
 using Frontline.Battle.CcgEvents;
 using Frontline.Battle.Data;
 using Frontline.Battle.Data.Card;
@@ -119,12 +120,12 @@ public class CcgGameState
     }
 
     public void CreatePlayers(int[] playerIds, string[] playerNames, List<List<Card>> deckCards,
-        List<List<Card>> supportCards, List<CommanderCard> commanders)
+        List<List<Card>> supportCards, List<CommanderCard> commanders, List<AiProfile?> aiProfiles)
     {
         for (var i = 0; i < 2; i++)
         {
             Players[i] = new Player(this, playerIds[i], playerNames[i], deckCards[i], supportCards[i],
-                commanders[i], (sbyte) i, false);
+                commanders[i], (sbyte) i, false, aiProfiles[i]);
             Rewards[i] = new Rewards();
         }
 

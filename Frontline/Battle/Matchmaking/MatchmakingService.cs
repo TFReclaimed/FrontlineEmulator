@@ -42,6 +42,12 @@ public class MatchmakingService : IMatchmakingService
     {
         var ticket = new MatchmakingTicket(userId, versusType, opponentId);
 
+        if (versusType == VersusType.PvpAiRemote)
+        {
+            FinalizeAiMatch(ticket).Wait();
+            return;
+        }
+
         lock (_queueLock)
         {
             _matchmakingQueue[userId] = ticket;
@@ -154,6 +160,18 @@ public class MatchmakingService : IMatchmakingService
             _logger.LogInformation("Cleaned up {StaleTicketCount} stale matchmaking tickets.",
                 staleTickets.Count);
         }
+    }
+
+    private async Task FinalizeAiMatch(MatchmakingTicket ticket)
+    {
+        lock (_queueLock)
+        {
+            _logger.LogInformation("Matching user {UserId} against AI for {GameType}.",
+                ticket.UserId, ticket.VersusType);
+        }
+
+        await _battleService.CreateBattle(ticket.UserId, -1, ticket.VersusType);
+        _userService.IncrementChangeCounter(ticket.UserId);
     }
 
     private async Task FinalizeMatch(MatchmakingTicket ticket1, MatchmakingTicket ticket2)

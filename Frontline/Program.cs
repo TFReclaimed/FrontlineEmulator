@@ -63,6 +63,7 @@ builder.Services.AddSingleton<IMatchmakingService, MatchmakingService>();
 builder.Services.AddScoped<ISupplyService, SupplyService>();
 
 builder.Services.AddHostedService<MatchmakingWorker>();
+builder.Services.AddHostedService<BattleAiWorker>();
 builder.Services.AddHostedService<BattleCleanupWorker>();
 builder.Services.AddHostedService<LogsCleanupWorker>();
 builder.Services.AddSingleton<IXmppServer, XmppServer>();

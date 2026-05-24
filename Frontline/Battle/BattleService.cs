@@ -13,6 +13,7 @@ public interface IBattleService
     CcgGame? GetBattle(Guid gameId);
     Task CreateBattle(int player1Id, int player2Id, VersusType versusType);
     bool IsPlayerInGame(int userId, [NotNullWhen(true)] out CcgGame? game);
+    void ProcessAiTurns();
     void CleanupStaleBattles();
 }
 
@@ -64,15 +65,25 @@ public class BattleService : IBattleService
         var dropshipRepository = scope.ServiceProvider.GetRequiredService<IDropshipRepository>();
 
         var player1Entity = await playerRepository.GetByIdAsync(player1Id);
-        var player2Entity = await playerRepository.GetByIdAsync(player2Id);
+        PlayerEntity? player2Entity = null;
 
-        if (player1Entity == null || player2Entity == null)
+        if (player2Id != -1)
+        {
+            player2Entity = await playerRepository.GetByIdAsync(player2Id);
+        }
+
+        if (player1Entity == null || (player2Id != -1 && player2Entity == null))
         {
             throw new Exception("Player 1 or 2 not found.");
         }
 
+        var player1Name = player1Entity.Name;
+        var player2Name = player2Id == -1 ? "<color=red>CLANKER</color>" : player2Entity!.Name;
+
         var player1Dropship = await dropshipRepository.GetDropshipItems(player1Entity.Id, player1Entity.DropshipId);
-        var player2Dropship = await dropshipRepository.GetDropshipItems(player2Entity.Id, player2Entity.DropshipId);
+        var player2Dropship = player2Id == -1
+            ? player1Dropship
+            : await dropshipRepository.GetDropshipItems(player2Entity!.Id, player2Entity.DropshipId);
 
         GetCardSets(player1Dropship, out var player1Deck,
             out var player1Support, out var player1Commander);
@@ -85,7 +96,7 @@ public class BattleService : IBattleService
             throw new Exception("Player 1 or 2 has an invalid deck.");
         }
 
-        var battle = new CcgGame(player1Id, player2Id, player1Entity.Name, player2Entity.Name, versusType,
+        var battle = new CcgGame(player1Id, player2Id, player1Name, player2Name, versusType,
             [player1Deck, player2Deck], [player1Support, player2Support],
             [player1Commander, player2Commander], _environment.IsProduction(), _loggerFactory);
         battle.OnBattleFinished += OnBattleFinished;
@@ -118,6 +129,52 @@ public class BattleService : IBattleService
 
             game = potentialGame;
             return game is not null;
+        }
+    }
+
+    public void ProcessAiTurns()
+    {
+        lock (_lock)
+        {
+            if (_battles.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var battle in _battles.Values)
+            {
+                if (battle.GameState.GameType != VersusType.PvpAiRemote)
+                {
+                    continue;
+                }
+
+                if (battle.GameState.IsGameOver())
+                {
+                    continue;
+                }
+
+                if (battle.GameState.PlayerTurn != 1)
+                {
+                    continue;
+                }
+
+                var action = battle.GenerateNextAiAction();
+                if (action == null)
+                {
+                    _logger.LogWarning("AI failed to generate action for game {GameId}.",
+                        battle.Id);
+                    continue;
+                }
+
+                if (action.GameEvent != GameEvent.TriggerEndTurnTraits)
+                {
+                    battle.PlayGameEvent(action);
+                    continue;
+                }
+
+                var player = battle.GameState.GetPlayer(action.PlayerIndex)!;
+                EndBattleTurn(battle, action.PlayerIndex, player);
+            }
         }
     }
 
@@ -199,40 +256,45 @@ public class BattleService : IBattleService
                 }
                 else
                 {
-                    battle.PlayGameEvent(new GameEventParams
-                    {
-                        PlayerIndex = inactivePlayerIndex,
-                        GameEvent = GameEvent.TriggerEndTurnTraits
-                    });
-
-                    var maxCardsInHand = battle.GameState.GetGameTemplate().MaxCardsInHand;
-                    if (inactivePlayer.Hand.Cards.Count > maxCardsInHand)
-                    {
-                        var discardCount = inactivePlayer.Hand.Cards.Count - maxCardsInHand;
-                        var discardCardIds = inactivePlayer
-                            .GetAutoDiscardCards(discardCount)
-                            .Select(c => c.InstanceId)
-                            .ToArray();
-
-                        battle.PlayGameEvent(new GameEventDiscardParams
-                        {
-                            PlayerIndex = inactivePlayerIndex,
-                            HandCardIdsToDiscard = discardCardIds,
-                            GameEvent = GameEvent.DiscardCard
-                        });
-                    }
-
-                    battle.PlayGameEvent(new GameEventEndTurnParams
-                    {
-                        PlayerIndex = inactivePlayerIndex,
-                        GameEvent = GameEvent.EndTurn
-                    });
+                    EndBattleTurn(battle, inactivePlayerIndex, inactivePlayer);
 
                     _logger.LogInformation("Auto-ended turn for player {Player} in game {GameId} due to inactivity.",
                         inactivePlayer.UserId, battle.Id);
                 }
             }
         }
+    }
+
+    private static void EndBattleTurn(CcgGame battle, sbyte playerIndex, Player player)
+    {
+        battle.PlayGameEvent(new GameEventParams
+        {
+            PlayerIndex = playerIndex,
+            GameEvent = GameEvent.TriggerEndTurnTraits
+        });
+
+        var maxCardsInHand = battle.GameState.GetGameTemplate().MaxCardsInHand;
+        if (player.Hand.Cards.Count > maxCardsInHand)
+        {
+            var discardCount = player.Hand.Cards.Count - maxCardsInHand;
+            var discardCardIds = player
+                .GetAutoDiscardCards(discardCount)
+                .Select(c => c.InstanceId)
+                .ToArray();
+
+            battle.PlayGameEvent(new GameEventDiscardParams
+            {
+                PlayerIndex = playerIndex,
+                HandCardIdsToDiscard = discardCardIds,
+                GameEvent = GameEvent.DiscardCard
+            });
+        }
+
+        battle.PlayGameEvent(new GameEventEndTurnParams
+        {
+            PlayerIndex = playerIndex,
+            GameEvent = GameEvent.EndTurn
+        });
     }
 
     private static void GetCardSets(List<DropshipEntity> dropship, out List<ItemEntity> deck,
@@ -273,17 +335,8 @@ public class BattleService : IBattleService
         var inventoryRepository = scope.ServiceProvider.GetRequiredService<IInventoryRepository>();
         var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
 
-        var player1Entity = await playerRepository.GetByIdAsync(battle.Player1Id);
-        var player2Entity = await playerRepository.GetByIdAsync(battle.Player2Id);
-
-        if (player1Entity == null || player2Entity == null)
-        {
-            _logger.LogError("Player 1 or 2 not found when processing battle rewards.");
-            return;
-        }
-
-        await ProcessUserRewards(player1Entity, battle.GameState.Rewards[0], playerRepository, userService);
-        await ProcessUserRewards(player2Entity, battle.GameState.Rewards[1], playerRepository, userService);
+        await ProcessUserRewards(battle.Player1Id, battle.GameState.Rewards[0], playerRepository, userService);
+        await ProcessUserRewards(battle.Player2Id, battle.GameState.Rewards[1], playerRepository, userService);
 
         foreach (var ccgEvent in battle.GameState.GetCcgEventLog())
         {
@@ -298,6 +351,10 @@ public class BattleService : IBattleService
             }
 
             var playerId = cardInfoEvent.Owner == 0 ? battle.Player1Id : battle.Player2Id;
+            if (playerId == -1)
+            {
+                continue;
+            }
 
             var itemEntity = await inventoryRepository.GetItemAsync(playerId, cardInfoEvent.InstanceId);
             if (itemEntity == null)
@@ -312,9 +369,22 @@ public class BattleService : IBattleService
         _logger.LogInformation("Processed battle rewards for game {GameId}.", battle.Id);
     }
 
-    private static async Task ProcessUserRewards(PlayerEntity player, Rewards rewards,
-        IPlayerRepository playerRepository, IUserService userService)
+    private async Task ProcessUserRewards(int playerId, Rewards rewards, IPlayerRepository playerRepository,
+        IUserService userService)
     {
+        if (playerId == -1)
+        {
+            return;
+        }
+
+        var player = await playerRepository.GetByIdAsync(playerId);
+        if (player == null)
+        {
+            _logger.LogError("Player {PlayerId} not found when processing battle rewards.",
+                playerId);
+            return;
+        }
+
         player.Xp += rewards.PlayerXp;
         player.Trophies += rewards.Trophies;
         player.Credits += rewards.Credits;

@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Frontline.Battle.Ai;
 using Frontline.Battle.CcgEvents;
 using Frontline.Battle.Data;
 using Frontline.Battle.Traits;
@@ -34,6 +35,10 @@ public class Player
     [JsonInclude]
     public readonly int UserId;
 
+    public readonly sbyte PlayerIndex;
+
+    public readonly AiBrain? AiBrain;
+
     public bool InitialCardsSwapped { get; set; }
 
     public bool Surrender { get; set; }
@@ -43,11 +48,12 @@ public class Player
     private readonly CcgGameState _gameState;
 
     public Player(CcgGameState gameState, int id, string profileName, List<Card> cards, List<Card> support,
-        CommanderCard currentCommander, sbyte playerIndex, bool skipShuffle)
+        CommanderCard currentCommander, sbyte playerIndex, bool skipShuffle, AiProfile? aiData)
     {
         _gameState = gameState;
         UserId = id;
         Name = profileName;
+        PlayerIndex = playerIndex;
 
         Deck = new Deck(cards);
         Deck.Shuffle(skipShuffle);
@@ -70,6 +76,12 @@ public class Player
         {
             PrimaryCard = commanderCard
         };
+
+        if (aiData != null)
+        {
+            AiBrain = new AiBrain(aiData, this);
+            InitialCardsSwapped = true;
+        }
     }
 
     public void ActivateCommander()
