@@ -43,7 +43,9 @@ public class CcgGame
 
         var innerLogger = loggerFactory.CreateLogger("Frontline.Battle.Game");
         var gameLogger = new GameLogger(innerLogger, Id);
-        GameState = new CcgGameState(this, gameLogger, Id, 1, versusType);
+
+        var gameId = versusType == VersusType.PvpAiRemote ? 4 : 1;
+        GameState = new CcgGameState(this, gameLogger, Id, gameId, versusType);
 
         var deckCards = new List<List<Card>>();
         for (var i = 0; i < 2; i++)

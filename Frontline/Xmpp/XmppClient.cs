@@ -448,9 +448,14 @@ public class XmppClient
 
             if (subject == ":::CHALLENGED:::" && to == -1)
             {
-                _logger.LogWarning("{Client} Attempted to challenge system.", this);
                 var systemJid = new Jid("-1", Globals.XmppServerAddress, "-1");
                 await SendPrivateMessage(systemJid, $":::CHALLENGE_ACCEPTED:::{to}");
+                return;
+            }
+
+            // Don't bother sending interaction events to a system user that doesn't exist
+            if (to == -1)
+            {
                 return;
             }
 
