@@ -23,77 +23,81 @@ public class AiBrain
         CalculateDeployActions(game);
         CalculateMoveActions(game);
         CalculateAttackActions(game);
-        var aiGameAction = CreateEndTurnAction();
-        _actions.Add(aiGameAction);
-        var list = new List<AiGameAction>();
+        _actions.Add(CreateEndTurnAction());
+
+        var newActions = new List<AiGameAction>();
         for (var i = 0; i < _actions.Count; i++)
         {
-            var aiGameAction2 = _actions[i];
-            if (aiGameAction2.Weight < 0f)
+            var action = _actions[i];
+            if (action.Weight < 0f)
             {
-                aiGameAction2.Weight = 0f - aiGameAction2.Weight;
-                list.Add(aiGameAction2);
+                action.Weight = 0f - action.Weight;
+                newActions.Add(action);
             }
         }
-        if (list.Count > 0)
+
+        if (newActions.Count > 0)
         {
             _actions.Clear();
-            _actions.AddRange(list);
+            _actions.AddRange(newActions);
         }
-        var num = GetWeightValue(AiWeightType.AiWeightTolerance) + 5f;
-        var num2 = 0f;
-        var j = 0;
+
         _actions.Sort(AiGameAction.SortByWeight);
+
+        var num = GetWeightValue(AiWeightType.AiWeightTolerance) + 5f;
+        var actionIndex = 0;
         if (num > 0f)
         {
-            for (; j < _actions.Count && _actions[j].Weight + num >= _actions[0].Weight; j++)
+            for (; actionIndex < _actions.Count && _actions[actionIndex].Weight + num >= _actions[0].Weight; actionIndex++)
             {
             }
         }
         else
         {
-            j = _actions.Count;
+            actionIndex = _actions.Count;
         }
-        if (j > 1)
+
+        if (actionIndex > 1)
         {
-            for (var k = 0; k < j; k++)
+            var weight = 0f;
+            for (var k = 0; k < actionIndex; k++)
             {
-                num2 += _actions[k].Weight;
+                weight += _actions[k].Weight;
             }
-            num2 = Range(0f, num2);
-            j = 0;
-            while (num2 > 0f)
+
+            weight = RandomBetween(0f, weight);
+            actionIndex = 0;
+
+            while (weight > 0f)
             {
-                num2 -= _actions[j].Weight;
-                if (num2 > 0f)
+                weight -= _actions[actionIndex].Weight;
+                if (weight > 0f)
                 {
-                    j++;
+                    actionIndex++;
                 }
             }
         }
         else
         {
-            j = 0;
+            actionIndex = 0;
         }
 
-        return _actions[j];
+        return _actions[actionIndex];
     }
 
-    private static float Range(float minInclusive, float maxInclusive)
+    private static float RandomBetween(float minInclusive, float maxInclusive)
     {
         return Random.Shared.NextSingle() * (maxInclusive - minInclusive) + minInclusive;
     }
 
     private static AiGameAction CreateEndTurnAction()
     {
-        var aIGameAction = new AiGameAction
+        return new AiGameAction
         {
             ActionType = GameEvent.TriggerEndTurnTraits,
             Hostile = false,
             Weight = 1f
         };
-
-        return aIGameAction;
     }
 
     private void CalculateDeployActions(CcgGameState game)
@@ -117,10 +121,10 @@ public class AiBrain
     {
         var gameIndex = _player.PlayerIndex;
         var regionEnum = (Region) gameIndex;
-        var array = game.Board.Regions[(uint) regionEnum].Slots;
-        for (sbyte b = 0; b < array.Length; b++)
+        var slots = game.Board.Regions[(uint) regionEnum].Slots;
+        for (sbyte slotIndex = 0; slotIndex < slots.Length; slotIndex++)
         {
-            var card = array[b].PrimaryCard;
+            var card = slots[slotIndex].PrimaryCard;
             if (card != null)
             {
                 GenerateMoveTargets(card, game);
@@ -132,20 +136,20 @@ public class AiBrain
     {
         var gameIndex = _player.PlayerIndex;
         var regionEnum = (Region) gameIndex;
-        var array = game.Board.Regions[(uint)regionEnum].Slots;
-        for (sbyte b = 0; b < array.Length; b++)
+        var slots = game.Board.Regions[(uint) regionEnum].Slots;
+        for (sbyte slotIndex = 0; slotIndex < slots.Length; slotIndex++)
         {
-            var card = array[b].PrimaryCard;
+            var card = slots[slotIndex].PrimaryCard;
             if (card != null)
             {
                 GenerateAttackTargets(card, game);
             }
         }
 
-        array = game.Board.Regions[2].Slots;
-        for (sbyte b = 0; b < array.Length; b++)
+        slots = game.Board.Regions[2].Slots;
+        for (sbyte slotIndex = 0; slotIndex < slots.Length; slotIndex++)
         {
-            var card = array[b].PrimaryCard;
+            var card = slots[slotIndex].PrimaryCard;
             if (card != null && card.ActiveData.Owner == gameIndex)
             {
                 GenerateAttackTargets(card, game);
@@ -157,8 +161,8 @@ public class AiBrain
         Region region, sbyte slotIndex, sbyte pushDir, float cardWeight, CardStack[]? slots)
     {
         var targetCardId = 0;
-        sbyte b = 0;
-        var num = 0f;
+        sbyte ownerId = 0;
+        var weight = 0f;
         var instanceId = card.InstanceId;
         if (!game.CanDeploy(playerIndex, instanceId, area, region, slotIndex, 0))
         {
@@ -169,24 +173,24 @@ public class AiBrain
         {
             var card2 = slots[slotIndex].PrimaryCard!;
             targetCardId = card2.InstanceId;
-            b = card2.ActiveData.Owner;
-            num = 1f * GetWeightValue(AiWeightType.DeployEmbarkWeight);
+            ownerId = card2.ActiveData.Owner;
+            weight = 1f * GetWeightValue(AiWeightType.DeployEmbarkWeight);
         }
 
-        var aiGameAction = new AiGameAction
+        var action = new AiGameAction
         {
             ActionType = GameEvent.Deploy,
             SourceCardId = instanceId,
             TargetCardId = targetCardId,
-            Hostile = b != playerIndex,
+            Hostile = ownerId != playerIndex,
             Area = area,
             Region = region,
             SlotIndex = slotIndex,
             PushDir = pushDir,
-            Weight = cardWeight + num
+            Weight = cardWeight + weight
         };
 
-        _actions.Add(aiGameAction);
+        _actions.Add(action);
     }
 
     private void GenerateDeployTargets(Card card, CcgGameState game)
@@ -196,12 +200,11 @@ public class AiBrain
         var regionEnum2 = (Region) game.GetOpponentPlayerIndex(gameIndex);
         var instanceId = card.InstanceId;
         var type = card.GetTemplate().Type;
-        sbyte b;
-        AiGameAction? aiGameAction;
-        var num = CalculateCardWeight(card);
+        AiGameAction? action;
+        var cardWeight = CalculateCardWeight(card);
         if (game.CanDeploy(gameIndex, instanceId, TargetableArea.FriendlyPerimeter, regionEnum, -1, 1))
         {
-            aiGameAction = new AiGameAction
+            action = new AiGameAction
             {
                 ActionType = GameEvent.Deploy,
                 SourceCardId = instanceId,
@@ -211,15 +214,15 @@ public class AiBrain
                 Region = regionEnum,
                 SlotIndex = 0,
                 PushDir = 1,
-                Weight = num
+                Weight = cardWeight
             };
-            _actions.Add(aiGameAction);
+            _actions.Add(action);
         }
 
         if (type != CardType.BurnCard && type != CardType.Secret && game.CanDeploy(gameIndex, instanceId, TargetableArea.UnitStack, regionEnum, -1, 1))
         {
             var emptyCardStackIndex = game.Board.Regions[(uint)regionEnum].GetEmptyCardStackIndex(false, !card.GetTemplate().IsCombatUnit());
-            aiGameAction = new AiGameAction
+            action = new AiGameAction
             {
                 ActionType = GameEvent.Deploy,
                 SourceCardId = instanceId,
@@ -229,14 +232,14 @@ public class AiBrain
                 Region = regionEnum,
                 SlotIndex = (sbyte) emptyCardStackIndex,
                 PushDir = 1,
-                Weight = num
+                Weight = cardWeight
             };
-            _actions.Add(aiGameAction);
+            _actions.Add(action);
         }
 
         if (game.CanDeploy(gameIndex, instanceId, TargetableArea.EnemyPerimeter, regionEnum2, -1, 1))
         {
-            aiGameAction = new AiGameAction
+            action = new AiGameAction
             {
                 ActionType = GameEvent.Deploy,
                 SourceCardId = instanceId,
@@ -246,14 +249,14 @@ public class AiBrain
                 Region = regionEnum2,
                 SlotIndex = 0,
                 PushDir = 1,
-                Weight = num
+                Weight = cardWeight
             };
-            _actions.Add(aiGameAction);
+            _actions.Add(action);
         }
 
         if (game.CanDeploy(gameIndex, instanceId, TargetableArea.BattleField, Region.NumRegions, -1, 1))
         {
-            aiGameAction = new AiGameAction
+            action = new AiGameAction
             {
                 ActionType = GameEvent.Deploy,
                 SourceCardId = instanceId,
@@ -263,14 +266,14 @@ public class AiBrain
                 Region = Region.NumRegions,
                 SlotIndex = 0,
                 PushDir = 1,
-                Weight = num
+                Weight = cardWeight
             };
-            _actions.Add(aiGameAction);
+            _actions.Add(action);
         }
 
         if (game.CanDeploy(gameIndex, instanceId, TargetableArea.Frontline, Region.Control, -1, 1))
         {
-            aiGameAction = new AiGameAction
+            action = new AiGameAction
             {
                 ActionType = GameEvent.Deploy,
                 SourceCardId = instanceId,
@@ -280,20 +283,20 @@ public class AiBrain
                 Region = Region.Control,
                 SlotIndex = 0,
                 PushDir = 1,
-                Weight = num
+                Weight = cardWeight
             };
-            _actions.Add(aiGameAction);
+            _actions.Add(action);
         }
 
-        var array = game.Board.Regions[2].Slots;
-        for (b = 0; b < array.Length; b++)
+        var slots = game.Board.Regions[2].Slots;
+        for (sbyte slotIndex = 0; slotIndex < slots.Length; slotIndex++)
         {
-            CheckDeployRegionIndex(game, gameIndex, card, TargetableArea.UnitStack, Region.Control, b, 0, num, array);
+            CheckDeployRegionIndex(game, gameIndex, card, TargetableArea.UnitStack, Region.Control, slotIndex, 0, cardWeight, slots);
         }
 
         if (game.CanDeploy(gameIndex, instanceId, TargetableArea.FriendlyCommander, Region.Player0, -1, 0))
         {
-            aiGameAction = new AiGameAction
+            action = new AiGameAction
             {
                 ActionType = GameEvent.Deploy,
                 SourceCardId = instanceId,
@@ -303,15 +306,15 @@ public class AiBrain
                 Region = Region.Control,
                 SlotIndex = 0,
                 PushDir = 0,
-                Weight = num
+                Weight = cardWeight
             };
-            _actions.Add(aiGameAction);
+            _actions.Add(action);
         }
 
         if (game.CanDeploy(gameIndex, instanceId, TargetableArea.EnemyCommander, Region.Player0, -1, 0))
         {
             var opponentPlayerIndex = game.GetOpponentPlayerIndex(gameIndex);
-            aiGameAction = new AiGameAction
+            action = new AiGameAction
             {
                 ActionType = GameEvent.Deploy,
                 SourceCardId = instanceId,
@@ -321,26 +324,26 @@ public class AiBrain
                 Region = Region.Control,
                 SlotIndex = 0,
                 PushDir = 0,
-                Weight = num
+                Weight = cardWeight
             };
-            _actions.Add(aiGameAction);
+            _actions.Add(action);
         }
 
-        array = game.Board.Regions[(uint) regionEnum].Slots;
-        for (b = 0; b < array.Length; b++)
+        slots = game.Board.Regions[(uint) regionEnum].Slots;
+        for (sbyte slotIndex = 0; slotIndex < slots.Length; slotIndex++)
         {
-            if (array[b].PrimaryCard != null)
+            if (slots[slotIndex].PrimaryCard != null)
             {
-                CheckDeployRegionIndex(game, gameIndex, card, TargetableArea.UnitStack, regionEnum, b, 0, num, array);
+                CheckDeployRegionIndex(game, gameIndex, card, TargetableArea.UnitStack, regionEnum, slotIndex, 0, cardWeight, slots);
             }
         }
 
-        array = game.Board.Regions[(uint) regionEnum2].Slots;
-        for (b = 0; b < array.Length; b++)
+        slots = game.Board.Regions[(uint) regionEnum2].Slots;
+        for (sbyte slotIndex = 0; slotIndex < slots.Length; slotIndex++)
         {
-            if (array[b].PrimaryCard != null)
+            if (slots[slotIndex].PrimaryCard != null)
             {
-                CheckDeployRegionIndex(game, gameIndex, card, TargetableArea.UnitStack, regionEnum2, b, 0, num, array);
+                CheckDeployRegionIndex(game, gameIndex, card, TargetableArea.UnitStack, regionEnum2, slotIndex, 0, cardWeight, slots);
             }
         }
     }
@@ -349,11 +352,11 @@ public class AiBrain
         Region region, sbyte slotIndex, sbyte pushDir, float cardWeight, CardStack[]? slots)
     {
         var instanceId = card.InstanceId;
-        var num = 0;
+        var targetCardId = 0;
         if (slots?[slotIndex].PrimaryCard != null)
         {
-            num = slots[slotIndex].PrimaryCard!.InstanceId;
-            if (instanceId == num)
+            targetCardId = slots[slotIndex].PrimaryCard!.InstanceId;
+            if (instanceId == targetCardId)
             {
                 return;
             }
@@ -364,11 +367,11 @@ public class AiBrain
             return;
         }
 
-        var aiGameAction = new AiGameAction
+        var action = new AiGameAction
         {
             ActionType = GameEvent.Move,
             SourceCardId = instanceId,
-            TargetCardId = num,
+            TargetCardId = targetCardId,
             Hostile = false,
             Area = area,
             Region = region,
@@ -376,7 +379,7 @@ public class AiBrain
             PushDir = pushDir,
             Weight = cardWeight
         };
-        _actions.Add(aiGameAction);
+        _actions.Add(action);
     }
 
     private void GenerateMoveTargets(Card card, CcgGameState game)
@@ -385,11 +388,10 @@ public class AiBrain
         var traitActorRegion = game.GetTraitActorRegion(gameIndex, card.InstanceId);
         var regionEnum = (Region) gameIndex;
         var instanceId = card.InstanceId;
-        sbyte b;
-        var num = CalculateCardWeight(card);
+        var cardWeight = CalculateCardWeight(card);
         if (traitActorRegion == Region.Control && game.CanMove(gameIndex, instanceId, regionEnum, -1, 1))
         {
-            var aiGameAction = new AiGameAction
+            var action = new AiGameAction
             {
                 ActionType = GameEvent.Move,
                 SourceCardId = instanceId,
@@ -399,23 +401,23 @@ public class AiBrain
                 Region = regionEnum,
                 SlotIndex = 0,
                 PushDir = 1,
-                Weight = num
+                Weight = cardWeight
             };
-            _actions.Add(aiGameAction);
+            _actions.Add(action);
         }
 
-        var array = game.Board.Regions[2].Slots;
-        for (b = 0; b < array.Length; b++)
+        var slots = game.Board.Regions[2].Slots;
+        for (sbyte slotIndex = 0; slotIndex < slots.Length; slotIndex++)
         {
-            CheckMoveRegionIndex(game, gameIndex, card, TargetableArea.UnitStack, Region.Control, b, 0, num, array);
+            CheckMoveRegionIndex(game, gameIndex, card, TargetableArea.UnitStack, Region.Control, slotIndex, 0, cardWeight, slots);
         }
 
-        array = game.Board.Regions[(uint) regionEnum].Slots;
-        for (b = 0; b < array.Length; b++)
+        slots = game.Board.Regions[(uint) regionEnum].Slots;
+        for (sbyte slotIndex = 0; slotIndex < slots.Length; slotIndex++)
         {
-            if (array[b].PrimaryCard != null)
+            if (slots[slotIndex].PrimaryCard != null)
             {
-                CheckMoveRegionIndex(game, gameIndex, card, TargetableArea.UnitStack, regionEnum, b, 0, num, array);
+                CheckMoveRegionIndex(game, gameIndex, card, TargetableArea.UnitStack, regionEnum, slotIndex, 0, cardWeight, slots);
             }
         }
     }
@@ -429,77 +431,77 @@ public class AiBrain
             return;
         }
 
-        var card2 = slots[slotIndex].PrimaryCard!;
-        var num = card2.InstanceId;
-        var b = card2.ActiveData.Owner;
-        if (playerIndex == b || !game.CanAttack(playerIndex, instanceId, b, num))
+        var targetCard = slots[slotIndex].PrimaryCard!;
+        var targetCardId = targetCard.InstanceId;
+        var ownerIndex = targetCard.ActiveData.Owner;
+        if (playerIndex == ownerIndex || !game.CanAttack(playerIndex, instanceId, ownerIndex, targetCardId))
         {
             return;
         }
 
-        var num2 = CalculateCombatResultWeight(card, card2);
-        var aIGameAction = new AiGameAction
+        var weight = CalculateCombatResultWeight(card, targetCard);
+        var action = new AiGameAction
         {
             ActionType = GameEvent.Attack,
             SourceCardId = instanceId,
-            TargetCardId = num,
+            TargetCardId = targetCardId,
             Hostile = true,
             Area = TargetableArea.AnyAreas,
             Region = Region.NumRegions,
             SlotIndex = slotIndex,
             PushDir = 0,
-            Weight = num2
+            Weight = weight
         };
-        _actions.Add(aIGameAction);
+        _actions.Add(action);
     }
 
     private float CalculateCombatResultWeight(Card card, Card targetCard)
     {
-        var num = CalculateCardWeight(card);
-        var num2 = CalculateCardWeight(targetCard);
-        var num3 = 1f;
-        int num4 = card.GetCurrentAttack(targetCard, false);
-        int num5 = targetCard.GetCurrentDefense(false);
-        if (num5 > 0)
+        var sourceCardWeight = CalculateCardWeight(card);
+        var targetCardWeight = CalculateCardWeight(targetCard);
+        var resultWeight = 1f;
+        int attackAgainstTarget = card.GetCurrentAttack(targetCard, false);
+        int targetDefense = targetCard.GetCurrentDefense(false);
+        if (targetDefense > 0)
         {
-            var num6 = card.GetCurrentBypassDefense(targetCard, false);
-            num5 -= num6;
-            if (num5 < 0)
+            var bypassDefense = card.GetCurrentBypassDefense(targetCard, false);
+            targetDefense -= bypassDefense;
+            if (targetDefense < 0)
             {
-                num5 = 0;
+                targetDefense = 0;
             }
         }
 
-        num4 -= num5;
-        if (num4 >= targetCard.GetCurrentHealth(false))
+        attackAgainstTarget -= targetDefense;
+        if (attackAgainstTarget >= targetCard.GetCurrentHealth(false))
         {
-            num3 += num2;
+            resultWeight += targetCardWeight;
         }
 
-        num4 = targetCard.GetCurrentAttack(card, false);
-        num5 = card.GetCurrentDefense(false);
-        if (num5 > 0)
+        var attackAgainstAttacker = targetCard.GetCurrentAttack(card, false);
+        var attackerDefense = card.GetCurrentDefense(false);
+        if (attackerDefense > 0)
         {
-            var num6 = targetCard.GetCurrentBypassDefense(card, false);
-            num5 -= num6;
-            if (num5 < 0)
+            var bypassDefense = targetCard.GetCurrentBypassDefense(card, false);
+            attackerDefense -= bypassDefense;
+            if (attackerDefense < 0)
             {
-                num5 = 0;
+                attackerDefense = 0;
             }
         }
 
-        num4 -= num5;
-        if (num4 >= card.GetCurrentHealth(false))
+        attackAgainstAttacker -= attackerDefense;
+        if (attackAgainstAttacker >= card.GetCurrentHealth(false))
         {
-            num3 -= num;
+            resultWeight -= sourceCardWeight;
         }
 
-        if (num3 < 0f)
+        if (resultWeight < 0f)
         {
-            num3 = 0.01f;
+            resultWeight = 0.01f;
         }
 
-        return num3;
+        return resultWeight;
     }
 
     private void GenerateAttackTargets(Card card, CcgGameState game)
@@ -508,18 +510,17 @@ public class AiBrain
         var opponentPlayerIndex = game.GetOpponentPlayerIndex(gameIndex);
         var regionEnum = (Region) opponentPlayerIndex;
         var instanceId = card.InstanceId;
-        sbyte b;
-        var num = CalculateCardWeight(card);
-        var array = game.Board.Regions[2].Slots;
-        for (b = 0; b < array.Length; b++)
+        var cardWeight = CalculateCardWeight(card);
+        var slots = game.Board.Regions[2].Slots;
+        for (sbyte slotIndex = 0; slotIndex < slots.Length; slotIndex++)
         {
-            CheckAttackRegionIndex(game, gameIndex, card, b, array);
+            CheckAttackRegionIndex(game, gameIndex, card, slotIndex, slots);
         }
 
-        array = game.Board.Regions[(uint) regionEnum].Slots;
-        for (b = 0; b < array.Length; b++)
+        slots = game.Board.Regions[(uint) regionEnum].Slots;
+        for (sbyte slotIndex = 0; slotIndex < slots.Length; slotIndex++)
         {
-            CheckAttackRegionIndex(game, gameIndex, card, b, array);
+            CheckAttackRegionIndex(game, gameIndex, card, slotIndex, slots);
         }
 
         var primaryCard = game.Players[opponentPlayerIndex].Commander.PrimaryCard!;
@@ -528,7 +529,7 @@ public class AiBrain
             return;
         }
 
-        var aiGameAction = new AiGameAction
+        var action = new AiGameAction
         {
             ActionType = GameEvent.Attack,
             SourceCardId = instanceId,
@@ -538,9 +539,9 @@ public class AiBrain
             Region = Region.NumRegions,
             SlotIndex = 0,
             PushDir = 0,
-            Weight = num + 1f * GetWeightValue(AiWeightType.DestroyCommanderWeight)
+            Weight = cardWeight + 1f * GetWeightValue(AiWeightType.DestroyCommanderWeight)
         };
-        _actions.Add(aiGameAction);
+        _actions.Add(action);
     }
 
     private float CalculateCardWeight(Card card)
