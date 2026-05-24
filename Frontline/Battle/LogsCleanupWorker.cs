@@ -33,6 +33,11 @@ public class LogsCleanupWorker : BackgroundService
     {
         try
         {
+            if (!Directory.Exists(GameLogger.LogFolder))
+            {
+                return;
+            }
+
             var staleLogsDateTime = DateTime.Now.Subtract(_daysToKeepSpan);
 
             var staleLogs = Directory
