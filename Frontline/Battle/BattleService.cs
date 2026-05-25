@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
 using Frontline.Battle.CcgEvents;
 using Frontline.Battle.GameEvents;
 using Frontline.Data.Entities;
@@ -158,22 +159,34 @@ public class BattleService : IBattleService
                     continue;
                 }
 
-                var action = battle.GenerateNextAiAction();
-                if (action == null)
+                try
                 {
-                    _logger.LogWarning("AI failed to generate action for game {GameId}.",
-                        battle.Id);
-                    continue;
-                }
+                    var action = battle.GenerateNextAiAction();
+                    if (action == null)
+                    {
+                        _logger.LogWarning("AI failed to generate action for game {GameId}.",
+                            battle.Id);
+                        continue;
+                    }
 
-                if (action.GameEvent != GameEvent.TriggerEndTurnTraits)
+                    battle.GameState.Logger.Debug(JsonSerializer.Serialize(action));
+
+                    if (action.GameEvent != GameEvent.TriggerEndTurnTraits)
+                    {
+                        battle.PlayGameEvent(action);
+                        continue;
+                    }
+
+                    var player = battle.GameState.GetPlayer(1)!;
+                    EndBattleTurn(battle, 1, player);
+                }
+                catch (Exception ex)
                 {
-                    battle.PlayGameEvent(action);
-                    continue;
-                }
+                    _logger.LogError(ex, "Error processing AI turn for game {GameId}.", battle.Id);
 
-                var player = battle.GameState.GetPlayer(action.PlayerIndex)!;
-                EndBattleTurn(battle, action.PlayerIndex, player);
+                    var player = battle.GameState.GetPlayer(1)!;
+                    EndBattleTurn(battle, 1, player);
+                }
             }
         }
     }
