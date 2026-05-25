@@ -254,23 +254,6 @@ public class AiBrain
             _actions.Add(action);
         }
 
-        if (game.CanDeploy(gameIndex, instanceId, TargetableArea.BattleField, Region.NumRegions, -1, 1))
-        {
-            action = new AiGameAction
-            {
-                ActionType = GameEvent.Deploy,
-                SourceCardId = instanceId,
-                TargetCardId = 0,
-                Hostile = true,
-                Area = TargetableArea.BattleField,
-                Region = Region.NumRegions,
-                SlotIndex = 0,
-                PushDir = 1,
-                Weight = cardWeight
-            };
-            _actions.Add(action);
-        }
-
         if (game.CanDeploy(gameIndex, instanceId, TargetableArea.Frontline, Region.Control, -1, 1))
         {
             action = new AiGameAction
