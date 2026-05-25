@@ -39,6 +39,8 @@ public class CardXpEntry
     public int Rank { get; set; }
     [JsonPropertyName("XPRequired")]
     public int XpRequired { get; set; }
+    [JsonPropertyName("FusionCost")]
+    public int FusionCost { get; set; }
 }
 
 public class FusionUpgrades

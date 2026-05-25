@@ -3,16 +3,24 @@ using Frontline.Battle.Data;
 using Frontline.Battle.Data.Card;
 using Frontline.Data.Repositories;
 using Frontline.Extensions;
+using Frontline.Services;
 
 namespace Frontline.Endpoints.Session.Inventory.Upgrade;
 
 public class UpgradeEndpoint : Endpoint<UpgradeRequest, UpgradedCard>
 {
+    private readonly IPlayerRepository _playerRepository;
+
     private readonly IInventoryRepository _inventoryRepository;
 
-    public UpgradeEndpoint(IInventoryRepository inventoryRepository)
+    private readonly IUserService _userService;
+
+    public UpgradeEndpoint(IPlayerRepository playerRepository, IInventoryRepository inventoryRepository,
+        IUserService userService)
     {
+        _playerRepository = playerRepository;
         _inventoryRepository = inventoryRepository;
+        _userService = userService;
     }
 
     public override void Configure()
@@ -24,6 +32,14 @@ public class UpgradeEndpoint : Endpoint<UpgradeRequest, UpgradedCard>
     public override async Task HandleAsync(UpgradeRequest req, CancellationToken ct)
     {
         var userId = this.GetUserId();
+        var player = await _playerRepository.GetByIdAsync(userId);
+        if (player is null)
+        {
+            Logger.LogWarning("Player {UserId} tried to upgrade an item but their profile wasn't found!",
+                userId);
+            await Send.NotFoundAsync();
+            return;
+        }
 
         var item = await _inventoryRepository.GetItemAsync(userId, req.ItemId);
         if (item is null)
@@ -71,12 +87,25 @@ public class UpgradeEndpoint : Endpoint<UpgradeRequest, UpgradedCard>
             return;
         }
 
+        if (player.Credits < xpEntry.FusionCost)
+        {
+            Logger.LogWarning("Player {UserId} tried to upgrade item {ItemId} but doesn't have enough credits!",
+                userId, req.ItemId);
+            await Send.ResultAsync(TypedResults.BadRequest());
+            return;
+        }
+
+        player.Credits -= xpEntry.FusionCost;
+        await _playerRepository.UpdateAsync(player);
+
         item.Rank = (sbyte) nextRank;
 
         await _inventoryRepository.UpdateAsync(item);
 
         Logger.LogInformation("Player {UserId} upgraded item {ItemId} to rank {Rank}",
             userId, req.ItemId, item.Rank);
+
+        _userService.IncrementChangeCounter(userId);
 
         var result = UpgradedCard.FromEntity(item);
         await Send.OkAsync(result);
