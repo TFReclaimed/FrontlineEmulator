@@ -19,13 +19,25 @@ public class SearchGuildsEndpoint : Endpoint<SearchGuildRequest, GuildListRespon
 
     public override async Task HandleAsync(SearchGuildRequest req, CancellationToken ct)
     {
-        var guilds = await _guildRepository.SearchGuildsAsync(req.Page, req.MaxCount, req.Search);
+        var page = req.Page;
+        var maxCount = req.MaxCount;
+        if (page < 0)
+        {
+            page = 0;
+        }
+
+        if (maxCount <= 0)
+        {
+            maxCount = 50;
+        }
+
+        var guilds = await _guildRepository.SearchGuildsAsync(page, maxCount, req.Search);
 
         var response = new GuildListResponse
         {
             Guilds = guilds.Select(GuildProfileDto.FromEntity).ToList(),
-            FirstPage = req.Page == 0,
-            LastPage = guilds.Count < req.MaxCount
+            FirstPage = page == 0,
+            LastPage = guilds.Count < maxCount
         };
 
         await Send.OkAsync(response);
