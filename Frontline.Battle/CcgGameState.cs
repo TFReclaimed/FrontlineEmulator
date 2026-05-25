@@ -1209,20 +1209,37 @@ public class CcgGameState
 
     public void GenerateRewards()
     {
-        if (GameType != VersusType.PvpRanked)
+        if (GameType == VersusType.PvpRanked)
         {
-            return;
-        }
-
-        for (var i = 0; i < Rewards.Length; i++)
-        {
-            if (i == WinningPlayer || (SurrenderGameOver && !Players[i].Surrender))
+            for (var i = 0; i < Rewards.Length; i++)
             {
-                Rewards[i].Generate(true, _winGameRewards);
+                if (i == WinningPlayer || (SurrenderGameOver && !Players[i].Surrender))
+                {
+                    Rewards[i].Generate(true, _winGameRewards);
+                }
+                else
+                {
+                    Rewards[i].Generate(false, _loseGameRewards);
+                }
             }
-            else
+        }
+        else if (GameType == VersusType.PvpAiRemote)
+        {
+            for (var i = 0; i < Rewards.Length; i++)
             {
-                Rewards[i].Generate(false, _loseGameRewards);
+                if (Players[i].AiBrain != null)
+                {
+                    continue;
+                }
+
+                if (i == WinningPlayer)
+                {
+                    Rewards[i].Generate(true, _winGameRewards);
+                }
+                else
+                {
+                    Rewards[i].Generate(false, _loseGameRewards);
+                }
             }
         }
     }
