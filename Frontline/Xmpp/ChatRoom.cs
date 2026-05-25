@@ -21,6 +21,8 @@ public class ChatRoom
 
     private readonly string _name;
 
+    private readonly string _roomName;
+
     private readonly Jid _systemJid;
 
     private readonly List<XmppClient> _clients;
@@ -42,10 +44,12 @@ public class ChatRoom
         new AlertCommand()
     ];
 
-    private ChatRoom(IOptions<ChatOptions> chatOptions, string name, List<Message> history, IXmppServer xmppServer)
+    private ChatRoom(IOptions<ChatOptions> chatOptions, string name, string roomName, List<Message> history,
+        IXmppServer xmppServer)
     {
         _chatOptions = chatOptions;
         _name = name;
+        _roomName = roomName;
         _systemJid = new Jid(_name, Globals.XmppMucAddress, "-1");
         _clients = [];
         _lastMessageTimes = [];
@@ -53,13 +57,13 @@ public class ChatRoom
         _xmppServer = xmppServer;
     }
 
-    public static async Task<ChatRoom> CreateAsync(IOptions<ChatOptions> chatOptions, string name,
+    public static async Task<ChatRoom> CreateAsync(IOptions<ChatOptions> chatOptions, string name, string roomName,
         IChatMessageRepository chatMessageRepository, IXmppServer xmppServer)
     {
         var messageEntities = await chatMessageRepository.GetRecentAsync(name, Globals.MaxMessages);
         var history = messageEntities.Select(entity => BuildMessageElement(entity, name)).ToList();
 
-        return new ChatRoom(chatOptions, name, history, xmppServer);
+        return new ChatRoom(chatOptions, name, roomName, history, xmppServer);
     }
 
     public async Task AddClient(XmppClient client)
@@ -290,7 +294,7 @@ public class ChatRoom
 
         if (_name.StartsWith("guild"))
         {
-            await SendSystemMessage(client, "Welcome to the guild chat!");
+            await SendSystemMessage(client, $"Welcome to the <b>{_roomName}</b> chat!");
         }
         else
         {

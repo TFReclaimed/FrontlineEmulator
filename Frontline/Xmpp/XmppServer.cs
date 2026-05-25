@@ -266,6 +266,7 @@ public class XmppServer : BackgroundService, IXmppServer
 
     private async Task ProcessOnClientEnteredRoom(XmppClient client, string room)
     {
+        var roomName = string.Empty;
         if (room.StartsWith("guild"))
         {
             var guildId = Guid.Parse(room.AsSpan(5));
@@ -280,6 +281,8 @@ public class XmppServer : BackgroundService, IXmppServer
                     client, room);
                 return;
             }
+
+            roomName = guild.Name;
         }
 
         if (!_chatRooms.TryGetValue(room, out var chatRoom))
@@ -287,7 +290,7 @@ public class XmppServer : BackgroundService, IXmppServer
             using var scope = _serviceScopeFactory.CreateScope();
             var chatMessageRepository = scope.ServiceProvider.GetRequiredService<IChatMessageRepository>();
 
-            var newRoom = await ChatRoom.CreateAsync(_chatOptions, room, chatMessageRepository, this);
+            var newRoom = await ChatRoom.CreateAsync(_chatOptions, room, roomName, chatMessageRepository, this);
             _chatRooms.TryAdd(room, newRoom);
             chatRoom = _chatRooms[room];
         }
