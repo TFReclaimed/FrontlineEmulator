@@ -159,6 +159,8 @@ public class BattleService : IBattleService
                     continue;
                 }
 
+                var player = battle.GameState.GetPlayer(1)!;
+
                 try
                 {
                     var action = battle.GenerateNextAiAction();
@@ -166,6 +168,8 @@ public class BattleService : IBattleService
                     {
                         _logger.LogWarning("AI failed to generate action for game {GameId}.",
                             battle.Id);
+
+                        EndBattleTurn(battle, 1, player);
                         continue;
                     }
 
@@ -177,14 +181,12 @@ public class BattleService : IBattleService
                         continue;
                     }
 
-                    var player = battle.GameState.GetPlayer(1)!;
                     EndBattleTurn(battle, 1, player);
                 }
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Error processing AI turn for game {GameId}.", battle.Id);
 
-                    var player = battle.GameState.GetPlayer(1)!;
                     EndBattleTurn(battle, 1, player);
                 }
             }
