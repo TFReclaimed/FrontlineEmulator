@@ -28,7 +28,7 @@ public sealed class GameLogger
                 Directory.CreateDirectory(LogFolder);
             }
 
-            File.AppendAllText(_logFilePath, $"[{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss}] [{level}] {message}{Environment.NewLine}");
+            File.AppendAllText(_logFilePath, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] [{level}] {message}{Environment.NewLine}");
         }
         catch (Exception ex)
         {
