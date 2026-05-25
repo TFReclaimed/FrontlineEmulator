@@ -302,7 +302,7 @@ public class AiBrain
                 ActionType = GameEvent.Deploy,
                 SourceCardId = instanceId,
                 TargetCardId = game.Players[opponentPlayerIndex].Commander.PrimaryCard!.InstanceId,
-                Hostile = false,
+                Hostile = true,
                 Area = TargetableArea.UnitStack,
                 Region = Region.Control,
                 SlotIndex = 0,
