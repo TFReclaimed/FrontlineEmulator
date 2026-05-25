@@ -1,5 +1,6 @@
 using Frontline.Options;
 using Frontline.Services;
+using Frontline.Xmpp;
 using Microsoft.Extensions.Options;
 
 namespace Frontline.Battle.Matchmaking;
@@ -17,6 +18,8 @@ public class MatchmakingService : IMatchmakingService
 {
     private readonly ILogger<MatchmakingService> _logger;
 
+    private readonly IXmppServer _xmppServer;
+
     private readonly IBattleService _battleService;
 
     private readonly IUserService _userService;
@@ -29,10 +32,11 @@ public class MatchmakingService : IMatchmakingService
 
     private readonly TimeSpan _ticketTimeout = TimeSpan.FromSeconds(20);
 
-    public MatchmakingService(ILogger<MatchmakingService> logger, IBattleService battleService,
+    public MatchmakingService(ILogger<MatchmakingService> logger, IXmppServer xmppServer, IBattleService battleService,
         IUserService userService, IOptionsMonitor<GameOptions> gameOptions)
     {
         _logger = logger;
+        _xmppServer = xmppServer;
         _battleService = battleService;
         _userService = userService;
         _gameOptions = gameOptions;
@@ -43,6 +47,12 @@ public class MatchmakingService : IMatchmakingService
         var ticket = new MatchmakingTicket(userId, versusType, opponentId);
 
         if (versusType == VersusType.PvpAiRemote)
+        {
+            FinalizeAiMatch(ticket).Wait();
+            return;
+        }
+
+        if (_xmppServer.GetClientCount() <= 1)
         {
             FinalizeAiMatch(ticket).Wait();
             return;
@@ -170,7 +180,7 @@ public class MatchmakingService : IMatchmakingService
                 ticket.UserId, ticket.VersusType);
         }
 
-        await _battleService.CreateBattle(ticket.UserId, -1, ticket.VersusType);
+        await _battleService.CreateBattle(ticket.UserId, -1, VersusType.PvpAiRemote);
         _userService.IncrementChangeCounter(ticket.UserId);
     }
 
