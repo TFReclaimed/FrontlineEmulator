@@ -10,7 +10,8 @@ namespace Frontline.Battle;
 
 public interface IBattleService
 {
-    int GetBattleCount();
+    int GetPvpBattleCount();
+    int GetAiBattleCount();
     CcgGame? GetBattle(Guid gameId);
     Task CreateBattle(int player1Id, int player2Id, VersusType versusType);
     bool IsPlayerInGame(int userId, [NotNullWhen(true)] out CcgGame? game);
@@ -43,11 +44,21 @@ public class BattleService : IBattleService
         _environment = environment;
     }
 
-    public int GetBattleCount()
+    public int GetPvpBattleCount()
     {
         lock (_lock)
         {
-            return _battles.Values.Count(b => !b.GameState.IsGameOver());
+            return _battles.Values.Count(b =>
+                b.GameState.GameType != VersusType.PvpAiRemote && !b.GameState.IsGameOver());
+        }
+    }
+
+    public int GetAiBattleCount()
+    {
+        lock (_lock)
+        {
+            return _battles.Values.Count(b =>
+                b.GameState.GameType == VersusType.PvpAiRemote && !b.GameState.IsGameOver());
         }
     }
 

@@ -31,7 +31,8 @@ public class GetStatsEndpoint : EndpointWithoutRequest<GetStatsResponse>
         var response = new GetStatsResponse
         {
             OnlinePlayers = _xmppServer.GetClientCount(),
-            ActiveBattles = _battleService.GetBattleCount()
+            PvpBattles = _battleService.GetPvpBattleCount(),
+            AiBattles = _battleService.GetAiBattleCount()
         };
 
         await Send.OkAsync(response);
