@@ -46,16 +46,19 @@ public class MatchmakingService : IMatchmakingService
     {
         var ticket = new MatchmakingTicket(userId, versusType, opponentId);
 
-        if (versusType == VersusType.PvpAiRemote)
+        if (_gameOptions.CurrentValue.EnableMatchmaking)
         {
-            FinalizeAiMatch(ticket).Wait();
-            return;
-        }
+            if (versusType == VersusType.PvpAiRemote)
+            {
+                FinalizeAiMatch(ticket).Wait();
+                return;
+            }
 
-        if (!PlayersAvailableForMatchmaking())
-        {
-            FinalizeAiMatch(ticket).Wait();
-            return;
+            if (!PlayersAvailableForMatchmaking())
+            {
+                FinalizeAiMatch(ticket).Wait();
+                return;
+            }
         }
 
         lock (_queueLock)
@@ -140,6 +143,14 @@ public class MatchmakingService : IMatchmakingService
                 .Where(t => t.VersusType == VersusType.PvpRanked)
                 .OrderBy(t => t.CreationUtc)
                 .ToList();
+
+            if (rankedTickets.Count == 1 && !PlayersAvailableForMatchmaking())
+            {
+                var ticket = rankedTickets[0];
+                FinalizeAiMatch(ticket).Wait();
+                _matchmakingQueue.Remove(ticket.UserId);
+                return;
+            }
 
             while (rankedTickets.Count >= 2)
             {
