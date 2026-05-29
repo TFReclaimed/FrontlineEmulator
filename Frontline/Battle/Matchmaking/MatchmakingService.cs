@@ -52,7 +52,7 @@ public class MatchmakingService : IMatchmakingService
             return;
         }
 
-        if (_xmppServer.GetClientCount() <= 1)
+        if (!PlayersAvailableForMatchmaking())
         {
             FinalizeAiMatch(ticket).Wait();
             return;
@@ -69,6 +69,20 @@ public class MatchmakingService : IMatchmakingService
         {
             TryMatchTargetedCasual(ticket);
         }
+    }
+
+    private bool PlayersAvailableForMatchmaking()
+    {
+        var onlineCount = _xmppServer.GetClientCount();
+        if (onlineCount <= 1)
+        {
+            return false;
+        }
+
+        onlineCount -= _battleService.GetAiBattleCount();
+        onlineCount -= _battleService.GetPvpBattleCount() * 2;
+
+        return onlineCount > 1;
     }
 
     private void TryMatchTargetedCasual(MatchmakingTicket ticket)
