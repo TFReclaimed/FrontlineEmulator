@@ -47,3 +47,6 @@ msbuild.wrn
 
 # Battle logs
 logs/
+
+# FastEndpoints
+.fastendpoints-generator-cache
