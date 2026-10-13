@@ -20,7 +20,7 @@
         </PackageReference>
         <PackageReference Include="FastEndpoints.Security" Version="8.3.0" />
         <PackageReference Include="FastEndpoints.Swagger" Version="8.3.0" />
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.12" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.13" />
         <PackageReference Include="XmppDotNet" Version="3.3.0" />
     </ItemGroup>
 
